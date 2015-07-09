@@ -15,10 +15,7 @@ import com.ivli.roim.controls.*;
 
 public class NewJFrame extends javax.swing.JFrame {
 
-    public NewJFrame() { 
-        ///BasicConfigurator.configure();
-        //PropertyConfigurator.configure("com/ivli/roim/log4j");// NOI18N
-        ///log4j.configurationFile = "";
+    public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
         initComponents();
     }
