@@ -10,8 +10,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ByteLookupTable;
 import java.awt.image.DataBuffer;
 import java.awt.image.LookupOp;
-import org.apache.log4j.Logger;
-import org.apache.log4j.LogManager;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jfree.data.xy.XYSeries;
 
 

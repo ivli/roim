@@ -38,8 +38,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import org.jfree.data.xy.XYSeries;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.controls.VOILUTPanel;
 /**

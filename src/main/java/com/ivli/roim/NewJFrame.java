@@ -5,9 +5,10 @@ import java.io.IOException;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
+//import org.apache.log4j.Logger;
+//import org.apache.log4j.BasicConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.controls.*;
 
@@ -16,7 +17,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     public NewJFrame() { 
         ///BasicConfigurator.configure();
-        PropertyConfigurator.configure("D:\\NetBeansProjects\\roimapp\\log4j.properties");// NOI18N
+        //PropertyConfigurator.configure("com/ivli/roim/log4j");// NOI18N
         ///log4j.configurationFile = "";
         logger.info("-->Entering application."); // NOI18N
         initComponents();
@@ -303,6 +304,6 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 
-    private final static Logger logger = Logger.getLogger(NewJFrame.class);
+    private final static Logger logger = LogManager.getLogger(NewJFrame.class);
 
 }

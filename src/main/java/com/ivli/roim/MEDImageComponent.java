@@ -16,8 +16,8 @@ import java.awt.image.Raster;
 import java.awt.RenderingHints;
 import javax.swing.JComponent;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 public class MEDImageComponent extends JComponent implements MEDImageComponentBase, WindowChangeNotifier {

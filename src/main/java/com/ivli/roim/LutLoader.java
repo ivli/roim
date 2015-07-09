@@ -6,8 +6,9 @@ import java.awt.*;
 import java.io.*;
 import java.awt.image.*;
 import java.net.*;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /** Opens NIH Image look-up tables (LUTs), 768 byte binary LUTs
 	(256 reds, 256 greens and 256 blues), LUTs in text format, 
