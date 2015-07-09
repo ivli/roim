@@ -5,8 +5,6 @@ import java.io.IOException;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 
-//import org.apache.log4j.Logger;
-//import org.apache.log4j.BasicConfigurator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -148,7 +146,7 @@ public class NewJFrame extends javax.swing.JFrame {
         if (null != aF) {
             dicomFileName = aF;
         } else {
-            FileDialog fd = new FileDialog(this,"NEWJFRAME.CHOOSE_DICOM_FILE", FileDialog.LOAD);
+            FileDialog fd = new FileDialog(this,java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_DICOM_FILE"), FileDialog.LOAD);
             fd.setDirectory("D:\\images\\"); // NOI18N
             fd.setFile("*.dcm"); // NOI18N
             fd.setVisible(true);
@@ -166,7 +164,7 @@ public class NewJFrame extends javax.swing.JFrame {
         try{
             iPanel.open(dicomFileName);
         }catch (IOException ex) {
-            logger.error("cannot open " + dicomFileName);
+            logger.error("cannot open " + dicomFileName); //NOI18N
         }
         iPanel.setMinimumSize(new Dimension(jPanel1.getWidth()-50, jPanel1.getHeight()));
         iPanel.setPreferredSize(jPanel1.getSize());
@@ -201,7 +199,7 @@ public class NewJFrame extends javax.swing.JFrame {
     //static boolean b = true; 
     
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        FileDialog fd = new FileDialog(this, "NEWJFRAME.CHOOSE_LUT_FILE", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_LUT_FILE"), FileDialog.LOAD);
         fd.setDirectory("D:\\temp\\Lookup_Tables\\"); // NOI18N
         fd.setFile("*.lut"); // NOI18N
         fd.setVisible(true);

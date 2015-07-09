@@ -1,26 +1,20 @@
 package com.ivli.roim;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Iterator;
 import java.awt.Color;
-import java.awt.image.Raster;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
+
 
 
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     
-            ROIManager iMgr; 
-    
-    private Color    iColor;
-    private RoiStats iStats;
-    
-    private HashSet<Overlay> iAnnos;
+    protected ROIManager iMgr; 
+    private   Color    iColor;
+    private   RoiStats iStats;
+    private   HashSet<Overlay> iAnnos;
     
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE;}
@@ -34,7 +28,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }
     
     ROI(ROI aR) {
-        super(aR.iShape, aR.iName + java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle/Bundle_ru_RU").getString("(2)")); 
+        super(aR.iShape, aR.iName + "(2)");  // NOI18N
         iColor = aR.iColor; 
         iMgr   = aR.iMgr;
         ///iName  = ;
