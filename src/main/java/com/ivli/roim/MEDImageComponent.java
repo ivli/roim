@@ -32,24 +32,28 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
     final static private int ZOOM_TO_FIT = 1;
     
     
-    private       MEDImageBase iImage;
-    private       Controller iController;
-            final VOILut          iWM  = new VOILut();                    
-            final PresentationLut iLUT = new PresentationLut(null);  
-    private final AffineTransform iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
-    private final Point iOrigin = new Point(0,0);     
-    private       BufferedImage iBuf; //offscreen image
-    private final HashSet<WindowChangeListener> iWinListeners = new HashSet();    
-    private       ROIManager iRoim;
+    private       MEDImageBase    iImage;
+    private       Controller      iController;
+    protected     VOILut          iWM;//  = new VOILut();                    
+    protected     PresentationLut iLUT;// = new PresentationLut(null);  
+    private final AffineTransform iZoom;// = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
+    private final Point           iOrigin;// = new Point(0,0);     
+    private       BufferedImage   iBuf; //offscreen image
+    private       ROIManager      iRoim;
+    private final HashSet<WindowChangeListener> iWinListeners;// = new HashSet();    
+    
         
     public MEDImageComponent() {         
-        iController = new Controller(this);         
+        iController = new Controller(this);   
+        iWM  = new VOILut();                    
+        iLUT = new PresentationLut(null);  
+        iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
+        iOrigin = new Point(0,0);     
+        iWinListeners = new HashSet();    
     }
    
-    public void open(String aFileName) throws IOException {   
-        
-        iImage = MEDImage.New(aFileName); 
-        ///iImage.open();
+    public void open(String aFileName) throws IOException {           
+        iImage = MEDImage.New(aFileName);        
         iWM.setImage(iImage);
         invalidateBuffer();
     }
@@ -57,8 +61,24 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
     public AffineTransform getZoom() {return iZoom;}
     public MEDImageBase getImage() {return iImage;}
     public ROIManager getROIManager() {return iRoim;}
-    public void setROIManager(ROIManager aRoim) {iRoim = aRoim; iRoim.attach(this);}
     
+        void setROIManager(ROIManager aRoim) {iRoim = aRoim; iRoim.attach(this);}
+        
+        void setLUTControl(LUTControl aCtrl) {
+            setVOILUT(aCtrl.iWM);
+            setPresentationLUT(aCtrl.iLUT);
+            aCtrl.addComponent(this);
+        }
+        
+        void setVOILUT(VOILut aLut) {
+            iWM=aLut;
+            iWM.setImage(iImage);        
+        }
+        
+        void setPresentationLUT(PresentationLut aLut) {
+            iLUT=aLut;
+        }
+        
     public void fitWidth() {
         final double scale = getWidth()/iImage.getWidth();
         iZoom.setToScale(scale, scale);

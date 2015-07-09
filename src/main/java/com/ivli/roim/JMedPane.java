@@ -22,11 +22,7 @@ public class JMedPane extends JLayeredPane{
     MEDImageComponent iImg;
     LUTControl        iLut;
     ROIManager        iRoim;
-    
-    public JMedPane() {        
-        
-    }
-    
+           
     void open(String aName) throws IOException {    
         iImg = new MEDImageComponent();
         iRoim = new ROIManagerImpl();
@@ -36,11 +32,14 @@ public class JMedPane extends JLayeredPane{
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS)); 
         iImg.setPreferredSize(new java.awt.Dimension(600, 600));  
         iImg.setMinimumSize(new java.awt.Dimension(575, 600));
-
         iImg.setAlignmentX(Component.LEFT_ALIGNMENT);
-        iLut  = new LUTControl(this, iImg);        
+        
+        //iLut  = new LUTControl(iImg);        
+        iLut  = new LUTControl();        
         iLut.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
+        iImg.setLUTControl(iLut);
+        
+        
         add(iImg, JLayeredPane.DEFAULT_LAYER);
         add(iLut, JLayeredPane.DEFAULT_LAYER);
 

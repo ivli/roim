@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ivli.roim;
 
 
@@ -54,10 +50,10 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     private static final int VERTICAL_BAR_EXCESS   = 4;  //reserve some pixels at top & bottom 
     private static final int HORIZONTAL_BAR_EXCESS = 1;  //reserve border at left & right
     
-    private boolean        iShowPercent = true;
-    private       MEDImageComponent iPane;
-    private final VOILut              iWM;
-    private final PresentationLut    iLUT;
+    private boolean           iShowPercent = true;
+    private MEDImageComponent iComponent;
+    final   VOILut            iWM;
+    final   PresentationLut   iLUT;
     
     private BufferedImage iBuf;
     
@@ -67,20 +63,30 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     private wlCursor iTop    = new wlCursor(Color.green, "top");  //NOI18N
     private wlCursor iBottom = new wlCursor(Color.red, "bottom"); //NOI18N
  
-    public LUTControl(Component aParent, MEDImageComponent aPane) {
-        iPane = aPane;
-        iLUT  = aPane.iLUT;
-        iWM   = aPane.iWM;      
+    public LUTControl(MEDImageComponent aComponent) {
+        iComponent = aComponent;
+        iLUT  = aComponent.iLUT;
+        iWM   = aComponent.iWM;      
         addComponentListener(new clListener());
     } 
            
-    public LUTControl(LUTControl aParent) {        
-        iLUT = aParent.iLUT;  
-        iWM  = aParent.iWM;           
+    public LUTControl(LUTControl aControl) {        
+        iLUT = aControl.iLUT;  
+        iWM  = aControl.iWM;           
         addComponentListener(new clListener());
     }    
     
-    public void setLUT(String aCM) {
+    public LUTControl() {        
+        iLUT = new PresentationLut(null);  
+        iWM  = new VOILut();           
+        addComponentListener(new clListener());
+    }    
+    
+    void addComponent(MEDImageComponent aComponent) {
+        iComponent = aComponent;
+    }
+    
+    public void setPresentationLUT(String aCM) {
         iLUT.setLUT(aCM);
         invalidateBuffer();
     }
@@ -107,7 +113,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
     @Override
     public void windowChanged(WindowChangeEvent anE) {
-        if (!iActive){  
+        if (!iActive) {  
             if (anE.isRangeChanged()) {
                 iWM.getRange().setTop(anE.getMax());
                 iWM.getRange().setBottom(anE.getMin());
@@ -131,8 +137,8 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             win.setLevel(win.getLevel() - e.getWheelRotation());                 
 
             if (iWM.getRange().contains(win)) {
-                if (null != iPane) 
-                    iPane.setWindow(win);
+                if (null != iComponent) 
+                    iComponent.setWindow(win);
 
                 windowChanged(win);     
             }
@@ -178,8 +184,8 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                     }
                     
                     if (iWM.getRange().contains(win)) {
-                        if (null != iPane) 
-                            iPane.setWindow(win);
+                        if (null != iComponent) 
+                            iComponent.setWindow(win);
 
                         windowChanged(win);     
                     }
@@ -191,8 +197,8 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                     win.setLevel(win.getLevel() - aX);                 
                     
                     if (iWM.getRange().contains(win)) {
-                        if (null != iPane) 
-                            iPane.setWindow(win);
+                        if (null != iComponent) 
+                            iComponent.setWindow(win);
 
                         windowChanged(win);     
                     }
@@ -393,23 +399,25 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
     
     public void actionPerformed(ActionEvent e) {
+        assert (null != iComponent);
+        
         logger.info(e.getActionCommand() +  e.paramString()); // NOI18N
         
-         switch (e.getActionCommand()) {             
+        switch (e.getActionCommand()) {             
             case KCommandTriggerLinear: 
-                iPane.setLinear(!iPane.isLinear());
+                iComponent.setLinear(!iComponent.isLinear());
                 invalidateBuffer();
-                iPane.repaint();
+                iComponent.repaint();
                 repaint();
                 break;
             case KCommandTriggerDirect: 
-                iPane.setInverted(!iPane.isInverted());
+                iComponent.setInverted(!iComponent.isInverted());
                 invalidateBuffer();
-                iPane.repaint();
+                iComponent.repaint();
                 repaint();
                 break;
             case KCommandShowDialog:                 
-                VOILUTPanel panel = new VOILUTPanel(this, (MEDImageBase)iPane.getImage());
+                VOILUTPanel panel = new VOILUTPanel(this, (MEDImageBase)iComponent.getImage());
                 JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
                 dialog.setContentPane(panel);
                 dialog.validate();
@@ -424,17 +432,17 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 fd.setVisible(true);
                 String cm ;        
                 if (null != fd.getFile() && null != (cm = fd.getDirectory() + fd.getFile())) {
-                    iPane.setLUT(cm);
+                    iComponent.setLUT(cm);
                     invalidateBuffer();
-                    iPane.repaint();
+                    iComponent.repaint();
                     repaint();
                 } 
                 break;          
             default: 
                 //setLUT(e.getActionCommand());
-                iPane.setLUT(e.getActionCommand());
+                iComponent.setLUT(e.getActionCommand());
                 invalidateBuffer();
-                iPane.repaint();
+                iComponent.repaint();
                 repaint();
                 break;
          }
@@ -476,7 +484,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         mi14.setActionCommand(KCommandChangeLUT); 
         mnu.add(mi14);
         
-        mnu.show(iPane, aX, aY);
+        mnu.show(iComponent, aX, aY);
     }   
                        
     class clListener implements ComponentListener {
