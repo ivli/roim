@@ -8,9 +8,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 
-
-public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
-    
+public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {    
     protected ROIManager iMgr; 
     private   Color    iColor;
     private   RoiStats iStats;
