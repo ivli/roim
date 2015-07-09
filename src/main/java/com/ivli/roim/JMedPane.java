@@ -14,10 +14,7 @@ import javax.swing.JLayeredPane;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-/**
- *
- * @author likhachev
- */
+
 public class JMedPane extends JLayeredPane{
     MEDImageComponent iImg;
     LUTControl        iLut;

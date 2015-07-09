@@ -24,21 +24,21 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
 
     private static final boolean DRAW_OVERLAYS_ON_BUFFERED_IMAGE = false; //i cry ther's no #ifdef 
     private static final boolean DRAW_SUMMED_FRAME = false; 
-    final static private boolean SUMMED_FRAME_PANE = false; 
-    final static private double DEFAULT_SCALE_X = 1.;
-    final static private double DEFAULT_SCALE_Y = 1.;
-    final static private int SELECTION_TOLERANCE_X = 3;
-    final static private int SELECTION_TOLERANCE_Y = 1;
-    final static private int ZOOM_TO_FIT = 1;
+    private static final boolean SUMMED_FRAME_PANE = false; 
+    private static final double  DEFAULT_SCALE_X = 1.;
+    private static final double  DEFAULT_SCALE_Y = 1.;
+    private static final int     SELECTION_TOLERANCE_X = 3;
+    private static final int     SELECTION_TOLERANCE_Y = 1;
+    private static final int     ZOOM_TO_FIT = 1;
     
     
+    protected     VOILut          iWM;                   
+    protected     PresentationLut iLUT;  
     private       MEDImageBase    iImage;
-    private       Controller      iController;
-    protected     VOILut          iWM;//  = new VOILut();                    
-    protected     PresentationLut iLUT;// = new PresentationLut(null);  
-    private final AffineTransform iZoom;// = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
-    private final Point           iOrigin;// = new Point(0,0);     
-    private       BufferedImage   iBuf; //offscreen image
+    private final Controller      iController;    
+    private final AffineTransform iZoom;
+    private final Point           iOrigin;   
+    private       BufferedImage   iBuf; 
     private       ROIManager      iRoim;
     private final HashSet<WindowChangeListener> iWinListeners;// = new HashSet();    
     

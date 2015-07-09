@@ -11,9 +11,10 @@ import java.awt.image.ByteLookupTable;
 import java.awt.image.DataBuffer;
 import java.awt.image.LookupOp;
 
+import org.jfree.data.xy.XYSeries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jfree.data.xy.XYSeries;
+
 
 
 class VOILut implements LutTransform {
@@ -62,9 +63,7 @@ class VOILut implements LutTransform {
             iWin = new Window(iMax);//percentTop * iMax.getWidth()/2, (percentTop - percentBottom) * iMax.getWidth()); 
             iWin.setTop(percentTop*iMax.getWidth()); 
             iWin.setBottom(percentBottom*iMax.getWidth()); 
-        }    
-               
-        
+        }                           
         makeLUT();            
     }
       

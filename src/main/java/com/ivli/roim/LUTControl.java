@@ -57,7 +57,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
     private BufferedImage iBuf;
     
-    boolean iActive = false;
+    private boolean    iActive;
     private ActionItem iAction;
     
     private wlCursor iTop    = new wlCursor(Color.green, "top");  //NOI18N

@@ -30,10 +30,7 @@ import org.dcm4che3.io.DicomInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- *
- * @author likhachev
- */
+
 public class ImageLoader {
     
     static {   
