@@ -17,15 +17,15 @@ import java.util.ListIterator;
  *
  * @author likhachev
  */
-class ROIManagerImpl implements ROIManager {
+class ROIManagerImpl extends ROIManager {
     private final LinkedList<Overlay> iOverlays = new LinkedList();  
     
-    MEDImageComponentBase iPane;
-    ROIManagerImpl(){}
+    MEDImageComponentBase iComponent;
     
-    public void attach(MEDImageComponentBase aMed){iPane = aMed;}
     
-    public MEDImageBase getImage() {return iPane.getImage();}
+    public void attach(MEDImageComponentBase aMed){iComponent = aMed;}
+    
+    public MEDImageBase getImage() {return iComponent.getImage();}
     public void clear() {iOverlays.clear();}
     
     public void update() {
@@ -39,34 +39,36 @@ class ROIManagerImpl implements ROIManager {
     }            
             
     public void createRoiFromShape(Shape aS) { 
-        final Shape r = iPane.screenToVirtual().createTransformedShape(aS);
-        final ROI temp = new ROI(r, this, null);
+        final Shape r = iComponent.screenToVirtual().createTransformedShape(aS);
+        final ROI temp = new ROI(r, this, null);       
         iOverlays.add(temp);
         iOverlays.add(new Annotation(temp));      
+        temp.update();
     }
     
     public void cloneRoi(ROI aR) {
         final ROI temp = new ROI(aR);
+        temp.iName = aR.iName + "(2)";
         iOverlays.add(temp); 
         iOverlays.add(new Annotation(temp));
     }
     
     public void moveRoi(Overlay aO, double adX, double adY) {   
         Rectangle r = aO.getShape().getBounds();
-        AffineTransform trans = iPane.virtualToScreen();
+        AffineTransform trans = iComponent.virtualToScreen();
         trans.concatenate(AffineTransform.getTranslateInstance(adX, adY));    
         Shape s = trans.createTransformedShape(r);
-        Rectangle o = iPane.getBounds();
+        Rectangle o = iComponent.getBounds();
         Rectangle i = s.getBounds();
         
         if (true == o.contains(i)) {
             ///logger.info ("--> move object" + o + i);
-            aO.move((adX/iPane.getZoom().getScaleX()), (adY/iPane.getZoom().getScaleY()));  
+            aO.move((adX/iComponent.getZoom().getScaleX()), (adY/iComponent.getZoom().getScaleY()));  
         }
     }
    
     public Overlay findOverlay(Point aP) {      
-        final Rectangle temp = iPane.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();
+        final Rectangle temp = iComponent.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();
         
         for (Overlay r:iOverlays) {
             if (r.isSelectable() && r.getShape().intersects(temp)) 

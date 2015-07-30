@@ -9,9 +9,9 @@ import java.awt.geom.AffineTransform;
 
 
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {    
-    protected ROIManager iMgr; 
-    private   Color    iColor;
-    private   RoiStats iStats;
+    protected ROIManager         iMgr; 
+    private   Color            iColor;
+    private   RoiStats         iStats;
     private   HashSet<Overlay> iAnnos;
     
     @Override
@@ -21,16 +21,14 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         super(aS, new String()); 
         iColor = (null != aC ? aC : Colorer.getNextColor(this));
         iMgr = aSrc;
-        //patchName();
-        update();
+        iStats = new RoiStats();       
     }
     
     ROI(ROI aR) {
-        super(aR.iShape, aR.iName + "(2)");  // NOI18N
+        super(aR.iShape, aR.iName);  // NOI18N
         iColor = aR.iColor; 
-        iMgr   = aR.iMgr;
-        ///iName  = ;
-        update();   
+        iMgr   = aR.iMgr;        
+        iStats = new RoiStats(aR.iStats);   
     }
     
     void register(Overlay aO) {
@@ -46,10 +44,17 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         return false;
     }   
        
-    public RoiStats getStats() {return iStats;}
+    public RoiStats getStats() {
+        return iStats;
+    }
     
-    public Color getColor() {return iColor;}
-    public void setColor(Color aC) {iColor = aC;}
+    public Color getColor() {
+        return iColor;
+    }
+    
+    public void setColor(Color aC) {
+        iColor = aC;
+    }
     
     void draw(Graphics2D aGC, AffineTransform aTrans) {
         aGC.setColor(iColor);
@@ -71,9 +76,9 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         try{
             ROIExtractor r = new ROIExtractor(this);
             iMgr.getImage().extract(r);
-            iStats = r.iStats;// iSrc.calcRoiStats(this);
+            //iStats = r.iStats;// iSrc.calcRoiStats(this);
         } catch (ArrayIndexOutOfBoundsException ex) {
-            iStats = new RoiStats();
+            ///iStats = new RoiStats();
         }
         
         if (null != iAnnos) {

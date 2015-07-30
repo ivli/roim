@@ -21,7 +21,7 @@ public class HistogramExtractor implements Extractor {
     public HistogramExtractor(ROI aRoi){iRoi = aRoi;}
     
     @Override
-    public void extract(Raster aRaster) throws ArrayIndexOutOfBoundsException {
+    public void apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
         extractOne(aRaster);
     }
     
@@ -53,8 +53,10 @@ public class HistogramExtractor implements Extractor {
         double temp [] = new double [aRaster.getNumBands()];
         
         final ROIExtractor rex = new ROIExtractor(iRoi);
-        rex.extract(aRaster);
-        final double step = (rex.iStats.iMax - rex.iStats.iMin ) / 256.0;
+        
+        rex.apply(aRaster);
+        
+        final double step = (iRoi.getStats().iMax - iRoi.getStats().iMin ) / 256.0;
                                 
         for (int i=bnds.x; i < (bnds.x + bnds.width); ++i)
             for (int j=bnds.y; j < (bnds.y + bnds.height); ++j) 

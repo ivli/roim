@@ -27,7 +27,7 @@ public class ProfileExtractor implements Extractor {
     }
     
     @Override
-    public void extract(Raster aRaster) throws ArrayIndexOutOfBoundsException {
+    public void apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
         
         double temp[] = new double [aRaster.getNumBands()];
         

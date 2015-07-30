@@ -41,7 +41,7 @@ public class MEDImage extends MEDImageBase {
         self.open(aFile);
         return self;
     }
-            
+                  
     private Raster getFrame() { 
         return iFrames.get(iIndex).iRaster;
     }
@@ -86,9 +86,9 @@ public class MEDImage extends MEDImageBase {
         if ((iIndex = anIndex) >= iFrames.size() || null == iFrames.get(iIndex)) { 
             FrameWithStats r = new FrameWithStats();
             r.iRaster = iLoader.readRaster(iIndex);
-            ROIExtractor ex=new ROIExtractor(null);
-            ex.extract(r.iRaster);
-            r.iStats = ex.iStats;                            
+            ROIExtractor ex=new ROIExtractor(new ROI(r.iRaster.getBounds(), null, null));
+            ex.apply(r.iRaster);
+            r.iStats = ex.iRoi.getStats();                            
 
             iFrames.add(iIndex, r);
         }    
@@ -144,7 +144,7 @@ public class MEDImage extends MEDImageBase {
     }    
     
     public void extract(Extractor aEx) {
-        aEx.extract(getFrame());
+        aEx.apply(getFrame());
     }
       
     

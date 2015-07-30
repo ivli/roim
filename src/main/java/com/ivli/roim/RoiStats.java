@@ -19,6 +19,19 @@ public class RoiStats {
         Measurement(String aF) {iVal = Double.NaN; iFormat = aF;}
     }
    
+    public RoiStats() {
+    }
+    
+    public RoiStats(RoiStats aS) {
+        iPixels  = aS.iPixels;
+        iBounds  = aS.iBounds;
+        iArea = aS.iArea;
+        iMin  = aS.iMin;
+        iMax  = aS.iMax;
+        iIden = aS.iIden;
+    }
+   
+   
    public double iPixels  = Double.NaN;  //new Measurement("measurement.pixels");  //number of pixels
    public double iBounds  = Double.NaN;  //area of bounding rectangle in pixels
    public double iArea = Double.NaN;     //area in mm2

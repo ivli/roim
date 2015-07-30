@@ -15,6 +15,7 @@ import java.io.IOException;
 public abstract class MEDImageBase {
     public abstract RoiStats getImageStats();
     public abstract BufferedImage getBufferedImage();
+    
     public abstract void extract(Extractor anExtractor);
     public abstract void loadFrame(int anIndex) throws IndexOutOfBoundsException;
     public          int  getNoOfFrames() throws IOException {return iLoader.getNumImages();}
