@@ -78,7 +78,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
         }
 
         public boolean DoRelease(int aX, int aY) {
-            iControlled.getROIManager().createRoiFromShape(iShape);
+            iControlled.getManager().createRoiFromShape(iShape);
             iControlled.repaint();
             return false;
         }
@@ -161,7 +161,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
 
     public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
-            if (null != (iSelected = iControlled.getROIManager().findOverlay(e.getPoint()))) {
+            if (null != (iSelected = iControlled.getManager().findOverlay(e.getPoint()))) {
                 if (0 == (iSelected.getCaps() & Overlay.HASCUSTOMMNU))
                     showPopupMenu_Roi(e.getX(), e.getY());
                 
@@ -177,7 +177,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
     }
 
     private Overlay findActionTarget(Point aP) {
-       Overlay ret = iControlled.getROIManager().findOverlay(aP);
+       Overlay ret = iControlled.getManager().findOverlay(aP);
        if (null != ret && true == ret.isSelectable())
            return ret;
        return null;
@@ -194,7 +194,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
                 iAction = new BaseActionItem(e.getX(), e.getY()) {
                     protected void DoAction(int aX, int aY) {
 
-                        iControlled.getROIManager().moveRoi(iSelected, aX-iX, aY-iY);
+                        iControlled.getManager().moveRoi(iSelected, aX-iX, aY-iY);
                         iControlled.repaint();//old.createIntersection(iSelected.iShape.getBounds2D())); 
                     }    
                     protected boolean DoRelease(int aX, int aY) {
@@ -305,7 +305,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
                             return true;
                         else {
                             iPath.closePath();
-                            iControlled.getROIManager().createRoiFromShape(iPath);
+                            iControlled.getManager().createRoiFromShape(iPath);
                             iControlled.repaint();
                         }
                         return false;
@@ -325,14 +325,14 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
             break;
                 
             case KCommandRoiClone:   
-                iControlled.getROIManager().cloneRoi((ROI)iSelected);
+                iControlled.getManager().cloneRoi((ROI)iSelected);
                 iControlled.repaint();
                 iSelected = null;
                 break;
             case KCommandRoiMove: break;
                 
             case KCommandRoiDelete: 
-                iControlled.getROIManager().deleteOverlay(iSelected); 
+                iControlled.getManager().deleteOverlay(iSelected); 
                 iSelected = null; 
                 iControlled.repaint(); 
                 break;
@@ -359,7 +359,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
                 ;break;
             case KCommandRoiDeleteAll: 
                 iSelected = null; 
-                iControlled.getROIManager().clear();//deleteAllOverlays(); 
+                iControlled.getManager().clear();//deleteAllOverlays(); 
                 iControlled.repaint();
                 break;
                 

@@ -27,12 +27,14 @@ public abstract class Overlay {
     //protected final int iCaps;
     //private boolean  iSelected;
     protected Shape  iShape;
-    protected String iName = new String();
+    protected String iName;
     
     protected Overlay(Shape aShape, String aName) {
         iShape = aShape; 
         if(null != aName) 
             iName = aName; 
+        else
+            iName = new String();
         patchName();
     }
    

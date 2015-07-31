@@ -6,25 +6,22 @@
 package com.ivli.roim;
 
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
+import java.awt.geom.AffineTransform;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  *
  * @author likhachev
  */
 class ROIExtractor implements Extractor {
-    Extractor iExtractor;
     ROI             iRoi;
-  
+    Extractor iExtractor;  
     
-    public ROIExtractor(ROI aRoi) {
-        
+    public ROIExtractor(ROI aRoi) {        
         iRoi = aRoi;        
         iExtractor = new SimpleExtractor();        
     }
@@ -67,35 +64,23 @@ class ROIExtractor implements Extractor {
         }   
     }
 
-    class ROISubpixelExtractor extends SimpleExtractor {
-
-        Raster scale(Raster aIn) {
-            AffineTransform zoom = iRoi.iMgr.getComponent().virtualToScreen();
-
-            //AffineTransform zoom = new AffineTransform();
-            //zoom.setToScale(aScale, aScale); 
-            RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
-            AffineTransformOp z = new AffineTransformOp(zoom, hts);       
-            return z.filter(aIn, null);   
-        }
-
-
-        Raster scale2(Raster aIn, int aScale) {
-            WritableRaster ret = aIn.createCompatibleWritableRaster(aIn.getWidth()*aScale, aIn.getHeight()*aScale);
+    class SubpixelExtractor extends SimpleExtractor {        
+        Raster scale(Raster aIn, int aScale) {
+            WritableRaster ret = aIn.createCompatibleWritableRaster(aIn.getWidth() * aScale, aIn.getHeight() * aScale);
 
             double temp[] = new double [aIn.getNumBands()];
 
-            for (int i=0; i<aIn.getWidth(); ++i)
-                for (int j=0; j < aIn.getHeight(); ++j) {
+            for (int i = 0; i < aIn.getWidth(); ++i)
+                for (int j = 0; j < aIn.getHeight(); ++j) {
                     aIn.getPixel(i, j, temp);  
                      //despite it does only make sense for BW images lets use all channels
-                    for (double D:temp)
-                        D /=(aScale*aScale);
+                    for (double D : temp)
+                        D /=(aScale * aScale);
 
 
-                    for (int m=0; m<aScale; ++m)
-                        for (int n=0; n<aScale; ++n)
-                            ret.setPixel(i*aScale + m, j*aScale + n, temp);
+                    for (int m = 0; m < aScale; ++m)
+                        for (int n = 0; n < aScale; ++n) 
+                            ret.setPixel(i * aScale + m, j * aScale + n, temp);
                 }
              //TODO: add smoothing filter here
 
@@ -104,13 +89,21 @@ class ROIExtractor implements Extractor {
 
         @Override
         public void apply(Raster aR) throws ArrayIndexOutOfBoundsException {
-            AffineTransform zoom = iRoi.iMgr.getComponent().virtualToScreen();
-            ROI r = new ROI(iRoi);
-            r.iShape = zoom.createTransformedShape(iRoi.iShape);
-
-            Raster img = scale2(aR, (int)Math.floor(zoom.getScaleX()));
-
+            
+            ROI r = new ROI(iRoi);            
+            Raster img = aR;
+            
+            if (null != iRoi.getManager()) {                
+                AffineTransform zoom = iRoi.getManager().getComponent().getZoom();           
+                r.iShape = zoom.createTransformedShape(iRoi.iShape);
+                iRoi = r;
+                img = scale(aR, (int)Math.floor(zoom.getScaleX()));
+            }
+            
+            logger.info(img);
             super.apply(img);
         }  
     }
+    
+    private static final Logger logger = LogManager.getLogger(ROIExtractor.class);
 }

@@ -17,7 +17,7 @@ import java.util.ListIterator;
  *
  * @author likhachev
  */
-class ROIManagerImpl extends ROIManager {
+class ROIManagerImpl implements ROIManager {
     private final LinkedList<Overlay> iOverlays = new LinkedList();  
     
     MEDImageComponentBase iComponent;
@@ -25,7 +25,11 @@ class ROIManagerImpl extends ROIManager {
     
     public void attach(MEDImageComponentBase aMed){iComponent = aMed;}
     
-    public MEDImageBase getImage() {return iComponent.getImage();}
+    public MEDImageComponentBase getComponent() {return iComponent;}
+    
+    public MEDImageBase getImage() {return getComponent().getImage();}
+    
+    
     public void clear() {iOverlays.clear();}
     
     public void update() {

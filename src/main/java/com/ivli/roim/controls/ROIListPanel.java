@@ -74,6 +74,7 @@ public class ROIListPanel extends javax.swing.JPanel implements TableModelListen
             jTable1.getColumnModel().getColumn(3).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INTDEN"));
             jTable1.getColumnModel().getColumn(4).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("COLOR"));
         }
+        
         while (null!=aLit && aLit.hasNext()) {
             Overlay o = aLit.next();
             if (o instanceof ROI) {       
@@ -206,11 +207,11 @@ final class ColorEditor extends javax.swing.AbstractCellEditor
         //Set up the dialog that the button brings up.
         colorChooser = new JColorChooser();
         dialog = JColorChooser.createDialog(button,
-                                        java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("PICK A COLOR"),
-                                        true,  //modal
-                                        colorChooser,
-                                        this,  //OK button handler
-                                        null); //no CANCEL button handler
+                    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("PICK A COLOR"),
+                    true,  //modal
+                    colorChooser,
+                    this,  //OK button handler
+                    null); //no CANCEL button handler
     }
 
     public void actionPerformed(ActionEvent e) {

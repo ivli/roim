@@ -59,25 +59,23 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
     }
     
     public AffineTransform getZoom() {return iZoom;}
-    public MEDImageBase getImage() {return iImage;}
-    public ROIManager getROIManager() {return iRoim;}
+    public MEDImageBase    getImage() {return iImage;}
+    public ROIManager      getManager() {return iRoim;}
     
-        void setROIManager(ROIManager aRoim) {iRoim = aRoim; iRoim.attach(this);}
-        
-        void setLUTControl(LUTControl aCtrl) {
-            setVOILUT(aCtrl.iWM);
-            setPresentationLUT(aCtrl.iLUT);
-            aCtrl.addComponent(this);
-        }
-        
-        void setVOILUT(VOILut aLut) {
-            iWM=aLut;
-            iWM.setImage(iImage);        
-        }
-        
-        void setPresentationLUT(PresentationLut aLut) {
-            iLUT=aLut;
-        }
+    void setROIManager(ROIManager aRoim) {iRoim = aRoim; iRoim.attach(this);}
+
+    void setLUTControl(LUTControl aCtrl) {
+        setVOILUT(aCtrl.iWM);
+        setPresentationLUT(aCtrl.iLUT);
+        aCtrl.addComponent(this);
+    }
+
+    void setVOILUT(VOILut aLut) {
+        iWM=aLut;
+        iWM.setImage(iImage);        
+    }
+
+    void setPresentationLUT(PresentationLut aLut) {iLUT=aLut;}
         
     public void fitWidth() {
         final double scale = getWidth()/iImage.getWidth();
@@ -106,6 +104,7 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
             l.windowChanged(wce);
     }
     
+    @Override
     public AffineTransform screenToVirtual() {
         AffineTransform ret = AffineTransform.getTranslateInstance(iOrigin.x, iOrigin.y); 
         ret.concatenate(iZoom);
@@ -117,6 +116,7 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
         return ret;
     }
     
+    @Override
     public AffineTransform virtualToScreen() {
         AffineTransform ret = AffineTransform.getTranslateInstance(iOrigin.x, iOrigin.y); 
         ret.concatenate(iZoom);
@@ -209,13 +209,20 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
         return op.filter(aR, null);
     }
       
-    private void updateBufferedImage() {            
+    private void updateBufferedImage() {          
+        /*
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
         AffineTransformOp z = new AffineTransformOp(iZoom, hts);
                     
         BufferedImage src = iWM.transform(iImage.getBufferedImage(), null);
         
         iBuf = z.filter(iLUT.transform(src, null), null);   
+        */
+        
+        RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
+        AffineTransformOp z = new AffineTransformOp(iZoom, hts);
+        BufferedImage src = iLUT.transform(iWM.transform(iImage.getBufferedImage(), null), null);
+        iBuf = z.filter(iLUT.transform(src, null), null);                  
     }
     
     public void paintComponent(Graphics g) {           

@@ -15,23 +15,19 @@ import java.util.ListIterator;
  *
  * @author likhachev
  */
-public abstract class ROIManager {
-    abstract MEDImageBase getImage();
-    abstract void attach(MEDImageComponentBase aPane);
-    abstract void clear();
-    abstract void update();
-    abstract void draw(Graphics2D aGC, AffineTransform aT);
-    abstract void createRoiFromShape(Shape aS);
-    abstract void cloneRoi(ROI aR);
-    abstract void moveRoi(Overlay aO, double adX, double adY);
-    abstract Overlay findOverlay(Point aP);
-    abstract boolean deleteOverlay(Overlay aR);
+interface ROIManager {
+    MEDImageBase getImage();
+    MEDImageComponentBase getComponent(); 
+    
+    void attach(MEDImageComponentBase aPane);
+    void clear();
+    void update();
+    void draw(Graphics2D aGC, AffineTransform aT);
+    void createRoiFromShape(Shape aS);
+    void cloneRoi(ROI aR);
+    void moveRoi(Overlay aO, double adX, double adY);
+    Overlay findOverlay(Point aP);
+    boolean deleteOverlay(Overlay aR);
    // void extract(Extractor anExtractor);
-    abstract ListIterator<Overlay> getOverlaysList();
-    
-    MEDImageComponentBase getComponent() {
-        return iComponent;
-    }
-    
-    MEDImageComponentBase iComponent;
+    ListIterator<Overlay> getOverlaysList();   
 }

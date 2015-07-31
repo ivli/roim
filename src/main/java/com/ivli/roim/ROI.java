@@ -9,10 +9,11 @@ import java.awt.geom.AffineTransform;
 
 
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {    
-    protected ROIManager         iMgr; 
+    private   ROIManager         iMgr; 
     private   Color            iColor;
     private   RoiStats         iStats;
     private   HashSet<Overlay> iAnnos;
+    
     
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE;}
@@ -25,11 +26,13 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }
     
     ROI(ROI aR) {
-        super(aR.iShape, aR.iName);  // NOI18N
+        super(aR.iShape, aR.iName);  
         iColor = aR.iColor; 
         iMgr   = aR.iMgr;        
         iStats = new RoiStats(aR.iStats);   
     }
+    
+    ROIManager getManager() {return iMgr;}
     
     void register(Overlay aO) {
         if (null == iAnnos)
@@ -82,7 +85,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         }
         
         if (null != iAnnos) {
-            for(Overlay o:iAnnos)
+            for(Overlay o : iAnnos)
                 o.update();
         }
     }
