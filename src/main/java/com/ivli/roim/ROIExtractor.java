@@ -88,16 +88,17 @@ class ROIExtractor implements Extractor {
         }
 
         @Override
-        public void apply(Raster aR) throws ArrayIndexOutOfBoundsException {
-            
+        public void apply(Raster aR) throws ArrayIndexOutOfBoundsException {            
             ROI r = new ROI(iRoi);            
             Raster img = aR;
             
             if (null != iRoi.getManager()) {                
+             /*   
                 AffineTransform zoom = iRoi.getManager().getComponent().getZoom();           
                 r.iShape = zoom.createTransformedShape(iRoi.iShape);
                 iRoi = r;
                 img = scale(aR, (int)Math.floor(zoom.getScaleX()));
+             */
             }
             
             logger.info(img);

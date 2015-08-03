@@ -7,13 +7,14 @@ import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {    
-    private   ROIManager         iMgr; 
-    private   Color            iColor;
-    private   RoiStats         iStats;
-    private   HashSet<Overlay> iAnnos;
-    
+    private ROIManager         iMgr; 
+    private Color            iColor;
+    private RoiStats         iStats;
+    private HashSet<Overlay> iAnnos;    
     
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE;}
@@ -32,6 +33,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iStats = new RoiStats(aR.iStats);   
     }
     
+       
     ROIManager getManager() {return iMgr;}
     
     void register(Overlay aO) {
@@ -70,18 +72,17 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         update();
         
         if (null != iAnnos) {
-            for(Overlay o:iAnnos)
+            for (Overlay o : iAnnos)
                 o.move(adX, adY);
         }
     }  
     
     void update() {
-        try{
-            ROIExtractor r = new ROIExtractor(this);
-            iMgr.getImage().extract(r);
-            //iStats = r.iStats;// iSrc.calcRoiStats(this);
+        try {
+            getManager().getImage().extract(new ROIExtractor(this));            
         } catch (ArrayIndexOutOfBoundsException ex) {
-            ///iStats = new RoiStats();
+            iStats = new RoiStats(); //set to NaN
+            logger.error(ex);
         }
         
         if (null != iAnnos) {
@@ -155,4 +156,5 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iShape = np;
     }
     */
+    private static final Logger logger = LogManager.getLogger(ROI.class);
 }

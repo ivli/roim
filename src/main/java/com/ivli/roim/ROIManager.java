@@ -17,8 +17,7 @@ import java.util.ListIterator;
  */
 interface ROIManager {
     MEDImageBase getImage();
-    MEDImageComponentBase getComponent(); 
-    
+
     void attach(MEDImageComponentBase aPane);
     void clear();
     void update();
@@ -26,8 +25,9 @@ interface ROIManager {
     void createRoiFromShape(Shape aS);
     void cloneRoi(ROI aR);
     void moveRoi(Overlay aO, double adX, double adY);
+
     Overlay findOverlay(Point aP);
     boolean deleteOverlay(Overlay aR);
-   // void extract(Extractor anExtractor);
+    void extract(Extractor anExtractor);
     ListIterator<Overlay> getOverlaysList();   
 }

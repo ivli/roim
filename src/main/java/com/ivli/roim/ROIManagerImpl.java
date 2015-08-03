@@ -33,12 +33,12 @@ class ROIManagerImpl implements ROIManager {
     public void clear() {iOverlays.clear();}
     
     public void update() {
-        for(Overlay o:iOverlays)
+        for(Overlay o : iOverlays)
             o.update();
     }
     
     public void draw(Graphics2D aGC, AffineTransform aT) {
-         for(Overlay o:iOverlays)
+         for(Overlay o : iOverlays)
             o.draw(aGC, aT);
     }            
             
@@ -52,7 +52,7 @@ class ROIManagerImpl implements ROIManager {
     
     public void cloneRoi(ROI aR) {
         final ROI temp = new ROI(aR);
-        temp.iName = aR.iName + "(2)";
+        temp.iName = aR.iName + "(2)"; // NOI18N
         iOverlays.add(temp); 
         iOverlays.add(new Annotation(temp));
     }
@@ -74,7 +74,7 @@ class ROIManagerImpl implements ROIManager {
     public Overlay findOverlay(Point aP) {      
         final Rectangle temp = iComponent.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();
         
-        for (Overlay r:iOverlays) {
+        for (Overlay r : iOverlays) {
             if (r.isSelectable() && r.getShape().intersects(temp)) 
                 return r;                                   
         }
@@ -111,5 +111,9 @@ class ROIManagerImpl implements ROIManager {
     public ListIterator<Overlay> getOverlaysList() {        
         return iOverlays.listIterator();
     }     
+    
+    public void extract(Extractor anExtractor) {
+    
+    }
 }
 

@@ -32,9 +32,9 @@ public class MEDImage extends MEDImageBase {
     }    
     
     private int iIndex;    
-    private final ArrayList<FrameWithStats> iFrames = new ArrayList();    
+    private final ArrayList<FrameWithStats> iFrames;    
     
-    private MEDImage() {}
+    private MEDImage() { iFrames = new ArrayList(); }
     
     static MEDImage New(final String aFile) throws IOException {
         MEDImage self = new MEDImage();
@@ -79,14 +79,14 @@ public class MEDImage extends MEDImageBase {
                    
     private void doLoadFrame(int anIndex) throws IOException, IndexOutOfBoundsException {
     
-        if (anIndex > getNoOfFrames()-1 || anIndex < 0)
+        if (anIndex > getNoOfFrames() - 1 || anIndex < 0)
             throw new IndexOutOfBoundsException();
         
          // load and cache image if it is not yet in cache
         if ((iIndex = anIndex) >= iFrames.size() || null == iFrames.get(iIndex)) { 
             FrameWithStats r = new FrameWithStats();
             r.iRaster = iLoader.readRaster(iIndex);
-            ROIExtractor ex=new ROIExtractor(new ROI(r.iRaster.getBounds(), null, null));
+            ROIExtractor ex = new ROIExtractor(new ROI(r.iRaster.getBounds(), null, null));
             ex.apply(r.iRaster);
             r.iStats = ex.iRoi.getStats();                            
 
@@ -114,12 +114,12 @@ public class MEDImage extends MEDImageBase {
     
     static ColorModel createColorModel(int bits, int dataType) {
         return new ComponentColorModel(
-                ColorSpace.getInstance(ColorSpace.CS_GRAY),
-                new int[] { bits },
-                false, // hasAlpha
-                false, // isAlphaPremultiplied
-                Transparency.OPAQUE,
-                dataType);
+                        ColorSpace.getInstance(ColorSpace.CS_GRAY),
+                        new int[] { bits },
+                        false, // hasAlpha
+                        false, // isAlphaPremultiplied
+                        Transparency.OPAQUE,
+                        dataType);
     }
     
     public BufferedImage makeCompositeFrame(int aFrom, int aTo) throws IOException {

@@ -8,6 +8,7 @@ package com.ivli.roim;
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.Raster;
+import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -23,12 +24,17 @@ import org.dcm4che2.io.DicomInputStream;
 /* IFDEF_DCM4CHE3 */
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReaderSpi;
-import org.dcm4che3.data.Attributes;
 import org.dcm4che3.io.DicomInputStream;
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.data.Sequence;
+import org.dcm4che3.data.VR;
+
+
 /* ENDIF */
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.dcm4che3.data.Tag;
 
 
 public class ImageLoader {
@@ -58,17 +64,32 @@ public class ImageLoader {
     }  
        
     public void open(String aFile) throws IOException {
-        File src = new File(aFile);   
+        File src = new File(aFile);           
         Attributes fmi;
-        Attributes dataset;
-        try (DicomInputStream dis = new DicomInputStream(src)) {            
+        Attributes ds;
+                
+        try (DicomInputStream dis = new DicomInputStream(new File(aFile)))  {  
+           
             fmi = dis.readFileMetaInformation();
-            dataset = dis.readDataset(-1, -1);
+            ds = dis.readDataset(-1, -1);
+            ///VR.Holder holderVR = new VR.Holder();
+            Sequence pid = (Sequence)ds.getValue(Tag.PhaseInformationSequence);
+            int ns = ds.getInt(Tag.NumberOfPhases, 1);
+            
+            for (Attributes a : pid) {
+                int fd = a.getInt(Tag.ActualFrameDuration, 1);                
+            }
+            
+            Object tsv = ds.getValue(Tag.TimeSliceVector);//, holderVR);
+            
+        
+            
+            
         } catch (Exception e) {
-            logger.info(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle/Bundle_ru_RU").getString("CANNOT READ DICOM DATASET"));              
+            logger.error(e);              
         }
         
-        ImageInputStream iis = ImageIO.createImageInputStream(src);
+        ImageInputStream iis = ImageIO.createImageInputStream(new File(aFile));
         iReader.setInput(iis);  
     }
     
