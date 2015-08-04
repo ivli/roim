@@ -56,18 +56,13 @@ class ROIManager {
         iOverlays.add(new Annotation(temp));
     }
     
-    public void moveRoi(Overlay aO, double adX, double adY) {   
-        Rectangle r = aO.getShape().getBounds();
+    public void moveRoi(Overlay aO, double adX, double adY) {           
         AffineTransform trans = iComponent.virtualToScreen();
         trans.concatenate(AffineTransform.getTranslateInstance(adX, adY));    
-        Shape s = trans.createTransformedShape(r);
-        Rectangle o = iComponent.getBounds();
-        Rectangle i = s.getBounds();
-        
-        if (true == o.contains(i)) {
-            ///logger.info ("--> move object" + o + i);
+               
+        if (iComponent.getBounds().contains(trans.createTransformedShape(aO.getShape().getBounds()).getBounds()))            
             aO.move((adX/iComponent.getZoom().getScaleX()), (adY/iComponent.getZoom().getScaleY()));  
-        }
+       
     }
    
     public Overlay findOverlay(Point aP) {      
@@ -87,8 +82,7 @@ class ROIManager {
             final Overlay o = it.next();
             if (o instanceof Annotation && aR.remove(o))               
                 it.remove();
-        }
-        
+        }        
         return iOverlays.remove(aR);   
     }  
     
@@ -110,9 +104,6 @@ class ROIManager {
     public ListIterator<Overlay> getOverlaysList() {        
         return iOverlays.listIterator();
     }     
-    
-    public void extract(Extractor anExtractor) {
-    
-    }
+       
 }
 

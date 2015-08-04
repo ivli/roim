@@ -44,14 +44,22 @@ public class MultiframeImage extends ImageBase {
         return self;
     }
                   
+    private RoiStats getStats() { 
+        return iFrames.get(iIndex).iStats;
+    }
+    
     private Raster getFrame() { 
         return iFrames.get(iIndex).iRaster;
     }
     
     public int getWidth() {return getFrame().getWidth();}
     
-    public int getHeight() {return getFrame().getHeight();}            
-            
+    public int getHeight() {return getFrame().getHeight();}  
+    
+    public double getMinimum() {return getStats().iMin;}
+    public double getMaximum() {return getStats().iMax;}
+    public double getDensity() {return getStats().iIden;}
+
     public void open(String aFile) throws IOException {           
         iLoader.open(aFile);
         iTimeSlices = iLoader.getTimeSliceVector();
@@ -77,9 +85,9 @@ public class MultiframeImage extends ImageBase {
         try{
             doLoadFrame(anIndex);
            
-            logger.info("Frame -"+iIndex+", MIN" + iFrames.get(iIndex).iStats.iMin + // NOI18N
-                        ", MAX" + iFrames.get(iIndex).iStats.iMax +   // NOI18N
-                        ", DEN" + iFrames.get(iIndex).iStats.iIden);  // NOI18N
+            logger.info("Frame -"+iIndex+", MIN" + getMinimum() + // NOI18N
+                        ", MAX" + getMaximum() +   // NOI18N
+                        ", DEN" + getDensity());  // NOI18N
         } catch (IOException ex) {
             logger.error(ex); 
         } 

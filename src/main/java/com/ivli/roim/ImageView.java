@@ -34,7 +34,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     
     protected     VOILut          iWM;                   
     protected     PresentationLut iLUT;  
-    private       ImageBase    iImage;
+    private       ImageBase       iImage;
     private final Controller      iController;    
     private final AffineTransform iZoom;
     private final Point           iOrigin;   
@@ -60,10 +60,9 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
     
     public AffineTransform getZoom() {return iZoom;}
-    public ImageBase    getImage() {return iImage;}
+    public ImageBase       getImage() {return iImage;}
     public ROIManager      getManager() {return iRoim;}
     
-    ///void setROIManager(ROIManager aRoim) {iRoim = aRoim; iRoim.attach(this);}
 
     void setLUTControl(LUTControl aCtrl) {
         setVOILUT(aCtrl.iWM);
@@ -101,7 +100,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     
     private void notifyWindowChanged(boolean aRC) {
         final WindowChangeEvent wce = new WindowChangeEvent(this, iWM.getWindow(), getMinimum(), getMaximum(), aRC);
-        for (WindowChangeListener l:iWinListeners)
+        for (WindowChangeListener l : iWinListeners)
             l.windowChanged(wce);
     }
     
@@ -158,8 +157,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         notifyWindowChanged(false);  
     }
 
-    double getMinimum() {return iImage.getImageStats().iMin;}// getMinimum();}
-    double getMaximum() {return iImage.getImageStats().iMax;}//getMaximum();}    
+    double getMinimum() {return iImage.getMinimum();}// getMinimum();}
+    double getMaximum() {return iImage.getMaximum();}//getMaximum();}    
     
     int  getNoOfFrames() throws IOException {return iImage.getNoOfFrames();}    
     

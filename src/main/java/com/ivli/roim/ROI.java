@@ -11,10 +11,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {    
-    private ROIManager         iMgr; 
-    private Color            iColor;
-    private RoiStats         iStats;
-    private HashSet<Overlay> iAnnos;    
+    private ROIManager          iMgr; 
+    private Color             iColor;
+    private RoiStats          iStats;
+    private HashSet<Overlay>  iAnnos;    
+    //private ArrayList<Double> iAnnos; 
     
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE;}

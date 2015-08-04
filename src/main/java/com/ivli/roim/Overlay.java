@@ -14,8 +14,7 @@ import java.awt.geom.AffineTransform;
  *
  * @author likhachev
  */
-public abstract class Overlay {
-    
+public abstract class Overlay {    
     protected static final int SELECTABLE = 0x1;
     protected static final int MOVEABLE    = 0x2;
     protected static final int PERMANENT  = 0x4;
@@ -24,8 +23,7 @@ public abstract class Overlay {
     protected static final int CANROTATE  = 0x20;
     protected static final int RESIZABLE  = 0x40;
     protected static final int HASCUSTOMMNU  = 0x100;    
-    //protected final int iCaps;
-    //private boolean  iSelected;
+    
     protected Shape  iShape;
     protected String iName;
     
@@ -48,19 +46,13 @@ public abstract class Overlay {
     boolean isCloneable() {return 0 != (getCaps() & CLONEABLE);}
     boolean canFlip() {return 0 != (getCaps() & CANFLIP);} 
     boolean canRotate() {return 0 != (getCaps() & CANROTATE);} 
-    
-   // void select(boolean aS) {
-   //     iSelected = aS;
-   // }
-    
+       
     private void patchName() { 
         if(iName.isEmpty()) {
             ///StringBuilder sb = new StringBuilder();
             iName = String.format("%d, %d", iShape.getBounds().x, iShape.getBounds().y); //NOI18N
         }
     }
-    
-   // boolean isSelected() {return iSelected;}
     
     abstract int getCaps();
     abstract void draw(Graphics2D aGC, AffineTransform aTrans); 

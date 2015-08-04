@@ -12,17 +12,23 @@ import java.io.IOException;
  *
  * @author likhachev
  */
-public abstract class ImageBase {
+public abstract class ImageBase  {
     public abstract RoiStats getImageStats();
     public abstract BufferedImage getBufferedImage();
     
-    public abstract void extract(Extractor anExtractor);
-    public abstract void loadFrame(int anIndex) throws IndexOutOfBoundsException;
-    public          int  getNoOfFrames() throws IOException {return iLoader.getNumImages();}
-    public abstract int  getWidth();    
-    public abstract int  getHeight(); 
-    public abstract void open(String aFile) throws IOException;    
+   
+    public abstract void   loadFrame(int anIndex) throws IndexOutOfBoundsException;
+    public abstract void   open(String aFile) throws IOException;   
+    public          int    getNoOfFrames() throws IOException {return iLoader.getNumImages();}
+    public abstract int    getWidth();    
+    public abstract int    getHeight(); 
+   
+    public abstract double getMinimum();
+    public abstract double getMaximum();
+    public abstract double getDensity();
     
+    
+    public abstract void extract(Extractor anExtractor);
     protected ImageLoader iLoader = new ImageLoader();
     
     protected ImageBase(){}

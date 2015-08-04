@@ -49,8 +49,8 @@ class VOILut implements LutTransform {
         iPVt = new PValueTransform();
         iBuffer = new LutBuffer(aI.getBufferedImage().getSampleModel().getDataType());
         
-        final double min = aI.getImageStats().iMin;
-        final double max = aI.getImageStats().iMax;
+        final double min = aI.getMinimum();
+        final double max = aI.getMaximum();
         
         
         if (null == iWin || !iKeepWindow) {
