@@ -36,7 +36,7 @@ class VOILut implements LutTransform {
         ///reset(aI);
     }
         
-    public void setImage(MEDImageBase aI) {
+    public void setImage(ImageBase aI) {
         reset(aI);
     }
     
@@ -44,7 +44,7 @@ class VOILut implements LutTransform {
     public Window getRange() {return iMax;}
     
     
-    private void reset(MEDImageBase aI) {
+    private void reset(ImageBase aI) {
         
         iPVt = new PValueTransform();
         iBuffer = new LutBuffer(aI.getBufferedImage().getSampleModel().getDataType());

@@ -12,7 +12,7 @@ import java.io.IOException;
  *
  * @author likhachev
  */
-public abstract class MEDImageBase {
+public abstract class ImageBase {
     public abstract RoiStats getImageStats();
     public abstract BufferedImage getBufferedImage();
     
@@ -25,5 +25,5 @@ public abstract class MEDImageBase {
     
     protected ImageLoader iLoader = new ImageLoader();
     
-    protected MEDImageBase(){}
+    protected ImageBase(){}
 }

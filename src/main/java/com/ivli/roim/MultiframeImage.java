@@ -22,7 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class MEDImage extends MEDImageBase {
+public class MultiframeImage extends ImageBase {
     
     class FrameWithStats {
         RoiStats iStats;
@@ -34,12 +34,12 @@ public class MEDImage extends MEDImageBase {
     TimeSliceVector       iTimeSlices; 
     
     
-    private MEDImage() {
+    private MultiframeImage() {
         iFrames = new ArrayList();
     }
     
-    static MEDImage New(final String aFile) throws IOException {
-        MEDImage self = new MEDImage();
+    static MultiframeImage New(final String aFile) throws IOException {
+        MultiframeImage self = new MultiframeImage();
         self.open(aFile);
         return self;
     }
@@ -156,6 +156,6 @@ public class MEDImage extends MEDImageBase {
     }
       
     
-    private static final Logger logger = LogManager.getLogger(MEDImage.class);    
+    private static final Logger logger = LogManager.getLogger(MultiframeImage.class);    
 }
 

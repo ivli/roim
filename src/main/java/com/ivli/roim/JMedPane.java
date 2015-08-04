@@ -15,12 +15,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class JMedPane extends JLayeredPane{
-    MEDImageComponent iImg;
+    ImageView iImg;
     LUTControl        iLut;
     //ROIManager        iRoim;
            
     void open(String aName) throws IOException {    
-        iImg = new MEDImageComponent();
+        iImg = new ImageView();
         //iRoim = new ROIManagerImpl();
         ///iImg.setROIManager(iRoim);
         iImg.open(aName); 

@@ -51,7 +51,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     private static final int HORIZONTAL_BAR_EXCESS = 1;  //reserve border at left & right
     
     private boolean           iShowPercent = true;
-    private MEDImageComponent iComponent;
+    private ImageView iComponent;
     final   VOILut            iWM;
     final   PresentationLut   iLUT;
     
@@ -63,7 +63,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     private wlCursor iTop    = new wlCursor(Color.green, "top");  //NOI18N
     private wlCursor iBottom = new wlCursor(Color.red, "bottom"); //NOI18N
  
-    public LUTControl(MEDImageComponent aComponent) {
+    public LUTControl(ImageView aComponent) {
         iComponent = aComponent;
         iLUT  = aComponent.iLUT;
         iWM   = aComponent.iWM;      
@@ -82,7 +82,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         addComponentListener(new clListener());
     }    
     
-    void addComponent(MEDImageComponent aComponent) {
+    void addComponent(ImageView aComponent) {
         iComponent = aComponent;
     }
     
@@ -417,7 +417,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 repaint();
                 break;
             case KCommandShowDialog:                 
-                VOILUTPanel panel = new VOILUTPanel(this, (MEDImageBase)iComponent.getImage());
+                VOILUTPanel panel = new VOILUTPanel(this, (ImageBase)iComponent.getImage());
                 JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
                 dialog.setContentPane(panel);
                 dialog.validate();

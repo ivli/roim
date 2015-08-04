@@ -19,15 +19,15 @@ import java.util.ListIterator;
  */
 class ROIManager {    
     private final LinkedList<Overlay> iOverlays;      
-    private final MEDImageComponentBase iComponent;    
+    private final ImageView          iComponent;    
     
     
-    ROIManager(MEDImageComponentBase aBase) {
+    ROIManager(ImageView aBase) {
         iComponent = aBase;
         iOverlays = new LinkedList();          
     }
         
-    public MEDImageBase getImage() {return iComponent.getImage();}
+    public ImageBase getImage() {return iComponent.getImage();}
         
     public void clear() {iOverlays.clear();}
     

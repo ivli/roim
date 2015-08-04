@@ -20,7 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class MEDImageComponent extends JComponent implements MEDImageComponentBase, WindowChangeNotifier {
+public class ImageView extends JComponent implements WindowChangeNotifier {
 
     private static final boolean DRAW_OVERLAYS_ON_BUFFERED_IMAGE = false; //i cry ther's no #ifdef 
     private static final boolean DRAW_SUMMED_FRAME = false; 
@@ -34,7 +34,7 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
     
     protected     VOILut          iWM;                   
     protected     PresentationLut iLUT;  
-    private       MEDImageBase    iImage;
+    private       ImageBase    iImage;
     private final Controller      iController;    
     private final AffineTransform iZoom;
     private final Point           iOrigin;   
@@ -43,7 +43,7 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
     private final HashSet<WindowChangeListener> iWinListeners;// = new HashSet();    
     
         
-    public MEDImageComponent() {         
+    public ImageView() {         
         iController = new Controller(this);   
         iWM  = new VOILut();                    
         iLUT = new PresentationLut(null);  
@@ -54,13 +54,13 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
     }
    
     public void open(String aFileName) throws IOException {           
-        iImage = MEDImage.New(aFileName);        
+        iImage = MultiframeImage.New(aFileName);        
         iWM.setImage(iImage);
         invalidateBuffer();
     }
     
     public AffineTransform getZoom() {return iZoom;}
-    public MEDImageBase    getImage() {return iImage;}
+    public ImageBase    getImage() {return iImage;}
     public ROIManager      getManager() {return iRoim;}
     
     ///void setROIManager(ROIManager aRoim) {iRoim = aRoim; iRoim.attach(this);}
@@ -105,7 +105,6 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
             l.windowChanged(wce);
     }
     
-    @Override
     public AffineTransform screenToVirtual() {
         AffineTransform ret = AffineTransform.getTranslateInstance(iOrigin.x, iOrigin.y); 
         ret.concatenate(iZoom);
@@ -117,7 +116,6 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
         return ret;
     }
     
-    @Override
     public AffineTransform virtualToScreen() {
         AffineTransform ret = AffineTransform.getTranslateInstance(iOrigin.x, iOrigin.y); 
         ret.concatenate(iZoom);
@@ -249,7 +247,7 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
         iController.paint((Graphics2D)g); //must paint the last   
     }
      
-    private static final Logger logger = LogManager.getLogger(MEDImageComponent.class);
+    private static final Logger logger = LogManager.getLogger(ImageView.class);
 }
 
 
