@@ -48,7 +48,8 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
         iWM  = new VOILut();                    
         iLUT = new PresentationLut(null);  
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
-        iOrigin = new Point(0,0);     
+        iOrigin = new Point(0,0);   
+        iRoim = new ROIManager(this);
         iWinListeners = new HashSet();    
     }
    
@@ -62,7 +63,7 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
     public MEDImageBase    getImage() {return iImage;}
     public ROIManager      getManager() {return iRoim;}
     
-    void setROIManager(ROIManager aRoim) {iRoim = aRoim; iRoim.attach(this);}
+    ///void setROIManager(ROIManager aRoim) {iRoim = aRoim; iRoim.attach(this);}
 
     void setLUTControl(LUTControl aCtrl) {
         setVOILUT(aCtrl.iWM);

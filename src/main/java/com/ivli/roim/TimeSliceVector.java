@@ -23,41 +23,39 @@ public class TimeSliceVector {
         int iNumberOfFrames;
         
         PhaseInformation(int aF, int aN) {
-            iFrameDuration = aF;  
+            iFrameDuration  = aF;  
             iNumberOfFrames = aN;
         }
     }  
             
     ArrayList<PhaseInformation> iPhases;       
     ArrayList<Long>             iSlices;
-    
-    
+        
     TimeSliceVector(Attributes aAttr) {        
         iPhases = new ArrayList();
         iSlices = new ArrayList();
-        iSlices.add(0L); //
+        
         
         Sequence pid = (Sequence)aAttr.getValue(Tag.PhaseInformationSequence);
         
         if (null != pid) {
         
-            int ns = aAttr.getInt(Tag.NumberOfPhases, 1);
-
-            assert (ns == pid.size()); //a paranoid sanity check
-
             for (Attributes a : pid) {
                 int fd = a.getInt(Tag.ActualFrameDuration, 1);     
                 int nf = a.getInt(Tag.NumberOfFramesInPhase, 1);  
                 iPhases.add(new PhaseInformation(fd, nf));
             }
-           
-            int i = 1;
+                       
             long n = 0L;
+            
             for (PhaseInformation p : iPhases) {            
-                for (int j = i; j < p.iNumberOfFrames; ++i, ++j) 
-                    iSlices.add(i, n += p.iFrameDuration);                 
+                for (int j = 0; j < p.iNumberOfFrames; ++j) 
+                    iSlices.add(n += p.iFrameDuration);                 
             }
+        } else {
+            iSlices.add(0L); //        
         }
+        
         logger.info(iSlices);
     }
     

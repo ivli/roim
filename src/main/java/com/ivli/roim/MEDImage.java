@@ -24,17 +24,19 @@ import org.apache.logging.log4j.Logger;
 
 public class MEDImage extends MEDImageBase {
     
-    private class FrameWithStats {
+    class FrameWithStats {
         RoiStats iStats;
         Raster   iRaster;      
     }    
     
-    private int iIndex;    
-    private final ArrayList<FrameWithStats> iFrames;    
-    private       TimeSliceVector       iTimeSlices;
+    int iIndex;    
+    ArrayList<FrameWithStats> iFrames;    
+    TimeSliceVector       iTimeSlices; 
     
     
-    private MEDImage() { iFrames = new ArrayList(); }
+    private MEDImage() {
+        iFrames = new ArrayList();
+    }
     
     static MEDImage New(final String aFile) throws IOException {
         MEDImage self = new MEDImage();
@@ -53,6 +55,11 @@ public class MEDImage extends MEDImageBase {
     public void open(String aFile) throws IOException {           
         iLoader.open(aFile);
         iTimeSlices = iLoader.getTimeSliceVector();
+        
+        int a = getNoOfFrames();
+        int b = iTimeSlices.iSlices.size();
+        
+        assert a == b;
         
         iFrames.clear();
         iFrames.ensureCapacity(getNoOfFrames());
