@@ -6,13 +6,12 @@
 package com.ivli.roim.algorithm;
 
 
-import com.ivli.roim.Direction;
 import java.util.ArrayList;
 
-import static com.ivli.roim.Direction.N;
-import static com.ivli.roim.Direction.S;
-import static com.ivli.roim.Direction.E;
-import static com.ivli.roim.Direction.W;
+import static com.ivli.roim.algorithm.Direction.N;
+import static com.ivli.roim.algorithm.Direction.S;
+import static com.ivli.roim.algorithm.Direction.E;
+import static com.ivli.roim.algorithm.Direction.W;
 
 /**
  * A simple implementation of the marching squares algorithm that can identify

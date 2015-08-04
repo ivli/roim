@@ -5,7 +5,6 @@
  */
 package com.ivli.roim.algorithm;
 
-import com.ivli.roim.Direction;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
