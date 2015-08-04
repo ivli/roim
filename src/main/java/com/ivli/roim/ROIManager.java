@@ -26,12 +26,9 @@ class ROIManager {
         iComponent = aBase;
         iOverlays = new LinkedList();          
     }
-    
-    public MEDImageComponentBase getComponent() {return iComponent;}
-    
-    public MEDImageBase getImage() {return getComponent().getImage();}
-    
-    
+        
+    public MEDImageBase getImage() {return iComponent.getImage();}
+        
     public void clear() {iOverlays.clear();}
     
     public void update() {
