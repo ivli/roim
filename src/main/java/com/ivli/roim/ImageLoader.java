@@ -34,7 +34,6 @@ import org.dcm4che3.data.VR;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dcm4che3.data.Tag;
 
 
 public class ImageLoader {
@@ -45,7 +44,7 @@ public class ImageLoader {
  
     private ImageReader iReader = _installImageReader();   
   
-    public ImageReader getImageReader() {
+    ImageReader getImageReader() {
         return iReader;
     }
     
@@ -62,40 +61,41 @@ public class ImageLoader {
            
         return ir;      
     }  
-       
-    public void open(String aFile) throws IOException {
-        File src = new File(aFile);           
-        Attributes fmi;
-        Attributes ds;
-                
-        try (DicomInputStream dis = new DicomInputStream(new File(aFile)))  {  
+    
+    String iFile;
+    
+    void open(String aFile) throws IOException {
            
+        try (DicomInputStream dis = new DicomInputStream(new File(iFile = aFile)))  {  
+            Attributes fmi;
+           // Attributes ds;
             fmi = dis.readFileMetaInformation();
-            ds = dis.readDataset(-1, -1);
-            ///VR.Holder holderVR = new VR.Holder();
-            Sequence pid = (Sequence)ds.getValue(Tag.PhaseInformationSequence);
-            int ns = ds.getInt(Tag.NumberOfPhases, 1);
+            //ds = dis.readDataset(-1, -1);
+           
             
-            for (Attributes a : pid) {
-                int fd = a.getInt(Tag.ActualFrameDuration, 1);                
-            }
+            //TimeSliceVector tsv = new TimeSliceVector(ds);
             
-            Object tsv = ds.getValue(Tag.TimeSliceVector);//, holderVR);
-            
-        
-            
-            
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error(e);              
-        }
+        }        
         
         ImageInputStream iis = ImageIO.createImageInputStream(new File(aFile));
         iReader.setInput(iis);  
     }
     
-    public int getNumImages() throws IOException {return iReader.getNumImages(false);}    
+    TimeSliceVector getTimeSliceVector() throws IOException {        
+        DicomInputStream dis = new DicomInputStream(new File(iFile));  
+        //Attributes fmi;
+        Attributes ds = dis.readDataset(-1, -1);
+        //fmi = dis.readFileMetaInformation();
+  
+        return new TimeSliceVector(ds);
+    }
+    
+    
+    int getNumImages() throws IOException {return iReader.getNumImages(false);}    
 
-    public Raster readRaster(int aIndex) throws IOException {
+    Raster readRaster(int aIndex) throws IOException {
         return iReader.readRaster(aIndex, readParam());
     }
 

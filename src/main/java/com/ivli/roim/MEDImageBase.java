@@ -21,8 +21,7 @@ public abstract class MEDImageBase {
     public          int  getNoOfFrames() throws IOException {return iLoader.getNumImages();}
     public abstract int  getWidth();    
     public abstract int  getHeight(); 
-    public abstract void open(String aFile) throws IOException;
-    // abstract void method();
+    public abstract void open(String aFile) throws IOException;    
     
     protected ImageLoader iLoader = new ImageLoader();
     

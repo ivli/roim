@@ -23,9 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 
 public class MEDImage extends MEDImageBase {
-              
-    private String iFile; 
-   
+    
     private class FrameWithStats {
         RoiStats iStats;
         Raster   iRaster;      
@@ -33,6 +31,8 @@ public class MEDImage extends MEDImageBase {
     
     private int iIndex;    
     private final ArrayList<FrameWithStats> iFrames;    
+    private       TimeSliceVector       iTimeSlices;
+    
     
     private MEDImage() { iFrames = new ArrayList(); }
     
@@ -52,10 +52,11 @@ public class MEDImage extends MEDImageBase {
             
     public void open(String aFile) throws IOException {           
         iLoader.open(aFile);
-         
+        iTimeSlices = iLoader.getTimeSliceVector();
+        
         iFrames.clear();
         iFrames.ensureCapacity(getNoOfFrames());
-       
+                
         loadFrame(0);
     }
            
