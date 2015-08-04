@@ -72,7 +72,7 @@ public class MEDImageComponent extends JComponent implements MEDImageComponentBa
     }
 
     void setVOILUT(VOILut aLut) {
-        iWM=aLut;
+        iWM = aLut;
         iWM.setImage(iImage);        
     }
 
