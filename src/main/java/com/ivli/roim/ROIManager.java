@@ -80,19 +80,14 @@ class ROIManager {
     }
         
     public boolean deleteRoi(ROI aR) {      
-        /* final ListIterator<Overlay> it = iOverlays.listIterator();
+         final Iterator<Overlay> it = iOverlays.iterator();
 
         while (it.hasNext()) {  //clean annotations out - silly but workin'
             final Overlay o = it.next();
             if (o instanceof Annotation && aR.remove(o))               
                 it.remove();
         } 
-        */
         
-        for (Overlay o:iOverlays) {  //clean annotations out - silly but workin'            
-            if (o instanceof Annotation && aR.remove(o))               
-                iOverlays.remove(o);
-        }
         
         return iOverlays.remove(aR);   
     }  
@@ -104,12 +99,7 @@ class ROIManager {
             return iOverlays.remove(aO);   
     }
     
-    void deleteAllOverlays() {
-       // ListIterator<Overlay> it = iOverlays.listIterator();
-       // while (it.hasNext()) {
-       //     Overlay o = it.next();
-       //     it.remove();    
-       // }
+    void deleteAllOverlays() {      
         iOverlays.clear();
     }  
     
