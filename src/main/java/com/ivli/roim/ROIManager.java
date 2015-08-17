@@ -11,25 +11,29 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.util.LinkedList;
-import java.util.ListIterator;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  *
  * @author likhachev
  */
 class ROIManager {    
-    private final LinkedList<Overlay> iOverlays;      
-    private final ImageView          iComponent;    
-    
+    private final HashSet<Overlay> iOverlays;      
+    private final ImageView          iComponent;        
     
     ROIManager(ImageView aBase) {
         iComponent = aBase;
-        iOverlays = new LinkedList();          
+        iOverlays = new HashSet();          
     }
         
-    public ImageBase getImage() {return iComponent.getImage();}
+    public ImageBase getImage() {
+        return iComponent.getImage();
+    }
         
-    public void clear() {iOverlays.clear();}
+    public void clear() {
+        iOverlays.clear();
+    }
     
     public void update() {
         for(Overlay o : iOverlays)
@@ -76,13 +80,20 @@ class ROIManager {
     }
         
     public boolean deleteRoi(ROI aR) {      
-        final ListIterator<Overlay> it = iOverlays.listIterator();
+        /* final ListIterator<Overlay> it = iOverlays.listIterator();
 
         while (it.hasNext()) {  //clean annotations out - silly but workin'
             final Overlay o = it.next();
             if (o instanceof Annotation && aR.remove(o))               
                 it.remove();
-        }        
+        } 
+        */
+        
+        for (Overlay o:iOverlays) {  //clean annotations out - silly but workin'            
+            if (o instanceof Annotation && aR.remove(o))               
+                iOverlays.remove(o);
+        }
+        
         return iOverlays.remove(aR);   
     }  
     
@@ -94,15 +105,16 @@ class ROIManager {
     }
     
     void deleteAllOverlays() {
-        ListIterator<Overlay> it = iOverlays.listIterator();
-        while (it.hasNext()) {
-            Overlay o = it.next();
-            it.remove();    
-        }
+       // ListIterator<Overlay> it = iOverlays.listIterator();
+       // while (it.hasNext()) {
+       //     Overlay o = it.next();
+       //     it.remove();    
+       // }
+        iOverlays.clear();
     }  
     
-    public ListIterator<Overlay> getOverlaysList() {        
-        return iOverlays.listIterator();
+    public Iterator<Overlay> getOverlaysList() {        
+        return iOverlays.iterator();// listIterator();
     }     
        
 }

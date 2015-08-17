@@ -5,7 +5,7 @@
  */
 package com.ivli.roim;
 
-import java.util.ListIterator;
+import java.util.Iterator;
 import java.io.IOException;
 import java.awt.Component;
 import javax.swing.BoxLayout;
@@ -59,7 +59,7 @@ public class JMedPane extends JLayeredPane{
         iImg.fitWidth();
     }
        
-    ListIterator<Overlay> getOverlaysList() {        
+    Iterator<Overlay> getOverlaysList() {        
         return iImg.getManager().getOverlaysList();
     }
     

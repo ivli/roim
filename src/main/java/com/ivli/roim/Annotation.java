@@ -51,6 +51,8 @@ public class Annotation extends Overlay {
         RoiStats s = iRoi.getStats();
         String out = new String();
         
+        aGC.setColor(iRoi.getColor());
+        
         if(0 != (iFields & ANNOTATION_DISPLAY_AREA_PIXELS))
             out += String.format("pix=%.0f", s.iPixels);
         //if(0 != (iFields & ANNOTATION_DISPLAY_AREA_PIXELS))

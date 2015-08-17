@@ -15,8 +15,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     private Color             iColor;
     private RoiStats          iStats;
     private HashSet<Overlay>  iAnnos;    
-    //private ArrayList<Double> iAnnos; 
-    
+        
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE;}
     

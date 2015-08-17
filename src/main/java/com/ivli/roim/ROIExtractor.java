@@ -56,9 +56,9 @@ class ROIExtractor implements Extractor {
                         sum += temp[0];
                     }
 
-            //iRoi.getStats().iMin = min;
-            //iRoi.getStats().iMax = max;
-            //iRoi.getStats().iIden = sum;
+            iRoi.getStats().iMin = min;
+            iRoi.getStats().iMax = max;
+            iRoi.getStats().iIden = sum;
             iRoi.getStats().iPixels = pix;
             //iRoi.getStats().iBounds = bnds.getWidth() * bnds.getHeight();          
         }   

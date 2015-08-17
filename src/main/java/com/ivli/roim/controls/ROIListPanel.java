@@ -9,7 +9,7 @@ import com.ivli.roim.Overlay;
 import com.ivli.roim.ROI;
 import com.ivli.roim.RoiStats;
 import static com.ivli.roim.controls.ColorEditor.EDIT;
-import java.util.ListIterator;
+import java.util.Iterator;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableCellRenderer;
@@ -30,10 +30,7 @@ import java.awt.Window;
  */
 public class ROIListPanel extends javax.swing.JPanel implements TableModelListener {
 
-    /**
-     * Creates new form NewJPanel
-     */
-    public ROIListPanel(ListIterator<Overlay> aLit) {
+    public ROIListPanel(Iterator<Overlay> aLit) {
         
         tableModel = new DefaultTableModel(
             new Object [][] {

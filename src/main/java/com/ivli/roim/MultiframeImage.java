@@ -52,23 +52,33 @@ public class MultiframeImage extends ImageBase {
         return iFrames.get(iIndex).iRaster;
     }
     
-    public int getWidth() {return getFrame().getWidth();}
+    public int getWidth() {
+        return getFrame().getWidth();
+    }
     
-    public int getHeight() {return getFrame().getHeight();}  
+    public int getHeight() {
+        return getFrame().getHeight();
+    }  
     
-    public double getMinimum() {return getStats().iMin;}
-    public double getMaximum() {return getStats().iMax;}
-    public double getDensity() {return getStats().iIden;}
+    public double getMinimum() {
+        return getStats().iMin;
+    }
+    
+    public double getMaximum() {
+        return getStats().iMax;
+    }
+    
+    public double getDensity() {
+        return getStats().iIden;
+    }
 
     public void open(String aFile) throws IOException {           
         iLoader.open(aFile);
         iTimeSlices = iLoader.getTimeSliceVector();
         
-        int a = getNoOfFrames();
-        int b = iTimeSlices.iSlices.size();
-        
-        assert a == b;
-        
+        //int a = getNoOfFrames();
+        //int b = iTimeSlices.iSlices.size();
+       
         iFrames.clear();
         iFrames.ensureCapacity(getNoOfFrames());
                 
