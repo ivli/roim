@@ -15,9 +15,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class JMedPane extends JLayeredPane{
-    ImageView iImg;
-    LUTControl        iLut;
-    //ROIManager        iRoim;
+    ImageView  iImg;
+    LUTControl iLut;
+    
            
     void open(String aName) throws IOException {    
         iImg = new ImageView();

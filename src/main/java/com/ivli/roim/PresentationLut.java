@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ivli.roim;
 
 import java.awt.image.BufferedImage;
@@ -15,15 +11,20 @@ import java.awt.image.WritableRaster;
  * @author likhachev
  */
 public class PresentationLut implements LutTransform {
-    protected String iName;
+    protected String          iName;
     protected IndexColorModel iLUT;
     
     PresentationLut(String aName) {
         setLUT(aName);
     }
     
-    public IndexColorModel getLUT() {return iLUT;}
-    public String getLUTName(){return iName;}
+    public IndexColorModel getLUT() {
+        return iLUT;
+    }
+    
+    public String getLUTName() {
+        return iName;
+    }
     
     public final void setLUT(String aName) {
         iLUT = LutLoader.open(iName = (null == aName ? Settings.DEFAULT_PRESENTATION_LUT:aName));
@@ -33,9 +34,9 @@ public class PresentationLut implements LutTransform {
     public BufferedImage transform (BufferedImage aSrc, BufferedImage aDst) {
         
         if (null == aDst)
-            aDst=new BufferedImage(aSrc.getWidth(), aSrc.getHeight(), BufferedImage.TYPE_INT_RGB);
+            aDst = new BufferedImage(aSrc.getWidth(), aSrc.getHeight(), BufferedImage.TYPE_INT_RGB);
         
-        WritableRaster wr=aDst.getRaster();
+        WritableRaster wr = aDst.getRaster();
 
         Raster rs = aSrc.getRaster();
 

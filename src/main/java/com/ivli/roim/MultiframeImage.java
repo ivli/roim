@@ -22,11 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-
-
-
-
-public class MultiframeImage extends ImageBase {
+public class MultiframeImage {//extends ImageBase {
  
     ArrayList<ImageFrame> iFrames;    
     TimeSliceVector  iTimeSlices;     
@@ -59,34 +55,16 @@ public class MultiframeImage extends ImageBase {
         return getCurrentFrame().getRaster().getHeight();
     }  
     
-    /*
-    
-    
-    ROIStats getStats() { 
-        return iFrames.get(getFrameNumber()).iStats;
-    }    
-    
-    
-    
-    public double getMinimum() {
-        return getStats().iMin;
+    int getNumFrames() throws IOException {
+        return iLoader.getNumImages();
     }
-    
-    public double getMaximum() {
-        return getStats().iMax;
-    }
-    
-    public double getDensity() {
-        return getStats().iIden;
-    }
-*/
     
     public void open(String aFile) throws IOException {           
         iLoader.open(aFile);
         iTimeSlices = iLoader.getTimeSliceVector();        
        
         iFrames.clear();
-        iFrames.ensureCapacity(getNoOfFrames());
+        iFrames.ensureCapacity(getNumFrames());
                 
         loadFrame(0);
     }
@@ -112,7 +90,7 @@ public class MultiframeImage extends ImageBase {
                    
     private void doLoadFrame(int anIndex) throws IOException, IndexOutOfBoundsException {
     
-        if (anIndex > getNoOfFrames() - 1 || anIndex < 0)
+        if (anIndex > getNumFrames() - 1 || anIndex < 0)
             throw new IndexOutOfBoundsException();
         
          // load and cache image if it is not yet in cache
@@ -157,9 +135,9 @@ public class MultiframeImage extends ImageBase {
     
     public BufferedImage makeCompositeFrame(int aFrom, int aTo) throws IOException {
         if (-1 == aTo)
-            aTo = getNoOfFrames();
+            aTo = getNumFrames();
 
-        assert (aFrom >= 0 && aFrom < getNoOfFrames() || aTo > aFrom || aFrom < getNoOfFrames());  
+        assert (aFrom >= 0 && aFrom < getNumFrames() || aTo > aFrom || aFrom < getNumFrames());  
         
         WritableRaster composite = iFrames.get(0).iRaster.createCompatibleWritableRaster();
         
@@ -194,6 +172,7 @@ public class MultiframeImage extends ImageBase {
     }
      
     
+    private ImageLoader iLoader = new ImageLoader(); 
     
     private static final Logger logger = LogManager.getLogger(MultiframeImage.class);    
 }

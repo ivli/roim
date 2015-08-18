@@ -2,6 +2,8 @@
 package com.ivli.roim;
 
 
+import com.ivli.roim.Events.WindowChangeListener;
+import com.ivli.roim.Events.WindowChangeEvent;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -417,7 +419,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 repaint();
                 break;
             case KCommandShowDialog:                 
-                VOILUTPanel panel = new VOILUTPanel(this, (ImageBase)iComponent.getImage());
+                VOILUTPanel panel = new VOILUTPanel(this, iComponent.getImage());
                 JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
                 dialog.setContentPane(panel);
                 dialog.validate();

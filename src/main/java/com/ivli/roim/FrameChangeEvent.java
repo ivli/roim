@@ -5,6 +5,7 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.Events.WindowChangeEvent;
 import java.util.EventListener;
 import java.util.EventObject;
 /**

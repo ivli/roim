@@ -1,5 +1,8 @@
 package com.ivli.roim;
 
+import com.ivli.roim.Events.WindowChangeListener;
+import com.ivli.roim.Events.WindowChangeNotifier;
+import com.ivli.roim.Events.WindowChangeEvent;
 import java.io.IOException;
 import java.util.HashSet;
 import java.awt.Graphics;
@@ -69,8 +72,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     
     ROIManager getManager() {
         return iRoim;
-    }
-    
+    }    
 
     void setLUTControl(LUTControl aCtrl) {
         setVOILUT(aCtrl.iWM);
@@ -99,7 +101,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     
     public void addWindowChangeListener(WindowChangeListener aL) {
         iWinListeners.add(aL);
-        aL.windowChanged(new WindowChangeEvent(this, iWM.getWindow(), getMinimum(), getMaximum(), true));
+        aL.windowChanged(new WindowChangeEvent(this, iWM.getWindow(), getMin(), getMax(), true));
     }
 
     public void removeWindowChangeListener(WindowChangeListener aL) {
@@ -107,7 +109,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
     
     private void notifyWindowChanged(boolean aRC) {
-        final WindowChangeEvent wce = new WindowChangeEvent(this, iWM.getWindow(), getMinimum(), getMaximum(), aRC);
+        final WindowChangeEvent wce = new WindowChangeEvent(this, iWM.getWindow(), getMin(), getMax(), aRC);
         for (WindowChangeListener l : iWinListeners)
             l.windowChanged(wce);
     }
@@ -135,7 +137,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     
     void setWindow (Window aW) { 
         if (!iWM.getWindow().equals(aW)) {
-            if (aW.getLevel() > getMinimum() && aW.getLevel() < getMaximum()) {
+            if (aW.getLevel() > getMin() && aW.getLevel() < getMax()) {
                 iWM.setWindow(aW);               
                 invalidateBuffer();
                 notifyWindowChanged(false);
@@ -165,11 +167,11 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         notifyWindowChanged(false);  
     }
 
-    double getMinimum() {return iImage.getCurrentFrame().getStats().getMin();}// getMinimum();}
-    double getMaximum() {return iImage.getCurrentFrame().getStats().getMax();}//getMaximum();}    
+    double getMin() {return iImage.getCurrentFrame().getStats().getMin();}// getMinimum();}
+    double getMax() {return iImage.getCurrentFrame().getStats().getMax();}//getMaximum();}    
     
-    int  getNoOfFrames() throws IOException {
-        return iImage.getNoOfFrames();
+    int  getNumFrames() throws IOException {
+        return iImage.getNumFrames();
     }    
            
     void loadFrame(int aN) throws IndexOutOfBoundsException {                

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ivli.roim;
+package com.ivli.roim.Events;
 
+import com.ivli.roim.Window;
 import java.util.EventObject;
 /**
  *
@@ -40,7 +41,3 @@ public final class WindowChangeEvent extends EventObject {
 }
 
 
-interface WindowChangeNotifier {
-    public void addWindowChangeListener(WindowChangeListener aL);
-    public void removeWindowChangeListener(WindowChangeListener aL);    
-}
