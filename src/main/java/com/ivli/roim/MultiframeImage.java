@@ -22,16 +22,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
+
+
+
+
 public class MultiframeImage extends ImageBase {
+ 
+    ArrayList<ImageFrame> iFrames;    
+    TimeSliceVector  iTimeSlices;     
     
-    class FrameWithStats {
-        ROIStats iStats;
-        Raster   iRaster;      
-    }    
-    
-    int iIndex;    
-    ArrayList<FrameWithStats> iFrames;    
-    TimeSliceVector       iTimeSlices;     
+    private int iCurrent = 0;
     
     private MultiframeImage() {
         iFrames = new ArrayList();
@@ -42,22 +42,31 @@ public class MultiframeImage extends ImageBase {
         self.open(aFile);
         return self;
     }
-                  
-    private ROIStats getStats() { 
-        return iFrames.get(iIndex).iStats;
+     
+    int getFrameNumber() {
+        return iCurrent;
     }
     
-    private Raster getFrame() { 
-        return iFrames.get(iIndex).iRaster;
+    ImageFrame getCurrentFrame() { 
+        return iFrames.get(getFrameNumber());
     }
     
-    public int getWidth() {
-        return getFrame().getWidth();
+    int getWidth() {
+        return getCurrentFrame().getRaster().getWidth();
     }
     
-    public int getHeight() {
-        return getFrame().getHeight();
+    int getHeight() {
+        return getCurrentFrame().getRaster().getHeight();
     }  
+    
+    /*
+    
+    
+    ROIStats getStats() { 
+        return iFrames.get(getFrameNumber()).iStats;
+    }    
+    
+    
     
     public double getMinimum() {
         return getStats().iMin;
@@ -70,7 +79,8 @@ public class MultiframeImage extends ImageBase {
     public double getDensity() {
         return getStats().iIden;
     }
-
+*/
+    
     public void open(String aFile) throws IOException {           
         iLoader.open(aFile);
         iTimeSlices = iLoader.getTimeSliceVector();        
@@ -81,19 +91,20 @@ public class MultiframeImage extends ImageBase {
         loadFrame(0);
     }
            
-    public ROIStats getImageStats() {return iFrames.get(iIndex).iStats;}
+    public ROIStats getImageStats() {return iFrames.get(iCurrent).iStats;}
        
     public BufferedImage getBufferedImage() {
-        return convert((WritableRaster)getFrame());
+        return convert((WritableRaster)getCurrentFrame().iRaster);
     }     
     
     public void loadFrame(int anIndex) throws IndexOutOfBoundsException{
         try{
             doLoadFrame(anIndex);
            
-            logger.info("Frame -"+iIndex+", MIN" + getMinimum() + // NOI18N
-                        ", MAX" + getMaximum() +   // NOI18N
-                        ", DEN" + getDensity());  // NOI18N
+            logger.info("Frame -" + getFrameNumber() +                       // NOI18N
+                        ", MIN"   + getCurrentFrame().getStats().getMin() +  // NOI18N
+                        ", MAX"   + getCurrentFrame().getStats().getMax() +  // NOI18N
+                        ", DEN"   + getCurrentFrame().getStats().getIden()); // NOI18N
         } catch (IOException ex) {
             logger.error(ex); 
         } 
@@ -105,14 +116,14 @@ public class MultiframeImage extends ImageBase {
             throw new IndexOutOfBoundsException();
         
          // load and cache image if it is not yet in cache
-        if ((iIndex = anIndex) >= iFrames.size() || null == iFrames.get(iIndex)) { 
-            FrameWithStats r = new FrameWithStats();
-            r.iRaster = iLoader.readRaster(iIndex);
+        if ((iCurrent = anIndex) >= iFrames.size() || null == iFrames.get(iCurrent)) { 
+            ImageFrame r = new ImageFrame();
+            r.iRaster = iLoader.readRaster(iCurrent);
             ROIExtractor ex = new ROIExtractor(new ROI(r.iRaster.getBounds(), null, null));
             ex.apply(r.iRaster);
             r.iStats = ex.iRoi.getStats();                            
 
-            iFrames.add(iIndex, r);
+            iFrames.add(iCurrent, r);
         }    
     }
     
@@ -170,7 +181,7 @@ public class MultiframeImage extends ImageBase {
         
         ROIExtractor r = new ROIExtractor(aRoi);
         
-        for (FrameWithStats f:iFrames) {
+        for (ImageFrame f:iFrames) {
             ROIStats rs = r.apply(f.iRaster);
             ret.add(new Measure(rs.iMin, rs.iMax, rs.iIden));
         }
@@ -179,7 +190,7 @@ public class MultiframeImage extends ImageBase {
     }
     
     public void extract(Extractor aEx) {
-        aEx.apply(getFrame());
+        aEx.apply(getCurrentFrame().getRaster());
     }
      
     

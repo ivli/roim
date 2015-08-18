@@ -10,17 +10,19 @@ import java.io.Serializable;
 /**
  *
  * @author likhachev
+ * @param <T>
  */
-public class Measure <T> implements Serializable {
+public class Measure <T extends Number> implements Serializable {
     T iMin;  //min value 
     T iMax;  //max value
-    T iIden; //integral density (sum of pixels)  
+    T iIden; //integral density (a sum of pixel values)  
     
     Measure(T aMin, T aMax, T aIden) {
         iMin  = aMin; 
         iMax  = aMax; 
         iIden = aIden;
     }
+    
     Measure(){}    
     
     public T getMin()  {return iMin;}

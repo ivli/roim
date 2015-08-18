@@ -36,7 +36,7 @@ class VOILut implements LutTransform {
         ///reset(aI);
     }
         
-    public void setImage(ImageBase aI) {
+    public void setImage(ImageFrame aI) {
         reset(aI);
     }
     
@@ -44,13 +44,13 @@ class VOILut implements LutTransform {
     public Window getRange() {return iMax;}
     
     
-    private void reset(ImageBase aI) {
+    private void reset(ImageFrame aI) {
         
         iPVt = new PValueTransform();
-        iBuffer = new LutBuffer(aI.getBufferedImage().getSampleModel().getDataType());
+        iBuffer = new LutBuffer(aI.getRaster().getSampleModel().getDataType());
         
-        final double min = aI.getMinimum();
-        final double max = aI.getMaximum();
+        final double min = aI.getStats().getMin();
+        final double max = aI.getStats().getMax();
         
         
         if (null == iWin || !iKeepWindow) {

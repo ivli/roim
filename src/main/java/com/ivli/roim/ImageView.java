@@ -43,7 +43,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     private final HashSet<WindowChangeListener> iWinListeners;// = new HashSet();    
     
         
-    public ImageView() {         
+    ImageView() {         
         iController = new Controller(this);   
         iWM  = new VOILut();                    
         iLUT = new PresentationLut(null);  
@@ -53,15 +53,23 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iWinListeners = new HashSet();    
     }
    
-    public void open(String aFileName) throws IOException {           
+    void open(String aFileName) throws IOException {           
         iImage = MultiframeImage.New(aFileName);        
-        iWM.setImage(iImage);
+        iWM.setImage(iImage.getCurrentFrame());
         invalidateBuffer();
     }
     
-    public AffineTransform getZoom() {return iZoom;}
-    public MultiframeImage       getImage() {return iImage;}
-    public ROIManager      getManager() {return iRoim;}
+    AffineTransform getZoom() {
+        return iZoom;
+    }
+    
+    MultiframeImage getImage() {
+        return iImage;
+    }
+    
+    ROIManager getManager() {
+        return iRoim;
+    }
     
 
     void setLUTControl(LUTControl aCtrl) {
@@ -72,7 +80,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
 
     void setVOILUT(VOILut aLut) {
         iWM = aLut;
-        iWM.setImage(iImage);        
+        iWM.setImage(iImage.getCurrentFrame());        
     }
 
     void setPresentationLUT(PresentationLut aLut) {iLUT=aLut;}
@@ -157,15 +165,17 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         notifyWindowChanged(false);  
     }
 
-    double getMinimum() {return iImage.getMinimum();}// getMinimum();}
-    double getMaximum() {return iImage.getMaximum();}//getMaximum();}    
+    double getMinimum() {return iImage.getCurrentFrame().getStats().getMin();}// getMinimum();}
+    double getMaximum() {return iImage.getCurrentFrame().getStats().getMax();}//getMaximum();}    
     
-    int  getNoOfFrames() throws IOException {return iImage.getNoOfFrames();}    
-    
+    int  getNoOfFrames() throws IOException {
+        return iImage.getNoOfFrames();
+    }    
+           
     void loadFrame(int aN) throws IndexOutOfBoundsException {                
         iImage.loadFrame(aN);   
         ///iWM.reset(iImage);
-        iWM.setImage(iImage);
+        iWM.setImage(iImage.getCurrentFrame());
         notifyWindowChanged(true);      
         iRoim.update();                
         invalidateBuffer();
