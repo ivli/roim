@@ -1,6 +1,8 @@
 package com.ivli.roim;
 
 import java.util.HashSet;
+import java.util.ArrayList;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -11,11 +13,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {    
-    private ROIManager          iMgr; 
-    private Color             iColor;
-    private RoiStats          iStats;
-    private HashSet<Overlay>  iAnnos;    
-        
+    ROIManager          iMgr; 
+    Color              iColor;
+    RoiStats           iStats;
+    HashSet<Overlay>   iAnnos;               
+    Curve              iCurve;
+    
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE;}
     
@@ -32,9 +35,10 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iMgr   = aR.iMgr;        
         iStats = new RoiStats(aR.iStats);   
     }
-    
-       
-    ROIManager getManager() {return iMgr;}
+           
+    ROIManager getManager() {
+        return iMgr;
+    }
     
     void register(Overlay aO) {
         if (null == iAnnos)
@@ -51,6 +55,10 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
        
     public RoiStats getStats() {
         return iStats;
+    }
+    
+    public RoiStats setStats(RoiStats aS) {
+        return iStats = aS;
     }
     
     public Color getColor() {
@@ -77,6 +85,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         }
     }  
     
+    @Override
     void update() {
         try {
             getManager().getImage().extract(new ROIExtractor(this));            

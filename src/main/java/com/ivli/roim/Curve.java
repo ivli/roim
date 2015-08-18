@@ -5,12 +5,21 @@
  */
 package com.ivli.roim;
 
-import java.util.Iterator;
-import java.awt.image.Raster;
+import java.util.ArrayList;
+import java.io.Serializable;
 /**
  *
  * @author likhachev
  */
-public interface Extractor {
-    RoiStats apply(Raster aR) throws ArrayIndexOutOfBoundsException;
+
+
+
+public class Curve extends ArrayList<Measure<Double>> implements Serializable {
+    String iName;
+    
+    Curve(String aName) {
+        iName = aName;
+    }
+    
+    
 }

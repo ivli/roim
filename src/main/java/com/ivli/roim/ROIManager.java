@@ -20,14 +20,14 @@ import java.util.Iterator;
  */
 class ROIManager {    
     private final HashSet<Overlay> iOverlays;      
-    private final ImageView          iComponent;        
+    private final ImageView       iComponent;        
     
     ROIManager(ImageView aBase) {
         iComponent = aBase;
         iOverlays = new HashSet();          
     }
         
-    public ImageBase getImage() {
+    public MultiframeImage getImage() {
         return iComponent.getImage();
     }
         
@@ -47,10 +47,16 @@ class ROIManager {
             
     public void createRoiFromShape(Shape aS) { 
         final Shape r = iComponent.screenToVirtual().createTransformedShape(aS);
-        final ROI temp = new ROI(r, this, null);       
-        iOverlays.add(temp);
-        iOverlays.add(new Annotation(temp));      
-        temp.update();
+        final ROI newRoi = new ROI(r, this, null);       
+        
+        getImage().makeCurveFromRoi(newRoi);
+        
+        iOverlays.add(newRoi);
+        iOverlays.add(new Annotation(newRoi));      
+        newRoi.update();
+        
+        
+        
     }
     
     public void cloneRoi(ROI aR) {

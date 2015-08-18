@@ -34,7 +34,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     
     protected     VOILut          iWM;                   
     protected     PresentationLut iLUT;  
-    private       ImageBase       iImage;
+    private       MultiframeImage iImage;
     private final Controller      iController;    
     private final AffineTransform iZoom;
     private final Point           iOrigin;   
@@ -60,7 +60,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
     
     public AffineTransform getZoom() {return iZoom;}
-    public ImageBase       getImage() {return iImage;}
+    public MultiframeImage       getImage() {return iImage;}
     public ROIManager      getManager() {return iRoim;}
     
 

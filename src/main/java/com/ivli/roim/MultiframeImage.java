@@ -31,8 +31,7 @@ public class MultiframeImage extends ImageBase {
     
     int iIndex;    
     ArrayList<FrameWithStats> iFrames;    
-    TimeSliceVector       iTimeSlices; 
-    
+    TimeSliceVector       iTimeSlices;     
     
     private MultiframeImage() {
         iFrames = new ArrayList();
@@ -74,10 +73,7 @@ public class MultiframeImage extends ImageBase {
 
     public void open(String aFile) throws IOException {           
         iLoader.open(aFile);
-        iTimeSlices = iLoader.getTimeSliceVector();
-        
-        //int a = getNoOfFrames();
-        //int b = iTimeSlices.iSlices.size();
+        iTimeSlices = iLoader.getTimeSliceVector();        
        
         iFrames.clear();
         iFrames.ensureCapacity(getNoOfFrames());
@@ -169,10 +165,24 @@ public class MultiframeImage extends ImageBase {
         return convert(composite);
     }    
     
+    Curve makeCurveFromRoi(ROI aRoi) {
+        Curve ret = new Curve(aRoi.getName());  
+        
+        ROIExtractor r = new ROIExtractor(aRoi);
+        
+        for (FrameWithStats f:iFrames) {
+            RoiStats rs = r.apply(f.iRaster);
+            ret.add(new Value(rs.iMin, rs.iMax, rs.iIden));
+        }
+        
+        return ret;
+    }
+    
     public void extract(Extractor aEx) {
         aEx.apply(getFrame());
     }
-      
+     
+    
     
     private static final Logger logger = LogManager.getLogger(MultiframeImage.class);    
 }
