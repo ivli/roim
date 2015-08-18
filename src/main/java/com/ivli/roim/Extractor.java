@@ -5,12 +5,11 @@
  */
 package com.ivli.roim;
 
-import java.util.Iterator;
 import java.awt.image.Raster;
 /**
  *
  * @author likhachev
  */
 public interface Extractor {
-    RoiStats apply(Raster aR) throws ArrayIndexOutOfBoundsException;
+    ROIStats apply(Raster aR) throws ArrayIndexOutOfBoundsException;
 }

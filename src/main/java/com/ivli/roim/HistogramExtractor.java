@@ -21,7 +21,7 @@ public class HistogramExtractor implements Extractor {
     public HistogramExtractor(ROI aRoi){iRoi = aRoi;}
     
     @Override
-    public RoiStats apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
+    public ROIStats apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
         extractOne(aRaster);
         return iRoi.getStats();
     }

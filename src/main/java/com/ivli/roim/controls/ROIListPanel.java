@@ -7,7 +7,7 @@ package com.ivli.roim.controls;
 
 import com.ivli.roim.Overlay;
 import com.ivli.roim.ROI;
-import com.ivli.roim.RoiStats;
+import com.ivli.roim.ROIStats;
 import static com.ivli.roim.controls.ColorEditor.EDIT;
 import java.util.Iterator;
 import javax.swing.table.DefaultTableModel;
@@ -76,10 +76,10 @@ public class ROIListPanel extends javax.swing.JPanel implements TableModelListen
             Overlay o = aLit.next();
             if (o instanceof ROI) {       
                 ROI r = (ROI)o;
-                RoiStats s = r.getStats();
+                ROIStats s = r.getStats();
                 DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
                 //jTable1.setModel(new TableModel());
-                model.addRow(new Object[]{r, r.getName(), r.getStats().iPixels, r.getStats().iIden, r.getColor()});                
+                model.addRow(new Object[]{r, r.getName(), r.getStats().getPixels(), r.getStats().getIden(), r.getColor()});                
             }
         }
         

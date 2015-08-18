@@ -27,7 +27,7 @@ public class ProfileExtractor implements Extractor {
     }
     
     @Override
-    public RoiStats apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
+    public ROIStats apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
         
         double temp[] = new double [aRaster.getNumBands()];
         
@@ -35,6 +35,6 @@ public class ProfileExtractor implements Extractor {
            temp = aRaster.getPixel(i, iFrom.y, temp) ;
             
         }
-        return new RoiStats();    
+        return new ROIStats();    
     }
 }

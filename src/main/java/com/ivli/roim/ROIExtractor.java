@@ -26,7 +26,7 @@ class ROIExtractor implements Extractor {
         iExtractor = new SimpleExtractor();        
     }
     
-    public RoiStats apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {  
+    public ROIStats apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {  
         if (null == iRoi)
             iRoi = new ROI((Shape)aRaster.getBounds(), null, null);
         
@@ -36,11 +36,11 @@ class ROIExtractor implements Extractor {
     class SimpleExtractor implements Extractor { 
     
         @Override
-        public RoiStats apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
+        public ROIStats apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
 
             final Shape shape = (null != iRoi) ? iRoi.getShape() : aRaster.getBounds();
             final Rectangle bnds = shape.getBounds();
-            RoiStats ret =  new RoiStats();
+            ROIStats ret =  new ROIStats();
             double min = 65535, max = .0, sum = .0, pix = .0;
 
             double temp[] = new double [aRaster.getNumBands()];
@@ -90,7 +90,7 @@ class ROIExtractor implements Extractor {
         }
 
         @Override
-        public RoiStats apply(Raster aR) throws ArrayIndexOutOfBoundsException {            
+        public ROIStats apply(Raster aR) throws ArrayIndexOutOfBoundsException {            
             ROI r = new ROI(iRoi);            
             Raster img = aR;
             
@@ -104,7 +104,7 @@ class ROIExtractor implements Extractor {
             }
             
             logger.info(img);
-            RoiStats rs = super.apply(img);
+            ROIStats rs = super.apply(img);
             return rs;//(iRoi.getStats() = rs);
         }  
     }

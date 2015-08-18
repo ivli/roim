@@ -48,7 +48,7 @@ public class Annotation extends Overlay {
     @Override
     void draw(Graphics2D aGC, AffineTransform aTrans) {
         Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();
-        RoiStats s = iRoi.getStats();
+        ROIStats s = iRoi.getStats();
         String out = new String();
         
         aGC.setColor(iRoi.getColor());

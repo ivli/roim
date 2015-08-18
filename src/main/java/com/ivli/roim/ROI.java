@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {    
     ROIManager          iMgr; 
     Color              iColor;
-    RoiStats           iStats;
+    ROIStats           iStats;
     HashSet<Overlay>   iAnnos;               
     Curve              iCurve;
     
@@ -26,14 +26,14 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         super(aS, new String()); 
         iColor = (null != aC ? aC : Colorer.getNextColor(this));
         iMgr = aSrc;
-        iStats = new RoiStats();       
+        iStats = new ROIStats();       
     }
     
     ROI(ROI aR) {
         super(aR.iShape, aR.iName);  
         iColor = aR.iColor; 
         iMgr   = aR.iMgr;        
-        iStats = new RoiStats(aR.iStats);   
+        iStats = new ROIStats(aR.iStats);   
     }
            
     ROIManager getManager() {
@@ -53,11 +53,11 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         return false;
     }   
        
-    public RoiStats getStats() {
+    public ROIStats getStats() {
         return iStats;
     }
     
-    public RoiStats setStats(RoiStats aS) {
+    public ROIStats setStats(ROIStats aS) {
         return iStats = aS;
     }
     
@@ -90,7 +90,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         try {
             getManager().getImage().extract(new ROIExtractor(this));            
         } catch (ArrayIndexOutOfBoundsException ex) {
-            iStats = new RoiStats(); //set to NaN
+            iStats = new ROIStats(); //set to NaN
             logger.error(ex);
         }
         

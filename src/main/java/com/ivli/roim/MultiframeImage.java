@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 public class MultiframeImage extends ImageBase {
     
     class FrameWithStats {
-        RoiStats iStats;
+        ROIStats iStats;
         Raster   iRaster;      
     }    
     
@@ -43,7 +43,7 @@ public class MultiframeImage extends ImageBase {
         return self;
     }
                   
-    private RoiStats getStats() { 
+    private ROIStats getStats() { 
         return iFrames.get(iIndex).iStats;
     }
     
@@ -81,7 +81,7 @@ public class MultiframeImage extends ImageBase {
         loadFrame(0);
     }
            
-    public RoiStats getImageStats() {return iFrames.get(iIndex).iStats;}
+    public ROIStats getImageStats() {return iFrames.get(iIndex).iStats;}
        
     public BufferedImage getBufferedImage() {
         return convert((WritableRaster)getFrame());
@@ -171,8 +171,8 @@ public class MultiframeImage extends ImageBase {
         ROIExtractor r = new ROIExtractor(aRoi);
         
         for (FrameWithStats f:iFrames) {
-            RoiStats rs = r.apply(f.iRaster);
-            ret.add(new Value(rs.iMin, rs.iMax, rs.iIden));
+            ROIStats rs = r.apply(f.iRaster);
+            ret.add(new Measure(rs.iMin, rs.iMax, rs.iIden));
         }
         
         return ret;

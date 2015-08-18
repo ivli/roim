@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author likhachev
  */
 public abstract class ImageBase  {
-    public abstract RoiStats getImageStats();
+    public abstract ROIStats getImageStats();
     public abstract BufferedImage getBufferedImage();
     
    
