@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip, Overlay.IRotate {    
-    ROIManager          iMgr; 
+    ROIManager         iMgr; 
     Color              iColor;
     ROIStats           iStats;
     HashSet<Overlay>   iAnnos;               

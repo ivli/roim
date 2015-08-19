@@ -49,11 +49,14 @@ class ROIManager {
         final Shape r = iComponent.screenToVirtual().createTransformedShape(aS);
         final ROI newRoi = new ROI(r, this, null);       
         
-        getImage().makeCurveFromRoi(newRoi);
+        
         
         iOverlays.add(newRoi);
         iOverlays.add(new Annotation(newRoi));      
         newRoi.update();
+        
+        
+        getImage().makeCurveFromRoi(newRoi);
    
     }
     

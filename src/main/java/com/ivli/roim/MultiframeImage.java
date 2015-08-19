@@ -24,6 +24,8 @@ import org.apache.logging.log4j.Logger;
 
 public class MultiframeImage {//extends ImageBase {
  
+    private static final boolean LOAD_ON_DEMAND = false;
+    
     ArrayList<ImageFrame> iFrames;    
     TimeSliceVector       iTimeSlices;     
     
@@ -65,7 +67,12 @@ public class MultiframeImage {//extends ImageBase {
        
         iFrames.clear();
         iFrames.ensureCapacity(getNumFrames());
-                
+        
+        if (!LOAD_ON_DEMAND) 
+            for (int i = 0; i < getNumFrames(); ++i)
+                loadFrame(i);
+
+        
         loadFrame(0);
     }
                  
@@ -75,8 +82,8 @@ public class MultiframeImage {//extends ImageBase {
     
     public void loadFrame(int anIndex) throws IndexOutOfBoundsException{
         try{
-            if (anIndex > getNumFrames() - 1 || anIndex < 0)
-            throw new IndexOutOfBoundsException();
+            if (!(anIndex < getNumFrames() && anIndex >= 0))
+                throw new IndexOutOfBoundsException();
         
                 // load and cache image if it is not yet in cache
             if ((iCurrent = anIndex) >= iFrames.size() || null == iFrames.get(iCurrent)) { 

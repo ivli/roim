@@ -46,8 +46,10 @@ import com.ivli.roim.controls.VOILUTPanel;
  */
 public class LUTControl extends JComponent implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, WindowChangeListener {
     private static final int NUMBER_OF_SHADES = 255;
-        
-    private static final int INACTIVE_BAR_WIDTH    = 16; //when mouse is out
+    
+    private static final boolean EXTEND_WHEN_FOCUSED = false;
+    
+    private static final int INACTIVE_BAR_WIDTH    = 32 / (EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out
     private static final int ACTIVATED_BAR_WIDTH   = 32; //mouse inside
     private static final int VERTICAL_BAR_EXCESS   = 4;  //reserve some pixels at top & bottom 
     private static final int HORIZONTAL_BAR_EXCESS = 1;  //reserve border at left & right
@@ -307,12 +309,14 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     }
        
     void extend() {
-        setSize(ACTIVATED_BAR_WIDTH, getHeight());
-        setLocation(getLocation().x - (ACTIVATED_BAR_WIDTH - INACTIVE_BAR_WIDTH), getLocation().y);
-        getParent().setComponentZOrder(this, 0);
-               
-        invalidateBuffer();
-        repaint();
+        if (EXTEND_WHEN_FOCUSED) {
+            setSize(ACTIVATED_BAR_WIDTH, getHeight());
+            setLocation(getLocation().x - (ACTIVATED_BAR_WIDTH - INACTIVE_BAR_WIDTH), getLocation().y);
+            getParent().setComponentZOrder(this, 0);
+
+            invalidateBuffer();
+            repaint();
+        }                
     }
     
     void shrink() {
