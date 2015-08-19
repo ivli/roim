@@ -1,8 +1,6 @@
 package com.ivli.roim;
 
 import java.util.HashSet;
-import java.util.ArrayList;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -12,7 +10,7 @@ import java.awt.geom.AffineTransform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {    
+public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip, Overlay.IRotate {    
     ROIManager          iMgr; 
     Color              iColor;
     ROIStats           iStats;
@@ -88,7 +86,9 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     @Override
     void update() {
         try {
-            getManager().getImage().extract(new ROIExtractor(this));            
+            ROIExtractor ex = new ROIExtractor(getShape());
+            getManager().getImage().extract(ex); 
+            iStats = ex.iStats;
         } catch (ArrayIndexOutOfBoundsException ex) {
             iStats = new ROIStats(); //set to NaN
             logger.error(ex);

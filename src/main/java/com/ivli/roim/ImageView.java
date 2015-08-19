@@ -1,8 +1,9 @@
+
 package com.ivli.roim;
 
-import com.ivli.roim.Events.WindowChangeListener;
-import com.ivli.roim.Events.WindowChangeNotifier;
-import com.ivli.roim.Events.WindowChangeEvent;
+//import com.ivli.roim.Events.WindowChangeListener;
+//import com.ivli.roim.Events.WindowChangeNotifier;
+import com.ivli.roim.Events.*;
 import java.io.IOException;
 import java.util.HashSet;
 import java.awt.Graphics;
@@ -43,8 +44,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     private final Point           iOrigin;   
     private       BufferedImage   iBuf; 
     private       ROIManager      iRoim;
-    private final HashSet<WindowChangeListener> iWinListeners;// = new HashSet();    
-    
+    private       HashSet<WindowChangeListener> iWinListeners;// = new HashSet();        
+    private       HashSet<ZoomChangeListener>   iZoomListeners;
         
     ImageView() {         
         iController = new Controller(this);   
@@ -53,7 +54,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
         iOrigin = new Point(0,0);   
         iRoim = new ROIManager(this);
-        iWinListeners = new HashSet();    
+        iWinListeners = new HashSet(); 
+        iZoomListeners = new HashSet();
     }
    
     void open(String aFileName) throws IOException {           
@@ -107,11 +109,19 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     public void removeWindowChangeListener(WindowChangeListener aL) {
         iWinListeners.remove(aL);
     }
-    
+            
     private void notifyWindowChanged(boolean aRC) {
         final WindowChangeEvent wce = new WindowChangeEvent(this, iWM.getWindow(), getMin(), getMax(), aRC);
         for (WindowChangeListener l : iWinListeners)
             l.windowChanged(wce);
+    }
+    
+    public void addZoomChangeListener(ZoomChangeListener aL) {
+        iZoomListeners.add(aL);
+    }
+    
+    public void removeZoomChangeListener(ZoomChangeListener aL) {
+        iZoomListeners.remove(aL);
     }
     
     public AffineTransform screenToVirtual() {
@@ -188,6 +198,9 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         
         invalidateBuffer();
         repaint();
+
+        for (ZoomChangeListener l: iZoomListeners)
+            l.zoomChanged(new ZoomChangeEvent(this, iZoom.getScaleX()));
     }
      
     public void pan(int adX, int adY) {

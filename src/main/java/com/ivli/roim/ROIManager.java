@@ -54,9 +54,7 @@ class ROIManager {
         iOverlays.add(newRoi);
         iOverlays.add(new Annotation(newRoi));      
         newRoi.update();
-        
-        
-        
+   
     }
     
     public void cloneRoi(ROI aR) {

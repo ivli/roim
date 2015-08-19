@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 public class MultiframeImage {//extends ImageBase {
  
     ArrayList<ImageFrame> iFrames;    
-    TimeSliceVector  iTimeSlices;     
+    TimeSliceVector       iTimeSlices;     
     
     private int iCurrent = 0;
     
@@ -48,11 +48,11 @@ public class MultiframeImage {//extends ImageBase {
     }
     
     int getWidth() {
-        return getCurrentFrame().getRaster().getWidth();
+        return getCurrentFrame().getWidth();
     }
     
     int getHeight() {
-        return getCurrentFrame().getRaster().getHeight();
+        return getCurrentFrame().getHeight();
     }  
     
     int getNumFrames() throws IOException {
@@ -68,16 +68,21 @@ public class MultiframeImage {//extends ImageBase {
                 
         loadFrame(0);
     }
-           
-    public ROIStats getImageStats() {return iFrames.get(iCurrent).iStats;}
-       
+                 
     public BufferedImage getBufferedImage() {
         return convert((WritableRaster)getCurrentFrame().iRaster);
     }     
     
     public void loadFrame(int anIndex) throws IndexOutOfBoundsException{
         try{
-            doLoadFrame(anIndex);
+            if (anIndex > getNumFrames() - 1 || anIndex < 0)
+            throw new IndexOutOfBoundsException();
+        
+                // load and cache image if it is not yet in cache
+            if ((iCurrent = anIndex) >= iFrames.size() || null == iFrames.get(iCurrent)) { 
+                ImageFrame r = new ImageFrame(iLoader.readRaster(iCurrent));
+                iFrames.add(iCurrent, r);
+            }    
            
             logger.info("Frame -" + getFrameNumber() +                       // NOI18N
                         ", MIN"   + getCurrentFrame().getStats().getMin() +  // NOI18N
@@ -87,24 +92,7 @@ public class MultiframeImage {//extends ImageBase {
             logger.error(ex); 
         } 
     }
-                   
-    private void doLoadFrame(int anIndex) throws IOException, IndexOutOfBoundsException {
-    
-        if (anIndex > getNumFrames() - 1 || anIndex < 0)
-            throw new IndexOutOfBoundsException();
-        
-         // load and cache image if it is not yet in cache
-        if ((iCurrent = anIndex) >= iFrames.size() || null == iFrames.get(iCurrent)) { 
-            ImageFrame r = new ImageFrame();
-            r.iRaster = iLoader.readRaster(iCurrent);
-            ROIExtractor ex = new ROIExtractor(new ROI(r.iRaster.getBounds(), null, null));
-            ex.apply(r.iRaster);
-            r.iStats = ex.iRoi.getStats();                            
-
-            iFrames.add(iCurrent, r);
-        }    
-    }
-    
+         
     private BufferedImage convert(WritableRaster raster) {
         ColorModel cm ;
        // if (pmi.isMonochrome()) {
@@ -157,11 +145,11 @@ public class MultiframeImage {//extends ImageBase {
     Curve makeCurveFromRoi(ROI aRoi) {
         Curve ret = new Curve(aRoi.getName());  
         
-        ROIExtractor r = new ROIExtractor(aRoi);
+        ROIExtractor r = new ROIExtractor(aRoi.getShape());
         
         for (ImageFrame f:iFrames) {
-            ROIStats rs = r.apply(f.iRaster);
-            ret.add(new Measure(rs.iMin, rs.iMax, rs.iIden));
+            r.apply(f.iRaster);
+            ret.add(new Measure(r.iStats.iMin, r.iStats.iMax, r.iStats.iIden));
         }
         
         return ret;

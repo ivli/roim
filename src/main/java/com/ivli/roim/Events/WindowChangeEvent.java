@@ -1,17 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ivli.roim.Events;
 
 import com.ivli.roim.Window;
-import java.util.EventObject;
+
 /**
  *
  * @author likhachev
  */
-public final class WindowChangeEvent extends EventObject {   
+public final class WindowChangeEvent extends java.util.EventObject {   
     private final boolean iRangeChanged;
     private final double  iMin;
     private final double  iMax;

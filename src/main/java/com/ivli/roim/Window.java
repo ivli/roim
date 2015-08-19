@@ -1,17 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ivli.roim;
 
-import java.io.Serializable;
 
 /**
  *
  * @author likhachev
+ * 
  */
-public class Window implements Serializable, Cloneable {      
+public class Window implements java.io.Serializable, Cloneable {      
 
     private static final long serialVersionUID = 42L;
 
@@ -19,7 +15,6 @@ public class Window implements Serializable, Cloneable {
     
     private double iLevel = .5;
     private double iWidth = WINDOW_WIDTH_MINIMUM;
-
 
     private Window(){}
     public Window(Window aW) {iLevel = aW.iLevel; iWidth = aW.iWidth;}

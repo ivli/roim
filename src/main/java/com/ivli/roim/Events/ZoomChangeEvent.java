@@ -5,17 +5,19 @@
  */
 package com.ivli.roim.Events;
 
-import java.util.EventObject;
-
 /**
  *
  * @author likhachev
  */
-public class ZoomChangeEvent extends EventObject {
+public class ZoomChangeEvent extends java.util.EventObject {
     double iZoom;
     
-    ZoomChangeEvent(Object aO, double aZoom) {
+    public ZoomChangeEvent(Object aO, double aZoom) {
         super(aO);
         iZoom = aZoom;
+    }
+    
+    public double getZoom() {
+        return iZoom;
     }
 }

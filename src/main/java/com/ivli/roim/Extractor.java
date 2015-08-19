@@ -11,5 +11,5 @@ import java.awt.image.Raster;
  * @author likhachev
  */
 public interface Extractor {
-    ROIStats apply(Raster aR) throws ArrayIndexOutOfBoundsException;
+    void apply(Raster aR) throws ArrayIndexOutOfBoundsException;
 }

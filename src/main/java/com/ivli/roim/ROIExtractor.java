@@ -18,36 +18,34 @@ import org.apache.logging.log4j.Logger;
  * @author likhachev
  */
 class ROIExtractor implements Extractor {
-    ROI             iRoi;    
+    Shape     iRoi; 
+    ROIStats  iStats;
     Extractor iExtractor;  
     
-    public ROIExtractor(ROI aRoi) {        
+    public ROIExtractor(Shape aRoi) {        
         iRoi = aRoi;        
         iExtractor = new SimpleExtractor();        
     }
     
-    public ROIStats apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {  
+    public void apply(Raster aR) throws ArrayIndexOutOfBoundsException {
         if (null == iRoi)
-            iRoi = new ROI((Shape)aRaster.getBounds(), null, null);
-        
-        return iRoi.setStats(iExtractor.apply(aRaster));
+            iRoi = aR.getBounds();
+        iExtractor.apply(aR);        
     }
-    
+            
+        
     class SimpleExtractor implements Extractor { 
-    
-        @Override
-        public ROIStats apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
-
-            final Shape shape = (null != iRoi) ? iRoi.getShape() : aRaster.getBounds();
-            final Rectangle bnds = shape.getBounds();
-            ROIStats ret =  new ROIStats();
+           
+        public void apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
+            final Rectangle bnds = iRoi.getBounds();
+           // ROIStats ret =  new ROIStats();
             double min = 65535, max = .0, sum = .0, pix = .0;
 
             double temp[] = new double [aRaster.getNumBands()];
 
             for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
                 for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) //{ 
-                    if (shape.contains(i, j)) {
+                    if (iRoi.contains(i, j)) {
                         ++pix;
                         temp = aRaster.getPixel(i, j, temp);
                         if (temp[0] > max) 
@@ -57,16 +55,12 @@ class ROIExtractor implements Extractor {
                         sum += temp[0];
                     }
 
-            ret.iMin = min;
-            ret.iMax = max;
-            ret.iIden = sum;
-            ret.iPixels = pix;
-            //iRoi.getStats().iBounds = bnds.getWidth() * bnds.getHeight(); 
-            return ret;
+                      
+            iStats = new ROIStats(pix, Double.NaN, min, max, sum);
         }   
     }
 
-    class SubpixelExtractor extends SimpleExtractor {        
+    class SubpixelExtractor implements Extractor {        
         Raster scale(Raster aIn, int aScale) {
             WritableRaster ret = aIn.createCompatibleWritableRaster(aIn.getWidth() * aScale, aIn.getHeight() * aScale);
 
@@ -89,23 +83,23 @@ class ROIExtractor implements Extractor {
             return ret;
         }
 
-        @Override
-        public ROIStats apply(Raster aR) throws ArrayIndexOutOfBoundsException {            
-            ROI r = new ROI(iRoi);            
+        
+        public void apply(Raster aR) throws ArrayIndexOutOfBoundsException {            
+           // ROI r = new ROI(iRoi);            
             Raster img = aR;
-            
+            /* 
             if (null != iRoi.getManager()) {                
-             /*   
+               
                 AffineTransform zoom = iRoi.getManager().getComponent().getZoom();           
                 r.iShape = zoom.createTransformedShape(iRoi.iShape);
                 iRoi = r;
                 img = scale(aR, (int)Math.floor(zoom.getScaleX()));
-             */
+             
             }
-            
+            */
             logger.info(img);
-            ROIStats rs = super.apply(img);
-            return rs;//(iRoi.getStats() = rs);
+            //ROIStats rs = ;
+            //super.apply(img);//(iRoi.getStats() = rs);
         }  
     }
     

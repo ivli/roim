@@ -5,12 +5,10 @@
  */
 package com.ivli.roim.Events;
 
-import java.util.EventObject;
-
 /**
  *
  * @author likhachev
  */
-public interface MyEventListener {
-    void mazltow(EventObject aE);
+public interface ZoomChangeListener extends java.util.EventListener {
+    void zoomChanged(ZoomChangeEvent aE);
 }

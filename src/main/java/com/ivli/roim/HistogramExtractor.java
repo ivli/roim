@@ -15,19 +15,19 @@ import org.jfree.data.xy.XYSeries;
  * @author likhachev
  */
 public class HistogramExtractor implements Extractor {
-    final ROI iRoi;
+    Shape iRoi;
     public final XYSeries iHist = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("HISTOGRAMEXTRACTOR.IHISTOGRAM"));
     
-    public HistogramExtractor(ROI aRoi){iRoi = aRoi;}
+    public HistogramExtractor(Shape aRoi){iRoi = aRoi;}
     
     @Override
-    public ROIStats apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
+    public void apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
         extractOne(aRaster);
-        return iRoi.getStats();
+        //return null;
     }
     
     void extractOne(Raster aRaster) throws ArrayIndexOutOfBoundsException {
-        final Shape shape = (null != iRoi) ? iRoi.getShape() : aRaster.getBounds();
+        final Shape shape = (null != iRoi) ? iRoi : aRaster.getBounds();
         final Rectangle bnds = shape.getBounds();
         double temp[] = new double [aRaster.getNumBands()];
         
@@ -49,7 +49,7 @@ public class HistogramExtractor implements Extractor {
     
     void extractBinned256(Raster aRaster) throws ArrayIndexOutOfBoundsException {
     
-        final Shape shape = (null != iRoi) ? iRoi.getShape() : aRaster.getBounds();
+        final Shape shape = (null != iRoi) ? iRoi : aRaster.getBounds();
         final Rectangle bnds = shape.getBounds();
         double temp [] = new double [aRaster.getNumBands()];
         
@@ -57,7 +57,7 @@ public class HistogramExtractor implements Extractor {
         
         rex.apply(aRaster);
         
-        final double step = (iRoi.getStats().iMax - iRoi.getStats().iMin ) / 256.0;
+        final double step = (rex.iStats.iMax - rex.iStats.iMin ) / 256.0;
                                 
         for (int i=bnds.x; i < (bnds.x + bnds.width); ++i)
             for (int j=bnds.y; j < (bnds.y + bnds.height); ++j) 

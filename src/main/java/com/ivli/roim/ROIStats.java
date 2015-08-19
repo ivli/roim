@@ -1,13 +1,11 @@
 package com.ivli.roim;
 
-import java.io.Serializable;
-
 /**
  *
  * @author likhachev
  */
 
-public class ROIStats extends Measure<Double> implements Serializable {
+public class ROIStats extends Measure<Double> implements java.io.Serializable {
     double iPixels;
     double iArea;
        
@@ -27,6 +25,13 @@ public class ROIStats extends Measure<Double> implements Serializable {
         iIden   = aS.iIden; 
     }
     
+    
+   ROIStats(double aP, double aA, double aMi, double aMa, double aI) {
+       super(aMi, aMa, aI);
+       iPixels = aP;
+       iArea = aA;
+   }
+           
    public double getPixels() {return iPixels;}
    public double getArea() {return iArea;}
 }
