@@ -14,7 +14,7 @@ public class PresentationLut implements LutTransform {
     protected String          iName;
     protected IndexColorModel iLUT;
     
-    PresentationLut(String aName) {
+    public PresentationLut(String aName) {
         setLUT(aName);
     }
     

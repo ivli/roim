@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 
 
-class VOILut implements LutTransform {
+public class VOILut implements LutTransform {
     private boolean iInverted;            
     private boolean iLog;
     private boolean iKeepWindow; 
@@ -25,21 +25,14 @@ class VOILut implements LutTransform {
     private Window          iWin;
     private Window          iMax;
     
-    
-    VOILut(/*ImageFrame aI*/) { 
-        //iPVt = new PValueTransform();
-        ///iBuffer = new LutBuffer(aI.getBufferedImage().getSampleModel().getDataType());
-        ///setImage(aI);
-    }
-        
-    void setImage(ImageFrame aI) {
+    public VOILut(){}        
+    public void setImage(ImageFrame aI) {
         reset(aI);
     }
     
     public Window getWindow() {return iWin;}
     public Window getRange() {return iMax;}
-    
-    
+        
     private void reset(ImageFrame aI) {
         
         iPVt = new PValueTransform();

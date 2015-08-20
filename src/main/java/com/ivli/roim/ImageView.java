@@ -3,6 +3,7 @@ package com.ivli.roim;
 
 //import com.ivli.roim.Events.WindowChangeListener;
 //import com.ivli.roim.Events.WindowChangeNotifier;
+import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.Events.*;
 import java.io.IOException;
 import java.util.HashSet;
@@ -45,7 +46,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     private       ROIManager       iROIMgr;
     private       HashSet<WindowChangeListener> iWinListeners;      
     private       HashSet<ZoomChangeListener>   iZoomListeners;
-        
+    private       HashSet<FrameChangeListener>  iFrameListeners;
+    
     ImageView(IMultiframeImage aImage) {  
         iImage = aImage;
         iController = new Controller(this);   
@@ -56,34 +58,39 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iROIMgr = new ROIManager(this);
         iWinListeners = new HashSet(); 
         iZoomListeners = new HashSet();
+        iFrameListeners = new HashSet();
+        
         iVLut.setImage(iImage.current());
     }
        
-    AffineTransform getZoom() {
+    public AffineTransform getZoom() {
         return iZoom;
     }
     
-    IMultiframeImage getImage() {
+    public IMultiframeImage getImage() {
         return iImage;
     }
     
-    ROIManager getManager() {
+    public ROIManager getManager() {
         return iROIMgr;
     }    
-
-    void setLUTControl(LUTControl aCtrl) {
-        setVOILUT(aCtrl.iWM);
-        setPresentationLUT(aCtrl.iLUT);
-        aCtrl.addComponent(this);
-    }
-
+/*
     void setVOILUT(VOILut aLut) {
         iVLut = aLut;
         iVLut.setImage(iImage.current());        
     }
 
-    void setPresentationLUT(PresentationLut aLut) {iPLut=aLut;}
-        
+    void setPresentationLUT(PresentationLut aLut) {
+        iPLut = aLut;
+    }
+ */   
+    public void setLUTControl(LUTControl aCtrl) {
+        //setVOILUT(aCtrl.iVLut);
+        //setPresentationLUT(aCtrl.iPLut);
+        aCtrl.attach(iPLut, iVLut);
+        aCtrl.addComponent(this);
+    }
+    
     public void fitWidth() {
         final double scale = getWidth()/iImage.getWidth();
         iZoom.setToScale(scale, scale);
@@ -119,6 +126,14 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iZoomListeners.remove(aL);
     }
     
+    public void addFrameChangeListener(FrameChangeListener aL) {
+        iFrameListeners.add(aL);
+    }
+    
+    public void removeFrameChangeListener(FrameChangeListener aL) {
+        iFrameListeners.remove(aL);
+    }
+    
     public AffineTransform screenToVirtual() {
         AffineTransform ret = AffineTransform.getTranslateInstance(iOrigin.x, iOrigin.y); 
         ret.concatenate(iZoom);
@@ -138,9 +153,9 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
    
     private void invalidateBuffer() {iBuf = null;}
     
-    Window getWindow() {return iVLut.getWindow();}
+    public Window getWindow() {return iVLut.getWindow();}
     
-    void setWindow (Window aW) { 
+    public void setWindow (Window aW) { 
         if (!iVLut.getWindow().equals(aW)) {
             if (aW.getLevel() > getMin() && aW.getLevel() < getMax()) {
                 iVLut.setWindow(aW);               
@@ -151,11 +166,11 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         }
     }
                 
-    boolean isInverted() {
+    public boolean isInverted() {
         return iVLut.isInverted();
     }
 
-    void setInverted(boolean aI) {
+    public void setInverted(boolean aI) {
         if (iVLut.setInverted(aI)) {              
             //updateBufferedImage();
             invalidateBuffer();
@@ -163,19 +178,19 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         }
     } 
     
-    boolean isLinear() {return iVLut.isLinear();}
+    public boolean isLinear() {return iVLut.isLinear();}
     
-    void setLinear(boolean aI) {
+    public void setLinear(boolean aI) {
         iVLut.setLinear(aI);
         //updateBufferedImage();
         invalidateBuffer();
         notifyWindowChanged(false);  
     }
 
-    double getMin() {return iImage.current().getStats().getMin();}// getMinimum();}
-    double getMax() {return iImage.current().getStats().getMax();}//getMaximum();}    
+    public double getMin() {return iImage.current().getStats().getMin();}// getMinimum();}
+    public double getMax() {return iImage.current().getStats().getMax();}//getMaximum();}    
     
-    int  getNumFrames() throws IOException {
+    public int getNumFrames() throws IOException {
         return iImage.getNumFrames();
     }    
            
@@ -186,6 +201,9 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         notifyWindowChanged(true);      
         iROIMgr.update();                
         invalidateBuffer();
+        iFrameListeners.stream().forEach((f) -> {
+            f.frameChanged(new FrameChangeEvent(this, aN));
+        });
     }
     
     public void zoom(double aFactor, int aX, int aY) {
@@ -212,7 +230,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         invalidateBuffer();
     }    
     
-    void setLUT(String aLUT) {
+    public void setLUT(String aLUT) {
         iPLut.setLUT(aLUT);        
         invalidateBuffer();      
     }

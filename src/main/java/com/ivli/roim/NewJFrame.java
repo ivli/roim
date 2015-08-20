@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import com.ivli.roim.controls.*;
 import com.ivli.roim.Events.*;
 
-public class NewJFrame extends javax.swing.JFrame implements ZoomChangeListener, WindowChangeListener {
+public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener{
 
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
@@ -35,6 +35,7 @@ public class NewJFrame extends javax.swing.JFrame implements ZoomChangeListener,
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -94,17 +95,21 @@ public class NewJFrame extends javax.swing.JFrame implements ZoomChangeListener,
 
         jLabel3.setText(bundle.getString("NewJFrame.jLabel3.text")); // NOI18N
 
+        jLabel4.setText(bundle.getString("NewJFrame.jLabel4.text")); // NOI18N
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(26, 26, 26)
+                .addComponent(jLabel4)
+                .addGap(60, 60, 60)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(82, 82, 82)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(44, 44, 44)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -114,7 +119,8 @@ public class NewJFrame extends javax.swing.JFrame implements ZoomChangeListener,
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4))
                 .addContainerGap())
         );
 
@@ -251,6 +257,7 @@ public class NewJFrame extends javax.swing.JFrame implements ZoomChangeListener,
         jPanel1.add(iPanel);
         
         jPanel1.validate(); 
+        iPanel.iView.addFrameChangeListener(this);
         iPanel.iView.addZoomChangeListener(this);
         iPanel.iView.addWindowChangeListener(this);
     }
@@ -355,15 +362,18 @@ public class NewJFrame extends javax.swing.JFrame implements ZoomChangeListener,
             }
         });
     }
-    
-    
+        
     public void zoomChanged(ZoomChangeEvent aE) {
         jLabel1.setText(String.format("%3.0f", aE.getZoom() * 100.0));
     }
     
     public void windowChanged(WindowChangeEvent aE) {
-        jLabel2.setText(String.format("%3.0f", aE.getWindow().getLevel()));
-        jLabel3.setText(String.format("%3.0f", aE.getWindow().getWidth()));
+        jLabel2.setText(String.format("%3.2f", aE.getWindow().getLevel()));
+        jLabel3.setText(String.format("%3.2f", aE.getWindow().getWidth()));
+    }
+    
+    public void frameChanged(FrameChangeEvent aE) {
+       jLabel4.setText(String.format("%d", aE.getFrame()));
     }
     
     JMedPane iPanel;
@@ -373,6 +383,7 @@ public class NewJFrame extends javax.swing.JFrame implements ZoomChangeListener,
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;

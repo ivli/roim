@@ -9,8 +9,8 @@ package com.ivli.roim;
  *
  * @author likhachev
  */
-class Ranger {
-    static final <T extends Comparable <T>> T range (T val, T min, T max) {
+public class Ranger {
+    public static final <T extends Comparable <T>> T range (T val, T min, T max) {
         if (val.compareTo(min) < 0)  return min;
         else if (val.compareTo(max) > 0) return max;
         return val;

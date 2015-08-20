@@ -13,7 +13,7 @@ import java.awt.Graphics2D;
  *
  * @author likhachev
  */
-abstract class ActionItem {
+public abstract class ActionItem {
     protected int iX;
     protected int iY;
 

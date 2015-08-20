@@ -5,6 +5,7 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.controls.LUTControl;
 import java.util.Iterator;
 import java.io.IOException;
 import java.awt.Component;
