@@ -22,7 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class MultiframeImage implements IMultiframeImage {
+public class MultiframeImage extends IMultiframeImage {
     private final DICOMImage iSrc;
     private int iCurrent;
     
@@ -33,15 +33,17 @@ public class MultiframeImage implements IMultiframeImage {
     
     public boolean hasAt(int aFrameNumber) {
         try {
-            iSrc.loadFrame(iCurrent = aFrameNumber);
+            iSrc.loadFrame(aFrameNumber);
         } catch (IndexOutOfBoundsException e) {
             return false;
         }
         return true;
     }
     
-    public ImageFrame getAt(int aFrameNumber) throws IndexOutOfBoundsException {        
-        return iSrc.loadFrame(iCurrent = aFrameNumber);
+    public ImageFrame getAt(int aFrameNumber) throws IndexOutOfBoundsException {         
+        ImageFrame ret = iSrc.loadFrame(aFrameNumber); //prevent iCurrent from change in the case of exception
+        iCurrent = aFrameNumber;
+        return ret;
     } 
     
     public ImageFrame current() { 

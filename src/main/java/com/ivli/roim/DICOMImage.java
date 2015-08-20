@@ -15,14 +15,11 @@ import org.apache.logging.log4j.Logger;
  * @author likhachev
  */
 public class DICOMImage extends IImage {
-   // public class DICOMMultiframeImage {
     private static final boolean LOAD_ON_DEMAND = false;
     
     private ArrayList<ImageFrame> iFrames;    
-    TimeSliceVector           iTimeSlices;     
-    
-   // private int iCurrent = 0;
-    
+    TimeSliceVector            iTimeSlices;     
+  
     private DICOMImage() {
         iFrames = new ArrayList();
     }
@@ -31,8 +28,7 @@ public class DICOMImage extends IImage {
         DICOMImage self = new DICOMImage();
         self.open(aFile);
         return self;
-    }
-     
+    }    
       
     public int getWidth() {
         return iFrames.get(0).getWidth();
