@@ -23,10 +23,10 @@ import com.ivli.roim.LUTControl;
 public class VOILUTPanel extends javax.swing.JPanel {
     private final LUTControl iLUT;
     private boolean iShowHistogram=true;
-    com.ivli.roim.MultiframeImage iImage;
+    com.ivli.roim.ImageFrame iImage;
     ChartPanel iChart;
     
-    public VOILUTPanel(LUTControl aP, com.ivli.roim.MultiframeImage aS) {
+    public VOILUTPanel(LUTControl aP, com.ivli.roim.ImageFrame aS) {
         initComponents();
         jCheckBox3.setSelected(iShowHistogram);
         XYSeries s = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.VOI_LUT"));

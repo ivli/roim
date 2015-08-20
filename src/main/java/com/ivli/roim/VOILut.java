@@ -26,13 +26,13 @@ class VOILut implements LutTransform {
     private Window          iMax;
     
     
-    public VOILut(/*MEDImage aI*/) { 
+    VOILut(/*ImageFrame aI*/) { 
         //iPVt = new PValueTransform();
         ///iBuffer = new LutBuffer(aI.getBufferedImage().getSampleModel().getDataType());
-        ///reset(aI);
+        ///setImage(aI);
     }
         
-    public void setImage(ImageFrame aI) {
+    void setImage(ImageFrame aI) {
         reset(aI);
     }
     

@@ -69,8 +69,8 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
  
     public LUTControl(ImageView aComponent) {
         iComponent = aComponent;
-        iLUT  = aComponent.iLUT;
-        iWM   = aComponent.iWM;      
+        iLUT  = aComponent.iPLut;
+        iWM   = aComponent.iVLut;      
         addComponentListener(new clListener());
     } 
            
@@ -423,7 +423,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 repaint();
                 break;
             case KCommandShowDialog:                 
-                VOILUTPanel panel = new VOILUTPanel(this, iComponent.getImage());
+                VOILUTPanel panel = new VOILUTPanel(this, iComponent.getImage().current());
                 JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
                 dialog.setContentPane(panel);
                 dialog.validate();

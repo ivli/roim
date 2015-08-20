@@ -27,7 +27,7 @@ class ROIManager {
         iOverlays = new HashSet();          
     }
         
-    public MultiframeImage getImage() {
+    public IMultiframeImage getImage() {
         return iComponent.getImage();
     }
         
@@ -56,7 +56,7 @@ class ROIManager {
         newRoi.update();
         
         
-        getImage().makeCurveFromRoi(newRoi);
+        ///getImage().makeCurveFromRoi(newRoi);
    
     }
     

@@ -15,52 +15,54 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class JMedPane extends JLayeredPane{
-    ImageView  iImg;
+    ImageView  iView;
     LUTControl iLut;
-    
+    DICOMImage iImage;
            
     void open(String aName) throws IOException {    
-        iImg = new ImageView();
+        
         //iRoim = new ROIManagerImpl();
         ///iImg.setROIManager(iRoim);
-        iImg.open(aName); 
+        iImage = DICOMImage.New(aName);
+        iView = new ImageView(iImage.image());
+        ///iView.open(iImage.image()); 
 
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS)); 
-        iImg.setPreferredSize(new java.awt.Dimension(600, 600));  
-        iImg.setMinimumSize(new java.awt.Dimension(575, 600));
-        iImg.setAlignmentX(Component.LEFT_ALIGNMENT);
+        iView.setPreferredSize(new java.awt.Dimension(600, 600));  
+        iView.setMinimumSize(new java.awt.Dimension(575, 600));
+        iView.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         //iLut  = new LUTControl(iImg);        
         iLut  = new LUTControl();        
         iLut.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        iImg.setLUTControl(iLut);
+        iView.setLUTControl(iLut);
         
         
-        add(iImg, JLayeredPane.DEFAULT_LAYER);
+        add(iView, JLayeredPane.DEFAULT_LAYER);
         add(iLut, JLayeredPane.DEFAULT_LAYER);
 
         iLut.registerListeners(this);
-        iImg.addWindowChangeListener(iLut);     
+        iView.addWindowChangeListener(iLut);     
     }
     
     void setLUT(String aName) {
-        iImg.setLUT(aName);        
+        iView.setLUT(aName);        
     }
     
     void resetView() {
-        iImg.resetView();
+        iView.resetView();
     }
     
     void loadFrame(int aN) {
-        iImg.loadFrame(aN);
+        iView.loadFrame(aN);
     }
     
     void fitWidth() {        
-        iImg.fitWidth();
+        iView.fitWidth();
     }
        
     Iterator<Overlay> getOverlaysList() {        
-        return iImg.getManager().getOverlaysList();
+        return iView.getManager().getOverlaysList();
     }
     
     

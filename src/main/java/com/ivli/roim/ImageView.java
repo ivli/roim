@@ -36,44 +36,49 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     private static final int     ZOOM_TO_FIT = 1;
     
     
-    protected     VOILut          iWM;                   
-    protected     PresentationLut iLUT;  
-    private       MultiframeImage iImage;
-    private final Controller      iController;    
-    private final AffineTransform iZoom;
-    private final Point           iOrigin;   
-    private       BufferedImage   iBuf; 
-    private       ROIManager      iRoim;
-    private       HashSet<WindowChangeListener> iWinListeners;// = new HashSet();        
+    
+    private       IMultiframeImage iImage;
+    protected     VOILut           iVLut;                   
+    protected     PresentationLut  iPLut;  
+    private final Controller       iController;    
+    private final AffineTransform  iZoom;
+    private final Point            iOrigin;   
+    private       BufferedImage    iBuf; 
+    private       ROIManager       iROIMgr;
+    private       HashSet<WindowChangeListener> iWinListeners;      
     private       HashSet<ZoomChangeListener>   iZoomListeners;
         
-    ImageView() {         
+    ImageView(IMultiframeImage aImage) {  
+        iImage = aImage;
         iController = new Controller(this);   
-        iWM  = new VOILut();                    
-        iLUT = new PresentationLut(null);  
+        iVLut  = new VOILut();                    
+        iPLut = new PresentationLut(null);  
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
-        iOrigin = new Point(0,0);   
-        iRoim = new ROIManager(this);
+        iOrigin = new Point(0, 0);   
+        iROIMgr = new ROIManager(this);
         iWinListeners = new HashSet(); 
         iZoomListeners = new HashSet();
+        iVLut.setImage(iImage.current());
     }
-   
-    void open(String aFileName) throws IOException {           
-        iImage = MultiframeImage.New(aFileName);        
-        iWM.setImage(iImage.getCurrentFrame());
+    
+   /*
+    void open(MultiframeImage aImage) throws IOException {           
+        iImage = aImage;//MultiframeImage.New(aFileName);        
+        iWM.setImage(iImage.current());
         invalidateBuffer();
     }
+    */
     
     AffineTransform getZoom() {
         return iZoom;
     }
     
-    MultiframeImage getImage() {
+    IMultiframeImage getImage() {
         return iImage;
     }
     
     ROIManager getManager() {
-        return iRoim;
+        return iROIMgr;
     }    
 
     void setLUTControl(LUTControl aCtrl) {
@@ -83,11 +88,11 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
 
     void setVOILUT(VOILut aLut) {
-        iWM = aLut;
-        iWM.setImage(iImage.getCurrentFrame());        
+        iVLut = aLut;
+        iVLut.setImage(iImage.current());        
     }
 
-    void setPresentationLUT(PresentationLut aLut) {iLUT=aLut;}
+    void setPresentationLUT(PresentationLut aLut) {iPLut=aLut;}
         
     public void fitWidth() {
         final double scale = getWidth()/iImage.getWidth();
@@ -103,7 +108,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     
     public void addWindowChangeListener(WindowChangeListener aL) {
         iWinListeners.add(aL);
-        aL.windowChanged(new WindowChangeEvent(this, iWM.getWindow(), getMin(), getMax(), true));
+        aL.windowChanged(new WindowChangeEvent(this, iVLut.getWindow(), getMin(), getMax(), true));
     }
 
     public void removeWindowChangeListener(WindowChangeListener aL) {
@@ -111,7 +116,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
             
     private void notifyWindowChanged(boolean aRC) {
-        final WindowChangeEvent wce = new WindowChangeEvent(this, iWM.getWindow(), getMin(), getMax(), aRC);
+        final WindowChangeEvent wce = new WindowChangeEvent(this, iVLut.getWindow(), getMin(), getMax(), aRC);
         for (WindowChangeListener l : iWinListeners)
             l.windowChanged(wce);
     }
@@ -143,12 +148,12 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
    
     private void invalidateBuffer() {iBuf = null;}
     
-    Window getWindow() {return iWM.getWindow();}
+    Window getWindow() {return iVLut.getWindow();}
     
     void setWindow (Window aW) { 
-        if (!iWM.getWindow().equals(aW)) {
+        if (!iVLut.getWindow().equals(aW)) {
             if (aW.getLevel() > getMin() && aW.getLevel() < getMax()) {
-                iWM.setWindow(aW);               
+                iVLut.setWindow(aW);               
                 invalidateBuffer();
                 notifyWindowChanged(false);
                 repaint();
@@ -157,39 +162,39 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
                 
     boolean isInverted() {
-        return iWM.isInverted();
+        return iVLut.isInverted();
     }
 
     void setInverted(boolean aI) {
-        if (iWM.setInverted(aI)) {              
+        if (iVLut.setInverted(aI)) {              
             //updateBufferedImage();
             invalidateBuffer();
             notifyWindowChanged(false);
         }
     } 
     
-    boolean isLinear() {return iWM.isLinear();}
+    boolean isLinear() {return iVLut.isLinear();}
     
     void setLinear(boolean aI) {
-        iWM.setLinear(aI);
+        iVLut.setLinear(aI);
         //updateBufferedImage();
         invalidateBuffer();
         notifyWindowChanged(false);  
     }
 
-    double getMin() {return iImage.getCurrentFrame().getStats().getMin();}// getMinimum();}
-    double getMax() {return iImage.getCurrentFrame().getStats().getMax();}//getMaximum();}    
+    double getMin() {return iImage.current().getStats().getMin();}// getMinimum();}
+    double getMax() {return iImage.current().getStats().getMax();}//getMaximum();}    
     
     int  getNumFrames() throws IOException {
         return iImage.getNumFrames();
     }    
            
     void loadFrame(int aN) throws IndexOutOfBoundsException {                
-        iImage.loadFrame(aN);   
+        iImage.getAt(aN);   
         ///iWM.reset(iImage);
-        iWM.setImage(iImage.getCurrentFrame());
+        iVLut.setImage(iImage.current());
         notifyWindowChanged(true);      
-        iRoim.update();                
+        iROIMgr.update();                
         invalidateBuffer();
     }
     
@@ -210,7 +215,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
              
     void resetView() {
-        iRoim.clear();
+        iROIMgr.clear();
         iOrigin.x = iOrigin.y = 0;
         iZoom.setToScale(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
         //updateBufferedImage();
@@ -218,7 +223,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }    
     
     void setLUT(String aLUT) {
-        iLUT.setLUT(aLUT);        
+        iPLut.setLUT(aLUT);        
         invalidateBuffer();      
     }
     
@@ -244,8 +249,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
         AffineTransformOp z = new AffineTransformOp(iZoom, hts);
-        BufferedImage src = iLUT.transform(iWM.transform(iImage.getBufferedImage(), null), null);
-        iBuf = z.filter(iLUT.transform(src, null), null);                  
+        BufferedImage src = iPLut.transform(iVLut.transform(iImage.current().getBufferedImage(), null), null);
+        iBuf = z.filter(iPLut.transform(src, null), null);                  
     }
     
     public void paintComponent(Graphics g) {           
@@ -261,7 +266,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
             
             //for (Overlay o : iOverlays) {                
             //    o.draw((Graphics2D)g, trans);
-            iRoim.draw((Graphics2D)g, trans);
+            iROIMgr.draw((Graphics2D)g, trans);
            // }
         
             g.setColor(clr);
