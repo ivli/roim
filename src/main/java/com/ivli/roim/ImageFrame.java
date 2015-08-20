@@ -18,7 +18,7 @@ import java.awt.image.WritableRaster;
  *
  * @author likhachev
  */
-public class ImageFrame implements java.io.Serializable {
+public class ImageFrame implements java.io.Serializable/*, IImage */{
     Raster   iRaster;  
     ROIStats iStats;   
     

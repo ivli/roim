@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ivli.roim;
 
 import com.ivli.roim.controls.LUTControl;
@@ -20,24 +16,18 @@ public class JMedPane extends JLayeredPane{
     LUTControl iLut;
     DICOMImage iImage;
            
-    void open(String aName) throws IOException {    
-        
-        //iRoim = new ROIManagerImpl();
-        ///iImg.setROIManager(iRoim);
+    void open(String aName) throws IOException {            
         iImage = DICOMImage.New(aName);
         iView = new ImageView(iImage.image());
-        ///iView.open(iImage.image()); 
-
+        
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS)); 
         iView.setPreferredSize(new java.awt.Dimension(600, 600));  
         iView.setMinimumSize(new java.awt.Dimension(575, 600));
         iView.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        //iLut  = new LUTControl(iImg);        
+          
         iLut  = new LUTControl();        
         iLut.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        iView.setLUTControl(iLut);
-        
+        iView.setLUTControl(iLut);        
         
         add(iView, JLayeredPane.DEFAULT_LAYER);
         add(iLut, JLayeredPane.DEFAULT_LAYER);

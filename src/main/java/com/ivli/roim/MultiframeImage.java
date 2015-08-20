@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class MultiframeImage extends IMultiframeImage {
+public class MultiframeImage implements IMultiframeImage {
     private final DICOMImage iSrc;
     private int iCurrent;
     
