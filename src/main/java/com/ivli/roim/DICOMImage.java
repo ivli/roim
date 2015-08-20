@@ -14,11 +14,11 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class DICOMImage extends IImage {
+public class DICOMImage extends IImageProvider {
     private static final boolean LOAD_ON_DEMAND = false;
     
     private ArrayList<ImageFrame> iFrames;    
-    TimeSliceVector            iTimeSlices;     
+    TimeSliceVector iTimeSlices;     
   
     private DICOMImage() {
         iFrames = new ArrayList();

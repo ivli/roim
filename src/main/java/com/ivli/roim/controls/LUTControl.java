@@ -429,7 +429,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 repaint();
                 break;
             case KCommandShowDialog:                 
-                VOILUTPanel panel = new VOILUTPanel(this, iComponent.getImage().current());
+                VOILUTPanel panel = new VOILUTPanel(this, iComponent.getImage().image());
                 JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
                 dialog.setContentPane(panel);
                 dialog.validate();

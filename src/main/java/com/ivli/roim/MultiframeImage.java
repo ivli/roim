@@ -6,18 +6,6 @@
 package com.ivli.roim;
 
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
-
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,7 +34,7 @@ public class MultiframeImage extends IMultiframeImage {
         return ret;
     } 
     
-    public ImageFrame current() { 
+    public ImageFrame image() { 
         return iSrc.loadFrame(iCurrent);
     }
     
@@ -76,7 +64,7 @@ public class MultiframeImage extends IMultiframeImage {
     }
     
     public void extract(Extractor aEx) {
-        aEx.apply(current().getRaster());
+        aEx.apply(image().getRaster());
     }
     
     private static final Logger logger = LogManager.getLogger(MultiframeImage.class);    

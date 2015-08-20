@@ -60,7 +60,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iZoomListeners = new HashSet();
         iFrameListeners = new HashSet();
         
-        iVLut.setImage(iImage.current());
+        iVLut.setImage(iImage.image());
     }
        
     public AffineTransform getZoom() {
@@ -77,7 +77,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
 /*
     void setVOILUT(VOILut aLut) {
         iVLut = aLut;
-        iVLut.setImage(iImage.current());        
+        iVLut.setImage(iImage.image());        
     }
 
     void setPresentationLUT(PresentationLut aLut) {
@@ -187,8 +187,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         notifyWindowChanged(false);  
     }
 
-    public double getMin() {return iImage.current().getStats().getMin();}// getMinimum();}
-    public double getMax() {return iImage.current().getStats().getMax();}//getMaximum();}    
+    public double getMin() {return iImage.image().getStats().getMin();}// getMinimum();}
+    public double getMax() {return iImage.image().getStats().getMax();}//getMaximum();}    
     
     public int getNumFrames() throws IOException {
         return iImage.getNumFrames();
@@ -197,7 +197,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     void loadFrame(int aN) throws IndexOutOfBoundsException {                
         iImage.getAt(aN);   
         ///iWM.reset(iImage);
-        iVLut.setImage(iImage.current());
+        iVLut.setImage(iImage.image());
         notifyWindowChanged(true);      
         iROIMgr.update();                
         invalidateBuffer();
@@ -257,7 +257,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
         AffineTransformOp z = new AffineTransformOp(iZoom, hts);
-        BufferedImage src = iPLut.transform(iVLut.transform(iImage.current().getBufferedImage(), null), null);
+        BufferedImage src = iPLut.transform(iVLut.transform(iImage.image().getBufferedImage(), null), null);
         iBuf = z.filter(iPLut.transform(src, null), null);                  
     }
     
