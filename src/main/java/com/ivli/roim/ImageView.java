@@ -35,8 +35,6 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     private static final int     SELECTION_TOLERANCE_Y = 1;
     private static final int     ZOOM_TO_FIT = 1;
     
-    
-    
     private       IMultiframeImage iImage;
     protected     VOILut           iVLut;                   
     protected     PresentationLut  iPLut;  
@@ -60,15 +58,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iZoomListeners = new HashSet();
         iVLut.setImage(iImage.current());
     }
-    
-   /*
-    void open(MultiframeImage aImage) throws IOException {           
-        iImage = aImage;//MultiframeImage.New(aFileName);        
-        iWM.setImage(iImage.current());
-        invalidateBuffer();
-    }
-    */
-    
+       
     AffineTransform getZoom() {
         return iZoom;
     }
