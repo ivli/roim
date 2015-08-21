@@ -48,16 +48,12 @@ class ROIManager {
     public void createRoiFromShape(Shape aS) { 
         final Shape r = iComponent.screenToVirtual().createTransformedShape(aS);
         final ROI newRoi = new ROI(r, this, null);       
-        
-        
-        
+  
         iOverlays.add(newRoi);
         iOverlays.add(new Annotation(newRoi));      
         newRoi.update();
         
         
-        ///getImage().makeCurveFromRoi(newRoi);
-   
     }
     
     public void cloneRoi(ROI aR) {

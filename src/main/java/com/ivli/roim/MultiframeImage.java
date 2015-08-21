@@ -6,6 +6,7 @@
 package com.ivli.roim;
 
 
+import java.util.Iterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +19,7 @@ public class MultiframeImage implements IMultiframeImage {
         iSrc = aSrc;
         iCurrent = 0;
     }
-    
+   
     public boolean hasAt(int aFrameNumber) {
         try {
             iSrc.loadFrame(aFrameNumber);
