@@ -113,9 +113,26 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
             
     private void notifyWindowChanged(boolean aRC) {
-        final WindowChangeEvent wce = new WindowChangeEvent(this, iVLut.getWindow(), getMin(), getMax(), aRC);
-        for (WindowChangeListener l : iWinListeners)
-            l.windowChanged(wce);
+        final WindowChangeEvent evt = new WindowChangeEvent(this, iVLut.getWindow(), getMin(), getMax(), aRC);
+        iWinListeners.stream().forEach((l) -> {
+            l.windowChanged(evt);
+        });
+    }
+   public void addFrameChangeListener(FrameChangeListener aL) {
+        iFrameListeners.add(aL);
+        aL.frameChanged(new FrameChangeEvent(this, iImage.getCurrentNo(), iImage.getNumFrames()));
+    }
+    
+    public void removeFrameChangeListener(FrameChangeListener aL) {
+        iFrameListeners.remove(aL);
+    } 
+    
+    private void notifyFrameChanged(int aN) {
+        final FrameChangeEvent evt = new FrameChangeEvent(this, aN, iImage.getNumFrames());
+        
+        iFrameListeners.stream().forEach((f) -> {
+                f.frameChanged(evt);
+            });
     }
     
     public void addZoomChangeListener(ZoomChangeListener aL) {
@@ -126,13 +143,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iZoomListeners.remove(aL);
     }
     
-    public void addFrameChangeListener(FrameChangeListener aL) {
-        iFrameListeners.add(aL);
-    }
     
-    public void removeFrameChangeListener(FrameChangeListener aL) {
-        iFrameListeners.remove(aL);
-    }
     
     public AffineTransform screenToVirtual() {
         AffineTransform ret = AffineTransform.getTranslateInstance(iOrigin.x, iOrigin.y); 
@@ -187,8 +198,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         notifyWindowChanged(false);  
     }
 
-    public double getMin() {return iImage.image().getStats().getMin();}// getMinimum();}
-    public double getMax() {return iImage.image().getStats().getMax();}//getMaximum();}    
+    public double getMin() {return iImage.image().getStats().getMin();} 
+    public double getMax() {return iImage.image().getStats().getMax();} 
     
     public int getNumFrames() throws IOException {
         return iImage.getNumFrames();
@@ -201,9 +212,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         notifyWindowChanged(true);      
         iROIMgr.update();                
         invalidateBuffer();
-        iFrameListeners.stream().forEach((f) -> {
-            f.frameChanged(new FrameChangeEvent(this, aN));
-        });
+        notifyFrameChanged(aN);
+        
     }
     
     public void zoom(double aFactor, int aX, int aY) {

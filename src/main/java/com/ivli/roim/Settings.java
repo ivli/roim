@@ -13,7 +13,7 @@ public class Settings {
     public static final double ZOOM_SENSITIVITY_FACTOR  = 10.;
     public static final EDISPLAY_UNITS DISPLAY_UNITS    = EDISPLAY_UNITS.DISPLAY_UNITS_MM;
     public static final String DEFAULT_PRESENTATION_LUT = LutLoader.BUILTIN_LUTS[1]; //GRAYS
-    public static final Object INTERPOLATION_METHOD     = RenderingHints.VALUE_INTERPOLATION_BILINEAR;//VALUE_INTERPOLATION_NEAREST_NEIGHBOR;//
+    public static final Object INTERPOLATION_METHOD     = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;//VALUE_INTERPOLATION_BILINEAR;//
     public static final String LUT_DIRECTORY            = "D:\\temp\\Lookup_Tables\\"; //NOI18N
     public static final String LUT_FILE_SUFFIX          = "*.lut"; //NOI18N
     

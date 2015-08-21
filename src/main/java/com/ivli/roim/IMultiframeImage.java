@@ -8,8 +8,8 @@ package com.ivli.roim;
  */
 public interface IMultiframeImage extends IImage {   
     boolean hasAt(int aFrameNumber);
-    ImageFrame getAt(int aFrameNumber);    
+    ImageFrame getAt(int aFrameNumber);  
+    int getCurrentNo();
     int getNumFrames();    
-    Curve makeCurveFromRoi(ROI aRoi);
-    
+    Curve makeCurveFromRoi(ROI aRoi);    
 }

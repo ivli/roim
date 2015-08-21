@@ -27,7 +27,7 @@ public class TimeSliceVector implements java.io.Serializable {
     ArrayList<PhaseInformation> iPhases;       
     ArrayList<Long>             iSlices;
         
-    TimeSliceVector(Attributes aAttr) {        
+    public TimeSliceVector(Attributes aAttr) {        
         iPhases = new ArrayList();
         iSlices = new ArrayList();
         
@@ -59,18 +59,18 @@ public class TimeSliceVector implements java.io.Serializable {
         return aFrame >=0 && aFrame < iSlices.size();
     }
          
-    int noOfFrames() {
+    public int noOfFrames() {
         int ret = 0;
         for (PhaseInformation p:iPhases) 
             ret += p.iNumberOfFrames;
         return ret;   
     }
     
-    long phaseDuration(int aPhase) {
+    public long phaseDuration(int aPhase) {
         return iPhases.get(aPhase).iFrameDuration * iPhases.get(aPhase).iNumberOfFrames;
     }
     
-    int phaseFrame(int aFrameNumber) {
+    public int phaseFrame(int aFrameNumber) {
         int ctr = 0, phase = 1;
         
         for (PhaseInformation p:iPhases) {
@@ -82,7 +82,7 @@ public class TimeSliceVector implements java.io.Serializable {
         return 0;
     }
     
-    long phaseStarts(int aPhaseNumber) {
+    public long phaseStarts(int aPhaseNumber) {
         long ret = 0L;
         
         for (int i = 0; i < iPhases.size() && i <= aPhaseNumber; ++i)             
@@ -91,11 +91,11 @@ public class TimeSliceVector implements java.io.Serializable {
         return ret;
     }
             
-    long frameLapse(int aStart, int aEnd) {    
+    public long frameLapse(int aStart, int aEnd) {    
         return frameStarts(aEnd) - frameStarts(aStart);                 
     } 
     
-    long frameStarts(int aFrameNumber) {
+    public long frameStarts(int aFrameNumber) {
         if (0 == aFrameNumber)
             return 0L;
         else {
@@ -114,14 +114,14 @@ public class TimeSliceVector implements java.io.Serializable {
         }
     }
     
-    int frameNumber(long anUSecFromStart) {
+    public int frameNumber(long anUSecFromStart) {
         if (0 == anUSecFromStart)
             return 0;
         else
             return 0;
     }
     
-    
+    ///public TimeSliceVector 
     
     private static final Logger logger = LogManager.getLogger(TimeSliceVector.class);
 }

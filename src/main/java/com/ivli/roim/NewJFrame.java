@@ -106,8 +106,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 .addComponent(jLabel4)
                 .addGap(60, 60, 60)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(82, 82, 82)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(48, 48, 48)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(44, 44, 44)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -295,13 +295,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             logger.info("LUT changed"); // NOI18N               
         }
     }//GEN-LAST:event_jMenuItem5ActionPerformed
-
-    
-            
+                
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-                        
-        VOILUTPanel panel = new VOILUTPanel(iPanel.iLut, iPanel.iView.getImage().image());
-       
+        VOILUTPanel panel = new VOILUTPanel(iPanel.iLut, iPanel.iView.getImage().image());       
         JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
         
         dialog.setContentPane(panel);
@@ -364,16 +360,16 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }
         
     public void zoomChanged(ZoomChangeEvent aE) {
-        jLabel1.setText(String.format("%3.0f", aE.getZoom() * 100.0));
+        jLabel1.setText(String.format("%3.0f", aE.getZoom() * 100.0)); // NOI18N
     }
     
     public void windowChanged(WindowChangeEvent aE) {
-        jLabel2.setText(String.format("%3.2f", aE.getWindow().getLevel()));
-        jLabel3.setText(String.format("%3.2f", aE.getWindow().getWidth()));
+        jLabel2.setText(String.format("%3.0f/%3.0f", aE.getWindow().getLevel(), aE.getWindow().getWidth())); // NOI18N
+        
     }
     
     public void frameChanged(FrameChangeEvent aE) {
-       jLabel4.setText(String.format("%d", aE.getFrame()));
+       jLabel4.setText(String.format("%d:%d", aE.getFrame() + 1, aE.getTotal())); // NOI18N
     }
     
     JMedPane iPanel;

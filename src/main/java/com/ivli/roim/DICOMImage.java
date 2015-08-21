@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ivli.roim;
 
 import java.io.IOException;
@@ -19,7 +15,8 @@ public class DICOMImage extends IImageProvider {
     
     private ArrayList<ImageFrame> iFrames;    
     TimeSliceVector iTimeSlices;     
-  
+    
+    
     private DICOMImage() {
         iFrames = new ArrayList();
     }
@@ -62,20 +59,20 @@ public class DICOMImage extends IImageProvider {
     }
       
     ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException {
-        try{
-            if (anIndex > getNumFrames() || anIndex < 0)
-                throw new IndexOutOfBoundsException();
         
+        if (anIndex > getNumFrames() || anIndex < 0)
+            throw new IndexOutOfBoundsException();
+
+        try {
                 // load and cache image if it is not yet in cache
-            if ((anIndex) >= iFrames.size() || null == iFrames.get(anIndex)) { 
-                ImageFrame r = new ImageFrame(iLoader.readRaster(anIndex));
-                iFrames.add(anIndex, r);
-            }    
-           
-            logger.info("Frame -" + anIndex +                       // NOI18N
+            if (anIndex >= iFrames.size() || null == iFrames.get(anIndex))                
+                iFrames.add(anIndex, new ImageFrame(iLoader.readRaster(anIndex)));
+            
+            logger.info("Frame -" + anIndex +                                   // NOI18N
                         ", MIN"   + iFrames.get(anIndex).getStats().getMin() +  // NOI18N
                         ", MAX"   + iFrames.get(anIndex).getStats().getMax() +  // NOI18N
-                        ", DEN"   + iFrames.get(anIndex).getStats().getIden()); // NOI18N
+                        ", DEN"   + iFrames.get(anIndex).getStats().getIden()); // NOI18N  
+                                      
         } catch (IOException ex) {
             logger.error(ex); 
         } 

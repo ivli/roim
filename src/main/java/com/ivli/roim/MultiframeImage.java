@@ -33,6 +33,9 @@ public class MultiframeImage implements IMultiframeImage {
         iCurrent = aFrameNumber;
         return ret;
     } 
+    public int getCurrentNo() {
+        return iCurrent;
+    }
     
     public ImageFrame image() { 
         return iSrc.loadFrame(iCurrent);
