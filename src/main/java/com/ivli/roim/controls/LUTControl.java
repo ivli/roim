@@ -271,24 +271,32 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         final double wtop = height * (iVLut.getWindow().getTop() / iVLut.getRange().getWidth());
         final double wbot = height * (iVLut.getWindow().getBottom() / iVLut.getRange().getWidth());
         
-               
+        final int size = (width * height - 1);
         DataBuffer data = new DataBufferUShort(width * height);
-        
-        
+                
         for (int i = 0; i < height; ++i) {                 
             final short line_value; 
+                        
+            if (iVLut.isInverted()) {
+                if (i >= wtop)
+                    line_value = 0;
+                else if (i <= wbot)
+                    line_value = 255;  
+                else             
+                    line_value = (short)(NUMBER_OF_SHADES - ((i-wbot)*NUMBER_OF_SHADES/(wtop-wbot)));
+                 } else {
+                if (i >= wtop)
+                    line_value = 255;
+                else if (i <= wbot)
+                    line_value = 0;  
+                else             
+                    line_value = (short)((i-wbot)*NUMBER_OF_SHADES/(wtop-wbot));          
+            }                     
             
-            if (i >= wtop)
-                line_value = 255;
-            else if (i <= wbot)
-                line_value = 0;  
-            else             
-                line_value = (short) ((i-wbot)*NUMBER_OF_SHADES/(wtop-wbot)) ;
-                                 
+            final int lineNdx =  size - (i * width);
             
             for (int j = 0; j < width; ++j) {               
-                data.setElem((width * height - 1) -  (i * width + j), line_value);
-            
+                data.setElem(lineNdx - j, line_value);            
             }                      
         }
        
@@ -328,15 +336,15 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         if (null == iBuf) 
             updateBufferedImage();
         
-        g.drawImage(iBuf, HORIZONTAL_BAR_EXCESS, VERTICAL_BAR_EXCESS, getWidth()-2*HORIZONTAL_BAR_EXCESS, getHeight()-2*VERTICAL_BAR_EXCESS, null);
+        g.drawImage(iBuf, 0, 0, getWidth(), getHeight(), null);
         //g.drawImage(iBuf, 0, 0, getWidth(), getHeight(), null);
         g.draw3DRect(0, 0, getWidth(), getHeight(), true);
         
         
         final Color clr = g.getColor();
         
-        iTop.draw((Graphics2D)g, getWidth(), (getHeight()-2*VERTICAL_BAR_EXCESS) + VERTICAL_BAR_EXCESS);
-        iBottom.draw((Graphics2D)g, getWidth(), (getHeight()-2*VERTICAL_BAR_EXCESS) + VERTICAL_BAR_EXCESS);
+        iTop.draw((Graphics2D)g, getWidth(), getHeight());
+        iBottom.draw((Graphics2D)g, getWidth(), getHeight());
         
         g.setColor(clr);
     }
