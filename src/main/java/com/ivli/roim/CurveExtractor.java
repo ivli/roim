@@ -16,20 +16,14 @@ public class CurveExtractor {
         iImages = aI;
     }
     
-    void extract(ROI aRoi) {
+    Curve extract(ROI aRoi) {
+        Curve c = new Curve(aRoi.getName());
+        for (ImageFrame f : iImages) {     
         
-        for (ImageFrame f : iImages) {            
-            aRoi.iCurve.add(Measure.Measure(f.getRaster(), aRoi));           
-        }        
-    }
-    
-    void extract(java.util.ArrayList<ROI> aRoiList) {
+            c.add(Measure.Measure(f.getRaster(), aRoi));           
+        } 
         
-        for (ImageFrame f : iImages) {
-            for (ROI r : aRoiList) {
-                r.iCurve.add(Measure.Measure(f.getRaster(), r));
-            }                        
-        }        
-    }
+        return c;
+    }    
     
 }

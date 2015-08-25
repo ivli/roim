@@ -17,12 +17,13 @@ public interface IMultiframeImage extends IImage, Iterable<ImageFrame> {
     @Override
     default public Iterator<ImageFrame> iterator() {    
         return new Iterator<ImageFrame>() {
+            int _next=0;
             public boolean hasNext() {    
-                return hasAt(getCurrentNo() + 1);
+                return hasAt(_next);
             }
 
             public ImageFrame next() {
-                return getAt(getCurrentNo() + 1);
+                return getAt(_next++);
             }  
         };
     }

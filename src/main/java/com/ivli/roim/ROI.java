@@ -1,3 +1,4 @@
+
 package com.ivli.roim;
 
 import java.util.HashSet;
@@ -76,6 +77,7 @@ public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip,
         AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
         iShape = trans.createTransformedShape(iShape);
         update();
+        updateCurve();
         
         if (null != iAnnos) {
             for (Overlay o : iAnnos)
@@ -83,12 +85,20 @@ public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip,
         }
     }  
     
+    void updateCurve() {
+        CurveExtractor ce = new CurveExtractor(getManager().getImage());
+        Curve cv = ce.extract(this);
+        iCurve = cv;
+    }
+    
     @Override
     void update() {
         try {
             ROIExtractor ex = new ROIExtractor(getShape());
             getManager().getImage().extract(ex); 
             iStats = ex.iStats;
+            
+            
         } catch (ArrayIndexOutOfBoundsException ex) {
             iStats = new ROIStats(); //set to NaN
             logger.error(ex);
@@ -97,7 +107,7 @@ public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip,
         if (null != iAnnos) {
             for(Overlay o : iAnnos)
                 o.update();
-        }
+        }         
     }
     
     @Override
