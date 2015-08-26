@@ -10,13 +10,13 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class DICOMImage extends IImageProvider {
+public class DICOMImage extends IImageProvider /*implements IImage*/ {
     private static final boolean LOAD_ON_DEMAND = false;
     
-    private ArrayList<ImageFrame> iFrames;    
+    private final ImageLoader iLoader = new ImageLoader(); 
+    private final ArrayList<ImageFrame> iFrames;    
     TimeSliceVector iTimeSlices;     
-    
-    
+        
     private DICOMImage() {
         iFrames = new ArrayList();
     }
@@ -43,6 +43,14 @@ public class DICOMImage extends IImageProvider {
         }
     }
     
+    public PixelSpacing getPixelSpacing() {
+        try{
+            return iLoader.getPixelSpacing();
+        } catch (IOException ex) {
+            logger.debug(ex);
+            return new PixelSpacing(1.0, 1.0);
+        }
+    }
     public void open(String aFile) throws IOException {           
         iLoader.open(aFile);
         iTimeSlices = iLoader.getTimeSliceVector();        
@@ -142,7 +150,7 @@ public class DICOMImage extends IImageProvider {
     
      
     
-    private ImageLoader iLoader = new ImageLoader(); 
+    
     
     private static final Logger logger = LogManager.getLogger(DICOMImage.class);    
  

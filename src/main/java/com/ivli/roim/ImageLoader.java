@@ -34,18 +34,13 @@ import org.dcm4che3.data.VR;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.dcm4che3.data.Tag;
 
 
 public class ImageLoader {
     
     static {   
         ImageIO.scanForPlugins(); 
-    }
- 
-    private ImageReader iReader = _installImageReader();   
-  
-    ImageReader getImageReader() {
-        return iReader;
     }
     
     static final ImageReader _installImageReader() {    
@@ -62,19 +57,16 @@ public class ImageLoader {
         return ir;      
     }  
     
-    String iFile;
-    
+    private String iFile;
+    private ImageReader iReader = _installImageReader();   
+    Attributes    iDataSet;
+        
     void open(String aFile) throws IOException {
-           
-        try (DicomInputStream dis = new DicomInputStream(new File(iFile = aFile)))  {  
-            Attributes fmi;
-           // Attributes ds;
-            fmi = dis.readFileMetaInformation();
-            //ds = dis.readDataset(-1, -1);
-           
+         
+        try (DicomInputStream dis = new DicomInputStream(new File(iFile = aFile))) {  
             
-            //TimeSliceVector tsv = new TimeSliceVector(ds);
-            
+            iDataSet = dis.readFileMetaInformation();
+           
         } catch (IOException e) {
             logger.error(e);              
         }        
@@ -84,16 +76,23 @@ public class ImageLoader {
     }
     
     TimeSliceVector getTimeSliceVector() throws IOException {        
-        DicomInputStream dis = new DicomInputStream(new File(iFile));  
+        //DicomInputStream dis = new DicomInputStream(new File(iFile));  
         //Attributes fmi;
-        Attributes ds = dis.readDataset(-1, -1);
+        //Attributes ds = iDIS.readDataset(-1, -1);
         //fmi = dis.readFileMetaInformation();
-  
-        return new TimeSliceVector(ds);
+         
+        return new TimeSliceVector(iDataSet);
     }
     
     
-    int getNumImages() throws IOException {return iReader.getNumImages(false);}    
+    PixelSpacing getPixelSpacing() throws IOException {        
+        double[] ps = iDataSet.getDoubles(Tag.PixelSpacing); 
+        return new PixelSpacing (ps[0], ps[1]);
+    }
+    
+    int getNumImages() throws IOException {
+        return iReader.getNumImages(false);
+    }    
 
     Raster readRaster(int aIndex) throws IOException {
         return iReader.readRaster(aIndex, readParam());

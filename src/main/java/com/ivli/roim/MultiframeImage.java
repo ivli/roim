@@ -54,6 +54,10 @@ public class MultiframeImage implements IMultiframeImage {
         return iSrc.getHeight();
     }  
     
+    public PixelSpacing getPixelSpacing() {
+        return iSrc.getPixelSpacing();
+    }
+    
     public Curve makeCurveFromRoi(ROI aRoi) {
         Curve ret = new Curve(aRoi.getName());  
         /*

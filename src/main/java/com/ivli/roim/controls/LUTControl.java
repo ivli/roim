@@ -59,8 +59,8 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
     private static final boolean EXTEND_WHEN_FOCUSED = false;
     
-    private static final int INACTIVE_BAR_WIDTH    = 40 / (EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out
-    private  final int ACTIVATED_BAR_WIDTH   = 40; //mouse inside
+    private static final int INACTIVE_BAR_WIDTH = 32 / (EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out
+    private  final int ACTIVATED_BAR_WIDTH = 32; //mouse inside
     private  final int TOP_GAP ;  //reserve some pixels at top & bottom 
     private  final int BOTTOM_GAP;
     private  static final int HORIZONTAL_BAR_EXCESS = 0;  //reserve border at left & right
@@ -68,7 +68,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     private static final int MARKER_CURSOR = java.awt.Cursor.HAND_CURSOR;    
     private static final int WINDOW_CURSOR = java.awt.Cursor.N_RESIZE_CURSOR;
                     
-    java.awt.Image arrow;
+    private java.awt.Image arrow;
     
     boolean iShowPercent = true;
     ImageView iComponent;
@@ -91,7 +91,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             arrow = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/green_arrow_w.png")); //NOI18N
             
             } catch (IOException ex) {              
-                logger.info(ex);                   
+                logger.info(ex);                 
             } 
         
         TOP_GAP = BOTTOM_GAP = null != arrow ? arrow.getHeight(null)/2 : 4;   
@@ -435,7 +435,8 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 final double val = iShowPercent ? screenToImage(iPos) * 100.0 / iVLut.getRange().getWidth() : screenToImage(iPos);
                 final String out = String.format("%.0f", Math.abs(val)); //NOI18N
                 final int width = (int)(aGC.getFontMetrics().getStringBounds(out, aGC)).getWidth();                 
-                aGC.drawString(out, aWidth/2 - width/2, (aHeight - iPos ) + ((iName == "top") ? (aGC.getFontMetrics().getAscent() + arrow.getHeight(null)/2) : - (aGC.getFontMetrics().getDescent()+ arrow.getHeight(null)/2)));
+                aGC.drawString(out, aWidth/2 - width/2, 
+                              (aHeight - iPos ) + ((iName == "top") ? (aGC.getFontMetrics().getAscent() - arrow.getHeight(null)/2) : - (aGC.getFontMetrics().getDescent() + arrow.getHeight(null)/2)));
             }
         }         
     }

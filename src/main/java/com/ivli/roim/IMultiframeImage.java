@@ -14,6 +14,9 @@ public interface IMultiframeImage extends IImage, Iterable<ImageFrame> {
     int getCurrentNo();
     int getNumFrames(); 
     
+    
+    
+    
     @Override
     default public Iterator<ImageFrame> iterator() {    
         return new Iterator<ImageFrame>() {
