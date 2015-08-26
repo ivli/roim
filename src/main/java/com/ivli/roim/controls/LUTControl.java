@@ -48,6 +48,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.controls.VOILUTPanel;
+import java.io.IOException;
 import org.apache.logging.log4j.Level;
 /**
  *
@@ -58,10 +59,12 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
     private static final boolean EXTEND_WHEN_FOCUSED = false;
     
-    private static final int INACTIVE_BAR_WIDTH    = 32 / (EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out
-    private static final int ACTIVATED_BAR_WIDTH   = 32; //mouse inside
+    private static final int INACTIVE_BAR_WIDTH    = 40 / (EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out
+    private static final int ACTIVATED_BAR_WIDTH   = 40; //mouse inside
     private static final int VERTICAL_BAR_EXCESS   = 0;  //reserve some pixels at top & bottom 
     private static final int HORIZONTAL_BAR_EXCESS = 0;  //reserve border at left & right
+    
+   
     
     boolean   iShowPercent = true;
     ImageView iComponent;
@@ -375,37 +378,54 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
 
     class wlCursor  {
-
         int    iPos;
         Color  iCol;
         String iName;
-        
-        wlCursor(Color aColor, String aName) {iCol=aColor; iName=aName;}
+        java.awt.Image arrow=null;
+   
+    
+        wlCursor(Color aColor, String aName) {
+            iCol=aColor; 
+            iName=aName;
+            
+            try {
+                arrow = javax.imageio.ImageIO.read(ClassLoader.getSystemResource( "images/green_arrow_w.png" )); //NOI18N
+            } catch (IOException ex) {
+                    logger.info(ex);                   
+            }
 
-        wlCursor (String aName, int aPos) {
-            iPos  = aPos;
-            iName = aName;
         }
-        
+              
         void setPosition(int aPos) {
             logger.info(iName + ", " + aPos ); //NOI18N
             iPos = aPos;
         } 
         
-        int getPosition() {return iPos;}             
+        int getPosition() {
+            return iPos;
+        }             
         
-        boolean contains(double aVal) {return aVal < getPosition() + 4 && aVal > getPosition() - 4;}
+        boolean contains(int aVal) {
+            final int hh = (null != arrow) ? arrow.getHeight(null) / 2 : 4;
+            return aVal < getPosition() + hh && aVal > getPosition() - hh;
+        }
             
-        void draw(Graphics2D aGC, int aWidth, int aHeight) {        
-            aGC.setColor(iCol);         
-            int pos = Ranger.range(aHeight - iPos, 0, getHeight()- 2*VERTICAL_BAR_EXCESS);     
-            aGC.drawLine(HORIZONTAL_BAR_EXCESS, aHeight - iPos, aWidth-HORIZONTAL_BAR_EXCESS, aHeight - iPos);
-
+        void draw(Graphics2D aGC, int aWidth, int aHeight) {  
+            aGC.setColor(iCol);       
+            
+            if (null != arrow) {
+                aGC.drawImage(arrow, 0, aHeight - iPos - arrow.getHeight(null)/2, null);
+            } else {
+                                       
+                aGC.drawLine(HORIZONTAL_BAR_EXCESS, aHeight - iPos, aWidth-HORIZONTAL_BAR_EXCESS, aHeight - iPos);  
+            }
+            
+                
             if (ACTIVATED_BAR_WIDTH == aWidth) {
                 final double val = iShowPercent ? screenToImage(iPos) * 100.0 / iVLut.getRange().getWidth() : screenToImage(iPos);
                 final String out = String.format("%.0f", Math.abs(val)); //NOI18N
                 final int width = (int)(aGC.getFontMetrics().getStringBounds(out, aGC)).getWidth();                 
-                aGC.drawString(out, aWidth/2 - width/2, (aHeight - iPos) + ((iName == "top") ? aGC.getFontMetrics().getAscent() : - aGC.getFontMetrics().getDescent()));
+                aGC.drawString(out, aWidth/2 - width/2, (aHeight - iPos ) + ((iName == "top") ? (aGC.getFontMetrics().getAscent() + arrow.getHeight(null)/2) : - (aGC.getFontMetrics().getDescent()+ arrow.getHeight(null)/2)));
             }
         }         
     }
