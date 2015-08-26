@@ -25,7 +25,7 @@ public class JMedPane extends JLayeredPane{
         iView.setMinimumSize(new java.awt.Dimension(575, 600));
         iView.setAlignmentX(Component.LEFT_ALIGNMENT);
           
-        iLut  = new LUTControl();        
+        iLut  = new LUTControl(null);        
         iLut.setAlignmentX(Component.RIGHT_ALIGNMENT);        
         iView.setLUTControl(iLut);        
         
