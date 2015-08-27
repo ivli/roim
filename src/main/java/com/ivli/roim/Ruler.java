@@ -5,28 +5,22 @@
  */
 package com.ivli.roim;
 
+
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 
 /**
  *
  * @author likhachev
  */
-public class OverlayPicture extends Overlay {
+public class Ruler extends Overlay {
     
-    java.awt.Image iPicture;
-    //Point iOrigin=new Point(0,0);
-    
-    OverlayPicture(java.awt.Image aP, String aN) { 
-        super(new Rectangle(aP.getWidth(null), aP.getHeight(null)), 
-              null != aN? aN:java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("PICTURE"));
-       
-        iPicture = aP;
+    Ruler(IImage aI, String aN) { 
+        super(new Rectangle(aI.getWidth(), aI.getHeight()), 
+              null != aN? aN : "RULER");
     }
     
     int getCaps(){return CANFLIP|CANROTATE|HASCUSTOMMNU|PERMANENT;}
@@ -44,7 +38,7 @@ public class OverlayPicture extends Overlay {
         AffineTransform trans = AffineTransform.getTranslateInstance(aTrans.getTranslateX(), aTrans.getTranslateY());
         
         //aGC.drawImage(iBuf, 0, 0, r.width, r.height, null);
-        aGC.drawImage(iPicture, trans, null);        
+        //aGC.drawImage(iBuf, trans, null);        
     } 
      
     void update(){
@@ -60,4 +54,5 @@ public class OverlayPicture extends Overlay {
         //iOrigin.x += adX;
         //iOrigin.y += adY;
     }
+    
 }

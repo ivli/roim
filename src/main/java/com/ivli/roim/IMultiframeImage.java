@@ -13,8 +13,8 @@ public interface IMultiframeImage extends IImage, Iterable<ImageFrame> {
     ImageFrame getAt(int aFrameNumber);  
     int getCurrentNo();
     int getNumFrames(); 
-    
-    
+    ImageFrame makeCompositeFrame(int aFrom, int aTo);  
+    PixelSpacing getPixelSpacing();
     
     
     @Override

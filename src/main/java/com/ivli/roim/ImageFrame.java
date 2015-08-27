@@ -14,7 +14,7 @@ import java.awt.image.WritableRaster;
  *
  * @author likhachev
  */
-public class ImageFrame implements java.io.Serializable/*, IImage */{
+public class ImageFrame implements java.io.Serializable, IImage /**/{
     Raster   iRaster;  
     ROIStats iStats;   
     
@@ -33,6 +33,12 @@ public class ImageFrame implements java.io.Serializable/*, IImage */{
     public int getHeight() {
         return iRaster.getHeight();
     }
+    
+    public ImageFrame image() {
+        return this;
+    } 
+    
+   
     
     ImageFrame(Raster aRaster) {
         iRaster = aRaster;

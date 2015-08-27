@@ -415,8 +415,9 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         }             
         
         boolean contains(int aVal) {
-            final int hh = (null != arrow) ? arrow.getHeight(null) / 2 : 4;
-            return aVal < getPosition() + hh && aVal > getPosition() - hh;
+            final int ypos = iPos;//getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;
+            final int half_height = (null != arrow) ? arrow.getHeight(null) : 4;
+            return aVal < ypos + half_height && aVal > ypos  /*- half_height*/;
         }
             
         void draw(Graphics2D aGC, int aWidth, int aHeight) {  

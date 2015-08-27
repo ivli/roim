@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ivli.roim;
 
 import java.awt.Graphics2D;
@@ -10,7 +6,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.util.LinkedList;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -20,15 +15,15 @@ import java.util.Iterator;
  */
 class ROIManager {    
     private final HashSet<Overlay> iOverlays;      
-    private final ImageView       iComponent;        
+    private final ImageView        iView;        
     
-    ROIManager(ImageView aBase) {
-        iComponent = aBase;
+    ROIManager(ImageView aV) {
+        iView = aV;
         iOverlays = new HashSet();          
     }
         
     public IMultiframeImage getImage() {
-        return iComponent.getImage();
+        return iView.getImage();
     }
         
     public void clear() {
@@ -46,14 +41,13 @@ class ROIManager {
     }            
             
     public void createRoiFromShape(Shape aS) { 
-        final Shape r = iComponent.screenToVirtual().createTransformedShape(aS);
+        final Shape r = iView.screenToVirtual().createTransformedShape(aS);
         final ROI newRoi = new ROI(r, this, null);       
   
         iOverlays.add(newRoi);
         iOverlays.add(new Annotation(newRoi));      
         newRoi.update();
-        newRoi.updateCurve();
-        
+        newRoi.updateCurve();        
     }
     
     public void cloneRoi(ROI aR) {
@@ -64,16 +58,16 @@ class ROIManager {
     }
     
     public void moveRoi(Overlay aO, double adX, double adY) {           
-        AffineTransform trans = iComponent.virtualToScreen();
+        AffineTransform trans = iView.virtualToScreen();
         trans.concatenate(AffineTransform.getTranslateInstance(adX, adY));    
                
-        if (iComponent.getBounds().contains(trans.createTransformedShape(aO.getShape().getBounds()).getBounds()))            
-            aO.move((adX/iComponent.getZoom().getScaleX()), (adY/iComponent.getZoom().getScaleY()));  
+        if (iView.getBounds().contains(trans.createTransformedShape(aO.getShape().getBounds()).getBounds()))            
+            aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));  
        
     }
-   
+    
     public Overlay findOverlay(Point aP) {      
-        final Rectangle temp = iComponent.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();
+        final Rectangle temp = iView.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();
         
         for (Overlay r : iOverlays) {
             if (r.isSelectable() && r.getShape().intersects(temp)) 
@@ -82,8 +76,8 @@ class ROIManager {
         return null;
     }
         
-    public boolean deleteRoi(ROI aR) {      
-         final Iterator<Overlay> it = iOverlays.iterator();
+    boolean deleteRoi(ROI aR) {      
+        final Iterator<Overlay> it = iOverlays.iterator();
 
         while (it.hasNext()) {  //clean annotations out - silly but workin'
             final Overlay o = it.next();

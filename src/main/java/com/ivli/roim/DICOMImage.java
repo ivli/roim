@@ -127,25 +127,7 @@ public class DICOMImage extends IImageProvider /*implements IImage*/ {
     }
     */
     
-    /*
-    public BufferedImage makeCompositeFrame(int aFrom, int aTo) throws IOException {
-        if (-1 == aTo)
-            aTo = getNumFrames();
-
-        assert (aFrom >= 0 && aFrom < getNumFrames() || aTo > aFrom || aFrom < getNumFrames());  
-        
-        WritableRaster composite = iFrames.get(0).iRaster.createCompatibleWritableRaster();
-                
-        for (int n = aFrom; n < aTo; ++n) {
-            final Raster r = iFrames.get(n).iRaster;
-            for (int i = 0; i < getWidth(); ++i)
-               for (int j = 0; j < getHeight(); ++j) 
-                   composite.setSample(i, j, 0, composite.getSample(i, j, 0) + r.getSample(i, j, 0));           
-        }
-        
-        return convert(composite);
-    }    
-    */
+    
     
     
      

@@ -61,6 +61,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iFrameListeners = new HashSet();
         
         iVLut.setImage(iImage.image());
+        PixelSpacing ps = iImage.getPixelSpacing();
     }
        
     public AffineTransform getZoom() {
@@ -92,7 +93,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
     
     public void fitWidth() {
-        final double scale = getWidth()/iImage.getWidth();
+        final double scale = getWidth() / iImage.getWidth();
         iZoom.setToScale(scale, scale);
         invalidateBuffer();
     }
@@ -142,9 +143,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     public void removeZoomChangeListener(ZoomChangeListener aL) {
         iZoomListeners.remove(aL);
     }
-    
-    
-    
+     
     public AffineTransform screenToVirtual() {
         AffineTransform ret = AffineTransform.getTranslateInstance(iOrigin.x, iOrigin.y); 
         ret.concatenate(iZoom);

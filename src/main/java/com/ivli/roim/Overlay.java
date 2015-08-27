@@ -46,7 +46,11 @@ public abstract class Overlay {
     boolean isCloneable() {return 0 != (getCaps() & CLONEABLE);}
     boolean canFlip() {return 0 != (getCaps() & CANFLIP);} 
     boolean canRotate() {return 0 != (getCaps() & CANROTATE);} 
-       
+    
+    Shape getShape() {
+        return iShape;
+    }   
+    
     private void patchName() { 
         if(iName.isEmpty()) {
             ///StringBuilder sb = new StringBuilder();
@@ -60,9 +64,17 @@ public abstract class Overlay {
     
     abstract void move(double adX, double adY); 
        
-    Shape getShape() {return iShape;}
+   
     
-    interface IFlip {public void flip(boolean aVertical);} 
-    interface IRotate {public void rotate(int anAngle);}
-    interface IIsoLevel {public void isolevel(int aTolerance);}
+    interface IFlip {
+        public void flip(boolean aVertical);
+    } 
+    
+    interface IRotate {
+        public void rotate(int anAngle);
+    }
+    
+    interface IIsoLevel {
+        public void isolevel(int aTolerance);
+    }
 }

@@ -59,13 +59,13 @@ public class ImageLoader {
     
     private String iFile;
     private ImageReader iReader = _installImageReader();   
-    Attributes    iDataSet;
+    private Attributes  iDataSet;
         
     void open(String aFile) throws IOException {
          
         try (DicomInputStream dis = new DicomInputStream(new File(iFile = aFile))) {  
             
-            iDataSet = dis.readFileMetaInformation();
+            iDataSet = dis.readDataset(-1, -1);//readFileMetaInformation();
            
         } catch (IOException e) {
             logger.error(e);              
