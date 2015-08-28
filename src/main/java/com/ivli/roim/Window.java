@@ -8,10 +8,8 @@ package com.ivli.roim;
  * 
  */
 public class Window implements java.io.Serializable {      
-
     private static final long serialVersionUID = 42L;
-
-    static final double WINDOW_WIDTH_MINIMUM = 1.;
+    private static final double WINDOW_WIDTH_MINIMUM = 1.;
     
     protected double iLevel;
     protected double iWidth;

@@ -1,11 +1,7 @@
-
 package com.ivli.roim.controls;
-
-
 
 import java.io.IOException;
 import java.awt.Color;
-//import ;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -18,11 +14,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseListener;
 import javax.swing.JComponent;
-import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
-
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseWheelEvent;
@@ -46,6 +40,7 @@ import com.ivli.roim.ImageView;
 import com.ivli.roim.LutLoader;
 import com.ivli.roim.Settings;
 import com.ivli.roim.Window;
+import java.awt.geom.Rectangle2D;
 
 
 /**
@@ -54,28 +49,26 @@ import com.ivli.roim.Window;
  */
 public class LUTControl extends JComponent implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, WindowChangeListener {
     private static final int NUMBER_OF_SHADES = 255;
-    
-    private static final boolean EXTEND_WHEN_FOCUSED = false;
-    
+    private static final boolean EXTEND_WHEN_FOCUSED = false; 
     private static final int INACTIVE_BAR_WIDTH = 32 / (EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out
-    private  final int ACTIVATED_BAR_WIDTH = 32; //mouse inside
-    private  final int TOP_GAP;  //reserve some pixels at top & bottom 
-    private  final int BOTTOM_GAP;
-    private  static final int HORIZONTAL_BAR_EXCESS = 0;  //reserve border at left & right
+    private static final int HORIZONTAL_BAR_EXCESS = 0;  //reserve border at left & right
+    private final int ACTIVATED_BAR_WIDTH = 32; //mouse inside
+    private final int TOP_GAP;  //reserve a half of marker height at window's top & bottom 
+    private final int BOTTOM_GAP;
+   
     
     private static final int MARKER_CURSOR = java.awt.Cursor.HAND_CURSOR;    
     private static final int WINDOW_CURSOR = java.awt.Cursor.N_RESIZE_CURSOR;
                     
-    private java.awt.Image arrow;
     
-    boolean iShowPercent = true;
-    ImageView iView;
+    private boolean iShowPercent = true;
+    private ImageView iView;
     
+    private java.awt.Image iMarker;
+    private BufferedImage  iBuf;
     
-    private BufferedImage iBuf;
-    
-    final boolean iActive;
-    ActionItem iAction;
+    private final boolean iActive;
+    private ActionItem iAction;
     
     Marker iTop    = new Marker(Color.green, "top");  //NOI18N
     Marker iBottom = new Marker(Color.red, "bottom"); //NOI18N
@@ -85,7 +78,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         iActive = false;
         iView = aControl.iView;
         
-        TOP_GAP = BOTTOM_GAP = null != arrow ? arrow.getHeight(null) / 2 : 4;   
+        TOP_GAP = BOTTOM_GAP = null != iMarker ? iMarker.getHeight(null) / 2 : 4;   
     } 
     
      @SuppressWarnings("LeakingThisInConstructor")
@@ -96,7 +89,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         iActive = true;
         
         try {
-            arrow = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/green_arrow_w.png")); //NOI18N
+            iMarker = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/green_arrow_w.png")); //NOI18N
             
             } catch (IOException ex) {              
                 logger.info(ex);                 
@@ -104,7 +97,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         
             addComponentListener(new listener());
 
-        TOP_GAP = BOTTOM_GAP = null != arrow ? arrow.getHeight(null) / 2 : 4;   
+        TOP_GAP = BOTTOM_GAP = null != iMarker ? iMarker.getHeight(null) / 2 : 4;   
         
         aView.addWindowChangeListener(this);  
         
@@ -361,6 +354,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     public void paintComponent(Graphics g) {  
         if (null == iBuf) 
             updateBufferedImage();
+        
         final Color clr = g.getColor();
         
         g.setColor(iView.isInverted() ? Color.WHITE : Color.BLACK);
@@ -372,8 +366,8 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         
         g.draw3DRect(0, 0, getWidth(), getHeight(), true);       
         
-        iTop.draw((Graphics2D)g, getWidth(), getHeight());
-        iBottom.draw((Graphics2D)g, getWidth(), getHeight());
+        iTop.draw(g);
+        iBottom.draw(g);
         
         g.setColor(clr);
     }
@@ -448,31 +442,31 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         
         boolean contains(int aVal) {
             final int ypos = iPos;//getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;
-            final int height = (null != arrow) ? arrow.getHeight(null) : 4;
+            final int height = (null != iMarker) ? iMarker.getHeight(null) : 4;
             return aVal < ypos + height && aVal > ypos  /*- half_height*/;
         }
             
-        void draw(Graphics2D aGC, int aWidth, int aHeight) {  
-            aGC.setColor(iCol);       
+        void draw(Graphics aGC)/*, int aWidth, int aHeight)*/ {  
+            aGC.setColor(Color.BLACK);       
             
             if (iActive) {
-                if (null != arrow) {
-                    int ypos = aHeight - (TOP_GAP + BOTTOM_GAP) - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);
-                    aGC.drawImage(arrow, 0, ypos, null);
+                if (null != iMarker) {
+                    int ypos = getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);
+                    aGC.drawImage(iMarker, 0, ypos, null);
                 } else {                                       
-                    aGC.drawLine(HORIZONTAL_BAR_EXCESS, aHeight - iPos, aWidth-HORIZONTAL_BAR_EXCESS, aHeight - iPos);  
+                    aGC.drawLine(HORIZONTAL_BAR_EXCESS, getHeight() - iPos, getWidth() - HORIZONTAL_BAR_EXCESS, getHeight() - iPos);  
                 }
             }
                 
-            if (ACTIVATED_BAR_WIDTH == aWidth) {
-                final double val = iShowPercent ? screenToImage(iPos) * 100.0 / iView.getVLut().getRange().getWidth() : screenToImage(iPos);
-                final String out = String.format("%.0f", Math.abs(val)); //NOI18N
-                final int width = (int)(aGC.getFontMetrics().getStringBounds(out, aGC)).getWidth();    
-                final int height = (null != arrow) ? arrow.getHeight(null) : 4;
-                aGC.drawString(out, aWidth/2 - width/2 
-                              , (aHeight - iPos ) + ((iName == "top") ? (aGC.getFontMetrics().getAscent() - height) : - (aGC.getFontMetrics().getDescent() + height))
-                              );
-            }
+            
+            final double val = iShowPercent ? screenToImage(iPos) * 100.0 / iView.getVLut().getRange().getWidth() : screenToImage(iPos);
+            final String out = String.format("%.0f", Math.abs(val)); //NOI18N
+            final Rectangle2D sb = aGC.getFontMetrics().getStringBounds(out, aGC);    
+            final int height = (null != iMarker) ? iMarker.getHeight(null) : 4;
+            aGC.drawString(out, (int)(getWidth()/2 - sb.getWidth()/2) 
+                          , (int)(getHeight() - iPos - height / 2 + sb.getHeight() / 2 )
+                          );
+           
         }         
     }
     
