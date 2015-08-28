@@ -323,20 +323,21 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
      private void updateBufferedImage() {
         final int width  = getWidth();
-        final int height = 256;//getHeight() - (TOP_GAP + BOTTOM_GAP);               
+        final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
        // final double wtop = height * (iView.getVLut().getWindow().getTop() / iView.getVLut().getRange().getWidth());
        // final double wbot = height * (iView.getVLut().getWindow().getBottom() / iView.getVLut().getRange().getWidth());
         
         final int size = (width * height - 1);
         DataBuffer data = new DataBufferUShort(width * height);
         
-        final double ratio = (double)(iView.getMax()-iView.getMin())/(double)(NUMBER_OF_SHADES);
+        final double ratio = (double)(iView.getMax()-iView.getMin()) / height;
         
         for (short i = 0; i < height; ++i) {                 
-            final short line_value = (short)(i*ratio);//(short)(i*NUMBER_OF_SHADES/height);   
+            final short line_value = (short)((double)i * ratio);//(short)(i*NUMBER_OF_SHADES/height);   
      
             final int lineNdx =  size - (i * width);
             
+           
             for (int j = 0; j < width; ++j) {               
                 data.setElem(lineNdx - j, line_value);            
             }                      
@@ -356,7 +357,29 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         
         iBuf = iView.getPLut().transform(iBuf, null);     
     }
-    
+     
+    public void paintComponent(Graphics g) {  
+        if (null == iBuf) 
+            updateBufferedImage();
+        final Color clr = g.getColor();
+        
+        g.setColor(iView.isInverted() ? Color.WHITE : Color.BLACK);
+        
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.drawImage(iBuf, 0, TOP_GAP, getWidth(), getHeight() - (TOP_GAP + BOTTOM_GAP), null);
+        
+        //g.drawImage(iBuf, 0, TOP_GAP, getWidth(), getHeight() - (TOP_GAP), 0, 0, INACTIVE_BAR_WIDTH, 255, null);
+        
+        g.draw3DRect(0, 0, getWidth(), getHeight(), true);       
+        
+        iTop.draw((Graphics2D)g, getWidth(), getHeight());
+        iBottom.draw((Graphics2D)g, getWidth(), getHeight());
+        
+        g.setColor(clr);
+    }
+     
+     
+     
     void extend() {
         if (EXTEND_WHEN_FOCUSED) {
             setSize(ACTIVATED_BAR_WIDTH, getHeight());
@@ -377,25 +400,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         getParent().revalidate();
     }
     
-    public void paintComponent(Graphics g) {  
-        if (null == iBuf) 
-            updateBufferedImage();
-        final Color clr = g.getColor();
-        
-        g.setColor(iView.isInverted() ? Color.WHITE : Color.BLACK);
-        
-        g.fillRect(0, 0, getWidth(), getHeight());
-        //g.drawImage(iBuf, 0, TOP_GAP, getWidth(), getHeight() - (TOP_GAP + BOTTOM_GAP), null);
-        
-        g.drawImage(iBuf, 0, TOP_GAP, getWidth(), getHeight() - (TOP_GAP), 0, 0, INACTIVE_BAR_WIDTH, 255, null);
-        
-        g.draw3DRect(0, 0, getWidth(), getHeight(), true);       
-        
-        iTop.draw((Graphics2D)g, getWidth(), getHeight());
-        iBottom.draw((Graphics2D)g, getWidth(), getHeight());
-        
-        g.setColor(clr);
-    }
+    
     
     double imageToScreen(double aY) {
         final double screenRange = this.getHeight() - (TOP_GAP + BOTTOM_GAP);
