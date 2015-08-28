@@ -44,9 +44,7 @@ import com.ivli.roim.Events.WindowChangeListener;
 import com.ivli.roim.Events.WindowChangeEvent;
 import com.ivli.roim.ImageView;
 import com.ivli.roim.LutLoader;
-import com.ivli.roim.PresentationLut;
 import com.ivli.roim.Settings;
-import com.ivli.roim.VOILut;
 import com.ivli.roim.Window;
 
 
@@ -61,7 +59,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
     private static final int INACTIVE_BAR_WIDTH = 32 / (EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out
     private  final int ACTIVATED_BAR_WIDTH = 32; //mouse inside
-    private  final int TOP_GAP ;  //reserve some pixels at top & bottom 
+    private  final int TOP_GAP;  //reserve some pixels at top & bottom 
     private  final int BOTTOM_GAP;
     private  static final int HORIZONTAL_BAR_EXCESS = 0;  //reserve border at left & right
     
@@ -71,14 +69,12 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     private java.awt.Image arrow;
     
     boolean iShowPercent = true;
-    ImageView iComponent;
+    ImageView iView;
     
-    VOILut iVLut;
-    PresentationLut iPLut;
     
     private BufferedImage iBuf;
     
-    boolean    iActive;
+    final boolean iActive;
     ActionItem iAction;
     
     Marker iTop    = new Marker(Color.green, "top");  //NOI18N
@@ -86,6 +82,18 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
  
            
     public LUTControl(LUTControl aControl) {    
+        iActive = false;
+        iView = aControl.iView;
+        
+        TOP_GAP = BOTTOM_GAP = null != arrow ? arrow.getHeight(null) / 2 : 4;   
+    } 
+    
+     @SuppressWarnings("LeakingThisInConstructor")
+    public LUTControl(ImageView aView) {            
+        assert (null != aView);
+        
+        iView = aView;               
+        iActive = true;
         
         try {
             arrow = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/green_arrow_w.png")); //NOI18N
@@ -94,45 +102,26 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 logger.info(ex);                 
             } 
         
-        TOP_GAP = BOTTOM_GAP = null != arrow ? arrow.getHeight(null)/2 : 4;   
-         
-        if (null != aControl) {
-            iPLut = aControl.iPLut;  
-            iVLut = aControl.iVLut;
-        }
+            addComponentListener(new listener());
+
+        TOP_GAP = BOTTOM_GAP = null != arrow ? arrow.getHeight(null) / 2 : 4;   
         
-        addComponentListener(new listener());
-    }    
-    
-       
-    public void attach(PresentationLut aPlut, VOILut aVlut) {
-       iPLut = aPlut;  
-       iVLut = aVlut;              
+        aView.addWindowChangeListener(this);  
+        
+        addMouseMotionListener(this);
+        addMouseListener(this);  
+        addMouseWheelListener(this);   
     }
     
-    public void addComponent(ImageView aComponent) {
-        iComponent = aComponent;
-    }
-    
-    public void setPresentationLUT(String aCM) {
-        iPLut.setLUT(aCM);
-        invalidateBuffer();
-    }
-    
-    public void registerListeners(Component aO) {       
-        aO.addMouseMotionListener(this);
-        aO.addMouseListener(this);  
-        aO.addMouseWheelListener(this);
-    }
-  
+     
     public XYSeries makeXYSeries(XYSeries ret) {
-        return iVLut.makeXYSeries(ret);
+        return iView.getVLut().makeXYSeries(ret);
     }   
 
     private void invalidateBuffer() {iBuf = null;}
     
     private void windowChanged(Window aW) {              
-        iVLut.setWindow(aW);        
+        iView.setWindow(aW);        
         iTop.setPosition((int) imageToScreen(aW.getTop()));
         iBottom.setPosition((int) imageToScreen(aW.getBottom())); 
         invalidateBuffer();
@@ -141,10 +130,10 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
     @Override
     public void windowChanged(WindowChangeEvent anE) {
-        if (!iActive) {  
+        if (anE.getSource() != this) {  
             if (anE.isRangeChanged()) {
-                iVLut.getRange().setTop(anE.getMax());
-                iVLut.getRange().setBottom(anE.getMin());
+                iView.getVLut().getRange().setTop(anE.getMax());
+                iView.getVLut().getRange().setBottom(anE.getMin());
             }    
             
             windowChanged(anE.getWindow());                       
@@ -162,13 +151,13 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         if (null != iAction)
             iAction.wheel(e.getWheelRotation());
         else {
-            final Window win = new Window(iVLut.getWindow());                     
+            final Window win = new Window(iView.getWindow());                     
 
             win.setLevel(win.getLevel() - e.getWheelRotation());                 
 
-            if (iVLut.getRange().contains(win)) {
-                if (null != iComponent) 
-                    iComponent.setWindow(win);
+            if (iView.getVLut().getRange().contains(win)) {
+                if (null != iView) 
+                    iView.setWindow(win);
 
                 windowChanged(win);     
             }
@@ -203,7 +192,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 protected void DoAction(int aX, int aY) {
 
                     final double delta = screenToImage(aY - iY);
-                    final Window win = new Window(iVLut.getWindow());                     
+                    final Window win = new Window(iView.getWindow());                     
 
                     if (iMoveTop) {               
                        win.setTop(win.getTop() - delta);
@@ -215,22 +204,22 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                        win.setBottom(win.getBottom() - delta);
                     }
                     
-                    if (iVLut.getRange().contains(win)) {
-                        if (null != iComponent) 
-                            iComponent.setWindow(win);
+                    if (iView.getVLut().getRange().contains(win)) {
+                        if (null != iView) 
+                            iView.setWindow(win);
 
                         windowChanged(win);     
                     }
                 }   
                 protected boolean DoWheel(int aX) {
                     
-                    final Window win = new Window(iVLut.getWindow());                     
+                    final Window win = new Window(iView.getVLut().getWindow());                     
                     
                     win.setLevel(win.getLevel() - aX);                 
                     
-                    if (iVLut.getRange().contains(win)) {
-                        if (null != iComponent) 
-                            iComponent.setWindow(win);
+                    if (iView.getVLut().getRange().contains(win)) {
+                        if (null != iView) 
+                            iView.setWindow(win);
 
                         windowChanged(win);     
                     }
@@ -255,12 +244,12 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         iAction = null;  
         if (!getBounds().contains(e.getPoint())){
            shrink(); 
-           iActive = true;
+           //iActive = true;
         }
     }
    
     public void mouseEntered(MouseEvent e) {        
-        iActive = true;
+        //iActive = true;
         if (null == iAction) {
             extend();
         }
@@ -269,7 +258,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     public void mouseExited(MouseEvent e) {
         if (null == iAction) {
             shrink();
-            iActive = false;
+           // iActive = false;
         }
     }
     
@@ -279,12 +268,12 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
        
     }
     
-
+/*
     private void updateBufferedImage() {
         final int width  = getWidth();
         final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
-        final double wtop = height * (iVLut.getWindow().getTop() / iVLut.getRange().getWidth());
-        final double wbot = height * (iVLut.getWindow().getBottom() / iVLut.getRange().getWidth());
+        final double wtop = height * (iView.getVLut().getWindow().getTop() / iView.getVLut().getRange().getWidth());
+        final double wbot = height * (iView.getVLut().getWindow().getBottom() / iView.getVLut().getRange().getWidth());
         
         final int size = (width * height - 1);
         DataBuffer data = new DataBufferUShort(width * height);
@@ -294,7 +283,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         for (int i = 0; i < height; ++i) {                 
             final short line_value; 
                         
-            if (iVLut.isInverted()) {
+            if (iView.isInverted()) {
                 if (i >= wtop)
                     line_value = 0;
                 else if (i <= wbot)
@@ -317,18 +306,57 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             }                      
         }
        
-        final WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
-                                                        data, new Point(0,0));        
+        final WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0})             
+                                                             , data, new Point(0,0)
+                                                             );        
         
-        iBuf = iPLut.transform(new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
-                                                               new int[] {8},
-                                                               false,		// has alpha
-                                                               false,		// alpha premultipled
-                                                               Transparency.OPAQUE,
-                                                               data.getDataType()), 
-                                                 wr, true, null), null);     
+        iBuf = iView.getPLut().transform(new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY)                                                               
+                                                    , new int[] {8}
+                                                    , false		// has alpha
+                                                    , false		// alpha premultipled
+                                                    , Transparency.OPAQUE
+                                                    , data.getDataType())                                                                                                                                  
+                                                , wr, true, null), null
+                                                );     
     }
+    */ 
+    
+     private void updateBufferedImage() {
+        final int width  = getWidth();
+        final int height = 256;//getHeight() - (TOP_GAP + BOTTOM_GAP);               
+       // final double wtop = height * (iView.getVLut().getWindow().getTop() / iView.getVLut().getRange().getWidth());
+       // final double wbot = height * (iView.getVLut().getWindow().getBottom() / iView.getVLut().getRange().getWidth());
+        
+        final int size = (width * height - 1);
+        DataBuffer data = new DataBufferUShort(width * height);
+        
+        final double ratio = (double)(iView.getMax()-iView.getMin())/(double)(NUMBER_OF_SHADES);
+        
+        for (short i = 0; i < height; ++i) {                 
+            final short line_value = (short)(i*ratio);//(short)(i*NUMBER_OF_SHADES/height);   
+     
+            final int lineNdx =  size - (i * width);
+            
+            for (int j = 0; j < width; ++j) {               
+                data.setElem(lineNdx - j, line_value);            
+            }                      
+        }
        
+        final WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0})             
+                                                             , data, new Point(0,0)
+                                                             );        
+        
+        iBuf = iView.getVLut().transform(new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY)                                                               
+                                                    , new int[] {8}
+                                                    , false		// has alpha
+                                                    , false		// alpha premultipled
+                                                    , Transparency.OPAQUE
+                                                    , data.getDataType())                                                                                                                                  
+                                                , wr, true, null), null);
+        
+        iBuf = iView.getPLut().transform(iBuf, null);     
+    }
+    
     void extend() {
         if (EXTEND_WHEN_FOCUSED) {
             setSize(ACTIVATED_BAR_WIDTH, getHeight());
@@ -354,15 +382,14 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             updateBufferedImage();
         final Color clr = g.getColor();
         
-        g.setColor(iVLut.isInverted() ? Color.WHITE : Color.BLACK);
+        g.setColor(iView.isInverted() ? Color.WHITE : Color.BLACK);
         
         g.fillRect(0, 0, getWidth(), getHeight());
-        g.drawImage(iBuf, 0, TOP_GAP, getWidth(), getHeight() - (TOP_GAP + BOTTOM_GAP), null);
-        //g.drawImage(iBuf, 0, 0, getWidth(), getHeight(), null);
-        g.draw3DRect(0, 0, getWidth(), getHeight(), true);
+        //g.drawImage(iBuf, 0, TOP_GAP, getWidth(), getHeight() - (TOP_GAP + BOTTOM_GAP), null);
         
+        g.drawImage(iBuf, 0, TOP_GAP, getWidth(), getHeight() - (TOP_GAP), 0, 0, INACTIVE_BAR_WIDTH, 255, null);
         
-        
+        g.draw3DRect(0, 0, getWidth(), getHeight(), true);       
         
         iTop.draw((Graphics2D)g, getWidth(), getHeight());
         iBottom.draw((Graphics2D)g, getWidth(), getHeight());
@@ -372,13 +399,13 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
     double imageToScreen(double aY) {
         final double screenRange = this.getHeight() - (TOP_GAP + BOTTOM_GAP);
-        final double imageRange  = iVLut.getRange().getWidth();        
+        final double imageRange  = iView.getVLut().getRange().getWidth();        
         return aY*screenRange/imageRange;       
     }
     
     double screenToImage(double aY) {
         final double screenRange = this.getHeight() - (TOP_GAP + BOTTOM_GAP);
-        final double imageRange  = iVLut.getRange().getWidth();        
+        final double imageRange  = iView.getVLut().getRange().getWidth();        
         return aY*imageRange/screenRange;    
     }       
     
@@ -416,28 +443,30 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         
         boolean contains(int aVal) {
             final int ypos = iPos;//getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;
-            final int half_height = (null != arrow) ? arrow.getHeight(null) : 4;
-            return aVal < ypos + half_height && aVal > ypos  /*- half_height*/;
+            final int height = (null != arrow) ? arrow.getHeight(null) : 4;
+            return aVal < ypos + height && aVal > ypos  /*- half_height*/;
         }
             
         void draw(Graphics2D aGC, int aWidth, int aHeight) {  
             aGC.setColor(iCol);       
             
-            if (null != arrow) {
-                int ypos = aHeight - (TOP_GAP + BOTTOM_GAP) - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);
-                aGC.drawImage(arrow, 0, ypos, null);
-            } else {
-                                       
-                aGC.drawLine(HORIZONTAL_BAR_EXCESS, aHeight - iPos, aWidth-HORIZONTAL_BAR_EXCESS, aHeight - iPos);  
+            if (iActive) {
+                if (null != arrow) {
+                    int ypos = aHeight - (TOP_GAP + BOTTOM_GAP) - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);
+                    aGC.drawImage(arrow, 0, ypos, null);
+                } else {                                       
+                    aGC.drawLine(HORIZONTAL_BAR_EXCESS, aHeight - iPos, aWidth-HORIZONTAL_BAR_EXCESS, aHeight - iPos);  
+                }
             }
-            
                 
             if (ACTIVATED_BAR_WIDTH == aWidth) {
-                final double val = iShowPercent ? screenToImage(iPos) * 100.0 / iVLut.getRange().getWidth() : screenToImage(iPos);
+                final double val = iShowPercent ? screenToImage(iPos) * 100.0 / iView.getVLut().getRange().getWidth() : screenToImage(iPos);
                 final String out = String.format("%.0f", Math.abs(val)); //NOI18N
-                final int width = (int)(aGC.getFontMetrics().getStringBounds(out, aGC)).getWidth();                 
-                aGC.drawString(out, aWidth/2 - width/2, 
-                              (aHeight - iPos ) + ((iName == "top") ? (aGC.getFontMetrics().getAscent() - arrow.getHeight(null)/2) : - (aGC.getFontMetrics().getDescent() + arrow.getHeight(null)/2)));
+                final int width = (int)(aGC.getFontMetrics().getStringBounds(out, aGC)).getWidth();    
+                final int height = (null != arrow) ? arrow.getHeight(null) : 4;
+                aGC.drawString(out, aWidth/2 - width/2 
+                              , (aHeight - iPos ) + ((iName == "top") ? (aGC.getFontMetrics().getAscent() - height) : - (aGC.getFontMetrics().getDescent() + height))
+                              );
             }
         }         
     }
@@ -450,25 +479,25 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
     
     public void actionPerformed(ActionEvent e) {
-        assert (null != iComponent);
+        assert (null != iView);
         
         logger.info(e.getActionCommand() +  e.paramString()); // NOI18N
         
         switch (e.getActionCommand()) {             
             case KCommandTriggerLinear: 
-                iComponent.setLinear(!iComponent.isLinear());
+                iView.setLinear(!iView.isLinear());
                 invalidateBuffer();
-                iComponent.repaint();
+                iView.repaint();
                 repaint();
                 break;
             case KCommandTriggerDirect: 
-                iComponent.setInverted(!iComponent.isInverted());
+                iView.setInverted(!iView.isInverted());
                 invalidateBuffer();
-                iComponent.repaint();
+                iView.repaint();
                 repaint();
                 break;
             case KCommandShowDialog:                 
-                VOILUTPanel panel = new VOILUTPanel(this, iComponent.getImage().image());
+                VOILUTPanel panel = new VOILUTPanel(this, iView.getImage().image());
                 JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
                 dialog.setContentPane(panel);
                 dialog.validate();
@@ -483,17 +512,17 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 fd.setVisible(true);
                 String cm ;        
                 if (null != fd.getFile() && null != (cm = fd.getDirectory() + fd.getFile())) {
-                    iComponent.setLUT(cm);
+                    iView.setLUT(cm);
                     invalidateBuffer();
-                    iComponent.repaint();
+                    iView.repaint();
                     repaint();
                 } 
                 break;          
             default: 
                 //setLUT(e.getActionCommand());
-                iComponent.setLUT(e.getActionCommand());
+                iView.setLUT(e.getActionCommand());
                 invalidateBuffer();
-                iComponent.repaint();
+                iView.repaint();
                 repaint();
                 break;
          }
@@ -503,7 +532,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         final JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("WL_CONTEXT_MENU_TITLE"));        
         JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.TRIGGER_LOGARITHMIC"));
         mi11.addActionListener(this);
-        mi11.setState(!iVLut.isLinear());
+        mi11.setState(!iView.isLinear());
         mi11.setActionCommand(KCommandTriggerLinear);
         
         mnu.add(mi11);
@@ -511,7 +540,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         JCheckBoxMenuItem mi12 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.TRIGGER_DIRECT_INVERSE"));
         mi12.addActionListener(this);
         mi12.setActionCommand(KCommandTriggerDirect); 
-        mi12.setState(iVLut.isInverted());
+        mi12.setState(iView.isInverted());
         mnu.add(mi12);
 
         JMenuItem mi13 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.SHOW_DIALOG"));
@@ -535,13 +564,13 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         mi14.setActionCommand(KCommandChangeLUT); 
         mnu.add(mi14);
         
-        mnu.show(iComponent, aX, aY);
+        mnu.show(this, aX, aY);
     }   
                        
     class listener implements ComponentListener {
     
         public void componentResized(ComponentEvent e) {           
-            windowChanged(iVLut.getWindow());
+            windowChanged(iView.getWindow());
         }
 
         public void componentHidden(ComponentEvent e) {}
@@ -549,7 +578,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         public void componentMoved(ComponentEvent e) {}
 
         public void componentShown(ComponentEvent e) {
-            windowChanged(iVLut.getWindow());
+            windowChanged(iView.getWindow());
         }
     }
     private static final Logger logger = LogManager.getLogger(LUTControl.class);

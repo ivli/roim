@@ -10,7 +10,7 @@ import java.awt.image.WritableRaster;
  *
  * @author likhachev
  */
-public class PresentationLut implements LutTransform {
+public class PresentationLut implements Transformation {
     protected String          iName;
     protected IndexColorModel iLUT;
     

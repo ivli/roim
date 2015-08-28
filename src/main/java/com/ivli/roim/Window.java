@@ -13,11 +13,19 @@ public class Window implements java.io.Serializable, Cloneable {
 
     static final double WINDOW_WIDTH_MINIMUM = 1.;
     
-    private double iLevel = .5;
-    private double iWidth = WINDOW_WIDTH_MINIMUM;
+    protected double iLevel;
+    protected double iWidth;
 
-    private Window(){}
-    public Window(Window aW) {iLevel = aW.iLevel; iWidth = aW.iWidth;}
+    private Window() {
+        iLevel = .5;
+        iWidth = WINDOW_WIDTH_MINIMUM;
+    }
+    
+    public Window(Window aW) {
+        iLevel = aW.iLevel; 
+        iWidth = aW.iWidth;
+    }
+    
     public Window(double aL, double aW) {
         iLevel = aL; 
         iWidth = Math.max(WINDOW_WIDTH_MINIMUM, aW);   

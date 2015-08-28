@@ -87,7 +87,10 @@ public class ImageLoader {
     
     PixelSpacing getPixelSpacing() throws IOException {        
         double[] ps = iDataSet.getDoubles(Tag.PixelSpacing); 
-        return new PixelSpacing (ps[0], ps[1]);
+        if (null != ps && ps.length >=2 )
+            return new PixelSpacing (ps[0], ps[1]);
+        else
+            return new PixelSpacing();
     }
     
     int getNumImages() throws IOException {

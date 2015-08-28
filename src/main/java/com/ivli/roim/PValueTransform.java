@@ -11,7 +11,7 @@ import java.awt.image.*;
  *
  * @author likhachev
  */
-public class PValueTransform implements Serializable, LutTransform {
+public class PValueTransform implements Serializable, Transformation {
         private final double iSlope;
         private final double iIntercept;
 

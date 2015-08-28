@@ -37,8 +37,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     private static final int     ZOOM_TO_FIT = 1;
     
     private       IMultiframeImage iImage;
-    protected     VOILut           iVLut;                   
-    protected     PresentationLut  iPLut;  
+                  VOILut           iVLut;                   
+                  PresentationLut  iPLut;  
     private final Controller       iController;    
     private final AffineTransform  iZoom;
     private final Point            iOrigin;   
@@ -75,6 +75,10 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     public ROIManager getManager() {
         return iROIMgr;
     }    
+    
+    public VOILut getVLut() {return iVLut;}
+    public PresentationLut getPLut() {return iPLut;}
+    
 /*
     void setVOILUT(VOILut aLut) {
         iVLut = aLut;
@@ -84,13 +88,14 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     void setPresentationLUT(PresentationLut aLut) {
         iPLut = aLut;
     }
- */   
+   
     public void setLUTControl(LUTControl aCtrl) {
         //setVOILUT(aCtrl.iVLut);
         //setPresentationLUT(aCtrl.iPLut);
         aCtrl.attach(iPLut, iVLut);
         aCtrl.addComponent(this);
     }
+    */ 
     
     public void fitWidth() {
         final double scale = getWidth() / iImage.getWidth();
@@ -99,7 +104,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
     
     public void fitHeight() {
-        double scale = ((double)getHeight())/(double)iImage.getHeight();
+        double scale = ((double)getHeight()) / (double)iImage.getHeight();
         iZoom.setToScale(scale, scale);
         invalidateBuffer();
     }
@@ -266,8 +271,10 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
         AffineTransformOp z = new AffineTransformOp(iZoom, hts);
-        BufferedImage src = iPLut.transform(iVLut.transform(iImage.image().getBufferedImage(), null), null);
-        iBuf = z.filter(iPLut.transform(src, null), null);                  
+        BufferedImage s1  = iVLut.transform(iImage.image().getBufferedImage(), null);
+        BufferedImage src = iPLut.transform(s1, null);
+        
+        iBuf = z.filter(src, null);                  
     }
     
     public void paintComponent(Graphics g) {           

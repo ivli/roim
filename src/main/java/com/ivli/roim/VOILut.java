@@ -13,14 +13,13 @@ import org.apache.logging.log4j.Logger;
 
 
 
-public class VOILut implements LutTransform {
+public class VOILut implements Transformation {
     private boolean iInverted;            
     private boolean iLog;
-    private boolean iKeepWindow; 
-    
+    private boolean iKeepWindow;     
     
     private PValueTransform iPVt;
-    private LutBuffer       iBuffer;
+    private Buffer       iBuffer;
     private LookupOp        iLok; 
     private Window          iWin;
     private Window          iMax;
@@ -36,7 +35,7 @@ public class VOILut implements LutTransform {
     private void reset(ImageFrame aI) {
         
         iPVt = new PValueTransform();
-        iBuffer = new LutBuffer(aI.getRaster().getSampleModel().getDataType());
+        iBuffer = new Buffer(aI.getRaster().getSampleModel().getDataType());
         
         final double min = aI.getStats().getMin();
         final double max = aI.getStats().getMax();
@@ -167,29 +166,34 @@ public class VOILut implements LutTransform {
     private static final Logger logger = LogManager.getLogger(VOILut.class);
 } 
 
-final class LutBuffer {
-    final byte [] bytes;
+final class Buffer {
+    final byte []bytes;
     final int  length;
     final int  min;
     final int  max;
 
-    public LutBuffer(int aType) {
-        boolean Signed=false;
-        switch (aType) {
-            case DataBuffer.TYPE_SHORT:
-                Signed = true;
-            case DataBuffer.TYPE_USHORT:
-                min = Signed ? -32768 : 0;
-                max = Signed ?  32768 : 65536;
-                bytes = new byte[length = 65536];
-                break;
+    public Buffer(int T) {
+        
+        switch (T) {
             case DataBuffer.TYPE_BYTE:
-                min = Signed ? -128 : 0;
-                max = Signed ?  128 : 256;
-                bytes = new byte[length = 256]; 
+                min = -128;
+                max = 128;
+                length = 256; 
                 break;
+            
+            case DataBuffer.TYPE_USHORT: 
+                min =  0;
+                max = 65536;
+                length = 65536;
+                break;
+                
+            case DataBuffer.TYPE_SHORT: 
+                min =  -32768;
+                max =   32768; 
+                length = 65536; break;
             default:
                 throw new IllegalArgumentException();                  
-        }                
+        }     
+        bytes = new byte[length]; 
     }
 }
