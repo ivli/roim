@@ -10,28 +10,20 @@ import java.awt.image.WritableRaster;
  *
  * @author likhachev
  */
-public class PresentationLut implements Transformation {
+public final class PresentationLut implements Transformation {
     protected String          iName;
     protected IndexColorModel iLUT;
     
     public PresentationLut(String aName) {
-        setLUT(aName);
+        open(aName);
     }
-    
-    public IndexColorModel getLUT() {
-        return iLUT;
-    }
-    
-    public String getLUTName() {
-        return iName;
-    }
-    
-    public final void setLUT(String aName) {
+          
+    public void open(String aName) {
         iLUT = LutLoader.open(iName = (null == aName ? Settings.DEFAULT_PRESENTATION_LUT:aName));
     }
     
     @Override
-    public BufferedImage transform (BufferedImage aSrc, BufferedImage aDst) {
+    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {
         
         if (null == aDst)
             aDst = new BufferedImage(aSrc.getWidth(), aSrc.getHeight(), BufferedImage.TYPE_INT_RGB);

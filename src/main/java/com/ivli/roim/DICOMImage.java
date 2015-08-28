@@ -61,7 +61,6 @@ public class DICOMImage extends IImageProvider /*implements IImage*/ {
         if (!LOAD_ON_DEMAND) 
             for (int i = 0; i < getNumFrames(); ++i)
                 loadFrame(i);
-
         
         loadFrame(0);
     }
@@ -91,48 +90,7 @@ public class DICOMImage extends IImageProvider /*implements IImage*/ {
     public IMultiframeImage image() {
         return new MultiframeImage(this);
     }
-    
-    /* 
-    
-    public BufferedImage getBufferedImage() {
-        return convert((WritableRaster)getCurrentFrame().iRaster);
-    }     
-    
-    private BufferedImage convert(WritableRaster raster) {
-        ColorModel cm ;
-       // if (pmi.isMonochrome()) {
-           
-            cm = createColorModel(8, DataBuffer.TYPE_USHORT);//TYPE_BYTE);
-          //  SampleModel sm = createSampleModel(DataBuffer.TYPE_BYTE, false);
-          //  raster = applyLUTs(raster, frameIndex, param, sm, 8);
-          //  for (int i = 0; i < overlayGroupOffsets.length; i++) {
-          //      applyOverlay(overlayGroupOffsets[i], 
-          //              raster, frameIndex, param, 8, overlayData[i]);
-       //     }
-      //  } else {
-      //      cm = createColorModel(bitsStored, dataType);
-      //  }
-        //WritableRaster r = raster.createCompatibleWritableRaster();
-        return new BufferedImage(cm, raster , false, null);
-    }
-    
-    static ColorModel createColorModel(int bits, int dataType) {
-        return new ComponentColorModel(
-                        ColorSpace.getInstance(ColorSpace.CS_GRAY),
-                        new int[] { bits },
-                        false, // hasAlpha
-                        false, // isAlphaPremultiplied
-                        Transparency.OPAQUE,
-                        dataType);
-    }
-    */
-    
-    
-    
-    
-     
-    
-    
+  
     
     private static final Logger logger = LogManager.getLogger(DICOMImage.class);    
  

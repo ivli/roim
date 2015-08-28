@@ -6,11 +6,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ByteLookupTable;
 import java.awt.image.DataBuffer;
 import java.awt.image.LookupOp;
-
 import org.jfree.data.xy.XYSeries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 
 public class VOILut implements Transformation {
@@ -24,13 +22,21 @@ public class VOILut implements Transformation {
     private Window          iWin;
     private Window          iMax;
     
-    public VOILut(){}        
+    public VOILut(ImageFrame aI) {
+        reset(aI);
+    }  
+    
     public void setImage(ImageFrame aI) {
         reset(aI);
     }
     
-    public Window getWindow() {return iWin;}
-    public Window getRange() {return iMax;}
+    public Window getWindow() {
+        return iWin;
+    }
+    
+    public Window getRange() {
+        return iMax;
+    }
         
     private void reset(ImageFrame aI) {
         
@@ -51,7 +57,8 @@ public class VOILut implements Transformation {
             iWin = new Window(iMax);//percentTop * iMax.getWidth()/2, (percentTop - percentBottom) * iMax.getWidth()); 
             iWin.setTop(percentTop*iMax.getWidth()); 
             iWin.setBottom(percentBottom*iMax.getWidth()); 
-        }                           
+        } 
+        
         makeLUT();            
     }
       
@@ -64,7 +71,9 @@ public class VOILut implements Transformation {
         }
     }
     
-    public boolean isInverted() {return iInverted;}
+    public boolean isInverted() {
+        return iInverted;
+    }
 
     public boolean setInverted(boolean aI) {
         if (aI != isInverted()) {
@@ -75,7 +84,9 @@ public class VOILut implements Transformation {
         return false;
     }
 
-    public boolean isLinear() {return true!=iLog;}
+    public boolean isLinear() {
+        return true!=iLog;
+    }
     
     public void setLinear(boolean aL) {
             iLog = !aL;

@@ -51,7 +51,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     ImageView(IMultiframeImage aImage) {  
         iImage = aImage;
         iController = new Controller(this);   
-        iVLut  = new VOILut();                    
+        iVLut  = new VOILut(iImage.image());                    
         iPLut = new PresentationLut(null);  
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
         iOrigin = new Point(0, 0);   
@@ -60,7 +60,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iZoomListeners = new HashSet();
         iFrameListeners = new HashSet();
         
-        iVLut.setImage(iImage.image());
+        ///iVLut.setImage(iImage.image());
         PixelSpacing ps = iImage.getPixelSpacing();
     }
        
@@ -245,7 +245,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }    
     
     public void setLUT(String aLUT) {
-        iPLut.setLUT(aLUT);        
+        iPLut.open(aLUT);        
         invalidateBuffer();      
     }
     

@@ -1,11 +1,10 @@
 
 package com.ivli.roim;
 
-import java.awt.image.BufferedImage;
 /**
  *
  * @author likhachev
  */
 public interface Transformation {
-    BufferedImage transform (BufferedImage aSrc, BufferedImage aDst);
+    java.awt.image.BufferedImage transform (java.awt.image.BufferedImage aSrc, java.awt.image.BufferedImage aDst);
 }

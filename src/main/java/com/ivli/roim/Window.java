@@ -16,7 +16,7 @@ public class Window implements java.io.Serializable {
     protected double iLevel;
     protected double iWidth;
 
-    private Window() {
+    public Window() {
         iLevel = .5;
         iWidth = WINDOW_WIDTH_MINIMUM;
     }
@@ -87,5 +87,5 @@ public class Window implements java.io.Serializable {
     }
 
     @Override
-    public String toString(){return super.toString() + String.format("%.1f, %.1f",getBottom(), getTop());} //NOI18N
+    public String toString(){return String.format("[%.1f, %.1f]", getLevel(), getWidth());} //NOI18N
 }

@@ -302,5 +302,5 @@ public class LutLoader {
             return new IndexColorModel(8, 256, reds, greens, blues);
     }
 
-    private static final Logger logger = LogManager.getLogger(Controller.class);
+    private static final Logger logger = LogManager.getLogger(LutLoader.class);
 }
