@@ -7,7 +7,7 @@ package com.ivli.roim;
  * @author likhachev
  * 
  */
-public class Window implements java.io.Serializable, Cloneable {      
+public class Window implements java.io.Serializable {      
 
     private static final long serialVersionUID = 42L;
 
@@ -31,14 +31,29 @@ public class Window implements java.io.Serializable, Cloneable {
         iWidth = Math.max(WINDOW_WIDTH_MINIMUM, aW);   
     }
 
-    public double getLevel()  {return iLevel;}
-    public double getWidth()  {return iWidth;}
+    public double getLevel() {
+        return iLevel;
+    }
+    
+    public double getWidth() {
+        return iWidth;
+    }
 
-    public void setLevel(double aC) {iLevel = aC;}
-    public void setWidth(double aW) {iWidth = Math.max(aW, WINDOW_WIDTH_MINIMUM);}   
+    public void setLevel(double aC) {
+        iLevel = aC;
+    }
+    
+    public void setWidth(double aW) {
+        iWidth = Math.max(aW, WINDOW_WIDTH_MINIMUM);
+    }   
 
-    public double getTop()    {return iLevel + iWidth / 2.;}
-    public double getBottom() {return iLevel - iWidth / 2.;}
+    public double getTop() {
+        return iLevel + iWidth / 2.;
+    }
+    
+    public double getBottom() {
+        return iLevel - iWidth / 2.;
+    }
 
     public void setTop(double aT) { 
         final double oldTop = getTop();
