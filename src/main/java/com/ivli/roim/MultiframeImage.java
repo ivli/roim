@@ -1,12 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ivli.roim;
 
 
-import java.util.Iterator;
+import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,15 +19,20 @@ public class MultiframeImage implements IMultiframeImage {
     public boolean hasAt(int aFrameNumber) {
         try {
             iSrc.loadFrame(aFrameNumber);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IOException | IndexOutOfBoundsException e) {
             return false;
         }
         return true;
     }
     
-    public ImageFrame getAt(int aFrameNumber) throws IndexOutOfBoundsException {         
-        ImageFrame ret = iSrc.loadFrame(aFrameNumber); //prevent iCurrent from change in the case of exception
-        iCurrent = aFrameNumber;
+    public ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException {           
+        ImageFrame ret = null;
+        try {
+            ret = iSrc.loadFrame(aFrameNumber); //prevent iCurrent from change in the case of exception
+            iCurrent = aFrameNumber;
+        } catch (IOException ex) {
+            throw( new java.util.NoSuchElementException());
+        }
         return ret;
     } 
     public int getCurrentNo() {
@@ -39,11 +40,17 @@ public class MultiframeImage implements IMultiframeImage {
     }
     
     public ImageFrame image() { 
-        return iSrc.loadFrame(iCurrent);
+        return getAt(iCurrent);
     }
     
     public int getNumFrames() {
-        return iSrc.getNumFrames();
+        int ret = 0;
+        try {
+            ret = iSrc.getNumFrames();
+        } catch (IOException ex) {
+            logger.error(ex);
+        }
+        return ret;
     }
     
     public int getWidth() {
@@ -71,7 +78,7 @@ public class MultiframeImage implements IMultiframeImage {
         return ret;
     }
           
-    public ImageFrame makeCompositeFrame(int aFrom, int aTo) {
+    public ImageFrame makeCompositeFrame(int aFrom, int aTo)  {
         if (-1 == aTo)
             aTo = getNumFrames();
 
@@ -94,7 +101,9 @@ public class MultiframeImage implements IMultiframeImage {
     
     
     public void extract(Extractor aEx) {
-        aEx.apply(image().getRaster());
+        
+            aEx.apply(image().getRaster());
+       
     }
     
     private static final Logger logger = LogManager.getLogger(MultiframeImage.class);    

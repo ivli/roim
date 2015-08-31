@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class DICOMImage extends IImageProvider /*implements IImage*/ {
+public class DICOMImage /*extends IImageProvider implements IImage*/ {
     private static final boolean LOAD_ON_DEMAND = false;
     
     private final ImageLoader iLoader = new ImageLoader(); 

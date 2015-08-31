@@ -1,6 +1,7 @@
 
 package com.ivli.roim;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 
@@ -10,10 +11,10 @@ import java.util.Iterator;
  */
 public interface IMultiframeImage extends IImage, Iterable<ImageFrame> {   
     boolean hasAt(int aFrameNumber);
-    ImageFrame getAt(int aFrameNumber);  
+    ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException;  
     int getCurrentNo();
     int getNumFrames(); 
-    ImageFrame makeCompositeFrame(int aFrom, int aTo);  
+    ImageFrame makeCompositeFrame(int aFrom, int aTo) ;  
     PixelSpacing getPixelSpacing();
     
     

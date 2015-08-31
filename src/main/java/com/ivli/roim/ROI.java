@@ -73,11 +73,11 @@ public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip,
         aGC.draw(aTrans.createTransformedShape(getShape()));
     }
     
-    void move(double adX, double adY) {
+    protected void move(double adX, double adY) {
         AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
         iShape = trans.createTransformedShape(iShape);
         update();
-        updateCurve();
+        
         
         if (null != iAnnos) {
             for (Overlay o : iAnnos)
@@ -85,7 +85,7 @@ public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip,
         }
     }  
     
-    void updateCurve() {
+    void makeCurve() {
         CurveExtractor ce = new CurveExtractor(getManager().getImage());
         Curve cv = ce.extract(this);
         iCurve = cv;
@@ -97,12 +97,13 @@ public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip,
             ROIExtractor ex = new ROIExtractor(getShape());
             getManager().getImage().extract(ex); 
             iStats = ex.iStats;
-            
-            
+        
         } catch (ArrayIndexOutOfBoundsException ex) {
             iStats = new ROIStats(); //set to NaN
             logger.error(ex);
         }
+        
+        makeCurve();
         
         if (null != iAnnos) {
             for(Overlay o : iAnnos)

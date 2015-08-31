@@ -47,7 +47,7 @@ class ROIManager {
         iOverlays.add(newRoi);
         iOverlays.add(new Annotation(newRoi));      
         newRoi.update();
-        newRoi.updateCurve();        
+        newRoi.makeCurve();        
     }
     
     public void cloneRoi(ROI aR) {

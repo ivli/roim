@@ -13,7 +13,7 @@ public abstract class IImageProvider {
    
     public abstract int getWidth();  
     public abstract int getHeight();
-    public abstract int getNumFrames()throws java.io.IOException;
+    public abstract int getNumFrames() throws java.io.IOException;
     abstract public IMultiframeImage image();
     
     abstract void open(String aFile) throws java.io.IOException;      
