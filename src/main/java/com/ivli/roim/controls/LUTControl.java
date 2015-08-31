@@ -113,7 +113,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
 
     private void invalidateBuffer() {iBuf = null;}
     
-    private void windowChanged(Window aW) {              
+    private void changeWindow(Window aW) {              
         iView.setWindow(aW);        
         iTop.setPosition((int) imageToScreen(aW.getTop()));
         iBottom.setPosition((int) imageToScreen(aW.getBottom())); 
@@ -129,7 +129,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 iView.getVLut().getRange().setBottom(anE.getMin());
             }    
             
-            windowChanged(anE.getWindow());                       
+            changeWindow(anE.getWindow());                       
         }
     }   
            
@@ -152,7 +152,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 if (null != iView) 
                     iView.setWindow(win);
 
-                windowChanged(win);     
+                changeWindow(win);     
             }
         }            
     } 
@@ -201,7 +201,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                         if (null != iView) 
                             iView.setWindow(win);
 
-                        windowChanged(win);     
+                        changeWindow(win);     
                     }
                 }   
                 protected boolean DoWheel(int aX) {
@@ -214,7 +214,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                         if (null != iView) 
                             iView.setWindow(win);
 
-                        windowChanged(win);     
+                        changeWindow(win);     
                     }
                   
                     return false;
@@ -258,7 +258,12 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     public void mouseClicked(MouseEvent e) {    
         if (SwingUtilities.isRightMouseButton(e)) 
             showPopupMenu(e.getX(), e.getY());
-       
+        else if (SwingUtilities.isLeftMouseButton(e)) {
+                if(e.getClickCount() == 2){
+                
+                changeWindow(new Window(this.iView.getVLut().getRange()));
+                }
+        }
     }
     
 /*
@@ -569,7 +574,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     class listener implements ComponentListener {
     
         public void componentResized(ComponentEvent e) {           
-            windowChanged(iView.getWindow());
+            changeWindow(iView.getWindow());
         }
 
         public void componentHidden(ComponentEvent e) {}
@@ -577,7 +582,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         public void componentMoved(ComponentEvent e) {}
 
         public void componentShown(ComponentEvent e) {
-            windowChanged(iView.getWindow());
+            changeWindow(iView.getWindow());
         }
     }
     private static final Logger logger = LogManager.getLogger(LUTControl.class);

@@ -35,12 +35,12 @@ public class DICOMImage extends IImageProvider /*implements IImage*/ {
         return iFrames.get(0).getHeight();
     }  
     
-    public int getNumFrames() {
-        try {
+    public int getNumFrames() throws IOException {
+        //try {
             return iLoader.getNumImages();
-        } catch (IOException e) {
-            return -1;
-        }
+       // } catch (IOException e) {
+        //    return -1;
+        //}
     }
     
     public PixelSpacing getPixelSpacing() {
@@ -65,7 +65,7 @@ public class DICOMImage extends IImageProvider /*implements IImage*/ {
         loadFrame(0);
     }
       
-    ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException {
+    ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, IOException {
         
         if (anIndex > getNumFrames() || anIndex < 0)
             throw new IndexOutOfBoundsException();
