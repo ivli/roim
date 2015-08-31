@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import com.ivli.roim.controls.*;
 import com.ivli.roim.Events.*;
 
-public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener{
+public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener {
 
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
@@ -56,6 +56,12 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1.setVerifyInputWhenFocusTarget(false);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
+
+        jPanel4.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                jPanel4ComponentShown(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -200,7 +206,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 717, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -310,7 +316,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        
         ROIListPanel panel = new ROIListPanel(null != iPanel?iPanel.getOverlaysList():null);
         JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);        
         dialog.setContentPane(panel);
@@ -325,6 +330,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iPanel.fitWidth();
         iPanel.repaint();
     }//GEN-LAST:event_jMenuItem8ActionPerformed
+
+    private void jPanel4ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel4ComponentShown
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPanel4ComponentShown
 
     /**
      * @param args the command line arguments

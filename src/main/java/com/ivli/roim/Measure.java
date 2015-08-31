@@ -27,8 +27,8 @@ public class Measure <T extends Number> implements Serializable {
     public T getMax()  {return iMax;}
     public T getIden() {return iIden;}
     
-    static Measure Measure (Raster aRaster, ROI aRoi) throws ArrayIndexOutOfBoundsException {          
-            final Rectangle bnds = aRoi.getShape().getBounds();
+    static Measure Measure (Raster aRaster, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
+            final Rectangle bnds = aShape.getBounds();
          
             double min = 65535, max = .0, sum = .0, pix = .0;
 
@@ -36,7 +36,7 @@ public class Measure <T extends Number> implements Serializable {
 
             for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
                 for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) //{ 
-                    if (aRoi.getShape().contains(i, j)) {
+                    if (aShape.contains(i, j)) {
                         ++pix;
                         temp = aRaster.getPixel(i, j, temp);
                         if (temp[0] > max) 
