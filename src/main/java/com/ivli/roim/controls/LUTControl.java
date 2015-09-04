@@ -47,18 +47,25 @@ import java.awt.geom.Rectangle2D;
  * @author likhachev
  */
 public class LUTControl extends JComponent implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, WindowChangeListener {
+    
+    private static final boolean MARKERS_DISPLAY_WL_VALUES = false;
+    private static final boolean WEDGE_EXTEND_WHEN_FOCUSED = false;      
+    
     private static final int NUMBER_OF_SHADES = 255;
-    private static final boolean EXTEND_WHEN_FOCUSED = false; 
-    private static final int INACTIVE_BAR_WIDTH = 32 / (EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out
-    private static final int HORIZONTAL_BAR_EXCESS = 0;  //reserve border at left & right
+    
+    
+    private static final int INACTIVE_BAR_WIDTH = 32 / (WEDGE_EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out
+    
     private final int ACTIVATED_BAR_WIDTH = 32; //mouse inside
     private final int TOP_GAP;  //reserve a half of marker height at window's top & bottom 
     private final int BOTTOM_GAP;
-       
+    private static final int LEFT_GAP = 2;  //reserve border at left & right
+    private static final int RIGHT_GAP = 2;
+    
     private static final int MARKER_CURSOR = java.awt.Cursor.HAND_CURSOR;    
     private static final int WINDOW_CURSOR = java.awt.Cursor.N_RESIZE_CURSOR;
                         
-    private boolean iShowPercent = true;
+    private boolean iShowPercent = false;
     private ImageView iView;
     
     private java.awt.Image iMarker;
@@ -75,7 +82,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         iActive = false;
         iView = aControl.iView;
         
-        TOP_GAP = BOTTOM_GAP = null != iMarker ? iMarker.getHeight(null) / 2 : 4; 
+        TOP_GAP = BOTTOM_GAP = (null != iMarker) ? iMarker.getHeight(null) / 2 : 4; 
         iTop = iBottom = null; //no markers needed
     } 
     
@@ -261,78 +268,21 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         }
     }
     
-/*
-    private void updateBufferedImage() {
-        final int width  = getWidth();
-        final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
-        final double wtop = height * (iView.getVLut().getWindow().getTop() / iView.getVLut().getRange().getWidth());
-        final double wbot = height * (iView.getVLut().getWindow().getBottom() / iView.getVLut().getRange().getWidth());
-        
-        final int size = (width * height - 1);
-        DataBuffer data = new DataBufferUShort(width * height);
-        
-        
-        
-        for (int i = 0; i < height; ++i) {                 
-            final short line_value; 
-                        
-            if (iView.isInverted()) {
-                if (i >= wtop)
-                    line_value = 0;
-                else if (i <= wbot)
-                    line_value = 255;  
-                else             
-                    line_value = (short)(NUMBER_OF_SHADES - ((i-wbot)*NUMBER_OF_SHADES/(wtop-wbot)));
-                 } else {
-                if (i >= wtop)
-                    line_value = 255;
-                else if (i <= wbot)
-                    line_value = 0;  
-                else             
-                    line_value = (short)((i-wbot)*NUMBER_OF_SHADES/(wtop-wbot));          
-            }                     
-            
-            final int lineNdx =  size - (i * width);
-            
-            for (int j = 0; j < width; ++j) {               
-                data.setElem(lineNdx - j, line_value);            
-            }                      
-        }
-       
-        final WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0})             
-                                                             , data, new Point(0,0)
-                                                             );        
-        
-        iBuf = iView.getPLut().transform(new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY)                                                               
-                                                    , new int[] {8}
-                                                    , false		// has alpha
-                                                    , false		// alpha premultipled
-                                                    , Transparency.OPAQUE
-                                                    , data.getDataType())                                                                                                                                  
-                                                , wr, true, null), null
-                                                );     
-    }
-    */ 
-    
      private void updateBufferedImage() {
-        final int width  = getWidth();
+        final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
         final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
-       // final double wtop = height * (iView.getVLut().getWindow().getTop() / iView.getVLut().getRange().getWidth());
-       // final double wbot = height * (iView.getVLut().getWindow().getBottom() / iView.getVLut().getRange().getWidth());
+       
         
         final int size = (width * height - 1);
         DataBuffer data = new DataBufferUShort(width * height);
         
-        final double ratio = (double)(iView.getMax()-iView.getMin()) / height;
+        final double ratio = (double)(iView.getMax() - iView.getMin()) / height;
         
-        for (short i = 0; i < height; ++i) {                 
-            final short line_value = (short)((double)i * ratio);//(short)(i*NUMBER_OF_SHADES/height);   
-     
+        for (int i = 0; i < height; ++i) {                                   
             final int lineNdx =  size - (i * width);
-            
-           
+   
             for (int j = 0; j < width; ++j) {               
-                data.setElem(lineNdx - j, line_value);            
+                data.setElem(lineNdx - j, (short)((double)i * ratio));            
             }                      
         }
        
@@ -360,10 +310,10 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         
         final Color clr = g.getColor();
         
-        g.setColor(iView.isInverted() ? Color.WHITE : Color.BLACK);
+        g.setColor(Color.LIGHT_GRAY);
         
         g.fillRect(0, 0, getWidth(), getHeight());
-        g.drawImage(iBuf, 0, TOP_GAP, getWidth(), getHeight() - (TOP_GAP + BOTTOM_GAP), null);
+        g.drawImage(iBuf, LEFT_GAP, TOP_GAP, getWidth() - (LEFT_GAP + RIGHT_GAP), getHeight() - (TOP_GAP + BOTTOM_GAP), null);
         
         //g.drawImage(iBuf, 0, TOP_GAP, getWidth(), getHeight() - (TOP_GAP), 0, 0, INACTIVE_BAR_WIDTH, 255, null);
         
@@ -376,7 +326,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     }
      
     void extend() {
-        if (EXTEND_WHEN_FOCUSED) {
+        if (WEDGE_EXTEND_WHEN_FOCUSED) {
             setSize(ACTIVATED_BAR_WIDTH, getHeight());
             setLocation(getLocation().x - (ACTIVATED_BAR_WIDTH - INACTIVE_BAR_WIDTH), getLocation().y);
             getParent().setComponentZOrder(this, 0);
@@ -387,12 +337,13 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     }
     
     void shrink() {
-        setSize(INACTIVE_BAR_WIDTH, getHeight());
-        getParent().setComponentZOrder(this, 1);
-       
-        invalidateBuffer();
-        //repaint(); 
-        getParent().revalidate();
+        if(WEDGE_EXTEND_WHEN_FOCUSED) {
+            setSize(INACTIVE_BAR_WIDTH, getHeight());
+            getParent().setComponentZOrder(this, 1);
+            invalidateBuffer();
+            //repaint(); 
+            getParent().revalidate();
+        }
     }
   
     double imageToScreen(double aY) {
@@ -453,18 +404,19 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                     int ypos = getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);
                     aGC.drawImage(iMarker, 0, ypos, null);
                 } else {                                       
-                    aGC.drawLine(HORIZONTAL_BAR_EXCESS, getHeight() - iPos, getWidth() - HORIZONTAL_BAR_EXCESS, getHeight() - iPos);  
+                    aGC.drawLine(0, getHeight() - iPos, getWidth() , getHeight() - iPos);  
                 }
             }
                 
-            
-            final double val = iShowPercent ? screenToImage(iPos) * 100.0 / iView.getVLut().getRange().getWidth() : screenToImage(iPos);
-            final String out = String.format("%.0f", Math.abs(val)); //NOI18N
-            final Rectangle2D sb = aGC.getFontMetrics().getStringBounds(out, aGC);    
-            final int height = (null != iMarker) ? iMarker.getHeight(null) : 4;
-            aGC.drawString(out, (int)(getWidth()/2 - sb.getWidth()/2) 
-                          , (int)(getHeight() - iPos - height / 2 + sb.getHeight() / 2 )
-                          );
+            if (MARKERS_DISPLAY_WL_VALUES) {
+                final double val = iShowPercent ? screenToImage(iPos) * 100.0 / iView.getVLut().getRange().getWidth() : screenToImage(iPos);
+                final String out = String.format("%.0f", Math.abs(val)); //NOI18N
+                final Rectangle2D sb = aGC.getFontMetrics().getStringBounds(out, aGC);    
+                final int height = (null != iMarker) ? iMarker.getHeight(null) : 4;
+                aGC.drawString(out, (int)(getWidth()/2 - sb.getWidth()/2) 
+                              , (int)(getHeight() - iPos - height / 2 + sb.getHeight() / 2 )
+                              );
+            }
            
         }         
     }
