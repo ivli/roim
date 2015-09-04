@@ -38,8 +38,6 @@ public abstract class ActionItem {
     protected  boolean DoWheel(int aX){return false;}
     // return true if action shall be continued
     protected  boolean DoRelease(int aX, int aY) {return false;}
-    protected  void DoPaint(Graphics2D aGC) {}
-    
-    
+    protected  void DoPaint(Graphics2D aGC) {}   
 }
 

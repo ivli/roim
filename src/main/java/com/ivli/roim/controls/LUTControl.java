@@ -77,6 +77,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     private final Marker iTop;///    = new Marker(Color.green, "top");  //NOI18N
     private final Marker iBottom;/// = new Marker(Color.red, "bottom"); //NOI18N
  
+    private Window iLast;
      /* 
       * passive mode constructor, control is able only to display W/L not to 
       */
@@ -101,16 +102,16 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         try {
             iMarker = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/green_arrow_w.png")); //NOI18N
             
-            } catch (IOException ex) {              
-                logger.info(ex);                 
-            } 
+        } catch (IOException ex) {              
+            logger.info(ex);                 
+        } 
              /* it's kinda feedback coupling used to addjust marker positions when control's size gets changed */
-            addComponentListener(new ComponentListener() {    
-                public void componentResized(ComponentEvent e) {changeWindow(iView.getWindow());}                                               
-                public void componentHidden(ComponentEvent e) {}
-                public void componentMoved(ComponentEvent e) {}
-                public void componentShown(ComponentEvent e) {changeWindow(iView.getWindow());}                    
-                });
+        addComponentListener(new ComponentListener() {    
+            public void componentResized(ComponentEvent e) {changeWindow(iView.getWindow());}                                               
+            public void componentHidden(ComponentEvent e) {}
+            public void componentMoved(ComponentEvent e) {}
+            public void componentShown(ComponentEvent e) {changeWindow(iView.getWindow());}                    
+            });
         
 
         TOP_GAP = BOTTOM_GAP = null != iMarker ? iMarker.getHeight(null) / 2 : 4;   
@@ -143,6 +144,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         if (null != iTop && null != iBottom) { //theoretically we'd never get here when in passive mode
             iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
             iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom())); 
+            //iLast = anE.getWindow();
         }
         invalidateBuffer();
         repaint();              
@@ -186,19 +188,21 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
        
     @Override
     public void mousePressed(MouseEvent e) {        
-        
         final int ypos = getHeight()- e.getPoint().y;
                       
         if (iTop.contains(ypos) || iBottom.contains(ypos) || iTop.getPosition() + 4 > ypos && iBottom.getPosition() - 4 < ypos) {  
-
-            iAction = new ActionItem(e.getX(), e.getY()) {
+           
             
+            iAction = new ActionItem(e.getX(), e.getY()) {
+                 
+                boolean first = true;
                 final boolean iMoveTop = iTop.contains(ypos);    
 
                 final boolean iMoveBoth = !(iMoveTop || iBottom.contains(ypos)) && iTop.getPosition() > ypos && iBottom.getPosition() < ypos;  
 
                 protected void DoAction(int aX, int aY) {
-
+                    
+                    
                     final double delta = screenToImage(aY - iY);
                     final Window win = new Window(iView.getWindow());                     
 
@@ -215,7 +219,11 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                     if (iView.getVLut().getRange().contains(win)) {
                         if (null != iView) 
                             iView.setWindow(win);
-
+                        if (first) {
+                            iLast = iView.getWindow();
+                            logger.info("saving last window, " + iLast);
+                            first = false;
+                        }
                         changeWindow(win);     
                     }
                 }   
@@ -274,9 +282,9 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         if (SwingUtilities.isRightMouseButton(e)) 
             showPopupMenu(e.getX(), e.getY());
         else if (SwingUtilities.isLeftMouseButton(e)) {
-                if(e.getClickCount() == 2){
-                
-                changeWindow(new Window(this.iView.getVLut().getRange()));
+                if(e.getClickCount() == 2){    
+                    logger.info("gonna chane window to " + iLast);
+                    changeWindow(iLast);//new Window(this.iView.getVLut().getRange()));
                 }
         }
     }
@@ -399,7 +407,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         }
               
         void setPosition(int aPos) {
-            logger.info(iName + ", " + aPos ); //NOI18N
+            //logger.info(iName + ", " + aPos ); //NOI18N
             iPos = aPos;
         } 
         
@@ -415,7 +423,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             
         void draw(Graphics aGC)/*, int aWidth, int aHeight)*/ {  
             aGC.setColor(Color.BLACK);       
-            logger.info("DrawMe buddy " + iPos);
+           
             if (iActive) {
                 if (null != iMarker) {
                     int ypos = getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);

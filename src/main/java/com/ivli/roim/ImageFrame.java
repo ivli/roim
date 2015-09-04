@@ -1,14 +1,11 @@
 
 package com.ivli.roim;
 
-import java.awt.Point;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
-import java.awt.image.ComponentSampleModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
@@ -16,7 +13,7 @@ import java.awt.image.WritableRaster;
  *
  * @author likhachev
  */
-public class ImageFrame implements java.io.Serializable/*, IImage */{
+public class ImageFrame implements java.io.Serializable, IImage {
     Raster   iRaster;  
     ROIStats iStats;   
     
@@ -39,8 +36,6 @@ public class ImageFrame implements java.io.Serializable/*, IImage */{
     public ImageFrame image() {
         return this;
     } 
-    
-   
     
     ImageFrame(Raster aRaster) {
         iRaster = aRaster;
