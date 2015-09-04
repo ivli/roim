@@ -1,8 +1,6 @@
 
 package com.ivli.roim;
 
-import java.io.IOException;
-
 /**
  *
  * @author likhachev

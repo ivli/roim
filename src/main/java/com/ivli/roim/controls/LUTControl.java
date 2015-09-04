@@ -74,11 +74,11 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     private final boolean iActive;
     private ActionItem iAction;
     
-    final Marker iTop;///    = new Marker(Color.green, "top");  //NOI18N
-    final Marker iBottom;/// = new Marker(Color.red, "bottom"); //NOI18N
+    private final Marker iTop;///    = new Marker(Color.green, "top");  //NOI18N
+    private final Marker iBottom;/// = new Marker(Color.red, "bottom"); //NOI18N
  
      /* 
-      * a passive mode constructor, control is able only to display W/L not to 
+      * passive mode constructor, control is able only to display W/L not to 
       */
     public LUTControl(LUTControl aControl) {    
         iActive = false;
@@ -89,7 +89,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     } 
     
      /* 
-      * a complete object constructor
+      * complete object constructor
       */
      @SuppressWarnings("LeakingThisInConstructor")
     public LUTControl(ImageView aView) {    

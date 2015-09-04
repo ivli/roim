@@ -13,27 +13,44 @@ import org.apache.logging.log4j.Logger;
 
 public class JMedPane extends JLayeredPane{
     ImageView  iView;
+    ImageView  iComp;
     LUTControl iLut;
-    DICOMImage iImage;
+    IImageProvider iProvider;
            
     void open(String aName) throws IOException {            
-        iImage = DICOMImage.New(aName);
-        iView = new ImageView(iImage.image());
+        boolean SHOW_COMPOSITE = true;
+        
+        iProvider = DICOMImageProvider.New(aName);
+        
+        iView = new ImageView( new MultiframeImage(iProvider));
+        
         
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS)); 
-        iView.setPreferredSize(new java.awt.Dimension(600, 600));  
-        iView.setMinimumSize(new java.awt.Dimension(575, 600));
-        iView.setAlignmentX(Component.LEFT_ALIGNMENT);
-          
+        
+        if (!SHOW_COMPOSITE) {   //yeah, there's no #ifdef          
+            iView.setPreferredSize(new java.awt.Dimension(600, 600));  
+            iView.setMinimumSize(new java.awt.Dimension(575, 600));
+            iView.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        } else {        
+            iComp = new ImageView(iView.getImage().makeCompositeFrame(0, -1));
+            iView.setPreferredSize(new java.awt.Dimension(300, 600));  
+            iView.setMinimumSize(new java.awt.Dimension(300, 600));
+            iView.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            iComp.setPreferredSize(new java.awt.Dimension(300, 600));  
+            iComp.setMinimumSize(new java.awt.Dimension(300, 600));
+            iComp.setAlignmentX(Component.CENTER_ALIGNMENT);
+        }
+        
         iLut = new LUTControl(iView);        
-        iLut.setAlignmentX(Component.RIGHT_ALIGNMENT);        
-       // iView.setLUTControl(iLut);        
+        iLut.setAlignmentX(Component.RIGHT_ALIGNMENT);                      
         
         add(iView, JLayeredPane.DEFAULT_LAYER);
+        if(SHOW_COMPOSITE)
+            add(iComp, JLayeredPane.DEFAULT_LAYER);
         add(iLut, JLayeredPane.DEFAULT_LAYER);
-
-        //iLut.registerListeners(this);
-        //iView.addWindowChangeListener(iLut);     
+          
     }
     
     void setLUT(String aName) {

@@ -9,15 +9,14 @@ package com.ivli.roim;
  *
  * @author likhachev
  */
-public abstract class IImageProvider {
+public interface IImageProvider {
    
-    public abstract int getWidth();  
-    public abstract int getHeight();
-    public abstract int getNumFrames() throws java.io.IOException;
-    abstract public IMultiframeImage image();
+    int getWidth();  
+    int getHeight();
+    int getNumFrames() throws java.io.IOException;
+    PixelSpacing getPixelSpacing();
     
-    abstract void open(String aFile) throws java.io.IOException;      
-    abstract ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, java.io.IOException;
-    
-
+   // void open(String aFile) throws java.io.IOException;      
+    ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, java.io.IOException;
+ 
 }

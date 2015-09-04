@@ -8,10 +8,10 @@ import org.apache.logging.log4j.Logger;
 
 
 public class MultiframeImage implements IMultiframeImage, java.io.Serializable {
-    private final DICOMImage iSrc;
+    private final IImageProvider iSrc;
     private int iCurrent;
     
-    MultiframeImage(DICOMImage aSrc) {
+    public MultiframeImage(IImageProvider aSrc) {
         iSrc = aSrc;
         iCurrent = 0;
     }
@@ -78,7 +78,7 @@ public class MultiframeImage implements IMultiframeImage, java.io.Serializable {
         return ret;
     }
           
-    public ImageFrame makeCompositeFrame(int aFrom, int aTo)  {
+    public IMultiframeImage makeCompositeFrame(int aFrom, int aTo)  {
         if (-1 == aTo)
             aTo = getNumFrames();
 
@@ -92,10 +92,8 @@ public class MultiframeImage implements IMultiframeImage, java.io.Serializable {
                for (int j = 0; j < getHeight(); ++j) 
                    comp.setSample(i, j, 0, comp.getSample(i, j, 0) + r.getSample(i, j, 0));           
         }
-        
-        ///ROIStats rs = 
-        
-        return new ImageFrame(comp);
+     
+        return new MultiframeImage(new VirtualImageProvider(iSrc, new ImageFrame(comp))); 
     }    
     
     

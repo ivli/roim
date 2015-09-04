@@ -10,19 +10,19 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class DICOMImage /*extends IImageProvider implements IImage*/ {
+public class DICOMImageProvider implements IImageProvider/* implements IImage*/ {
     private static final boolean LOAD_ON_DEMAND = false;
     
     private final ImageLoader iLoader = new ImageLoader(); 
     private final ArrayList<ImageFrame> iFrames;    
     private TimeSliceVector iTimeSlices;     
         
-    private DICOMImage() {
+    private DICOMImageProvider() {
         iFrames = new ArrayList();
     }
     
-    static DICOMImage New(final String aFile) throws IOException {
-        DICOMImage self = new DICOMImage();
+    static DICOMImageProvider New(final String aFile) throws IOException {
+        DICOMImageProvider self = new DICOMImageProvider();
         self.open(aFile);
         return self;
     }    
@@ -66,7 +66,7 @@ public class DICOMImage /*extends IImageProvider implements IImage*/ {
         loadFrame(0);
     }
       
-    ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, IOException {
+    public ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, IOException {
         
         if (anIndex > getNumFrames() || anIndex < 0)
             throw new IndexOutOfBoundsException();
@@ -87,13 +87,13 @@ public class DICOMImage /*extends IImageProvider implements IImage*/ {
         
         return iFrames.get(anIndex);
     }
-   
+   /**/
     public IMultiframeImage image() {
         return new MultiframeImage(this);
     }
   
     
-    private static final Logger logger = LogManager.getLogger(DICOMImage.class);    
+    private static final Logger logger = LogManager.getLogger(DICOMImageProvider.class);    
  
 }
 

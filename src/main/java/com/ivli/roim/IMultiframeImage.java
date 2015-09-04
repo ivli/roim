@@ -5,14 +5,18 @@ package com.ivli.roim;
  *
  * @author likhachev
  */
-public interface IMultiframeImage extends IImage, Iterable<ImageFrame> {   
+public interface IMultiframeImage extends /*IImage, */Iterable<ImageFrame> {   
+    int getWidth();  
+    int getHeight();
     boolean hasAt(int aFrameNumber);
-    ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException;  
+    ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException; 
+    ImageFrame image();    
+    void extract(Extractor aEx);
     int getCurrent();
-    int getNumFrames(); 
-    ImageFrame makeCompositeFrame(int aFrom, int aTo) ;  
+    int getNumFrames();      
     PixelSpacing getPixelSpacing();
     
+    IMultiframeImage makeCompositeFrame(int aFrom, int aTo) ; 
     
     @Override
     default public java.util.Iterator<ImageFrame> iterator() {    
