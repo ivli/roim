@@ -109,11 +109,13 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         invalidateBuffer();
     }
     
+    @Override
     public void addWindowChangeListener(WindowChangeListener aL) {
         iWinListeners.add(aL);
         aL.windowChanged(new WindowChangeEvent(this, iVLut.getWindow(), getMin(), getMax(), true));
     }
 
+    @Override
     public void removeWindowChangeListener(WindowChangeListener aL) {
         iWinListeners.remove(aL);
     }
@@ -126,7 +128,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
    public void addFrameChangeListener(FrameChangeListener aL) {
         iFrameListeners.add(aL);
-        aL.frameChanged(new FrameChangeEvent(this, iImage.getCurrentNo(), iImage.getNumFrames()));
+        aL.frameChanged(new FrameChangeEvent(this, iImage.getCurrent(), iImage.getNumFrames()));
     }
     
     public void removeFrameChangeListener(FrameChangeListener aL) {

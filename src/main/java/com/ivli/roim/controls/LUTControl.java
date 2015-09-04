@@ -77,7 +77,9 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     final Marker iTop;///    = new Marker(Color.green, "top");  //NOI18N
     final Marker iBottom;/// = new Marker(Color.red, "bottom"); //NOI18N
  
-           
+     /* 
+      * a passive mode constructor, control is able only to display W/L not to 
+      */
     public LUTControl(LUTControl aControl) {    
         iActive = false;
         iView = aControl.iView;
@@ -86,12 +88,15 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         iTop = iBottom = null; //no markers needed
     } 
     
+     /* 
+      * a complete object constructor
+      */
      @SuppressWarnings("LeakingThisInConstructor")
-    public LUTControl(ImageView aView) {            
-        assert (null != aView);
+    public LUTControl(ImageView aView) {    
+        assert(null != aView);
         
-        iView = aView;               
         iActive = true;
+        iView = aView;                       
         
         try {
             iMarker = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/green_arrow_w.png")); //NOI18N
@@ -99,8 +104,14 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             } catch (IOException ex) {              
                 logger.info(ex);                 
             } 
+             /* it's kinda feedback coupling used to addjust marker positions when control's size gets changed */
+            addComponentListener(new ComponentListener() {    
+                public void componentResized(ComponentEvent e) {changeWindow(iView.getWindow());}                                               
+                public void componentHidden(ComponentEvent e) {}
+                public void componentMoved(ComponentEvent e) {}
+                public void componentShown(ComponentEvent e) {changeWindow(iView.getWindow());}                    
+                });
         
-            addComponentListener(new listener());
 
         TOP_GAP = BOTTOM_GAP = null != iMarker ? iMarker.getHeight(null) / 2 : 4;   
         
@@ -128,9 +139,11 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     }   
     
     @Override
-    public void windowChanged(WindowChangeEvent anE) {        
-        iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
-        iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom())); 
+    public void windowChanged(WindowChangeEvent anE) {   
+        if (null != iTop && null != iBottom) { //theoretically we'd never get here when in passive mode
+            iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
+            iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom())); 
+        }
         invalidateBuffer();
         repaint();              
     }   
@@ -304,8 +317,10 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     public void paintComponent(Graphics g) {  
         if (null == iBuf) { 
             updateBufferedImage();
-            iTop.setPosition((int) imageToScreen(iView.getVLut().getWindow().getTop()));  
-            iBottom.setPosition((int) imageToScreen(iView.getVLut().getWindow().getBottom()));
+            if (null != iTop && null != iBottom) {
+                iTop.setPosition((int) imageToScreen(iView.getVLut().getWindow().getTop()));              
+                iBottom.setPosition((int) imageToScreen(iView.getVLut().getWindow().getBottom()));
+            }
         }
         
         final Color clr = g.getColor();
@@ -319,8 +334,10 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         
         g.draw3DRect(0, 0, getWidth(), getHeight(), true);       
         
-        iTop.draw(g);
-        iBottom.draw(g);
+        if (null != iTop && null != iBottom) {
+            iTop.draw(g);
+            iBottom.draw(g);
+        }
         
         g.setColor(clr);
     }
@@ -516,22 +533,6 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         
         mnu.show(this, aX, aY);
     }   
-                       
-    class listener implements ComponentListener {
-    
-        public void componentResized(ComponentEvent e) {           
-            changeWindow(iView.getWindow());
-        }
-
-        public void componentHidden(ComponentEvent e) {}
-
-        public void componentMoved(ComponentEvent e) {}
-
-        public void componentShown(ComponentEvent e) {
-            changeWindow(iView.getWindow());
-        }
-    }
-    
     
     
     private static final Logger logger = LogManager.getLogger(LUTControl.class);

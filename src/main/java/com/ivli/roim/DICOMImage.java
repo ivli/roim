@@ -15,7 +15,7 @@ public class DICOMImage /*extends IImageProvider implements IImage*/ {
     
     private final ImageLoader iLoader = new ImageLoader(); 
     private final ArrayList<ImageFrame> iFrames;    
-    TimeSliceVector iTimeSlices;     
+    private TimeSliceVector iTimeSlices;     
         
     private DICOMImage() {
         iFrames = new ArrayList();
@@ -51,6 +51,7 @@ public class DICOMImage /*extends IImageProvider implements IImage*/ {
             return new PixelSpacing(1.0, 1.0);
         }
     }
+    
     public void open(String aFile) throws IOException {           
         iLoader.open(aFile);
         iTimeSlices = iLoader.getTimeSliceVector();        

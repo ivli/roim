@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class MultiframeImage implements IMultiframeImage {
+public class MultiframeImage implements IMultiframeImage, java.io.Serializable {
     private final DICOMImage iSrc;
     private int iCurrent;
     
@@ -35,7 +35,7 @@ public class MultiframeImage implements IMultiframeImage {
         }
         return ret;
     } 
-    public int getCurrentNo() {
+    public int getCurrent() {
         return iCurrent;
     }
     
