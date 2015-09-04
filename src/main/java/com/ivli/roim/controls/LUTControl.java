@@ -112,15 +112,12 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         return iView.getVLut().makeXYSeries(ret);
     }   
 
-    private void invalidateBuffer() {iBuf = null;}
+    private void invalidateBuffer() {        
+        iBuf = null;
+    }
     
     private void changeWindow(Window aW) {              
-        iView.setWindow(aW);        
-        /*iTop.setPosition((int) imageToScreen(aW.getTop()));
-        iBottom.setPosition((int) imageToScreen(aW.getBottom())); 
-        invalidateBuffer();
-        repaint();        
-        */
+        iView.setWindow(aW);            
     }   
     
     @Override
@@ -128,17 +125,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
         iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom())); 
         invalidateBuffer();
-        repaint();        
-        /*
-        if (anE.getSource() != this) {  
-            if (anE.isRangeChanged()) {
-                iView.getVLut().getRange().setTop(anE.getMax());
-                iView.getVLut().getRange().setBottom(anE.getMin());
-            }    
-            
-            changeWindow(anE.getWindow());                       
-        }
-        */
+        repaint();              
     }   
            
     @Override
@@ -592,6 +579,9 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             changeWindow(iView.getWindow());
         }
     }
+    
+    
+    
     private static final Logger logger = LogManager.getLogger(LUTControl.class);
 }
 

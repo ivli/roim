@@ -7,6 +7,6 @@ package com.ivli.roim.Events;
  */
 
 public interface WindowChangeNotifier {
-    public void addWindowChangeListener(WindowChangeListener aL);
-    public void removeWindowChangeListener(WindowChangeListener aL);    
+    void addWindowChangeListener(WindowChangeListener aL);
+    void removeWindowChangeListener(WindowChangeListener aL);    
 }
