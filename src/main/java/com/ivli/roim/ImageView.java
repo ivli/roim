@@ -324,6 +324,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
             if (iVLUT.setInverted(aI)) {                          
                 invalidateBuffer();
                 notifyWindowChanged(false);
+                repaint();
             }        
         }
 
@@ -332,10 +333,10 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         }
 
         public void setLinear(boolean aI) {
-
             if (iVLUT.setLinear(aI)) {
-            invalidateBuffer();
-            notifyWindowChanged(false);  
+                invalidateBuffer();
+                notifyWindowChanged(false);  
+                repaint();
             }
         }
 

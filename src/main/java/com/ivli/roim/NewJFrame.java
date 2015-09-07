@@ -255,13 +255,14 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             logger.info("Unable to open file " + dicomFileName); //NOI18N            
             javax.swing.JOptionPane.showMessageDialog(null, "Unable to open file " + dicomFileName);
         }
-        iPanel.setMinimumSize(new Dimension(jPanel1.getWidth()-50, jPanel1.getHeight()));
-        iPanel.setPreferredSize(jPanel1.getSize());
-        iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-        iPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        //iPanel.setMinimumSize(new Dimension(jPanel1.getWidth()-50, jPanel1.getHeight()));
+        //iPanel.setPreferredSize(jPanel1.getSize());
+        //iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        //iPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
              
         
-        jPanel1.setLayout(new BoxLayout(jPanel1, BoxLayout.X_AXIS));
+        //jPanel1.setLayout(new BoxLayout(jPanel1, BoxLayout.X_AXIS));
         jPanel1.add(iPanel);
         
         jPanel1.validate(); 

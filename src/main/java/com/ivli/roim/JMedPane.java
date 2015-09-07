@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.io.IOException;
 import java.awt.Component;
 import javax.swing.BoxLayout;
+//import javax.swing.FlowLayout;
 import javax.swing.JLayeredPane;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,19 +19,19 @@ public class JMedPane extends JLayeredPane{
     IImageProvider iProvider;
            
     void open(String aName) throws IOException {            
-        boolean SHOW_COMPOSITE = true;
+        boolean SHOW_COMPOSITE = false;
         
         iProvider = DICOMImageProvider.New(aName);
         
-        iView = new ImageView( new MultiframeImage(iProvider));
+        iView = new ImageView(new MultiframeImage(iProvider));
         
         
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS)); 
+       setLayout( new BoxLayout(this, BoxLayout.X_AXIS)); 
         
         if (!SHOW_COMPOSITE) {   //yeah, there's no #ifdef          
             iView.setPreferredSize(new java.awt.Dimension(600, 600));  
-            iView.setMinimumSize(new java.awt.Dimension(575, 600));
-            iView.setAlignmentX(Component.LEFT_ALIGNMENT);
+            iView.setMinimumSize(new java.awt.Dimension(300, 300));
+            iView.setAlignmentX(Component.TOP_ALIGNMENT);
         
         } else {        
             iComp = new ImageView(iView.getImage().makeCompositeFrame(0, -1));
@@ -44,13 +45,13 @@ public class JMedPane extends JLayeredPane{
         }
         
         iLut = new LUTControl(iView.getLUTMgr());        
-        iLut.setAlignmentX(Component.RIGHT_ALIGNMENT);                      
+        iLut.setAlignmentX(Component.TOP_ALIGNMENT);                      
         iView.addWindowChangeListener(iLut); //!!!!
         
-        add(iView, JLayeredPane.DEFAULT_LAYER);
+        add(iView);//, JLayeredPane.DEFAULT_LAYER);
         if(SHOW_COMPOSITE)
             add(iComp, JLayeredPane.DEFAULT_LAYER);
-        add(iLut, JLayeredPane.DEFAULT_LAYER);
+        add(iLut);//, JLayeredPane.DEFAULT_LAYER);
           
     }
     
