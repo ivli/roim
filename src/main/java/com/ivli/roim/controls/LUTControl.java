@@ -51,10 +51,10 @@ import com.ivli.roim.IWLManager;
 public class LUTControl extends JComponent implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, WindowChangeListener {
     
     private static final boolean MARKERS_DISPLAY_WL_VALUES = false;
+    private final boolean MARKERS_DISPLAY_PERCENT = false;
     private static final boolean WEDGE_EXTEND_WHEN_FOCUSED = false;      
     
-    private static final int NUMBER_OF_SHADES = 255;
-    
+    private static final int NUMBER_OF_SHADES = 255;    
     
     private static final int INACTIVE_BAR_WIDTH = 32 / (WEDGE_EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out
     
@@ -65,27 +65,22 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     private static final int RIGHT_GAP = 2;
     
     private static final int MARKER_CURSOR = java.awt.Cursor.HAND_CURSOR;    
-    private static final int WINDOW_CURSOR = java.awt.Cursor.N_RESIZE_CURSOR;
-                        
-    private boolean iShowPercent = false;
-    ///private ImageView iView;
-    
+    private static final int WINDOW_CURSOR = java.awt.Cursor.N_RESIZE_CURSOR;                           
+   
     private IWLManager     iWLM;
     private java.awt.Image iMarker;
     private BufferedImage  iBuf;
-    
-    private final boolean iActive;
-    private ActionItem iAction;
-    
+  
     private final Marker iTop;///    = new Marker(Color.green, "top");  //NOI18N
     private final Marker iBottom;/// = new Marker(Color.red, "bottom"); //NOI18N
  
-    private Window iLast;
+    private ActionItem iAction;
+    
      /* 
       * passive mode constructor, control is able only to display W/L not to 
       */
     public LUTControl(LUTControl aControl) {    
-        iActive = false;
+        //iActive = false;
         iWLM = aControl.iWLM;
         
         TOP_GAP = BOTTOM_GAP = (null != iMarker) ? iMarker.getHeight(null) / 2 : 4; 
@@ -99,7 +94,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     public LUTControl(IWLManager aView) {    
         assert(null != aView);
         
-        iActive = true;
+       // iActive = true;
         iWLM = aView;                       
         
         try {
@@ -119,8 +114,8 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
 
         TOP_GAP = BOTTOM_GAP = null != iMarker ? iMarker.getHeight(null) / 2 : 4;   
         
-        iTop    = new Marker(Color.green, "top");  //NOI18N
-        iBottom = new Marker(Color.red, "bottom"); //NOI18N
+        iTop    = new Marker("top");  //NOI18N
+        iBottom = new Marker("bottom"); //NOI18N
         
         //aView.addWindowChangeListener(this);  
         
@@ -219,14 +214,8 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                     }
                     
                     if (iWLM.getRange().contains(win)) {
-                        if (null != iWLM) 
-                            iWLM.setWindow(win);
-                        if (first) {
-                            iLast = iWLM.getWindow();
-                            logger.info("saving last window, " + iLast);
-                            first = false;
-                        }
-                        changeWindow(win);     
+                        iWLM.setWindow(win);
+                        changeWindow(win);                          
                     }
                 }   
                 protected boolean DoWheel(int aX) {
@@ -284,8 +273,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         if (SwingUtilities.isRightMouseButton(e)) 
             showPopupMenu(e.getX(), e.getY());
         else if (SwingUtilities.isLeftMouseButton(e)) {
-                if(e.getClickCount() == 2){    
-                    logger.info("gonna chane window to " + iLast);
+                if(e.getClickCount() == 2){                        
                     changeWindow(iWLM.getRange().Window());
                 }
         }
@@ -399,12 +387,12 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
     final class Marker {
         int    iPos;
-        Color  iCol;
+        //Color  iCol;
         String iName;
 
-        Marker(Color aColor, String aName) {
+        Marker(String aName) {
             iPos = 0;
-            iCol = aColor; 
+           // iCol = aColor; 
             iName = aName;
         }
               
@@ -426,17 +414,15 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         void draw(Graphics aGC)/*, int aWidth, int aHeight)*/ {  
             aGC.setColor(Color.BLACK);       
            
-            if (iActive) {
+            
                 if (null != iMarker) {
                     int ypos = getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);
                     aGC.drawImage(iMarker, 0, ypos, null);
-                } else {                                       
-                    aGC.drawLine(0, getHeight() - iPos, getWidth() , getHeight() - iPos);  
-                }
+                
             }
                 
             if (MARKERS_DISPLAY_WL_VALUES) {
-                final double val = iShowPercent ? screenToImage(iPos) * 100.0 / iWLM.getRange().getRange() : screenToImage(iPos);
+                final double val = MARKERS_DISPLAY_PERCENT ? screenToImage(iPos) * 100.0 / iWLM.getRange().getRange() : screenToImage(iPos);
                 final String out = String.format("%.0f", Math.abs(val)); //NOI18N
                 final Rectangle2D sb = aGC.getFontMetrics().getStringBounds(out, aGC);    
                 final int height = (null != iMarker) ? iMarker.getHeight(null) : 4;
