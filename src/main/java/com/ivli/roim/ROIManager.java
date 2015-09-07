@@ -13,7 +13,7 @@ import java.util.Iterator;
  *
  * @author likhachev
  */
-class ROIManager {    
+public class ROIManager {    
     private final HashSet<Overlay> iOverlays;      
     private final ImageView        iView;        
     

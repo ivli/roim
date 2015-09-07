@@ -12,15 +12,15 @@ import org.apache.logging.log4j.Logger;
 
 
 public class VOILut implements Transformation {
-    private boolean iInverted;            
-    private boolean iLog;
+    private boolean   iInverted;            
+    private boolean        iLog;
     private boolean iKeepWindow;     
     
     private PValueTransform iPVt;
     private Buffer       iBuffer;
     private LookupOp        iLok; 
     private Window          iWin;
-    private Window          iMax;
+    private Window         iRange; 
     
     public VOILut(ImageFrame aI) {
         reset(aI);
@@ -35,7 +35,7 @@ public class VOILut implements Transformation {
     }
     
     public Window getRange() {
-        return iMax;
+        return iRange;
     }
         
     private void reset(ImageFrame aI) {
@@ -48,25 +48,25 @@ public class VOILut implements Transformation {
         
         
         if (null == iWin || !iKeepWindow) {
-            iMax = new Window(min + (max - min) / 2., max - min);
-            iWin = new Window(iMax); 
+            iRange = new Window(min + (max - min) / 2., max - min);
+            iWin = new Window(iRange); 
         } else {
-            final double percentTop = iWin.getTop()/iMax.getWidth();
-            final double percentBottom = iWin.getBottom()/iMax.getWidth();
-            iMax = new Window(min + (max - min) / 2., max - min);
-            iWin = new Window(iMax);//percentTop * iMax.getWidth()/2, (percentTop - percentBottom) * iMax.getWidth()); 
-            iWin.setTop(percentTop*iMax.getWidth()); 
-            iWin.setBottom(percentBottom*iMax.getWidth()); 
+            final double percentTop = iWin.getTop()/iRange.getWidth();
+            final double percentBottom = iWin.getBottom()/iRange.getWidth();
+            iRange = new Window(min + (max - min) / 2., max - min);
+            iWin = new Window(iRange);//percentTop * iMax.getWidth()/2, (percentTop - percentBottom) * iMax.getWidth()); 
+            iWin.setTop(percentTop*iRange.getWidth()); 
+            iWin.setBottom(percentBottom*iRange.getWidth()); 
         } 
         
         makeLUT();            
     }
       
     public void setWindow(Window aW) {       
-        final Window tmp = new Window(aW.getLevel(), aW.getWidth());
+        //final Window tmp = new Window(aW.getLevel(), aW.getWidth());
         
-        if (tmp.getBottom()>=iMax.getBottom() && tmp.getTop()<=iMax.getTop()) {
-            iWin.setWindow(aW.getLevel(), aW.getWidth());
+        if (iRange.contains(aW)) {//tmp.getBottom()>=iMax.getBottom() && tmp.getTop()<=iMax.getTop()) {
+            iWin.setWindow(aW);
             makeLUT();
         }
     }
@@ -88,9 +88,13 @@ public class VOILut implements Transformation {
         return true!=iLog;
     }
     
-    public void setLinear(boolean aL) {
+    public boolean setLinear(boolean aL) {
+        if (iLog == aL) { // LOG == 1 but we set LINEAR == 1
             iLog = !aL;
-            makeLUT();    
+            makeLUT();   
+            return true;
+        }
+        return false;
     }
     
     private static final double LUT_MIN   = .0;

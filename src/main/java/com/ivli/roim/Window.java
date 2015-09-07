@@ -69,6 +69,11 @@ public class Window implements java.io.Serializable {
         iLevel = oldTop - iWidth / 2.0;       
     }
     
+    public void setWindow(Window aW) {
+        setLevel(aW.iLevel);
+        setWidth(aW.iWidth);
+    }
+    
     public void setWindow(double aL, double aW) {
         setLevel(aL);
         setWidth(aW);

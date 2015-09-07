@@ -15,6 +15,8 @@ import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import com.ivli.roim.*;
+
 /**
  *
  * @author likhachev
@@ -25,7 +27,7 @@ public class VOILUTPanel extends javax.swing.JPanel {
     com.ivli.roim.ImageFrame iImage;
     ChartPanel iChart;
     
-    public VOILUTPanel(LUTControl aP, com.ivli.roim.ImageFrame aS) {
+    public VOILUTPanel(LUTControl aP, ImageFrame aS) {
         initComponents();
         jCheckBox3.setSelected(iShowHistogram);
         XYSeries s = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.VOI_LUT"));
@@ -36,7 +38,7 @@ public class VOILUTPanel extends javax.swing.JPanel {
         final XYSeriesCollection xyc = new XYSeriesCollection(aP.makeXYSeries(s));
         
         if(iShowHistogram) {
-            com.ivli.roim.HistogramExtractor hx=new com.ivli.roim.HistogramExtractor(null);
+            com.ivli.roim.HistogramExtractor hx = new HistogramExtractor(null);
             aS.extract(hx);
             hx.iHist.remove(0); ///correction for background        
             xyc.addSeries(hx.iHist);

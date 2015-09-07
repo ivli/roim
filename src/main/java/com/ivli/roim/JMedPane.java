@@ -43,8 +43,9 @@ public class JMedPane extends JLayeredPane{
             iComp.setAlignmentX(Component.CENTER_ALIGNMENT);
         }
         
-        iLut = new LUTControl(iView);        
+        iLut = new LUTControl(iView.getLUTMgr());        
         iLut.setAlignmentX(Component.RIGHT_ALIGNMENT);                      
+        iView.addWindowChangeListener(iLut); //!!!!
         
         add(iView, JLayeredPane.DEFAULT_LAYER);
         if(SHOW_COMPOSITE)
@@ -54,7 +55,7 @@ public class JMedPane extends JLayeredPane{
     }
     
     void setLUT(String aName) {
-        iView.setLUT(aName);        
+        iView.getLUTMgr().setLUT(aName);        
     }
     
     void resetView() {
@@ -70,7 +71,7 @@ public class JMedPane extends JLayeredPane{
     }
        
     Iterator<Overlay> getOverlaysList() {        
-        return iView.getManager().getOverlaysList();
+        return iView.getROIMgr().getOverlaysList();
     }
     
     
