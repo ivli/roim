@@ -473,14 +473,16 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 ///iView.repaint();
                 repaint();
                 break;
-            case KCommandShowDialog:    /**    TODO: refactor the dialog        
-                VOILUTPanel panel = new VOILUTPanel(this, iView.getImage().image());
-                JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
+            case KCommandShowDialog:    /**    TODO: refactor the dialog     **/     
+                
+                VOILUTPanel panel = new VOILUTPanel(this, null);//iView.getImage().image());
+                
+                javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
                 dialog.setContentPane(panel);
                 dialog.validate();
                 dialog.pack();
                 dialog.setResizable(false);
-                dialog.setVisible(true);        **/           
+                dialog.setVisible(true);                 
                 break;
             case KCommandChangeLUT:
                 FileDialog fd = new FileDialog((Frame)null , java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_A_FILE"), FileDialog.LOAD);
@@ -526,14 +528,14 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         mnu.add(mi13);
         
         JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.OPEN_BUILTIN_LUT"));
-        
-        final String [] bl = LutLoader.getBuiltinLUT();
-        for (String s:bl) {
+               
+        for (String s : LutLoader.getBuiltinLUT()) {
             JMenuItem mit = new JMenuItem(s);
             mit.addActionListener(this);
             mit.setActionCommand(s); 
             m1.add(mit);
-        }        
+        }   
+        
         mnu.add(m1);
         
         JMenuItem mi14 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.OPEN_LUT_ONDISC"));

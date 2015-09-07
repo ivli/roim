@@ -20,7 +20,7 @@ public class VOILut implements Transformation {
     private Buffer       iBuffer;
     private LookupOp        iLok; 
     private Window          iWin;
-    private Window         iRange; 
+    private Window        iRange; 
     
     public VOILut(ImageFrame aI) {
         reset(aI);

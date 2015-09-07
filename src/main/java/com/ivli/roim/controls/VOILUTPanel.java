@@ -22,22 +22,29 @@ import com.ivli.roim.*;
  * @author likhachev
  */
 public class VOILUTPanel extends javax.swing.JPanel {
-    private final LUTControl iLUT;
-    private boolean iShowHistogram=true;
+    
+    private final   LUTControl iLUT;
+    private boolean iShowHistogram = true;
+    
     com.ivli.roim.ImageFrame iImage;
+    
     ChartPanel iChart;
     
     public VOILUTPanel(LUTControl aP, ImageFrame aS) {
         initComponents();
-        jCheckBox3.setSelected(iShowHistogram);
-        XYSeries s = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.VOI_LUT"));
-                
         iLUT = new LUTControl(aP);
-        iImage = aS;
         
-        final XYSeriesCollection xyc = new XYSeriesCollection(aP.makeXYSeries(s));
+        if (null != (iImage = aS))
+            jCheckBox3.setSelected(iShowHistogram);
+        else             
+            jCheckBox3.setEnabled(false);
+                
+                
+        XYSeries s = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.VOI_LUT"));
+        XYSeriesCollection xyc = new XYSeriesCollection(aP.makeXYSeries(s));
         
-        if(iShowHistogram) {
+        
+        if(iShowHistogram && null != aS) {
             com.ivli.roim.HistogramExtractor hx = new HistogramExtractor(null);
             aS.extract(hx);
             hx.iHist.remove(0); ///correction for background        
