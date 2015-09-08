@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ivli.roim;
 
 
@@ -18,7 +14,7 @@ import java.awt.image.AffineTransformOp;
  */
 public class Ruler extends Overlay {
     
-    Ruler(IImage aI, String aN) { 
+    Ruler(ImageFrame aI, String aN) { 
         super(new Rectangle(aI.getWidth(), aI.getHeight()), 
               null != aN? aN : "RULER");
     }

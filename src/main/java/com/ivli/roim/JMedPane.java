@@ -4,28 +4,30 @@ package com.ivli.roim;
 import com.ivli.roim.controls.LUTControl;
 import java.util.Iterator;
 import java.io.IOException;
-import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-//import javax.swing.FlowLayout;
+import javax.swing.JPanel;
 import javax.swing.JComponent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class JMedPane extends JComponent{
+public class JMedPane extends JPanel{
+    private static final boolean SHOW_COMPOSITE = true;
+      
+    IImageProvider iProvider;
     ImageView  iView;
     ImageView  iComp;
     LUTControl iLut;
-    IImageProvider iProvider;
+    
            
     void open(String aName) throws IOException {            
-        boolean SHOW_COMPOSITE = true;
+     
         
         iProvider = DICOMImageProvider.New(aName);
         
         iView = new ImageView(new MultiframeImage(iProvider));        
-        iLut = new LUTControl(iView.getLUTMgr());                                     
+        iLut  = new LUTControl(iView.getLUTMgr());                                     
         iView.addWindowChangeListener(iLut); //!!!!
         
         
@@ -47,7 +49,7 @@ public class JMedPane extends JComponent{
         if(!SHOW_COMPOSITE) {              
             add(iView);            
         } else {
-            JComponent temp = new JComponent(){};
+            JComponent temp = new JPanel();
             
             temp.setLayout(new GridLayout());
             
