@@ -5,7 +5,7 @@ import com.ivli.roim.controls.LUTControl;
 import java.util.Iterator;
 import java.io.IOException;
 import java.awt.Component;
-import javax.swing.BoxLayout;
+import java.awt.BorderLayout;
 //import javax.swing.FlowLayout;
 import javax.swing.JLayeredPane;
 
@@ -26,21 +26,25 @@ public class JMedPane extends JLayeredPane{
         iView = new ImageView(new MultiframeImage(iProvider));
         
         
-       setLayout( new BoxLayout(this, BoxLayout.X_AXIS)); 
+        setLayout(new BorderLayout()); 
+        
+        final int width  = iProvider.getWidth();
+        final int height = iProvider.getHeight();
+        
         
         if (!SHOW_COMPOSITE) {   //yeah, there's no #ifdef          
-            iView.setPreferredSize(new java.awt.Dimension(600, 600));  
-            iView.setMinimumSize(new java.awt.Dimension(300, 300));
+            //iView.setPreferredSize(new java.awt.Dimension(width, height));  
+            //iView.setMinimumSize(new java.awt.Dimension(width, height));
             iView.setAlignmentX(Component.TOP_ALIGNMENT);
         
         } else {        
             iComp = new ImageView(iView.getImage().makeCompositeFrame(0, -1));
-            iView.setPreferredSize(new java.awt.Dimension(300, 600));  
-            iView.setMinimumSize(new java.awt.Dimension(300, 600));
-            iView.setAlignmentX(Component.LEFT_ALIGNMENT);
+            //iView.setPreferredSize(new java.awt.Dimension(width, height));  
+            //iView.setMinimumSize(new java.awt.Dimension(width, height));
+            iView.setAlignmentX(Component.TOP_ALIGNMENT);
 
-            iComp.setPreferredSize(new java.awt.Dimension(300, 600));  
-            iComp.setMinimumSize(new java.awt.Dimension(300, 600));
+            //iComp.setPreferredSize(new java.awt.Dimension(width, height));  
+            //iComp.setMinimumSize(new java.awt.Dimension(width, height));
             iComp.setAlignmentX(Component.CENTER_ALIGNMENT);
         }
         
@@ -48,10 +52,10 @@ public class JMedPane extends JLayeredPane{
         iLut.setAlignmentX(Component.TOP_ALIGNMENT);                      
         iView.addWindowChangeListener(iLut); //!!!!
         
-        add(iView);//, JLayeredPane.DEFAULT_LAYER);
+        add(iView, BorderLayout.CENTER);
         if(SHOW_COMPOSITE)
             add(iComp, JLayeredPane.DEFAULT_LAYER);
-        add(iLut);//, JLayeredPane.DEFAULT_LAYER);
+        add(iLut, BorderLayout.LINE_END);
           
     }
     

@@ -5,25 +5,18 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Transparency;
-import java.awt.color.*;
-import java.awt.image.*;
+
 import java.awt.Point;
 import java.awt.Frame;
-
+import java.awt.Image;
 import java.awt.Dialog;
 import java.awt.FileDialog;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.ActionListener;
+import java.awt.Cursor;
+import java.awt.event.*;
+import java.awt.color.*;
+import java.awt.image.*;
 import java.awt.geom.Rectangle2D;
 import javax.swing.JComponent;
-
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JCheckBoxMenuItem;
@@ -51,39 +44,36 @@ import com.ivli.roim.IWLManager;
 public class LUTControl extends JComponent implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, WindowChangeListener {
     
     private static final boolean MARKERS_DISPLAY_WL_VALUES = false;
-    private final boolean MARKERS_DISPLAY_PERCENT = false;
+    private static final boolean MARKERS_DISPLAY_PERCENT   = false;
     private static final boolean WEDGE_EXTEND_WHEN_FOCUSED = false;      
     
     private static final int NUMBER_OF_SHADES = 255;    
-    
-    private static final int INACTIVE_BAR_WIDTH = 32 / (WEDGE_EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out
-    
-    private final int ACTIVATED_BAR_WIDTH = 32; //mouse inside
-    private final int TOP_GAP;  //reserve a half of marker height at window's top & bottom 
-    private final int BOTTOM_GAP;
-    private static final int LEFT_GAP = 2;  //reserve border at left & right
+    private static final int VGAP_DEVAULT = 4;
+    private static final int INACTIVE_BAR_WIDTH  = 32 / (WEDGE_EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out    
+    private static final int ACTIVATED_BAR_WIDTH = 32; //mouse inside
+    private static final int LEFT_GAP  = 2;  //reserve border at left & right
     private static final int RIGHT_GAP = 2;
     
-    private static final int MARKER_CURSOR = java.awt.Cursor.HAND_CURSOR;    
-    private static final int WINDOW_CURSOR = java.awt.Cursor.N_RESIZE_CURSOR;                           
+    private final int TOP_GAP;  //reserve a half of marker height at window's top & bottom 
+    private final int BOTTOM_GAP;
+    
+    
+    private static final int MARKER_CURSOR = Cursor.HAND_CURSOR;    
+    private static final int WINDOW_CURSOR = Cursor.N_RESIZE_CURSOR;                           
    
-    private IWLManager     iWLM;
-    private java.awt.Image iMarker;
-    private BufferedImage  iBuf;
-  
-    private final Marker iTop;///    = new Marker(Color.green, "top");  //NOI18N
-    private final Marker iBottom;/// = new Marker(Color.red, "bottom"); //NOI18N
- 
-    private ActionItem iAction;
+    private IWLManager    iWLM;    
+   
+    private BufferedImage iBuf;
+    private final Marker  iTop;
+    private final Marker  iBottom;
+    private ActionItem    iAction;
     
      /* 
       * passive mode constructor, control is able only to display W/L not to 
       */
-    public LUTControl(LUTControl aControl) {    
-        //iActive = false;
-        iWLM = aControl.iWLM;
-        
-        TOP_GAP = BOTTOM_GAP = (null != iMarker) ? iMarker.getHeight(null) / 2 : 4; 
+    public LUTControl(LUTControl aControl) {            
+        iWLM = aControl.iWLM;        
+        TOP_GAP = BOTTOM_GAP = VGAP_DEVAULT; 
         iTop = iBottom = null; //no markers needed
     } 
     
@@ -92,18 +82,19 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
       */
      @SuppressWarnings("LeakingThisInConstructor")
     public LUTControl(IWLManager aView) {    
-        assert(null != aView);
+        if (null == aView)
+            throw new java.lang.NullPointerException();
+     
+        iWLM    = aView;                               
+        iTop    = new Marker(true);  
+        iBottom = new Marker(false); 
         
-       // iActive = true;
-        iWLM = aView;                       
+        TOP_GAP    = iTop.getMarkerHeight()/2;
+        BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used
+        //aView.addWindowChangeListener(this);  
         
-        try {
-            iMarker = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/green_arrow_w.png")); //NOI18N
-            
-        } catch (IOException ex) {              
-            logger.info(ex);                 
-        } 
-             /* it's kinda feedback coupling used to addjust marker positions when control's size gets changed */
+        
+           /* it's kinda feedback coupling used to addjust marker positions when control's size gets changed */
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {changeWindow(iWLM.getWindow());}                                               
             public void componentHidden(ComponentEvent e) {}
@@ -111,13 +102,6 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             public void componentShown(ComponentEvent e) {changeWindow(iWLM.getWindow());}                    
             });
         
-
-        TOP_GAP = BOTTOM_GAP = null != iMarker ? iMarker.getHeight(null) / 2 : 4;   
-        
-        iTop    = new Marker("top");  //NOI18N
-        iBottom = new Marker("bottom"); //NOI18N
-        
-        //aView.addWindowChangeListener(this);  
         
         addMouseMotionListener(this);
         addMouseListener(this);  
@@ -139,7 +123,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     
     @Override
     public void windowChanged(WindowChangeEvent anE) {   
-        if (null != iTop && null != iBottom) { //theoretically we'd never get here when in passive mode
+        if (null != iTop && null != iBottom) { //theoretically we'd never get here in passive mode
             iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
             iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom())); 
             //iLast = anE.getWindow();
@@ -185,7 +169,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
        
     @Override
     public void mousePressed(MouseEvent e) {        
-        final int ypos = getHeight()- e.getPoint().y;
+        final int ypos = getHeight() - e.getPoint().y;
                       
         if (iTop.contains(ypos) || iBottom.contains(ypos) || iTop.getPosition() + 4 > ypos && iBottom.getPosition() - 4 < ypos) {  
            
@@ -386,16 +370,35 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     }
     
     final class Marker {
-        int    iPos;
-        //Color  iCol;
-        String iName;
+        int     iPos;        
+        boolean iTop;
+        Image iKnob;
 
-        Marker(String aName) {
-            iPos = 0;
-           // iCol = aColor; 
-            iName = aName;
+        Marker(boolean aTop) {           
+            iPos = 0;                       
+            iTop = aTop;
+            
+            try {               
+                if (iTop) 
+                    iKnob = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/knob_top.png")); //NOI18N
+                else
+                    iKnob = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/knob_bot.png")); //NOI18N   
+                
+                logger.info("Knobs are here :-)");
+                
+             } catch (IOException ex) {              
+                 logger.info("Some shit happened -{}",ex);                 
+             } 
+        
         }
-              
+        
+        int getMarkerHeight() {
+            return iKnob.getHeight(null);
+        }
+        
+        
+        
+        
         void setPosition(int aPos) {
             //logger.info(iName + ", " + aPos ); //NOI18N
             iPos = aPos;
@@ -407,7 +410,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         
         boolean contains(int aVal) {
             final int ypos = iPos;//getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;
-            final int height = (null != iMarker) ? iMarker.getHeight(null) : 4;
+            final int height = (null != iKnob) ? iKnob.getHeight(null) : 4;
             return aVal < ypos + height && aVal > ypos  /*- half_height*/;
         }
             
@@ -415,9 +418,9 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             aGC.setColor(Color.BLACK);       
            
             
-                if (null != iMarker) {
+                if (null != iKnob) {
                     int ypos = getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);
-                    aGC.drawImage(iMarker, 0, ypos, null);
+                    aGC.drawImage(iKnob, 0, ypos, null);
                 
             }
                 
@@ -425,7 +428,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 final double val = MARKERS_DISPLAY_PERCENT ? screenToImage(iPos) * 100.0 / iWLM.getRange().getRange() : screenToImage(iPos);
                 final String out = String.format("%.0f", Math.abs(val)); //NOI18N
                 final Rectangle2D sb = aGC.getFontMetrics().getStringBounds(out, aGC);    
-                final int height = (null != iMarker) ? iMarker.getHeight(null) : 4;
+                final int height = (null != iKnob) ? iKnob.getHeight(null) : 4;
                 aGC.drawString(out, (int)(getWidth()/2 - sb.getWidth()/2) 
                               , (int)(getHeight() - iPos - height / 2 + sb.getHeight() / 2 )
                               );
