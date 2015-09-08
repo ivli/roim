@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.awt.Component;
 import java.awt.BorderLayout;
 //import javax.swing.FlowLayout;
-import javax.swing.JLayeredPane;
+import javax.swing.JComponent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class JMedPane extends JLayeredPane{
+public class JMedPane extends JComponent{
     ImageView  iView;
     ImageView  iComp;
     LUTControl iLut;
@@ -23,40 +23,37 @@ public class JMedPane extends JLayeredPane{
         
         iProvider = DICOMImageProvider.New(aName);
         
-        iView = new ImageView(new MultiframeImage(iProvider));
-        
-        
-        setLayout(new BorderLayout()); 
-        
-        final int width  = iProvider.getWidth();
-        final int height = iProvider.getHeight();
-        
-        
-        if (!SHOW_COMPOSITE) {   //yeah, there's no #ifdef          
-            //iView.setPreferredSize(new java.awt.Dimension(width, height));  
-            //iView.setMinimumSize(new java.awt.Dimension(width, height));
-            iView.setAlignmentX(Component.TOP_ALIGNMENT);
-        
-        } else {        
-            iComp = new ImageView(iView.getImage().makeCompositeFrame(0, -1));
-            //iView.setPreferredSize(new java.awt.Dimension(width, height));  
-            //iView.setMinimumSize(new java.awt.Dimension(width, height));
-            iView.setAlignmentX(Component.TOP_ALIGNMENT);
-
-            //iComp.setPreferredSize(new java.awt.Dimension(width, height));  
-            //iComp.setMinimumSize(new java.awt.Dimension(width, height));
-            iComp.setAlignmentX(Component.CENTER_ALIGNMENT);
-        }
-        
-        iLut = new LUTControl(iView.getLUTMgr());        
-        iLut.setAlignmentX(Component.TOP_ALIGNMENT);                      
+        iView = new ImageView(new MultiframeImage(iProvider));        
+        iLut = new LUTControl(iView.getLUTMgr());                                     
         iView.addWindowChangeListener(iLut); //!!!!
         
-        add(iView, BorderLayout.CENTER);
-        if(SHOW_COMPOSITE)
-            add(iComp, JLayeredPane.DEFAULT_LAYER);
-        add(iLut, BorderLayout.LINE_END);
+        
+        setLayout(new BorderLayout());                 
+                
+        if (SHOW_COMPOSITE) {
+            final int width  = iProvider.getWidth() / 2;
+            final int height = iProvider.getHeight();     
+            iComp = new ImageView(iView.getImage().makeCompositeFrame(0, -1));
+            iView.setPreferredSize(new java.awt.Dimension(width, height));  
+            iView.setMinimumSize(new java.awt.Dimension(width, height));
+
+            iComp.setPreferredSize(new java.awt.Dimension(width, height));  
+            iComp.setMinimumSize(new java.awt.Dimension(width, height));
           
+        }
+        
+       
+        add(iView, BorderLayout.CENTER);
+        
+        if(SHOW_COMPOSITE) {            
+            add(iComp, BorderLayout.LINE_START);
+            iComp.fitWidth();
+        }
+        
+        iView.fitWidth();
+        
+        add(iLut, BorderLayout.LINE_END);
+  
     }
     
     void setLUT(String aName) {

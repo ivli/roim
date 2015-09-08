@@ -37,9 +37,13 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     private static final int     SELECTION_TOLERANCE_Y = 1;
     private static final int     ZOOM_TO_FIT = 1;
     
-    private       IMultiframeImage iImage;
-                  //VOILut           iVLut;                   
-                  //PresentationLut  iPLut;  
+    enum EFit {
+        Width, Height, Area, Zoom; 
+    }
+    
+    private EFit iFit = EFit.Area; 
+    
+    private final IMultiframeImage iImage;                 
     
     private final Controller      iController;    
     private final AffineTransform iZoom;
@@ -52,7 +56,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     private HashSet<ZoomChangeListener>   iZoomListeners;
     private HashSet<FrameChangeListener>  iFrameListeners;
     
-    private BufferedImage  iBuf; 
+    private BufferedImage iBuf; 
     
     ImageView(IMultiframeImage aImage) {  
         iImage      = aImage;
@@ -80,20 +84,39 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         return iROIMgr;
     }    
       
-    public IWLManager getLUTMgr() {return iLUTMgr;}
+    public IWLManager getLUTMgr() {
+        return iLUTMgr;
+    }
+    
     
     public void fitWidth() {
-        final double scale = getWidth() / iImage.getWidth();
-        iZoom.setToScale(scale, scale);
+        iFit = EFit.Width; 
         invalidateBuffer();
     }
     
     public void fitHeight() {
-        double scale = ((double)getHeight()) / (double)iImage.getHeight();
-        iZoom.setToScale(scale, scale);
+        iFit = EFit.Height; 
         invalidateBuffer();
     }
-    
+        
+    private void scale() {
+        double scale = 1.0;
+        
+        switch (iFit) {
+            case Area:
+                scale = Math.min((double)getWidth() / (double)iImage.getWidth()
+                                    , (double)getHeight() / (double)iImage.getHeight()); break;                
+            case Height: scale = (double)getHeight() / (double)iImage.getHeight(); break;
+            case Width:  scale = (double)getWidth() / (double)iImage.getWidth(); break;
+            default: 
+                return;
+                            
+        }        
+        
+        iZoom.setToScale(scale, scale); //does it make sense to implement non isomorphic scale?
+        invalidateBuffer();
+    }
+          
     @Override
     public void addWindowChangeListener(WindowChangeListener aL) {
         iWinListeners.add(aL);
@@ -109,7 +132,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         final WindowChangeEvent evt = new WindowChangeEvent(this, iLUTMgr.getWindow(), getMin(), getMax(), aRC);
         iWinListeners.stream().forEach((l) -> {
             l.windowChanged(evt);
-        });
+            });
     }
    public void addFrameChangeListener(FrameChangeListener aL) {
         iFrameListeners.add(aL);
@@ -121,15 +144,15 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     } 
     
     private void notifyFrameChanged(int aN) {
-        final FrameChangeEvent evt = new FrameChangeEvent(this, aN, iImage.getNumFrames());
-        
+        final FrameChangeEvent evt = new FrameChangeEvent(this, aN, iImage.getNumFrames());        
         iFrameListeners.stream().forEach((f) -> {
-                f.frameChanged(evt);
+            f.frameChanged(evt);
             });
     }
     
     public void addZoomChangeListener(ZoomChangeListener aL) {
         iZoomListeners.add(aL);
+        aL.zoomChanged(new ZoomChangeEvent(this,iZoom.getScaleX()));
     }
     
     public void removeZoomChangeListener(ZoomChangeListener aL) {
@@ -205,6 +228,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
     
     public void zoom(double aFactor, int aX, int aY) {
+        iFit = EFit.Zoom;
+        
         iZoom.setToScale(iZoom.getScaleX() + aFactor, iZoom.getScaleY() + aFactor);        
         
         invalidateBuffer();
@@ -249,6 +274,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         
         iBuf = z.filter(iLUT.transform(src, null), null);   
         */
+        
+        scale();
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
         AffineTransformOp z = new AffineTransformOp(iZoom, hts);
