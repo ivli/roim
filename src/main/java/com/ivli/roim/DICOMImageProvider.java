@@ -52,6 +52,10 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
         }
     }
     
+    public TimeSliceVector getTimeSliceVector() {
+        return iTimeSlices;
+    }
+    
     public void open(String aFile) throws IOException {           
         iLoader.open(aFile);
         iTimeSlices = iLoader.getTimeSliceVector();        
@@ -87,11 +91,12 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
         
         return iFrames.get(anIndex);
     }
-   /**/
+    
+   /*
     public IMultiframeImage image() {
         return new MultiframeImage(this);
     }
-  
+  */
     
     private static final Logger logger = LogManager.getLogger(DICOMImageProvider.class);    
  

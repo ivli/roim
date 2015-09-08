@@ -40,10 +40,10 @@ public class ImageFrame implements java.io.Serializable {
     }
     
     public BufferedImage getBufferedImage() {
-        return convert((WritableRaster)iRaster);
-    }     
-    
-    private BufferedImage convert(WritableRaster wr) {
+        
+        WritableRaster wr = iRaster.createCompatibleWritableRaster();
+        wr.setRect(iRaster);
+        
         return new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY)                                                               
                                                         , new int[] {8}
                                                         , false		// has alpha
@@ -51,8 +51,8 @@ public class ImageFrame implements java.io.Serializable {
                                                         , Transparency.OPAQUE
                                                         , wr.getDataBuffer().getDataType())                                                                                                                                  
                                                     , wr, true, null);
-                  
-    }  
+    }     
+    
    
     public void extract(Extractor aEx) {
         aEx.apply(iRaster);

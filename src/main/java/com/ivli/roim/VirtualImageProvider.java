@@ -26,7 +26,8 @@ public class VirtualImageProvider implements IImageProvider{
     public int getHeight() {return iParent.getHeight();}
     public int getNumFrames() throws java.io.IOException {return iFrames.size();}
     public PixelSpacing getPixelSpacing() {return iParent.getPixelSpacing();}
-
+    public TimeSliceVector getTimeSliceVector() {return iParent.getTimeSliceVector();}
+    
     public ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException/*, java.io.IOException */{
         return iFrames.get(anIndex);
     }
