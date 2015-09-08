@@ -35,9 +35,9 @@ public class ROIManager {
             o.update();
     }
     
-    public void draw(Graphics2D aGC, AffineTransform aT) {
+    public void paint(Graphics2D aGC, AffineTransform aT) {
          for(Overlay o : iOverlays)
-            o.draw(aGC, aT);
+            o.paint(aGC, aT);
     }            
             
     public void createRoiFromShape(Shape aS) { 

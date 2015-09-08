@@ -68,7 +68,7 @@ public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip,
         iColor = aC;
     }
     
-    void draw(Graphics2D aGC, AffineTransform aTrans) {
+    void paint(Graphics2D aGC, AffineTransform aTrans) {
         aGC.setColor(iColor);
         aGC.draw(aTrans.createTransformedShape(getShape()));
     }

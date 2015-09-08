@@ -19,6 +19,8 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.awt.image.Raster;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import javax.swing.JComponent;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,10 +40,10 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     private static final int     ZOOM_TO_FIT = 1;
     
     enum EFit {
-        Width, Height, Area, Zoom; 
+        Width, Height, Visible, Zoom; 
     }
     
-    private EFit iFit = EFit.Area; 
+    private EFit iFit = EFit.Visible;  // 
     
     private final IMultiframeImage iImage;                 
     
@@ -70,6 +72,13 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iWinListeners   = new HashSet(); 
         iZoomListeners  = new HashSet();
         iFrameListeners = new HashSet();  
+        
+        addComponentListener(new ComponentListener() {    
+            public void componentResized(ComponentEvent e) {invalidateBuffer();}                                               
+            public void componentHidden(ComponentEvent e) {}
+            public void componentMoved(ComponentEvent e) {}
+            public void componentShown(ComponentEvent e) {}                    
+            });
     }
        
     public AffineTransform getZoom() {
@@ -103,7 +112,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         double scale = 1.0;
         
         switch (iFit) {
-            case Area:
+            case Visible:
                 scale = Math.min((double)getWidth() / (double)iImage.getWidth()
                                     , (double)getHeight() / (double)iImage.getHeight()); break;                
             case Height: scale = (double)getHeight() / (double)iImage.getHeight(); break;
@@ -292,18 +301,9 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
               
         g.drawImage(iBuf, iOrigin.x, iOrigin.y, iBuf.getWidth(), iBuf.getHeight(), null);
         
-        if (!DRAW_OVERLAYS_ON_BUFFERED_IMAGE) {
-            final AffineTransform trans = virtualToScreen();            
-            final Color clr = g.getColor();
-            
-            //for (Overlay o : iOverlays) {                
-            //    o.draw((Graphics2D)g, trans);
-            iROIMgr.draw((Graphics2D)g, trans);
-           // }
-        
-            g.setColor(clr);
-        }
-    
+        if (!DRAW_OVERLAYS_ON_BUFFERED_IMAGE) 
+            iROIMgr.paint((Graphics2D)g, virtualToScreen());
+          
                
         iController.paint((Graphics2D)g); //must paint the last   
     }

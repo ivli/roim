@@ -27,7 +27,7 @@ public class Annotation extends Overlay {
     private static final int iFields = ANNOTATION_DISPLAY_AREA_PIXELS|ANNOTATION_DISPLAY_CNTS_IDEN;
     
     private final ROI iRoi; //eah, where's my favorite c++'s constant referencies
-    private String iUserText; 
+    private String iText; 
     
     @Override
     int getCaps(){return MOVEABLE|SELECTABLE;}
@@ -46,7 +46,7 @@ public class Annotation extends Overlay {
     }
     
     @Override
-    void draw(Graphics2D aGC, AffineTransform aTrans) {
+    void paint(Graphics2D aGC, AffineTransform aTrans) {
         Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();
         ROIStats s = iRoi.getStats();
         String out = new String();

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.io.IOException;
 import java.awt.Component;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 //import javax.swing.FlowLayout;
 import javax.swing.JComponent;
 
@@ -19,7 +20,7 @@ public class JMedPane extends JComponent{
     IImageProvider iProvider;
            
     void open(String aName) throws IOException {            
-        boolean SHOW_COMPOSITE = false;
+        boolean SHOW_COMPOSITE = true;
         
         iProvider = DICOMImageProvider.New(aName);
         
@@ -38,20 +39,22 @@ public class JMedPane extends JComponent{
             iView.setMinimumSize(new java.awt.Dimension(width, height));
 
             iComp.setPreferredSize(new java.awt.Dimension(width, height));  
-            iComp.setMinimumSize(new java.awt.Dimension(width, height));
-          
-        }
-        
+            iComp.setMinimumSize(new java.awt.Dimension(width, height));          
+        }        
        
-        add(iView, BorderLayout.CENTER);
         
-        if(SHOW_COMPOSITE) {            
-            add(iComp, BorderLayout.LINE_START);
-            iComp.fitWidth();
+        
+        if(!SHOW_COMPOSITE) {              
+            add(iView);            
+        } else {
+            JComponent temp = new JComponent(){};
+            
+            temp.setLayout(new GridLayout());
+            
+            temp.add(iView);//, BorderLayout.CENTER);
+            temp.add(iComp);
+            add(temp);
         }
-        
-        iView.fitWidth();
-        
         add(iLut, BorderLayout.LINE_END);
   
     }

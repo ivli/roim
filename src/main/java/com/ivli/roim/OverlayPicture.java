@@ -31,7 +31,7 @@ public class OverlayPicture extends Overlay {
     
     int getCaps(){return CANFLIP|CANROTATE|HASCUSTOMMNU|PERMANENT;}
     
-    void draw(Graphics2D aGC, AffineTransform aTrans) {
+    void paint(Graphics2D aGC, AffineTransform aTrans) {
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
         AffineTransformOp z = new AffineTransformOp(aTrans, hts);
