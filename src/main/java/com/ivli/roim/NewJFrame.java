@@ -13,6 +13,8 @@ import com.ivli.roim.Events.*;
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener {
 
+    
+    boolean open = false;
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
         initComponents();
@@ -152,6 +154,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText(bundle.getString("NewJFrame.jMenu2.text")); // NOI18N
+        jMenu2.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                jMenu2ComponentShown(evt);
+            }
+        });
 
         jMenuItem3.setText(bundle.getString("NewJFrame.jMenuItem3.text")); // NOI18N
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
@@ -182,6 +189,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem8ActionPerformed(evt);
+            }
+        });
+        jMenuItem8.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jMenuItem8PropertyChange(evt);
             }
         });
         jMenu2.add(jMenuItem8);
@@ -254,6 +266,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         }catch (IOException ex) {            
             logger.info("Unable to open file " + dicomFileName); //NOI18N            
             javax.swing.JOptionPane.showMessageDialog(null, "Unable to open file " + dicomFileName);
+            return;
         }
         
         //iPanel.setMinimumSize(new Dimension(jPanel1.getWidth()-50, jPanel1.getHeight()));
@@ -335,6 +348,18 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private void jPanel4ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel4ComponentShown
         // TODO add your handling code here:
     }//GEN-LAST:event_jPanel4ComponentShown
+
+    private void jMenuItem8PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jMenuItem8PropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem8PropertyChange
+
+    private void jMenu2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu2ComponentShown
+        // TODO add your handling code here:
+        if (null == iPanel)
+            jMenuItem8.setEnabled(false);
+        else
+            jMenuItem8.setEnabled(true);
+    }//GEN-LAST:event_jMenu2ComponentShown
 
     /**
      * @param args the command line arguments
