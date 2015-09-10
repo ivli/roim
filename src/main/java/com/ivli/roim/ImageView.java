@@ -1,15 +1,12 @@
 
 package com.ivli.roim;
 
-//import com.ivli.roim.Events.WindowChangeListener;
-//import com.ivli.roim.Events.WindowChangeNotifier;
-import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.Events.*;
 import java.io.IOException;
 import java.util.HashSet;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Color;
+
 import java.awt.image.WritableRaster;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -54,10 +51,12 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     private final ROIManager      iROIMgr;
     private final IWLManager      iLUTMgr;
     
+     //TODO: to all following - change allocation model to create-as-first-client-comes
     private HashSet<WindowChangeListener> iWinListeners;      
     private HashSet<ZoomChangeListener>   iZoomListeners;
     private HashSet<FrameChangeListener>  iFrameListeners;
-    
+    private HashSet<ROIChangeListener>    iROIListeners;
+        
     private BufferedImage iBuf; 
     
     ImageView(IMultiframeImage aImage) {  
@@ -72,6 +71,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iWinListeners   = new HashSet(); 
         iZoomListeners  = new HashSet();
         iFrameListeners = new HashSet();  
+        iROIListeners   = new HashSet();
         
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {invalidateBuffer();}                                               
@@ -95,8 +95,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
       
     public IWLManager getLUTMgr() {
         return iLUTMgr;
-    }
-    
+    }    
     
     public void fitWidth() {
         iFit = EFit.Width; 
@@ -109,7 +108,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
         
     private void scale() {
-        double scale = 1.0;
+        double scale;
         
         switch (iFit) {
             case Visible:
@@ -118,14 +117,25 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
             case Height: scale = (double)getHeight() / (double)iImage.getHeight(); break;
             case Width:  scale = (double)getWidth() / (double)iImage.getWidth(); break;
             default: 
-                return;
-                            
+                return;                            
         }        
         
         iZoom.setToScale(scale, scale); //does it make sense to implement non isomorphic scale?
         invalidateBuffer();
     }
           
+    public void addROIChangeListener(ROIChangeListener aL) {
+        iROIListeners.add(aL);
+        ///aL.windowChanged(new WindowChangeEvent(this, iLUTMgr.getWindow(), getMin(), getMax(), true));
+    }
+    
+    void notifyROIChanged(ROI aR, EStateChanged aS) {
+       ROIChangeEvent evt = new ROIChangeEvent(this, aR, aS);
+       
+       for(ROIChangeListener l:iROIListeners)
+           l. ROIChanged(evt);
+    }
+    
     @Override
     public void addWindowChangeListener(WindowChangeListener aL) {
         iWinListeners.add(aL);

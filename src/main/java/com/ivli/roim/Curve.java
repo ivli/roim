@@ -22,4 +22,5 @@ public class Curve extends ArrayList<Measure<Double>> implements Serializable {
     }
     
     
+    
 }

@@ -1,6 +1,7 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.Events.EStateChanged;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -15,7 +16,7 @@ import java.util.Iterator;
  */
 public class ROIManager {    
     private final HashSet<Overlay> iOverlays;      
-    private final ImageView        iView;        
+    private final ImageView            iView;        
     
     ROIManager(ImageView aV) {
         iView = aV;
@@ -47,22 +48,27 @@ public class ROIManager {
         iOverlays.add(newRoi);
         iOverlays.add(new Annotation(newRoi));      
         newRoi.update();
-        newRoi.makeCurve();        
+        newRoi.makeCurve();  
+        iView.notifyROIChanged(newRoi, EStateChanged.Created);
     }
     
     public void cloneRoi(ROI aR) {
-        final ROI temp = new ROI(aR);
-        temp.iName = aR.iName + "(2)"; // NOI18N
-        iOverlays.add(temp); 
-        iOverlays.add(new Annotation(temp));
+        final ROI newRoi = new ROI(aR);
+        newRoi.iName = aR.iName + "(2)"; // NOI18N
+        iOverlays.add(newRoi); 
+        iOverlays.add(new Annotation(newRoi));
+        iView.notifyROIChanged(newRoi, EStateChanged.Created);
     }
     
     public void moveRoi(Overlay aO, double adX, double adY) {           
         AffineTransform trans = iView.virtualToScreen();
         trans.concatenate(AffineTransform.getTranslateInstance(adX, adY));    
                
-        if (iView.getBounds().contains(trans.createTransformedShape(aO.getShape().getBounds()).getBounds()))            
+        if (iView.getBounds().contains(trans.createTransformedShape(aO.getShape().getBounds()).getBounds())) {           
             aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));  
+            if (aO instanceof ROI)
+                iView.notifyROIChanged((ROI)aO, EStateChanged.Changed);
+        }
        
     }
     
@@ -85,6 +91,7 @@ public class ROIManager {
                 it.remove();
         } 
         
+        iView.notifyROIChanged(aR, EStateChanged.Cleared);
         
         return iOverlays.remove(aR);   
     }  

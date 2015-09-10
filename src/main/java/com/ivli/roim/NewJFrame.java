@@ -10,14 +10,43 @@ import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.controls.*;
 import com.ivli.roim.Events.*;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
-public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener {
+public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
 
+    private final XYPlot    iPlot;
+    private final JFreeChart iJfc;
     
-    boolean open = false;
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
         initComponents();
+        
+        iPlot = new XYPlot();
+        //plot.setDataset(xyc);
+        iPlot.setRenderer(new StandardXYItemRenderer());
+        iPlot.setDomainAxis(new NumberAxis("ROI_CHART.TIME_SERIES_VALUES"));
+        iPlot.setRangeAxis(0, new NumberAxis("ROI_CHART.ROI_INTDEN_VALUES"));
+       // if(iShowHistogram)
+       //     plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
+        iPlot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
+        iPlot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
+        
+        iJfc = new JFreeChart(iPlot); 
+      
+        iChart = new ChartPanel(iJfc);
+        //iChart.setMouseWheelEnabled(true);
+         
+        XYSeriesCollection ds = new XYSeriesCollection();
+        iPlot.setDataset(ds);
+        iChart.setSize(jPanel4.getPreferredSize());
+        jPanel4.add(iChart);//, java.awt.BorderLayout.CENTER);
     }
     	
     /**
@@ -52,6 +81,12 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
+
+        jTabbedPane1.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                jTabbedPane1ComponentShown(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setPreferredSize(new java.awt.Dimension(597, 600));
@@ -282,6 +317,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iPanel.iView.addFrameChangeListener(this);
         iPanel.iView.addZoomChangeListener(this);
         iPanel.iView.addWindowChangeListener(this);
+        ///////////////////////////////////////////////
+        
+        iPanel.iView.addROIChangeListener(this);
+        
+        
+        
+        
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -361,6 +403,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             jMenuItem8.setEnabled(true);
     }//GEN-LAST:event_jMenu2ComponentShown
 
+    private void jTabbedPane1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jTabbedPane1ComponentShown
+        // TODO add your handling code here:
+        logger.info(evt);
+    }//GEN-LAST:event_jTabbedPane1ComponentShown
+
     /**
      * @param args the command line arguments
      */
@@ -409,8 +456,40 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
        jLabel4.setText(String.format("%d:%d", aE.getFrame() + 1, aE.getTotal())); // NOI18N
     }
     
-    JMedPane iPanel;
+    public void ROIChanged(ROIChangeEvent aE) {
+        
+        
+        XYSeriesCollection collection =  ((XYSeriesCollection)iPlot.getDataset());
+        
+        switch (aE.getChange()) {
+            case Cleared: {
+                int ndx = collection.indexOf(aE.getROI().getName());
+                collection.removeSeries(ndx); 
+              } break;
+    
+            case Changed: 
+                int ndx = collection.indexOf(aE.getROI().getName());
+                collection.removeSeries(ndx); //no break fall through creation case
+            case Created: 
+                XYSeries s = new XYSeries(aE.getROI().getName());
+                Curve c = aE.getROI().getCurve();
+                
+                int x=0;
+                for (Measure m : c)
+                 s.add(x++, m.iIden);
+
+                ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   
+                iPlot.getRenderer().setSeriesPaint(collection.indexOf(aE.getROI().getName()), aE.getROI().getColor());
+                
+            break;
+            
+            default: throw new java.lang.IllegalArgumentException();    
+        }
    
+    }
+    
+    JMedPane iPanel;
+    ChartPanel iChart;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

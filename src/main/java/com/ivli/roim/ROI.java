@@ -91,6 +91,11 @@ public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip,
         iCurve = cv;
     }
     
+    public Curve getCurve() {
+        //if (null == iCurve)
+        return iCurve;
+    }
+    
     @Override
     void update() {
         try {

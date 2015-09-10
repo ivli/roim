@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class JMedPane extends JPanel{
-    private static final boolean SHOW_COMPOSITE = true;
+    private static final boolean SHOW_COMPOSITE = false;
       
     IImageProvider iProvider;
     ImageView  iView;
@@ -21,16 +21,13 @@ public class JMedPane extends JPanel{
     LUTControl iLut;
     
            
-    void open(String aName) throws IOException {            
-     
-        
+    void open(String aName) throws IOException {                         
         iProvider = DICOMImageProvider.New(aName);
         
         iView = new ImageView(new MultiframeImage(iProvider));        
         iLut  = new LUTControl(iView.getLUTMgr());                                     
         iView.addWindowChangeListener(iLut); //!!!!
-        
-        
+                
         setLayout(new BorderLayout());                 
                 
         if (SHOW_COMPOSITE) {
@@ -43,9 +40,7 @@ public class JMedPane extends JPanel{
             iComp.setPreferredSize(new java.awt.Dimension(width, height));  
             iComp.setMinimumSize(new java.awt.Dimension(width, height));          
         }        
-       
-        
-        
+                       
         if(!SHOW_COMPOSITE) {              
             add(iView);            
         } else {
@@ -57,8 +52,7 @@ public class JMedPane extends JPanel{
             temp.add(iComp);
             add(temp);
         }
-        add(iLut, BorderLayout.LINE_END);
-  
+        add(iLut, BorderLayout.LINE_END);  
     }
     
     void setLUT(String aName) {

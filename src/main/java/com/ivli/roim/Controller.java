@@ -14,7 +14,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.event.*;
-import java.util.NoSuchElementException;
 import javax.swing.SwingUtilities;
 import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
@@ -63,7 +62,10 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
         final RectangularShape iShape;
         boolean first = true;
         
-        RectangularRoiCreator(RectangularShape aShape) {super(-1,-1); iShape = aShape;}
+        RectangularRoiCreator(RectangularShape aShape) {
+            super(-1,-1); 
+            iShape = aShape;
+        }
 
         public void DoAction(int aX, int aY) {
             if (!first) {
