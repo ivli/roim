@@ -290,7 +290,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             else
                 return;
         }
-              
+         
+        iChart.removeAll();
         jPanel1.removeAll();
         iPanel = null;
         
@@ -314,12 +315,15 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1.add(iPanel, BorderLayout.CENTER);
         
         jPanel1.validate(); 
+        
         iPanel.iView.addFrameChangeListener(this);
         iPanel.iView.addZoomChangeListener(this);
         iPanel.iView.addWindowChangeListener(this);
+        iPanel.iView.addROIChangeListener(this);
+        
         ///////////////////////////////////////////////
         
-        iPanel.iView.addROIChangeListener(this);
+        
         
         
         

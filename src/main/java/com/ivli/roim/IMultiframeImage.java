@@ -5,7 +5,7 @@ package com.ivli.roim;
  *
  * @author likhachev
  */
-public interface IMultiframeImage extends /*IImage, */Iterable<ImageFrame> {   
+public interface IMultiframeImage extends /*IImage, */Iterable<ImageFrame>, java.io.Serializable {   
    
     int getWidth();  
     int getHeight();

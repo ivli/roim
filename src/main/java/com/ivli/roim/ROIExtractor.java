@@ -27,8 +27,7 @@ class ROIExtractor implements Extractor {
         if (null == iRoi)
             iRoi = aR.getBounds();
         iExtractor.apply(aR);        
-    }
-            
+    }            
         
     class SimpleExtractor implements Extractor { 
            

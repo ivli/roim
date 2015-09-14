@@ -76,13 +76,15 @@ public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip,
     protected void move(double adX, double adY) {
         AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
         iShape = trans.createTransformedShape(iShape);
-        update();
         
-        
+       
+                
         if (null != iAnnos) {
             for (Overlay o : iAnnos)
                 o.move(adX, adY);
         }
+        
+        update();
     }  
     
     void makeCurve() {

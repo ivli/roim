@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ivli.roim;
 
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.Raster;
-import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -58,6 +53,7 @@ public class ImageLoader {
     }  
     
     private String iFile;
+    
     private ImageReader iReader = _installImageReader();   
     private Attributes  iDataSet;
         

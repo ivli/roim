@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
  * @author likhachev
  */
 public class DICOMImageProvider implements IImageProvider/* implements IImage*/ {
-    private static final boolean LOAD_ON_DEMAND = false;
+    private static final boolean LOAD_ON_DEMAND = true;
     
     private final ImageLoader iLoader = new ImageLoader(); 
     private final ArrayList<ImageFrame> iFrames;    
@@ -74,22 +74,29 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
         
         if (anIndex > getNumFrames() || anIndex < 0)
             throw new IndexOutOfBoundsException();
+        
+        ImageFrame f = null;
 
         try {
-                // load and cache image if it is not yet in cache
-            if (anIndex >= iFrames.size() || null == iFrames.get(anIndex))                
-                iFrames.add(anIndex, new ImageFrame(iLoader.readRaster(anIndex)));
+            f = iFrames.get(anIndex); 
             
-            logger.info("Frame -" + anIndex +                                   // NOI18N
-                        ", MIN"   + iFrames.get(anIndex).getStats().getMin() +  // NOI18N
-                        ", MAX"   + iFrames.get(anIndex).getStats().getMax() +  // NOI18N
-                        ", DEN"   + iFrames.get(anIndex).getStats().getIden()); // NOI18N  
-                                      
-        } catch (IOException ex) {
-            logger.error(ex); 
-        } 
-        
-        return iFrames.get(anIndex);
+           
+        } catch (IndexOutOfBoundsException ex) {
+             try {
+                f = new ImageFrame(iLoader.readRaster(anIndex));
+                
+                iFrames.add(anIndex, f);
+                
+                logger.info("Frame -" + anIndex +                                   // NOI18N
+                            ", MIN"   + f.getStats().getMin() +  // NOI18N
+                            ", MAX"   + f.getStats().getMax() +  // NOI18N
+                            ", DEN"   + f.getStats().getIden()); // NOI18N     
+      
+            } catch (IOException ioex) {
+                logger.error(ioex); 
+            } 
+        }
+        return f;
     }
     
    /*
