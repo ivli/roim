@@ -16,6 +16,7 @@ public class MultiframeImage implements IMultiframeImage, java.io.Serializable {
         iCurrent = 0;
     }
    
+    @Override
     public boolean hasAt(int aFrameNumber) {
         try {
             iSrc.loadFrame(aFrameNumber);
@@ -25,7 +26,7 @@ public class MultiframeImage implements IMultiframeImage, java.io.Serializable {
         return true;
     }
     
-    public ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException {           
+    public ImageFrame current(int aFrameNumber) throws java.util.NoSuchElementException {           
         ImageFrame ret = null;
         try {
             ret = iSrc.loadFrame(aFrameNumber); //prevent iCurrent from change in the case of exception
@@ -35,6 +36,17 @@ public class MultiframeImage implements IMultiframeImage, java.io.Serializable {
         }
         return ret;
     } 
+    
+    public ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException {           
+        ImageFrame ret = null;
+        try {
+            ret = iSrc.loadFrame(aFrameNumber); //prevent iCurrent from change in the case of exception           
+        } catch (IOException ex) {
+            throw (new java.util.NoSuchElementException());
+        }
+        return ret;
+    } 
+    
     public int getCurrent() {
         return iCurrent;
     }
@@ -64,20 +76,7 @@ public class MultiframeImage implements IMultiframeImage, java.io.Serializable {
     public PixelSpacing getPixelSpacing() {
         return iSrc.getPixelSpacing();
     }
-    
-    public Curve makeCurveFromRoi(ROI aRoi) {
-        Curve ret = new Curve(aRoi.getName());  
-        /*
-        ROIExtractor r = new ROIExtractor(aRoi.getShape());
-        
-        for (ImageFrame f : iSrc.iFrames) {
-            r.apply(f.iRaster);
-            ret.add(new Measure(r.iStats.iMin, r.iStats.iMax, r.iStats.iIden));
-        }
-        */
-        return ret;
-    }
-          
+              
     public IMultiframeImage makeCompositeFrame(int aFrom, int aTo)  {
         if (-1 == aTo)
             aTo = getNumFrames();
@@ -98,10 +97,8 @@ public class MultiframeImage implements IMultiframeImage, java.io.Serializable {
     
     
     
-    public void extract(Extractor aEx) {
-        
-            aEx.apply(image().getRaster());
-       
+    public void extract(Extractor aEx) {  
+       aEx.apply(image().getRaster());   
     }
     
     private static final Logger logger = LogManager.getLogger(MultiframeImage.class);    

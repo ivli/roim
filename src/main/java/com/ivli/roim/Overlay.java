@@ -58,10 +58,11 @@ public abstract class Overlay {
         }
     }
     
-    abstract int getCaps();
-    abstract void paint(Graphics2D aGC, AffineTransform aTrans); 
-    abstract void update();
+    abstract int  getCaps(); 
     
+    abstract void paint(Graphics2D aGC, AffineTransform aTrans); 
+   
+    abstract void update();    
     abstract void move(double adX, double adY); 
        
    

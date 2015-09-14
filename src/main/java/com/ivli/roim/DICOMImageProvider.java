@@ -35,12 +35,8 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
         return iFrames.get(0).getHeight();
     }  
     
-    public int getNumFrames() throws IOException {
-        //try {
-            return iLoader.getNumImages();
-       // } catch (IOException e) {
-        //    return -1;
-        //}
+    public int getNumFrames() throws IOException {       
+        return iLoader.getNumImages();    
     }
     
     public PixelSpacing getPixelSpacing() {
@@ -82,19 +78,19 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
             
            
         } catch (IndexOutOfBoundsException ex) {
-             try {
+             //try { 
                 f = new ImageFrame(iLoader.readRaster(anIndex));
                 
                 iFrames.add(anIndex, f);
-                
-                logger.info("Frame -" + anIndex +                                   // NOI18N
+                 //record only cache misses
+                logger.info("Frame -" + anIndex +                                  
                             ", MIN"   + f.getStats().getMin() +  // NOI18N
                             ", MAX"   + f.getStats().getMax() +  // NOI18N
                             ", DEN"   + f.getStats().getIden()); // NOI18N     
       
-            } catch (IOException ioex) {
-                logger.error(ioex); 
-            } 
+            //} catch (IOException ioex) {
+            //    logger.error(ioex); 
+            //} 
         }
         return f;
     }

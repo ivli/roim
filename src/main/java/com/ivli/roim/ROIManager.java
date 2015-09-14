@@ -32,13 +32,15 @@ public class ROIManager {
     }
     
     public void update() {
-        for(Overlay o : iOverlays)
+        iOverlays.stream().forEach((o) -> {
             o.update();
+        });
     }
     
     public void paint(Graphics2D aGC, AffineTransform aT) {
-         for(Overlay o : iOverlays)
+        iOverlays.stream().forEach((o) -> {
             o.paint(aGC, aT);
+        });
     }            
             
     public void createRoiFromShape(Shape aS) { 
@@ -47,8 +49,9 @@ public class ROIManager {
   
         iOverlays.add(newRoi);
         iOverlays.add(new Annotation(newRoi));      
+        ///newRoi.update();
+        ///newRoi.makeCurve();  
         newRoi.update();
-        newRoi.makeCurve();  
         iView.notifyROIChanged(newRoi, EStateChanged.Created);
     }
     
@@ -68,8 +71,7 @@ public class ROIManager {
             aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));  
             if (aO instanceof ROI)
                 iView.notifyROIChanged((ROI)aO, EStateChanged.Changed);
-        }
-       
+        }       
     }
     
     public Overlay findOverlay(Point aP) {      

@@ -23,9 +23,10 @@ public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip,
     
     ROI(Shape aS, ROIManager aSrc, Color aC) {
         super(aS, new String()); 
-        iColor = (null != aC ? aC : Colorer.getNextColor(this));
+        iColor = (null != aC ? aC : Colorer.getNextColor(ROI.class));
         iMgr = aSrc;
-        iStats = new ROIStats();       
+        iStats = new ROIStats();     
+        makeCurve();
     }
     
     ROI(ROI aR) {
@@ -68,53 +69,50 @@ public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip,
         iColor = aC;
     }
     
+    @Override
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         aGC.setColor(iColor);
         aGC.draw(aTrans.createTransformedShape(getShape()));
     }
     
+    @Override
     protected void move(double adX, double adY) {
         AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
         iShape = trans.createTransformedShape(iShape);
         
-       
-                
-        if (null != iAnnos) {
-            for (Overlay o : iAnnos)
-                o.move(adX, adY);
-        }
+        makeCurve();    
         
         update();
+        
+         if (null != iAnnos) {
+             iAnnos.stream().forEach((o) -> {
+                 o.move(adX, adY);
+            });
+        }
     }  
     
-    void makeCurve() {
+    private void makeCurve() {
         CurveExtractor ce = new CurveExtractor(getManager().getImage());
         Curve cv = ce.extract(this);
         iCurve = cv;
     }
     
-    public Curve getCurve() {
-        //if (null == iCurve)
+    public Curve getCurve() {      
         return iCurve;
     }
     
     @Override
-    void update() {
-        try {
-            ROIExtractor ex = new ROIExtractor(getShape());
-            getManager().getImage().extract(ex); 
-            iStats = ex.iStats;
+    void update() {        
+        Measure<Double> mes = iCurve.get(getManager().getImage().getCurrent());
         
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            iStats = new ROIStats(); //set to NaN
-            logger.error(ex);
-        }
-        
-        makeCurve();
-        
+        iStats.iMax  = mes.iMax;
+        iStats.iMin  = mes.iMin;
+        iStats.iIden = mes.iIden;
+       
         if (null != iAnnos) {
-            for(Overlay o : iAnnos)
+            iAnnos.stream().forEach((o) -> {
                 o.update();
+            });
         }         
     }
     

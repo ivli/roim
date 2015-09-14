@@ -124,8 +124,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(56, 56, 56))
         );
 
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
@@ -391,10 +391,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iPanel.repaint();
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
-    private void jPanel4ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel4ComponentShown
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jPanel4ComponentShown
-
     private void jMenuItem8PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jMenuItem8PropertyChange
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem8PropertyChange
@@ -411,6 +407,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         // TODO add your handling code here:
         logger.info(evt);
     }//GEN-LAST:event_jTabbedPane1ComponentShown
+
+    private void jPanel4ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel4ComponentShown
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPanel4ComponentShown
 
     /**
      * @param args the command line arguments

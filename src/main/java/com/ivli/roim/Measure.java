@@ -30,7 +30,7 @@ public class Measure <T extends Number> implements Serializable {
     static Measure Measure (Raster aRaster, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
             final Rectangle bnds = aShape.getBounds();
          
-            double min = 65535, max = .0, sum = .0, pix = .0;
+            double min = Double.MAX_VALUE, max = Double.MIN_VALUE, sum = .0, pix = .0;
 
             double temp[] = new double [aRaster.getNumBands()];
 

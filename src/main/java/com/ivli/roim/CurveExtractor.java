@@ -18,8 +18,8 @@ public class CurveExtractor {
     
     Curve extract(ROI aRoi) {
         Curve c = new Curve(aRoi.getName());
-        for (ImageFrame f : iImages) {     
         
+        for (ImageFrame f : iImages) {             
             c.add(Measure.Measure(f.getRaster(), aRoi.getShape()));           
         } 
         
