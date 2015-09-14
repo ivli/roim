@@ -10,17 +10,21 @@ public interface IMultiframeImage extends Iterable<ImageFrame>, java.io.Serializ
     int getWidth();  
     int getHeight();
     PixelSpacing getPixelSpacing();    
+    int getNumFrames();  
     
     boolean hasAt(int aFrameNumber);
-     //moves cursor to aFrameNumber
-    ImageFrame current(int aFrameNumber) throws java.util.NoSuchElementException; 
      //gets frame at aFrameNumber  cursor left untouched 
     ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException; 
+    
+    /*TODO rework to let collection be a collection and iterator be an iterator*/
+     //moves cursor to aFrameNumber
+    ImageFrame current(int aFrameNumber) throws java.util.NoSuchElementException; 
+    
      //returns frame at cursor position
     ImageFrame image();    
       //returns cursor position
     int getCurrent();
-    int getNumFrames();      
+        
     
     //void extract(Extractor aEx);
     

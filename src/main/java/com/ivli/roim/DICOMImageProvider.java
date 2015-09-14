@@ -12,12 +12,16 @@ import org.apache.logging.log4j.Logger;
  */
 public class DICOMImageProvider implements IImageProvider/* implements IImage*/ {
     private static final boolean LOAD_ON_DEMAND = true;
+    private static final int     FIRST_FRAME_TO_LOAD = 0;
     
-    private final ImageLoader iLoader = new ImageLoader(); 
+    private final ImageLoader iLoader;// = new ImageLoader(); 
     private final ArrayList<ImageFrame> iFrames;    
     private TimeSliceVector iTimeSlices;     
-        
+    private int iWidth;
+    private int iHeight;
+    
     private DICOMImageProvider() {
+        iLoader = new ImageLoader(); 
         iFrames = new ArrayList();
     }
     
@@ -28,11 +32,11 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
     }    
       
     public int getWidth() {
-        return iFrames.get(0).getWidth();
+        return iWidth;
     }
     
     public int getHeight() {
-        return iFrames.get(0).getHeight();
+        return iHeight;
     }  
     
     public int getNumFrames() throws IOException {       
@@ -63,7 +67,10 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
             for (int i = 0; i < getNumFrames(); ++i)
                 loadFrame(i);
         
-        loadFrame(0);
+        ImageFrame f = loadFrame(FIRST_FRAME_TO_LOAD);
+        
+        iWidth = f.getWidth();
+        iHeight = f.getHeight();
     }
       
     public ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, IOException {

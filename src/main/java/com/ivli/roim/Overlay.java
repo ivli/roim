@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * 
  */
 package com.ivli.roim;
 
@@ -26,6 +24,9 @@ public abstract class Overlay {
     
     protected Shape  iShape;
     protected String iName;
+    protected int    iId;
+    
+    private static int sId = 0;
     
     protected Overlay(Shape aShape, String aName) {
         iShape = aShape; 
@@ -34,11 +35,21 @@ public abstract class Overlay {
         else
             iName = new String();
         patchName();
+        
+        iId = sId++;
     }
    
-    public String getName() {return iName;}
+    public int getId() {
+        return iId;
+    }
     
-    public void setName(String aName) {iName = aName;}
+    public String getName() {
+        return iName;
+    }
+    
+    public void setName(String aName) {
+        iName = aName;
+    }
     
     boolean isSelectable() {return 0 != (getCaps() & SELECTABLE);}
     boolean isMovable() {return 0 != (getCaps() & MOVEABLE);}

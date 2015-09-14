@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class MultiframeImage implements IMultiframeImage, java.io.Serializable {
+public class MultiframeImage implements IMultiframeImage {
     private final IImageProvider iSrc;
     private int iCurrent;
     

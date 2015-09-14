@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.controls.*;
 import com.ivli.roim.Events.*;
+import org.apache.logging.log4j.Level;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
@@ -45,8 +46,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
          
         XYSeriesCollection ds = new XYSeriesCollection();
         iPlot.setDataset(ds);
-        iChart.setSize(jPanel4.getPreferredSize());
-        jPanel4.add(iChart);//, java.awt.BorderLayout.CENTER);
+        iChart.setSize(jPanel3.getPreferredSize());
+        iChart.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        jPanel3.add(iChart);//, java.awt.BorderLayout.CENTER);
     }
     	
     /**
@@ -61,7 +63,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -94,40 +95,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
 
-        jPanel4.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                jPanel4ComponentShown(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 692, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 534, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(56, 56, 56))
-        );
-
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel3.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -319,24 +288,14 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iPanel.iView.addFrameChangeListener(this);
         iPanel.iView.addZoomChangeListener(this);
         iPanel.iView.addWindowChangeListener(this);
-        iPanel.iView.addROIChangeListener(this);
-        
-        ///////////////////////////////////////////////
-        
-        
-        
-        
-        
-        
+        iPanel.iView.addROIChangeListener(this);  
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
         try {
             openImage(null);//"d:\\images\\H2_res.dcm"); // NOI18N           
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception e) {                   
             logger.error(e);
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
@@ -408,10 +367,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         logger.info(evt);
     }//GEN-LAST:event_jTabbedPane1ComponentShown
 
-    private void jPanel4ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel4ComponentShown
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jPanel4ComponentShown
-
     /**
      * @param args the command line arguments
      */
@@ -460,31 +415,42 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
        jLabel4.setText(String.format("%d:%d", aE.getFrame() + 1, aE.getTotal())); // NOI18N
     }
     
+    
+  
+    
     public void ROIChanged(ROIChangeEvent aE) {
-        
-        
+
         XYSeriesCollection collection =  ((XYSeriesCollection)iPlot.getDataset());
         
         switch (aE.getChange()) {
             case Cleared: {
+                
                 int ndx = collection.indexOf(aE.getROI().getName());
                 collection.removeSeries(ndx); 
+               
               } break;
     
             case Changed: 
                 int ndx = collection.indexOf(aE.getROI().getName());
-                collection.removeSeries(ndx); //no break fall through creation case
+               
+                collection.removeSeries(ndx); //no break - fall through creation case
+               
             case Created: 
                 XYSeries s = new XYSeries(aE.getROI().getName());
                 Curve c = aE.getROI().getCurve();
                 
-                int x=0;
+                int x = 0;
+                
+                
+                java.util.Iterator<Long> tsv = iPanel.iProvider.getTimeSliceVector().iSlices.iterator();
+                
+                
                 for (Measure m : c)
-                 s.add(x++, m.iIden);
+                    s.add(tsv.next() / 1000, m.iIden);
 
                 ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   
                 iPlot.getRenderer().setSeriesPaint(collection.indexOf(aE.getROI().getName()), aE.getROI().getColor());
-                
+              
             break;
             
             default: throw new java.lang.IllegalArgumentException();    
@@ -513,7 +479,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables

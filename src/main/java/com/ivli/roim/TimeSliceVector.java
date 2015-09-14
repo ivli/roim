@@ -24,8 +24,9 @@ public class TimeSliceVector implements java.io.Serializable {
         }
     }  
             
-    ArrayList<PhaseInformation> iPhases;       
-    ArrayList<Long>             iSlices;
+    ArrayList<PhaseInformation> iPhases; 
+      //frame start time in millisecons from series begin
+    ArrayList<Long>             iSlices; 
         
     public TimeSliceVector(Attributes aAttr) {        
         iPhases = new ArrayList();
