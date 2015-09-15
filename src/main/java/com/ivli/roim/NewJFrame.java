@@ -462,20 +462,20 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     
     public void ROIChanged(ROIChangeEvent aE) {
 
-        XYSeriesCollection collection =  ((XYSeriesCollection)iPlot.getDataset());
+        XYSeriesCollection col = ((XYSeriesCollection)iPlot.getDataset());
         
         switch (aE.getChange()) {
             case Cleared: {
                 
-                int ndx = collection.indexOf(aE.getROI().getName());
-                collection.removeSeries(ndx); 
+                int ndx = col.indexOf(aE.getROI().getName());
+                col.removeSeries(ndx); 
                
               } break;
     
             case Changed: 
-                int ndx = collection.indexOf(aE.getROI().getName());
+                int ndx = col.indexOf(aE.getROI().getName());
                
-                collection.removeSeries(ndx); //no break - fall through creation case
+                col.removeSeries(ndx); //no break - fall through creation case
                
             case Created: 
                 XYSeries s = new XYSeries(aE.getROI().getName());
@@ -491,7 +491,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                     s.add(tsv.next() / 1000, m.iIden);
 
                 ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   
-                iPlot.getRenderer().setSeriesPaint(collection.indexOf(aE.getROI().getName()), aE.getROI().getColor());
+                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getROI().getName()), aE.getROI().getColor());
               
             break;
             

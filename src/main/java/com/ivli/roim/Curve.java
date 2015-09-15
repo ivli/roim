@@ -9,7 +9,7 @@ package com.ivli.roim;
  * @author likhachev
  */
 
-public class Curve extends java.util.ArrayList<Measure<Double>> implements java.io.Serializable {
+public class Curve extends java.util.ArrayList<Measure<Double>> {
     
     private static final long serialVersionUID = 42L;
     
@@ -18,8 +18,5 @@ public class Curve extends java.util.ArrayList<Measure<Double>> implements java.
     Curve(String aName) {
         iName = aName;
     }
-    
-    
-    
-    
+
 }

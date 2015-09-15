@@ -9,14 +9,14 @@ package com.ivli.roim;
  */
 public class Window implements java.io.Serializable {      
     private static final long serialVersionUID = 42L;
-    private static final double WINDOW_WIDTH_MINIMUM = 1.;
+    private static final double MINIMAL_WINDOW_WIDTH = 1.;
     
     protected double iLevel;
     protected double iWidth;
 
     public Window() {
         iLevel = .5;
-        iWidth = WINDOW_WIDTH_MINIMUM;
+        iWidth = MINIMAL_WINDOW_WIDTH;
     }
     
     public Window(Window aW) {
@@ -26,7 +26,7 @@ public class Window implements java.io.Serializable {
     
     public Window(double aL, double aW) {
         iLevel = aL; 
-        iWidth = Math.max(WINDOW_WIDTH_MINIMUM, aW);   
+        iWidth = Math.max(MINIMAL_WINDOW_WIDTH, aW);   
     }
 
     public double getLevel() {
@@ -42,7 +42,7 @@ public class Window implements java.io.Serializable {
     }
     
     public void setWidth(double aW) {
-        iWidth = Math.max(aW, WINDOW_WIDTH_MINIMUM);
+        iWidth = Math.max(aW, MINIMAL_WINDOW_WIDTH);
     }   
 
     public double getTop() {

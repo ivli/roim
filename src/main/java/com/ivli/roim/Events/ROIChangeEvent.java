@@ -7,7 +7,7 @@ import com.ivli.roim.ROI;
  * @author likhachev
  */
 public final class ROIChangeEvent extends java.util.EventObject { 
-    private final ROI              iROI;
+    private final ROI iROI;
     private final EStateChanged iChange;
     
     public ROIChangeEvent(Object aO, ROI aR, EStateChanged aC) {

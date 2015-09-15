@@ -149,7 +149,8 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
             l.windowChanged(evt);
             });
     }
-   public void addFrameChangeListener(FrameChangeListener aL) {
+    
+    public void addFrameChangeListener(FrameChangeListener aL) {
         iFrameListeners.add(aL);
         aL.frameChanged(new FrameChangeEvent(this, iImage.getCurrent(), iImage.getNumFrames()));
     }

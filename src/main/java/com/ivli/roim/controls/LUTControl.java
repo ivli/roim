@@ -61,15 +61,13 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     private static final int MARKER_CURSOR = Cursor.HAND_CURSOR;    
     private static final int WINDOW_CURSOR = Cursor.N_RESIZE_CURSOR;                           
    
-    private IWLManager    iWLM;    
-   
-    private BufferedImage iBuf;
-    private final Marker  iTop;
-    private final Marker  iBottom;
-    private ActionItem    iAction;
-    
+    private IWLManager     iWLM;      
+    private final Marker   iTop;
+    private final Marker   iBottom;
+    private ActionItem     iAction;
+     private BufferedImage iBuf;
      /* 
-      * passive mode constructor, control is able only to display W/L not to 
+      * passive mode constructor, only to display W/L not to control 
       */
     public LUTControl(LUTControl aControl) {            
         iWLM = aControl.iWLM;        
@@ -81,28 +79,25 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
       * complete object constructor
       */
      @SuppressWarnings("LeakingThisInConstructor")
-    public LUTControl(IWLManager aView) {    
-        if (null == aView)
+    public LUTControl(IWLManager aW) {    
+        if (null == aW)
             throw new java.lang.NullPointerException();
      
-        iWLM    = aView;                               
+        iWLM    = aW;                               
         iTop    = new Marker(true);  
         iBottom = new Marker(false); 
         
         TOP_GAP    = iTop.getMarkerHeight()/2;
-        BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used
-        //aView.addWindowChangeListener(this);  
-        
-        
-           /* it's kinda feedback coupling used to addjust marker positions when control's size gets changed */
+        BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used        
+         
+        /* use feedback loop to addjust marker positions when size changed */
         addComponentListener(new ComponentListener() {    
-            public void componentResized(ComponentEvent e) {changeWindow(iWLM.getWindow());}                                               
+            public void componentResized(ComponentEvent e) {iWLM.setWindow(iWLM.getWindow());}                                               
             public void componentHidden(ComponentEvent e) {}
             public void componentMoved(ComponentEvent e) {}
-            public void componentShown(ComponentEvent e) {changeWindow(iWLM.getWindow());}                    
+            public void componentShown(ComponentEvent e) {iWLM.setWindow(iWLM.getWindow());}                    
             });
-        
-        
+              
         addMouseMotionListener(this);
         addMouseListener(this);  
         addMouseWheelListener(this);   
@@ -115,12 +110,8 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
 
     private void invalidateBuffer() {        
         iBuf = null;
-    }
-    
-    private void changeWindow(Window aW) {              
-        iWLM.setWindow(aW);            
-    }   
-    
+    }    
+      
     @Override
     public void windowChanged(WindowChangeEvent anE) {   
         if (null != iTop && null != iBottom) { //theoretically we'd never get here in passive mode
@@ -150,7 +141,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             if (iWLM.getRange().contains(win)) {
                 iWLM.setWindow(win);
 
-                changeWindow(win);     
+                ///iWLM.setWindow(win);     
             }
         }            
     } 
@@ -199,7 +190,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                     
                     if (iWLM.getRange().contains(win)) {
                         iWLM.setWindow(win);
-                        changeWindow(win);                          
+                       // changeWindow(win);                          
                     }
                 }   
                 protected boolean DoWheel(int aX) {
@@ -212,7 +203,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                         if (null != iWLM) 
                             iWLM.setWindow(win);
 
-                        changeWindow(win);     
+                        //changeWindow(win);     
                     }
                   
                     return false;
@@ -258,7 +249,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             showPopupMenu(e.getX(), e.getY());
         else if (SwingUtilities.isLeftMouseButton(e)) {
                 if(e.getClickCount() == 2){                        
-                    changeWindow(iWLM.getRange().Window());
+                    iWLM.setWindow(iWLM.getRange().Window());
                 }
         }
     }
@@ -395,12 +386,9 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         int getMarkerHeight() {
             return iKnob.getHeight(null);
         }
+    
         
-        
-        
-        
-        void setPosition(int aPos) {
-            //logger.info(iName + ", " + aPos ); //NOI18N
+        void setPosition(int aPos) {           
             iPos = aPos;
         } 
         
@@ -436,13 +424,11 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
            
         }         
     }
-    
-    
+        
     private static final String KCommandTriggerLinear = "COMMAND_LUTCONTROL_TRIGGER_LINEAR"; // NOI18N
     private static final String KCommandTriggerDirect = "COMMAND_LUTCONTROL_TRIGGER_DIRECT"; // NOI18N
     private static final String KCommandShowDialog    = "COMMAND_LUTCONTROL_SHOW_DIALOG"; // NOI18N
-    private static final String KCommandChangeLUT     = "COMMAND_LUTCONTROL_CHANGE_LUT"; // NOI18N
-    
+    private static final String KCommandChangeLUT     = "COMMAND_LUTCONTROL_CHANGE_LUT"; // NOI18N    
     
     public void actionPerformed(ActionEvent e) {
         assert (null != iWLM);

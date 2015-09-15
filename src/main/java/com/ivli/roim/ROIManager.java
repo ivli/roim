@@ -1,18 +1,20 @@
 
 package com.ivli.roim;
 
-import com.ivli.roim.Events.EStateChanged;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ivli.roim.Events.EStateChanged;
 /**
  *
  * @author likhachev
@@ -20,8 +22,10 @@ import org.apache.logging.log4j.Logger;
 public class ROIManager implements java.io.Serializable {  
     private static final long serialVersionUID = 42L;
     
+    transient private final ImageView  iView; 
+    
     private HashSet<Overlay> iOverlays;      
-    transient private final ImageView  iView;        
+           
     
     ROIManager(ImageView aV) { 
         iView = aV;
@@ -132,12 +136,13 @@ public class ROIManager implements java.io.Serializable {
             java.io.ObjectInputStream ois = new java.io.ObjectInputStream(fis);
             iOverlays = (HashSet<Overlay>)(ois.readObject());
             ois.close();
-            for (Overlay o : iOverlays) {
-                if (o instanceof ROI) {
-                    ((ROI)o).iMgr = this;
-                
-                    for (Overlay o1 : ((ROI)o).iAnnos)   
-                        iOverlays.add(o1);
+            for (Overlay r : iOverlays) {
+                if (r instanceof ROI) {
+                    ((ROI)r).iMgr = this;
+                    iView.notifyROIChanged(((ROI)r), EStateChanged.Created);
+                    
+                    for (Overlay o : ((ROI)r).iAnnos)   
+                        iOverlays.add(o);
                 }
             }
         } catch (IOException|ClassNotFoundException ex) {
