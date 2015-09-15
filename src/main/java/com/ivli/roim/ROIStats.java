@@ -6,6 +6,8 @@ package com.ivli.roim;
  */
 
 public class ROIStats extends Measure<Double> implements java.io.Serializable {
+    private static final long serialVersionUID = 42L;
+    
     double iPixels;
     double iArea;
        

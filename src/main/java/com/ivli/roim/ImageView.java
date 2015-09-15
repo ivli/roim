@@ -27,20 +27,16 @@ import org.jfree.data.xy.XYSeries;
 
 public class ImageView extends JComponent implements WindowChangeNotifier {
 
-    private static final boolean DRAW_OVERLAYS_ON_BUFFERED_IMAGE = false; //i cry ther's no #ifdef 
-    private static final boolean DRAW_SUMMED_FRAME = false; 
-    private static final boolean SUMMED_FRAME_PANE = false; 
+    private static final boolean DRAW_OVERLAYS_ON_BUFFERED_IMAGE = false; //i cry ther's no #ifdef     
     private static final double  DEFAULT_SCALE_X = 1.;
     private static final double  DEFAULT_SCALE_Y = 1.;
-    private static final int     SELECTION_TOLERANCE_X = 3;
-    private static final int     SELECTION_TOLERANCE_Y = 1;
-    private static final int     ZOOM_TO_FIT = 1;
+    
     
     enum EFit {
-        Width, Height, Visible, Zoom; 
+        Visible, Width, Height, Zoom; 
     }
     
-    private EFit iFit = EFit.Visible;  // 
+    private EFit iFit = EFit.Zoom;  // 
     
     private final IMultiframeImage iImage;                 
     
@@ -132,7 +128,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     void notifyROIChanged(ROI aR, EStateChanged aS) {
        ROIChangeEvent evt = new ROIChangeEvent(this, aR, aS);
        
-       for(ROIChangeListener l:iROIListeners)
+       for (ROIChangeListener l : iROIListeners)
            l. ROIChanged(evt);
     }
     
@@ -196,37 +192,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
    
     private void invalidateBuffer() {iBuf = null;}
-     
-    /*
-    public void setWindow(Window aW) { 
-        if (!iLUTMgr.getWindow().equals(aW) && iLUTMgr.getRange().contains(aW)) {            
-            iLUTMgr.setWindow(aW);               
-            invalidateBuffer();
-            notifyWindowChanged(false);
-            repaint();
-        }
-    }
-
-    public void setInverted(boolean aI) {
-        if (iLUTMgr.setInverted(aI)) {              
-            //updateBufferedImage();
-            invalidateBuffer();
-            notifyWindowChanged(false);
-        }
-    } 
-    
-    public void setLinear(boolean aI) {
-        iLUTMgr.setLinear(aI);        
-        invalidateBuffer();
-        notifyWindowChanged(false);  
-    }
-
-    public void setLUT(String aLUT) {
-        iLUTMgr.setLut(aLUT);        
-        invalidateBuffer();      
-    }
-    */
-    
+        
     private double getMin() {return iImage.image().getStats().getMin();} 
     private double getMax() {return iImage.image().getStats().getMax();} 
     
@@ -234,8 +200,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         return iImage.getNumFrames();
     }    
            
-    void loadFrame(int aN) throws IndexOutOfBoundsException {                
-        
+    void loadFrame(int aN) throws IndexOutOfBoundsException {                        
         iImage.current(aN);   
         ///iWM.reset(iImage);
         notifyFrameChanged(aN);
@@ -321,12 +286,11 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
      
       
     public class WLManager implements IWLManager {    
-
         VOILut          iVLUT;
         PresentationLut iPLUT;
 
         //private 
-        public WLManager() {       
+        WLManager() {       
             iVLUT = new VOILut(iImage.image());
             iPLUT = new PresentationLut(null);
         }

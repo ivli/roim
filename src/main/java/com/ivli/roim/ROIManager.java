@@ -7,18 +7,23 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author likhachev
  */
-public class ROIManager {    
-    private final HashSet<Overlay> iOverlays;      
-    private final ImageView            iView;        
+public class ROIManager implements java.io.Serializable {  
+    private static final long serialVersionUID = 42L;
     
-    ROIManager(ImageView aV) {
+    private HashSet<Overlay> iOverlays;      
+    transient private final ImageView  iView;        
+    
+    ROIManager(ImageView aV) { 
         iView = aV;
         iOverlays = new HashSet();          
     }
@@ -49,8 +54,7 @@ public class ROIManager {
   
         iOverlays.add(newRoi);
         iOverlays.add(new Annotation(newRoi));      
-        ///newRoi.update();
-        ///newRoi.makeCurve();  
+       
         newRoi.update();
         iView.notifyROIChanged(newRoi, EStateChanged.Created);
     }
@@ -113,5 +117,34 @@ public class ROIManager {
         return iOverlays.iterator();// listIterator();
     }     
        
+    void externalize(String aFileName) {        
+        try(java.io.FileOutputStream fos = new java.io.FileOutputStream(aFileName)) {
+            java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(fos);
+            oos.writeObject(iOverlays);
+            oos.close();
+        } catch (IOException ex){
+           logger.error("Unable to deserialize" + ex); 
+        } 
+    }
+    
+    void internalize(String aFileName) {
+        try(java.io.FileInputStream fis = new java.io.FileInputStream(aFileName)) {
+            java.io.ObjectInputStream ois = new java.io.ObjectInputStream(fis);
+            iOverlays = (HashSet<Overlay>)(ois.readObject());
+            ois.close();
+            for (Overlay o : iOverlays) {
+                if (o instanceof ROI) {
+                    ((ROI)o).iMgr = this;
+                
+                    for (Overlay o1 : ((ROI)o).iAnnos)   
+                        iOverlays.add(o1);
+                }
+            }
+        } catch (IOException|ClassNotFoundException ex) {
+            logger.error("Unable to deserialize" + ex);
+        } 
+    }
+    
+    private static final Logger logger = LogManager.getLogger(ROIManager.class);
 }
 

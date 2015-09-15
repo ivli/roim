@@ -12,9 +12,11 @@ import java.awt.geom.AffineTransform;
  *
  * @author likhachev
  */
-public abstract class Overlay {    
+public abstract class Overlay implements java.io.Serializable {  
+    private static final long serialVersionUID = 42L;
+    
     protected static final int SELECTABLE = 0x1;
-    protected static final int MOVEABLE    = 0x2;
+    protected static final int MOVEABLE   = 0x2;
     protected static final int PERMANENT  = 0x4;
     protected static final int CLONEABLE  = 0x8;
     protected static final int CANFLIP    = 0x10;
@@ -22,11 +24,12 @@ public abstract class Overlay {
     protected static final int RESIZABLE  = 0x40;
     protected static final int HASCUSTOMMNU  = 0x100;    
     
+    private static int staticId = 0;
+     
     protected Shape  iShape;
     protected String iName;
     protected int    iId;
-    
-    private static int sId = 0;
+       
     
     protected Overlay(Shape aShape, String aName) {
         iShape = aShape; 
@@ -36,7 +39,7 @@ public abstract class Overlay {
             iName = new String();
         patchName();
         
-        iId = sId++;
+        iId = staticId++;
     }
    
     public int getId() {

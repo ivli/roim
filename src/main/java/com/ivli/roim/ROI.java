@@ -11,8 +11,8 @@ import java.awt.geom.AffineTransform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ROI extends Overlay implements java.io.Serializable, Overlay.IFlip, Overlay.IRotate {    
-    ROIManager         iMgr; 
+public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {      
+    transient ROIManager iMgr; 
     Color              iColor;
     ROIStats           iStats;
     HashSet<Overlay>   iAnnos;               

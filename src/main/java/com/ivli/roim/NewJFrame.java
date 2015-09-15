@@ -77,6 +77,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
+        jMenuItem9 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
 
@@ -188,6 +190,22 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             }
         });
         jMenu2.add(jMenuItem7);
+
+        jMenuItem6.setText(bundle.getString("NewJFrame.jMenuItem6.text")); // NOI18N
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem6);
+
+        jMenuItem9.setText(bundle.getString("NewJFrame.jMenuItem9.text")); // NOI18N
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem9ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem9);
 
         jMenuItem8.setText(bundle.getString("NewJFrame.jMenuItem8.text")); // NOI18N
         jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
@@ -367,6 +385,16 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         logger.info(evt);
     }//GEN-LAST:event_jTabbedPane1ComponentShown
 
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+       iPanel.iView.getROIMgr().externalize("ROILIST");
+        
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+       iPanel.iView.getROIMgr().internalize("ROILIST");
+       iPanel.repaint();
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -474,8 +502,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
+    private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
