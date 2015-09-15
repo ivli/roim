@@ -475,14 +475,13 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 break;
             case KCommandChangeLUT:
                 FileDialog fd = new FileDialog((Frame)null , java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_A_FILE"), FileDialog.LOAD);
-                fd.setDirectory(Settings.LUT_DIRECTORY);
-                fd.setFile(Settings.LUT_FILE_SUFFIX);
+                fd.setDirectory(Settings.DEFAULT_FOLDER_LUT);
+                fd.setFile(Settings.FILE_SUFFIX_LUT);
                 fd.setVisible(true);
                 String cm ;        
                 if (null != fd.getFile() && null != (cm = fd.getDirectory() + fd.getFile())) {
                     iWLM.setLUT(cm);
-                    invalidateBuffer();
-                   // iView.repaint();
+                    invalidateBuffer();                  
                     repaint();
                 } 
                 break;          

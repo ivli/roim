@@ -328,8 +328,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         FileDialog fd = new FileDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_LUT_FILE"), FileDialog.LOAD);
-        fd.setDirectory("D:\\temp\\Lookup_Tables\\"); // NOI18N
-        fd.setFile("*.lut"); // NOI18N
+        fd.setDirectory(Settings.DEFAULT_FOLDER_LUT); 
+        fd.setFile(Settings.FILE_SUFFIX_LUT); 
         fd.setVisible(true);
         String cm ;        
         if (null != fd.getFile() && null != (cm = fd.getDirectory() + fd.getFile())) {
@@ -386,13 +386,27 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jTabbedPane1ComponentShown
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
-       iPanel.iView.getROIMgr().externalize("ROILIST");
+        FileDialog fd = new FileDialog(this, "NEWJFRAME.CHOOSE_ROILIST_FILE", FileDialog.SAVE);
+        fd.setDirectory(Settings.DEFAULT_FOLDER_ROILIST); 
+        fd.setFile(Settings.FILE_SUFFIX_ROILIST); 
+        fd.setVisible(true);
+        String ff ;        
+        if (null != fd.getFile() && null != (ff = fd.getDirectory() + fd.getFile()))         
+            iPanel.iView.getROIMgr().externalize(ff);
         
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-       iPanel.iView.getROIMgr().internalize("ROILIST");
-       iPanel.repaint();
+       
+        FileDialog fd = new FileDialog(this, "NEWJFRAME.CHOOSE_ROILIST_FILE", FileDialog.LOAD);
+        fd.setDirectory(Settings.DEFAULT_FOLDER_ROILIST); 
+        fd.setFile(Settings.FILE_SUFFIX_ROILIST); 
+        fd.setVisible(true);
+        String ff ;        
+        if (null != fd.getFile() && null != (ff = fd.getDirectory() + fd.getFile())) {
+            iPanel.iView.getROIMgr().internalize(ff);
+            iPanel.repaint();
+        }
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     /**
