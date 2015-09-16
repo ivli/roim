@@ -482,13 +482,15 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 Series c = aE.getROI().getCurve();
                 
                 int x = 0;
+                                
+                ///java.util.Iterator<Long> tsv = iPanel.iProvider.getTimeSliceVector().iSlices.iterator();
+                  //sanity check
+                assert(c.noOfFrames() == iPanel.iProvider.getTimeSliceVector().noOfFrames());
                 
-                
-                java.util.Iterator<Long> tsv = iPanel.iProvider.getTimeSliceVector().iSlices.iterator();
-                
-                
-                for (Measure m : c)
-                    s.add(tsv.next() / 1000, m.iIden);
+                for (int n = 0; n < c.noOfFrames(); ++n) {
+                    long dur = iPanel.iProvider.getTimeSliceVector().getSlices().get(n) / 1000;
+                    s.add(dur, c.get(n).iIden);
+                }
 
                 ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   
                 iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getROI().getName()), aE.getROI().getColor());

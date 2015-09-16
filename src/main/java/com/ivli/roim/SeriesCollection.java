@@ -1,29 +1,32 @@
 
 package com.ivli.roim;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  *
  * @author likhachev
  */
-public class SeriesCollection {
+public class SeriesCollection implements java.io.Serializable {
+    private static final long serialVersionUID = 42L;
     
     TimeSliceVector iTimeSliceVector = null;
     final java.util.ArrayList<Series> iSeries = new java.util.ArrayList<>(); 
     
-    public void setTimeSliceVector(TimeSliceVector aV) {
-        if (iSeries.isEmpty() || iSeries.get(0).noOfFrames() == aV.noOfFrames() )
-            iTimeSliceVector = aV;
-        else
-            throw new IllegalArgumentException();
+    
+    SeriesCollection(TimeSliceVector aV) {
+        iTimeSliceVector = aV;
     }
     
     public void addSeries(Series aC) {
-        if (null == iTimeSliceVector || iTimeSliceVector.noOfFrames() == aC.noOfFrames())
-            iSeries.add(aC);
-        else
-            throw new IllegalArgumentException();                  
+        if (iTimeSliceVector.noOfFrames() != aC.noOfFrames())
+            throw new IllegalArgumentException();      
+               
+        iSeries.add(aC);               
     } 
     
         
- 
+    
+    private static final Logger logger = LogManager.getLogger(SeriesCollection.class); 
 }

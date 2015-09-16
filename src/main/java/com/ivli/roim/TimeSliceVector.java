@@ -16,9 +16,9 @@ public class TimeSliceVector implements java.io.Serializable {
 
     private static final long serialVersionUID = 42L;
                     
-    ArrayList<PhaseInformation> iPhases; 
+    private ArrayList<PhaseInformation> iPhases; 
       //frame start time in millisecons from series begin
-    ArrayList<Long>             iSlices; 
+    private ArrayList<Long>             iSlices; 
         
     public TimeSliceVector(Attributes aAttr) {        
         iPhases = new ArrayList();
@@ -26,13 +26,15 @@ public class TimeSliceVector implements java.io.Serializable {
         
         Sequence pid = (Sequence)aAttr.getValue(Tag.PhaseInformationSequence);
         
-        if (null != pid) {
-        
+        if (null != pid) {        
             for (Attributes a : pid) {
                 int fd = a.getInt(Tag.ActualFrameDuration, 1);     
                 int nf = a.getInt(Tag.NumberOfFramesInPhase, 1);  
                 iPhases.add(new PhaseInformation(nf, fd));
             }  
+        } else {  
+             // single frame image
+            iPhases.add(new PhaseInformation(1, aAttr.getInt(Tag.ActualFrameDuration, 1)));   
         }
         
         fillSlicesArray();
@@ -52,7 +54,11 @@ public class TimeSliceVector implements java.io.Serializable {
         
         fillSlicesArray();
     }
-  
+      
+    public ArrayList<Long> getSlices() {
+        return iSlices;
+    }
+    
     private void fillSlicesArray() {
         long n = 0L;
        
