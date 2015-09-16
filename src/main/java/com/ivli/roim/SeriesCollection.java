@@ -7,8 +7,8 @@ package com.ivli.roim;
  */
 public class SeriesCollection {
     
-    TimeSliceVector iTimeSliceVector;
-    java.util.ArrayList<Series> iSeries = new java.util.ArrayList<>(); 
+    TimeSliceVector iTimeSliceVector = null;
+    final java.util.ArrayList<Series> iSeries = new java.util.ArrayList<>(); 
     
     public void setTimeSliceVector(TimeSliceVector aV) {
         if (iSeries.isEmpty() || iSeries.get(0).noOfFrames() == aV.noOfFrames() )
@@ -23,5 +23,7 @@ public class SeriesCollection {
         else
             throw new IllegalArgumentException();                  
     } 
+    
+        
  
 }
