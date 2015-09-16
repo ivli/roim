@@ -16,8 +16,8 @@ public class CurveExtractor {
         iImages = aI;
     }
     
-    Curve extract(ROI aRoi) {
-        Curve c = new Curve(aRoi.getName());
+    Series extract(ROI aRoi) {
+        Series c = new Series(aRoi.getName());
         
         for (ImageFrame f : iImages) {             
             c.add(Measure.Measure(f.getRaster(), aRoi.getShape()));           

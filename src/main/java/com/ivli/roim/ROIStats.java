@@ -5,34 +5,27 @@ package com.ivli.roim;
  * @author likhachev
  */
 
-public class ROIStats extends Measure<Double> implements java.io.Serializable {
-    private static final long serialVersionUID = 42L;
-    
+public class ROIStats extends Measure {   
     double iPixels;
     double iArea;
        
     ROIStats() {
+        super(Double.NaN, Double.NaN, Double.NaN);
         iPixels = Double.NaN;  
-        iArea   = Double.NaN;     
-        iMin    = Double.NaN;  
-        iMax    = Double.NaN; 
-        iIden   = Double.NaN;  
+        iArea   = Double.NaN;             
     }
     
     ROIStats(ROIStats aS) {
+        super(aS.iMin, aS.iMax, aS.iIden);
         iPixels = aS.iPixels;        
-        iArea   = aS.iArea;
-        iMin    = aS.iMin;  
-        iMax    = aS.iMax; 
-        iIden   = aS.iIden; 
+        iArea   = aS.iArea;        
+    }    
+    
+    ROIStats(double aP, double aA, double aMi, double aMa, double aI) {
+        super(aMi, aMa, aI);
+        iPixels = aP;
+        iArea = aA;
     }
-    
-    
-   ROIStats(double aP, double aA, double aMi, double aMa, double aI) {
-       super(aMi, aMa, aI);
-       iPixels = aP;
-       iArea = aA;
-   }
            
    public double getPixels() {return iPixels;}
    public double getArea() {return iArea;}

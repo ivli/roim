@@ -479,7 +479,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                
             case Created: 
                 XYSeries s = new XYSeries(aE.getROI().getName());
-                Curve c = aE.getROI().getCurve();
+                Series c = aE.getROI().getCurve();
                 
                 int x = 0;
                 

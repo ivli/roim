@@ -62,7 +62,7 @@ public class TimeSliceVector implements java.io.Serializable {
          
     public int noOfFrames() {
         int ret = 0;
-        for (PhaseInformation p:iPhases) 
+        for (PhaseInformation p : iPhases) 
             ret += p.iNumberOfFrames;
         return ret;   
     }

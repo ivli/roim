@@ -10,22 +10,22 @@ import java.io.Serializable;
  * @author likhachev
  * @param <T>
  */
-public class Measure <T extends Number> implements Serializable {
-    T iMin;  //min value 
-    T iMax;  //max value
-    T iIden; //integral density (a sum of pixel values)  
+public class Measure implements Serializable {
+    double iMin;  //min value 
+    double iMax;  //max value
+    double iIden; //integral density (a sum of pixel values)  
     
-    Measure(T aMin, T aMax, T aIden) {
+    Measure(double aMin, double aMax, double aIden) {
         iMin  = aMin; 
         iMax  = aMax; 
         iIden = aIden;
     }
     
-    Measure(){}    
+    //Measure(){}    
     
-    public T getMin()  {return iMin;}
-    public T getMax()  {return iMax;}
-    public T getIden() {return iIden;}
+    public double getMin()  {return iMin;}
+    public double getMax()  {return iMax;}
+    public double getIden() {return iIden;}
     
     static Measure Measure (Raster aRaster, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
             final Rectangle bnds = aShape.getBounds();

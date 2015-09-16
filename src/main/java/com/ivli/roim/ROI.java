@@ -16,7 +16,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     Color              iColor;
     ROIStats           iStats;
     HashSet<Overlay>   iAnnos;               
-    Curve              iCurve;
+    Series              iCurve;
     
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE;}
@@ -93,17 +93,17 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     
     private void makeCurve() {
         CurveExtractor ce = new CurveExtractor(getManager().getImage());
-        Curve cv = ce.extract(this);
+        Series cv = ce.extract(this);
         iCurve = cv;
     }
     
-    public Curve getCurve() {      
+    public Series getCurve() {      
         return iCurve;
     }
     
     @Override
     void update() {        
-        Measure<Double> mes = iCurve.get(getManager().getImage().getCurrent());
+        Measure mes = iCurve.get(getManager().getImage().getCurrent());
         
         iStats.iMax  = mes.iMax;
         iStats.iMin  = mes.iMin;
