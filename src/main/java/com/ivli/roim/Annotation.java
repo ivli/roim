@@ -26,11 +26,11 @@ public class Annotation extends Overlay {
       
     private static final int iFields = ANNOTATION_DISPLAY_AREA_PIXELS|ANNOTATION_DISPLAY_CNTS_IDEN;
     
-    private final ROI iRoi; //eah, where's my favorite c++'s constant referencies
+    private final ROI iRoi; //eah, where're my favorite c++'s constant referencies
     private String iText; 
     
     @Override
-    int getCaps(){return MOVEABLE|SELECTABLE;}
+    int getCaps(){return MOVEABLE | SELECTABLE;}
    
     Annotation(ROI aRoi) {
         super(new Rectangle2D.Double(), null);

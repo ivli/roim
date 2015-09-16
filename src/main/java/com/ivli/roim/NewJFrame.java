@@ -22,8 +22,11 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
 
-    private final XYPlot    iPlot;
-    private final JFreeChart iJfc;
+    private final XYPlot     iPlot;
+    private final JFreeChart iJfc;    
+    private final ChartPanel iChart;
+    
+    private       JMedPane   iPanel;
     
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
@@ -277,8 +280,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             else
                 return;
         }
-         
-        iChart.removeAll();
+        
+        ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries();
+       
+        ///iChart.removeAll();
+        
         jPanel1.removeAll();
         iPanel = null;
         
@@ -472,11 +478,19 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                
               } break;
     
-            case Changed: 
+            case Changed: {
                 int ndx = col.indexOf(aE.getROI().getName());
                
-                col.removeSeries(ndx); //no break - fall through creation case
-               
+                Series c = aE.getROI().getCurve();
+                XYSeries s = col.getSeries(ndx); 
+                s.clear();
+                
+                for (int n = 0; n < c.noOfFrames(); ++n) {
+                    long dur = iPanel.iProvider.getTimeSliceVector().getSlices().get(n) / 1000;
+                    s.add(dur, c.get(n).iIden);
+                }
+               } break;
+                
             case Created: 
                 XYSeries s = new XYSeries(aE.getROI().getName());
                 Series c = aE.getROI().getCurve();
@@ -497,13 +511,14 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
               
             break;
             
+            case Emptied: 
+                ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); break;
             default: throw new java.lang.IllegalArgumentException();    
         }
    
     }
     
-    JMedPane iPanel;
-    ChartPanel iChart;
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

@@ -22,6 +22,8 @@ import com.ivli.roim.Events.EStateChanged;
 public class ROIManager implements java.io.Serializable {  
     private static final long serialVersionUID = 42L;
     
+    private static final boolean ROI_HAS_ANNOTATIONS = false;
+    
     transient private final ImageView  iView; 
     
     private HashSet<Overlay> iOverlays;      
@@ -38,6 +40,7 @@ public class ROIManager implements java.io.Serializable {
         
     public void clear() {
         iOverlays.clear();
+        iView.notifyROIChanged(null, EStateChanged.Emptied);
     }
     
     public void update() {
@@ -57,7 +60,9 @@ public class ROIManager implements java.io.Serializable {
         final ROI newRoi = new ROI(r, this, null);       
   
         iOverlays.add(newRoi);
-        iOverlays.add(new Annotation(newRoi));      
+        
+        if (ROI_HAS_ANNOTATIONS)
+            iOverlays.add(new Annotation(newRoi));      
        
         newRoi.update();
         iView.notifyROIChanged(newRoi, EStateChanged.Created);
@@ -127,22 +132,26 @@ public class ROIManager implements java.io.Serializable {
             oos.writeObject(iOverlays);
             oos.close();
         } catch (IOException ex){
-           logger.error("Unable to deserialize" + ex); 
+           logger.error("Unable to externalize objects" + ex); 
         } 
     }
-    
+     
     void internalize(String aFileName) {
         try(java.io.FileInputStream fis = new java.io.FileInputStream(aFileName)) {
             java.io.ObjectInputStream ois = new java.io.ObjectInputStream(fis);
-            iOverlays = (HashSet<Overlay>)(ois.readObject());
+            iOverlays = (HashSet<Overlay>)(ois.readObject());            
             ois.close();
+             
+            iView.notifyROIChanged(null, EStateChanged.Emptied);
+            
             for (Overlay r : iOverlays) {
                 if (r instanceof ROI) {
                     ((ROI)r).iMgr = this;
                     iView.notifyROIChanged(((ROI)r), EStateChanged.Created);
                     
-                    for (Overlay o : ((ROI)r).iAnnos)   
-                        iOverlays.add(o);
+                    if (null != ((ROI)r).iAnnos)
+                        for (Overlay o : ((ROI)r).iAnnos)   
+                            iOverlays.add(o);
                 }
             }
         } catch (IOException|ClassNotFoundException ex) {
