@@ -59,8 +59,8 @@ public class TimeSliceVector implements java.io.Serializable {
         
         ArrayList<PhaseInformation> phases =  new ArrayList();
         
-        final int frameTo = (-1 == aS.iTo) ? getNumFrames() - 1 : frameNumber(aS.iTo);
-        final int frameFrom = frameNumber(aS.iFrom);   
+        final int frameTo = (-1 == aS.getTo()) ? getNumFrames() - 1 : frameNumber(aS.getTo()) - 1;
+        final int frameFrom = frameNumber(aS.getFrom());   
         
         final int phaseFrom = phaseFrame(frameFrom);
         final int phaseTo   = phaseFrame(frameTo);               
@@ -182,10 +182,14 @@ public class TimeSliceVector implements java.io.Serializable {
             ret += p.duration();
         return ret;
     }
-    
+       
+    private void testTimeArgument(long uSec) {
+        if (uSec < 0L || uSec > duration())
+            throw new IllegalArgumentException("bad uSecFromStart");
+    }
       //get phase number by time in uSec -returns 0, 1, 2 etc
     public int phaseNumber(long uSecFromStart) {        
-        assert (uSecFromStart >= 0L && uSecFromStart < duration());
+        testTimeArgument(uSecFromStart);
            
         long elapsed = 0L;
         
@@ -202,8 +206,7 @@ public class TimeSliceVector implements java.io.Serializable {
     
      //get frame ordinal by time in uSec
     public int frameNumber(long uSecFromStart) {                
-        if (uSecFromStart < 0 || uSecFromStart > duration())
-            throw new IllegalArgumentException("bad uSecFromStart");
+        testTimeArgument(uSecFromStart);
                 
         int  phase = phaseNumber(uSecFromStart);
         int  ret = 0;
@@ -233,15 +236,12 @@ public class TimeSliceVector implements java.io.Serializable {
             
         fillSlicesArray();
     }
-    
-    
-              
+                  
     public void resample(int aPhase, int newFrameDuration) {
         resamplePhase(iPhases.get(aPhase), newFrameDuration);        
         fillSlicesArray();
     }
-    
-    
+   
     
     private static final Logger logger = LogManager.getLogger(TimeSliceVector.class);
 }

@@ -82,8 +82,7 @@ public class TimeSliceVectorTest {
         System.out.println("isValidFrameNumber");
         
         TimeSliceVector instance = new TimeSliceVector(phi);
-        
-        
+                
         boolean positive = instance.isValidFrameNumber(0) 
                         && instance.isValidFrameNumber(TOTAL_NO_OF_FRAMES - 1)
                         && instance.isValidFrameNumber(Math.floorDiv(TOTAL_NO_OF_FRAMES, 2));
@@ -188,28 +187,13 @@ public class TimeSliceVectorTest {
         }  
     }
 
-    /**
-     * Test of frameLapse method, of class TimeSliceVector.
-     */
-    @Test
-    public void testFrameLapse() {
-        System.out.println("frameLapse");
-        int aStart = 0;
-        int aEnd = 0;
-        TimeSliceVector instance = new TimeSliceVector(phi);
-        long expResult = 0L;
-        long result = instance.frameLapse(aStart, aEnd);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-    
+        
     /**
      * Test of frameNumber method, of class TimeSliceVector.
      */
     @Test
     public void testPhaseNumber() {
-        System.out.println("frameNumber");
+        System.out.println("phaseNumber");
         long uSecFromStart = 0L;
         TimeSliceVector instance = new TimeSliceVector(phi);
         
@@ -219,8 +203,15 @@ public class TimeSliceVectorTest {
         ret = instance.phaseNumber(PHASE_DURATION[0]-1);
         assertEquals(0, ret);
         
+        
+        ret = instance.phaseNumber(PHASE_DURATION[0]);
+        assertEquals(1, ret);
+        
         ret = instance.phaseNumber(PHASE_DURATION[0] + PHASE_DURATION[1] - 1);
         assertEquals(1, ret);
+        
+        ret = instance.phaseNumber(PHASE_DURATION[0] + PHASE_DURATION[1] );
+        assertEquals(2, ret);
         
         ret = instance.phaseNumber(PHASE_DURATION[0] + PHASE_DURATION[1] + PHASE_DURATION[2] - 1);        
         assertEquals(2, ret);
@@ -228,23 +219,18 @@ public class TimeSliceVectorTest {
         ret = instance.phaseNumber(PHASE_DURATION[0] + PHASE_DURATION[1] / 2);        
         assertEquals(1, ret);
         
+        //boolean res = false;
+        //try {
+            ret = instance.phaseNumber(PHASE_DURATION[0] + PHASE_DURATION[1] + PHASE_DURATION[2]);        
+            System.out.println(String.format("phaseNumber %d", ret));
+        //} catch (Exception ex) {
+        //    res = true;
+       // }
+        
+        assertEquals(2, ret);
     }
 
-    /**
-     * Test of frameStarts method, of class TimeSliceVector.
-     */
-    @Test
-    public void testFrameStarts() {
-        System.out.println("frameStarts");
-        int aFrameNumber = 0;
-        TimeSliceVector instance = new TimeSliceVector(phi);;
-        long expResult = 0L;
-        long result = instance.frameStarts(aFrameNumber);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
+    
     /**
      * Test of frameNumber method, of class TimeSliceVector.
      */
@@ -260,14 +246,12 @@ public class TimeSliceVectorTest {
             expResult     += NO_OF_FRAMES[i];
             uSecFromStart += PHASE_DURATION[i];          
             
-            int result = instance.frameNumber(uSecFromStart);
+            int result = instance.frameNumber(uSecFromStart - 1);
             
-            assertEquals(expResult, result);    
+            assertEquals(expResult - 1, result);    
         }
     }
 
-     
-    
     
      /**
      * Test of resample method, of class TimeSliceVector.

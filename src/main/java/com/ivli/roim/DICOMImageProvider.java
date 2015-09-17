@@ -115,10 +115,10 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
     }
     
     public IImageProvider collapse(TimeSlice aS) throws IOException {   
-        int frameTo = (-1 == aS.iTo) ? getNumFrames() : iTimeSlices.frameNumber(aS.iTo);
-        int frameFrom = iTimeSlices.frameNumber(aS.iFrom);        
+        int frameTo = (-1 == aS.getTo()) ? getNumFrames() : iTimeSlices.frameNumber(aS.getTo());
+        int frameFrom = iTimeSlices.frameNumber(aS.getFrom());        
        
-        assert (aS.iFrom >= 0 && aS.iFrom < getNumFrames() || aS.iTo > aS.iFrom || aS.iFrom < getNumFrames());  
+        assert (aS.getFrom() >= 0 && aS.getFrom() < getNumFrames() || aS.getTo() > aS.getFrom() || aS.getFrom() < getNumFrames());  
         
         VirtualImageProvider ret = new VirtualImageProvider(this);
         

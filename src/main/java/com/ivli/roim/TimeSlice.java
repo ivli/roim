@@ -23,8 +23,8 @@ package com.ivli.roim;
  */
 public class TimeSlice {
     public static final long TIME_END = -1L;
-    long    iFrom;
-    long    iTo;
+    private final long iFrom;
+    private final long iTo;
     
     public TimeSlice() {
         iFrom = 0L;
@@ -35,4 +35,13 @@ public class TimeSlice {
         iFrom = aFrom;
         iTo = aTo;
     }
+    
+    public long getFrom() {
+        return iFrom;
+    }
+    
+    public long getTo() {
+        return iTo;
+    }
+    
 }
