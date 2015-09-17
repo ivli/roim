@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class TimeSliceVector implements java.io.Serializable {
+public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSliceVector> {
 
     private static final long serialVersionUID = 42L;
                     
@@ -242,6 +242,12 @@ public class TimeSliceVector implements java.io.Serializable {
         fillSlicesArray();
     }
    
+    public int compareTo(TimeSliceVector aV) {       
+        if (getNumPhases() == aV.getNumPhases() && getNumFrames() == aV.getNumFrames())
+            return 0;
+        
+        return ((Long)duration()).compareTo(aV.duration()) ; //how to                
+    }
     
     private static final Logger logger = LogManager.getLogger(TimeSliceVector.class);
 }
