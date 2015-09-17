@@ -20,7 +20,7 @@ public class SeriesCollection implements java.io.Serializable {
     }
     
     public void addSeries(Series aC) {
-        if (iTimeSliceVector.noOfFrames() != aC.noOfFrames())
+        if (iTimeSliceVector.getNumFrames() != aC.getNumFrames())
             throw new IllegalArgumentException();      
                
         iSeries.add(aC);               

@@ -73,7 +73,8 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
         iHeight = f.getHeight();
     }
       
-    public ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, IOException {
+    
+    private ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, IOException {
         
         if (anIndex > getNumFrames() || anIndex < 0)
             throw new IndexOutOfBoundsException();
@@ -102,11 +103,39 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
         return f;
     }
     
-   /*
-    public IMultiframeImage image() {
-        return new MultiframeImage(this);
+  
+    public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException, IOException {
+        return loadFrame(anIndex);
     }
-  */
+    
+    public IImageProvider slice(TimeSlice aS) {
+        VirtualImageProvider ret = new VirtualImageProvider(this);
+        
+        return ret;
+    }
+    
+    public IImageProvider collapse(TimeSlice aS) throws IOException {   
+        int frameTo = (-1 == aS.iTo) ? getNumFrames() : iTimeSlices.frameNumber(aS.iTo);
+        int frameFrom = iTimeSlices.frameNumber(aS.iFrom);        
+       
+        assert (aS.iFrom >= 0 && aS.iFrom < getNumFrames() || aS.iTo > aS.iFrom || aS.iFrom < getNumFrames());  
+        
+        VirtualImageProvider ret = new VirtualImageProvider(this);
+        
+        ret.iTimeSlices = iTimeSlices.slice(aS);
+        
+        java.awt.image.WritableRaster comp = iFrames.get(0).iRaster.createCompatibleWritableRaster();
+                
+        for (int n = frameFrom; n < frameTo; ++n) {
+            final java.awt.image.Raster r = iFrames.get(n).iRaster;
+            for (int i = 0; i < getWidth(); ++i)
+               for (int j = 0; j < getHeight(); ++j) 
+                   comp.setSample(i, j, 0, comp.getSample(i, j, 0) + r.getSample(i, j, 0));           
+        }
+        
+        
+        return ret; 
+    }
     
     private static final Logger logger = LogManager.getLogger(DICOMImageProvider.class);    
  

@@ -107,7 +107,7 @@ public class TimeSliceVectorTest {
         System.out.println("noOfFrames");
         TimeSliceVector instance = new TimeSliceVector(phi);
         
-        int result = instance.noOfFrames();
+        int result = instance.getNumFrames();
         assertEquals(TOTAL_NO_OF_FRAMES, result);
         
     }
@@ -120,7 +120,7 @@ public class TimeSliceVectorTest {
         System.out.println("noOfPhases");  
         TimeSliceVector instance = new TimeSliceVector(phi);    
        
-        int result = instance.noOfPhases();
+        int result = instance.getNumPhases();
         assertEquals(TOTAL_NO_OF_PHASES, result);
        
     }
@@ -164,13 +164,18 @@ public class TimeSliceVectorTest {
     @Test
     public void testPhaseStarts() {
         System.out.println("phaseStarts");
-        int aPhaseNumber = 0;
-        TimeSliceVector instance = new TimeSliceVector(phi);;
+        
+        TimeSliceVector instance = new TimeSliceVector(phi);
+        
         long expResult = 0L;
-        long result = instance.phaseStarts(aPhaseNumber);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        
+        for (int i = 0; i < TOTAL_NO_OF_PHASES; ++i) {
+            String msg = String.format("phase %d", i);
+            long result = instance.phaseStarts(i);
+            assertEquals(expResult, result);           
+            expResult += PHASE_DURATION[i];
+        }  
     }
 
     /**
@@ -241,6 +246,24 @@ public class TimeSliceVectorTest {
         
     }
     
+    
+     /**
+     * Test of resample method, of class TimeSliceVector.
+     */
+    @Test
+    public void testSlice() {
+        System.out.println("slice");
+        
+        final TimeSliceVector instance = new TimeSliceVector(phi);
+        
+        TimeSliceVector temp = instance.slice(new TimeSlice());
+        
+
+        assertEquals("duration", instance.duration(), temp.duration());
+        assertEquals("duration", instance.getNumPhases(), temp.getNumPhases());
+        assertEquals("duration", instance.getNumFrames(), temp.getNumFrames());       
+    }
+    
     /**
      * Test of resample method, of class TimeSliceVector.
      */
@@ -254,7 +277,7 @@ public class TimeSliceVectorTest {
             instance.resample(newFrameDuration[i]);
 
             assertEquals(instance.duration(), SERIES_DURATION);
-            assertEquals( instance.duration() / newFrameDuration[i], instance.noOfFrames());
+            assertEquals( instance.duration() / newFrameDuration[i], instance.getNumFrames());
         }
     }
 
@@ -287,7 +310,7 @@ public class TimeSliceVectorTest {
                 for (int l=0; l < nf.length; ++l)
                     newNoOfFrames += nf[l];
                  
-                assertEquals(msg, newNoOfFrames, instance.noOfFrames());
+                assertEquals(msg, newNoOfFrames, instance.getNumFrames());
              }
     }
     

@@ -1,6 +1,8 @@
 
 package com.ivli.roim;
 
+import java.io.IOException;
+
 /**
  *
  * @author likhachev
@@ -8,9 +10,12 @@ package com.ivli.roim;
 public interface IImageProvider {   
     int getWidth();  
     int getHeight();
-    int getNumFrames() throws java.io.IOException;
+    int getNumFrames() throws IOException;
     PixelSpacing getPixelSpacing();
     TimeSliceVector getTimeSliceVector();
-       
-    ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, java.io.IOException;
+    
+    IImageProvider slice(TimeSlice aS) throws IOException;
+    IImageProvider collapse(TimeSlice aS) throws IOException;
+    
+    ImageFrame frame(int anIndex) throws IndexOutOfBoundsException, IOException;
 }

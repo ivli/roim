@@ -55,6 +55,34 @@ public class TimeSliceVector implements java.io.Serializable {
         fillSlicesArray();
     }
       
+    public TimeSliceVector slice(TimeSlice aS) {
+        
+        ArrayList<PhaseInformation> phases =  new ArrayList();
+        
+        final int frameTo = (-1 == aS.iTo) ? getNumFrames() : frameNumber(aS.iTo);
+        final int frameFrom = frameNumber(aS.iFrom);   
+        
+        final int phaseFrom = phaseFrame(frameFrom);
+        final int phaseTo   = phaseFrame(frameTo);               
+        
+        for (int n = phaseFrom; n < phaseTo; ++n) {        
+            
+            PhaseInformation pi = new PhaseInformation(iPhases.get(n));
+            
+            if (phaseFrom == n)  {
+                pi.iNumberOfFrames = pi.iNumberOfFrames - (frameFrom - framesToPhase(n));
+            }
+            
+            else if (phaseTo == n) {
+                pi.iNumberOfFrames = frameTo - framesToPhase(n);
+            }
+            
+            phases.add(pi);
+        }
+        
+        return new TimeSliceVector(phases);        
+    }
+    
     public ArrayList<Long> getSlices() {
         return iSlices;
     }
@@ -69,21 +97,21 @@ public class TimeSliceVector implements java.io.Serializable {
                 iSlices.add(n += p.iFrameDuration);                 
         } 
         
-        assert (noOfFrames() == iSlices.size());    
+        assert (getNumFrames() == iSlices.size());    
     }
     
     boolean isValidFrameNumber(int aFrame) {
         return aFrame >=0 && aFrame < iSlices.size();
     }
          
-    public int noOfFrames() {
+    public int getNumFrames() {
         int ret = 0;
         for (PhaseInformation p : iPhases) 
             ret += p.iNumberOfFrames;
         return ret;   
     }
     
-    public int noOfPhases() {     
+    public int getNumPhases() {     
         return iPhases.size();   
     }
     
@@ -91,10 +119,11 @@ public class TimeSliceVector implements java.io.Serializable {
         return iPhases.get(aPhase).iFrameDuration * iPhases.get(aPhase).iNumberOfFrames;
     }
     
+     //get phase number by frame
     public int phaseFrame(int aFrameNumber) {
         int ctr = 0, phase = 1;
         
-        for (PhaseInformation p:iPhases) {
+        for (PhaseInformation p : iPhases) {
             if (aFrameNumber > ctr && aFrameNumber < (ctr += p.iNumberOfFrames))
                 return phase;
             ++phase;
@@ -102,11 +131,20 @@ public class TimeSliceVector implements java.io.Serializable {
         
         return 0;
     }
+     //return number of frames before phase aPhaseNumber
+    public int framesToPhase(int aPhaseNumber) {
+        int ret = 0;
+        
+        for (int n = 0; n < aPhaseNumber; ++n)            
+            ret += iPhases.get(n).iNumberOfFrames;
+                
+        return ret;  
+    }
     
     public long phaseStarts(int aPhaseNumber) {
         long ret = 0L;
         
-        for (int i = 0; i < iPhases.size() && i <= aPhaseNumber; ++i)             
+        for (int i = 0; i < iPhases.size() && i < aPhaseNumber; ++i)             
             ret += phaseDuration(i);    
         
         return ret;
@@ -142,7 +180,7 @@ public class TimeSliceVector implements java.io.Serializable {
         return ret;
     }
     
-      //0, 1, 2 etc
+      //get phase number by time in uSec -returns 0, 1, 2 etc
     public int phaseNumber(long uSecFromStart) {        
         assert (uSecFromStart >= 0L && uSecFromStart < duration());
            

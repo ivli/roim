@@ -17,7 +17,7 @@ public class Series extends java.util.ArrayList<Measure> {
         iName = aName;
     }
     
-    public int noOfFrames() {
+    public int getNumFrames() {
         return size();
     }
 }

@@ -485,7 +485,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 XYSeries s = col.getSeries(ndx); 
                 s.clear();
                 
-                for (int n = 0; n < c.noOfFrames(); ++n) {
+                for (int n = 0; n < c.getNumFrames(); ++n) {
                     long dur = iPanel.iProvider.getTimeSliceVector().getSlices().get(n) / 1000;
                     s.add(dur, c.get(n).iIden);
                 }
@@ -499,9 +499,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                                 
                 ///java.util.Iterator<Long> tsv = iPanel.iProvider.getTimeSliceVector().iSlices.iterator();
                   //sanity check
-                assert(c.noOfFrames() == iPanel.iProvider.getTimeSliceVector().noOfFrames());
+                assert(c.getNumFrames() == iPanel.iProvider.getTimeSliceVector().getNumFrames());
                 
-                for (int n = 0; n < c.noOfFrames(); ++n) {
+                for (int n = 0; n < c.getNumFrames(); ++n) {
                     long dur = iPanel.iProvider.getTimeSliceVector().getSlices().get(n) / 1000;
                     s.add(dur, c.get(n).iIden);
                 }

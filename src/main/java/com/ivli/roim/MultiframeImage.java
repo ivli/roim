@@ -19,7 +19,7 @@ public class MultiframeImage implements IMultiframeImage {
     @Override
     public boolean hasAt(int aFrameNumber) {
         try {
-            iSrc.loadFrame(aFrameNumber);
+            iSrc.frame(aFrameNumber);
         } catch (IOException | IndexOutOfBoundsException e) {
             return false;
         }
@@ -29,7 +29,7 @@ public class MultiframeImage implements IMultiframeImage {
     public ImageFrame current(int aFrameNumber) throws java.util.NoSuchElementException {           
         ImageFrame ret = null;
         try {
-            ret = iSrc.loadFrame(aFrameNumber); //prevent iCurrent from change in the case of exception
+            ret = iSrc.frame(aFrameNumber); //prevent iCurrent from change in the case of exception
             iCurrent = aFrameNumber;
         } catch (IOException ex) {
             throw( new java.util.NoSuchElementException());
@@ -40,7 +40,7 @@ public class MultiframeImage implements IMultiframeImage {
     public ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException {           
         ImageFrame ret = null;
         try {
-            ret = iSrc.loadFrame(aFrameNumber); //prevent iCurrent from change in the case of exception           
+            ret = iSrc.frame(aFrameNumber); //prevent iCurrent from change in the case of exception           
         } catch (IOException ex) {
             throw (new java.util.NoSuchElementException());
         }
@@ -77,25 +77,15 @@ public class MultiframeImage implements IMultiframeImage {
         return iSrc.getPixelSpacing();
     }
               
-    public IMultiframeImage makeCompositeFrame(int aFrom, int aTo)  {
-        if (-1 == aTo)
-            aTo = getNumFrames();
-
-        assert (aFrom >= 0 && aFrom < getNumFrames() || aTo > aFrom || aFrom < getNumFrames());  
-        
-        java.awt.image.WritableRaster comp = getAt(0).iRaster.createCompatibleWritableRaster();
-                
-        for (int n = aFrom; n < aTo; ++n) {
-            final java.awt.image.Raster r = getAt(n).iRaster;
-            for (int i = 0; i < getWidth(); ++i)
-               for (int j = 0; j < getHeight(); ++j) 
-                   comp.setSample(i, j, 0, comp.getSample(i, j, 0) + r.getSample(i, j, 0));           
+    public IMultiframeImage makeCompositeFrame(int aFrom, int aTo)  {        
+        MultiframeImage ret = null;        
+        try {     
+            ret = new MultiframeImage(iSrc.collapse(new TimeSlice (aFrom, aTo))); 
+        } catch (IOException ex) {
+            logger.error(ex);
         }
-     
-        return new MultiframeImage(new VirtualImageProvider(iSrc, new ImageFrame(comp))); 
+        return ret;
     }    
-    
-    
     
     public void extract(Extractor aEx) {  
        aEx.apply(image().getRaster());   
