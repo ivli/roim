@@ -59,13 +59,13 @@ public class TimeSliceVector implements java.io.Serializable {
         
         ArrayList<PhaseInformation> phases =  new ArrayList();
         
-        final int frameTo = (-1 == aS.iTo) ? getNumFrames() : frameNumber(aS.iTo);
+        final int frameTo = (-1 == aS.iTo) ? getNumFrames() - 1 : frameNumber(aS.iTo);
         final int frameFrom = frameNumber(aS.iFrom);   
         
         final int phaseFrom = phaseFrame(frameFrom);
         final int phaseTo   = phaseFrame(frameTo);               
         
-        for (int n = phaseFrom; n < phaseTo; ++n) {        
+        for (int n = phaseFrom; n <= phaseTo; ++n) {        
             
             PhaseInformation pi = new PhaseInformation(iPhases.get(n));
             
@@ -74,7 +74,7 @@ public class TimeSliceVector implements java.io.Serializable {
             }
             
             else if (phaseTo == n) {
-                pi.iNumberOfFrames = frameTo - framesToPhase(n);
+                pi.iNumberOfFrames = frameTo - framesToPhase(n) + 1;
             }
             
             phases.add(pi);
@@ -121,15 +121,18 @@ public class TimeSliceVector implements java.io.Serializable {
     
      //get phase number by frame
     public int phaseFrame(int aFrameNumber) {
-        int ctr = 0, phase = 1;
         
-        for (PhaseInformation p : iPhases) {
-            if (aFrameNumber > ctr && aFrameNumber < (ctr += p.iNumberOfFrames))
-                return phase;
-            ++phase;
+        if (aFrameNumber < 0 || aFrameNumber > getNumFrames())
+            throw new IllegalArgumentException("bad FrameNumber");
+        
+        long frm = 0L;
+                
+        for (int i = 0; i < getNumPhases(); ++i) {
+            if (aFrameNumber >= framesToPhase(i) && aFrameNumber < framesToPhase(i+1))
+                return i;            
         }
         
-        return 0;
+        throw new IllegalArgumentException("bad FrameNumber");        
     }
      //return number of frames before phase aPhaseNumber
     public int framesToPhase(int aPhaseNumber) {
@@ -197,11 +200,24 @@ public class TimeSliceVector implements java.io.Serializable {
         return n-1;
     }
     
-    public int frameNumber(long uSecFromStart) {        
-        if (0 == uSecFromStart)
-            return 0;
-        else
-            return 0;
+     //get frame ordinal by time in uSec
+    public int frameNumber(long uSecFromStart) {                
+        if (uSecFromStart < 0 || uSecFromStart > duration())
+            throw new IllegalArgumentException("bad uSecFromStart");
+        
+        int ret = 0;
+        long duration = 0L;
+        
+        for (int i = 0; i < getNumPhases(); ++i) {
+            if (uSecFromStart >= duration && uSecFromStart < iPhases.get(i+1).duration())
+                return ret + (int)(uSecFromStart - duration) / iPhases.get(i).iFrameDuration;            
+            else {
+                ret += iPhases.get(i).iNumberOfFrames;
+                duration += iPhases.get(i).duration();
+            }
+        }
+         //ideally we should never get here 
+        throw new IllegalArgumentException("bad uSecFromStart");         
     }
     
     private void resamplePhase(PhaseInformation aP, int newFrameDuration) {

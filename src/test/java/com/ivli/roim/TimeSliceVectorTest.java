@@ -150,12 +150,22 @@ public class TimeSliceVectorTest {
     public void testPhaseFrame() {
         System.out.println("phaseFrame");
         int aFrameNumber = 0;
-        TimeSliceVector instance = new TimeSliceVector(phi);;
-        int expResult = 0;
-        int result = instance.phaseFrame(aFrameNumber);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        for (int i = 0; i < TOTAL_NO_OF_PHASES; ++i) {                   
+            TimeSliceVector instance = new TimeSliceVector(phi);
+            
+            int result = instance.phaseFrame(aFrameNumber + NO_OF_FRAMES[i] / 2);
+            assertEquals(i, result);
+            
+            result = instance.phaseFrame(aFrameNumber );
+            assertEquals(i, result);
+            
+            result = instance.phaseFrame(aFrameNumber + NO_OF_FRAMES[i] - 1);
+            assertEquals(i, result);
+            
+            
+            aFrameNumber += NO_OF_FRAMES[i];
+        }
     }
 
     /**
@@ -256,12 +266,31 @@ public class TimeSliceVectorTest {
         
         final TimeSliceVector instance = new TimeSliceVector(phi);
         
+        {
         TimeSliceVector temp = instance.slice(new TimeSlice());
         
+        assertEquals("duration",  instance.duration(),     temp.duration());
+        assertEquals("NumPhases", instance.getNumPhases(), temp.getNumPhases());
+        assertEquals("NumFrames", instance.getNumFrames(), temp.getNumFrames());   
+        }
+        
+        int from = 0;
+        int to   = 0;
+        
+        for (int i = 0; i < TOTAL_NO_OF_PHASES; ++i) {
+            String msg = String.format("iteration #%d", i);
+            to += PHASE_DURATION[i];
+        
+            TimeSliceVector temp = instance.slice(new TimeSlice(from, to));
 
-        assertEquals("duration", instance.duration(), temp.duration());
-        assertEquals("duration", instance.getNumPhases(), temp.getNumPhases());
-        assertEquals("duration", instance.getNumFrames(), temp.getNumFrames());       
+            assertEquals(msg + "duration", PHASE_DURATION[i], temp.duration());
+            assertEquals(msg + "NumPhases",                1, temp.getNumPhases());
+            assertEquals(msg + "NumFrames", NO_OF_FRAMES[i],  temp.getNumFrames());
+
+            from += PHASE_DURATION[i];        
+        }
+        
+        
     }
     
     /**
