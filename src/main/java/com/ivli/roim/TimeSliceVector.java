@@ -197,27 +197,24 @@ public class TimeSliceVector implements java.io.Serializable {
             else
                 elapsed += iPhases.get(n).duration();
                 
-        return n-1;
+        return n - 1;
     }
     
      //get frame ordinal by time in uSec
     public int frameNumber(long uSecFromStart) {                
         if (uSecFromStart < 0 || uSecFromStart > duration())
             throw new IllegalArgumentException("bad uSecFromStart");
-        
-        int ret = 0;
+                
+        int  phase = phaseNumber(uSecFromStart);
+        int  ret = 0;
         long duration = 0L;
         
-        for (int i = 0; i < getNumPhases(); ++i) {
-            if (uSecFromStart >= duration && uSecFromStart < iPhases.get(i+1).duration())
-                return ret + (int)(uSecFromStart - duration) / iPhases.get(i).iFrameDuration;            
-            else {
-                ret += iPhases.get(i).iNumberOfFrames;
-                duration += iPhases.get(i).duration();
-            }
+        for (int i = 0; i < phase; ++i) {            
+            ret += iPhases.get(i).iNumberOfFrames;
+            duration += iPhases.get(i).duration();            
         }
-         //ideally we should never get here 
-        throw new IllegalArgumentException("bad uSecFromStart");         
+       
+        return ret + (int)(uSecFromStart - duration) / iPhases.get(phase).iFrameDuration ;         
     }
     
     private void resamplePhase(PhaseInformation aP, int newFrameDuration) {

@@ -203,6 +203,32 @@ public class TimeSliceVectorTest {
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
+    
+    /**
+     * Test of frameNumber method, of class TimeSliceVector.
+     */
+    @Test
+    public void testPhaseNumber() {
+        System.out.println("frameNumber");
+        long uSecFromStart = 0L;
+        TimeSliceVector instance = new TimeSliceVector(phi);
+        
+        int ret = instance.phaseNumber(0);
+        assertEquals(0, ret);
+        
+        ret = instance.phaseNumber(PHASE_DURATION[0]-1);
+        assertEquals(0, ret);
+        
+        ret = instance.phaseNumber(PHASE_DURATION[0] + PHASE_DURATION[1] - 1);
+        assertEquals(1, ret);
+        
+        ret = instance.phaseNumber(PHASE_DURATION[0] + PHASE_DURATION[1] + PHASE_DURATION[2] - 1);        
+        assertEquals(2, ret);
+        
+        ret = instance.phaseNumber(PHASE_DURATION[0] + PHASE_DURATION[1] / 2);        
+        assertEquals(1, ret);
+        
+    }
 
     /**
      * Test of frameStarts method, of class TimeSliceVector.
@@ -225,36 +251,22 @@ public class TimeSliceVectorTest {
     @Test
     public void testFrameNumber() {
         System.out.println("frameNumber");
-        long uSecFromStart = 0L;
-        TimeSliceVector instance = new TimeSliceVector(phi);
-        int expResult = NO_OF_FRAMES[0];
-        int result = instance.frameNumber(PHASE_DURATION[0]);
-        assertEquals(expResult, result);
         
+        TimeSliceVector instance = new TimeSliceVector(phi);
+        int expResult = 0;
+        long uSecFromStart = 0L;
+        
+        for (int i = 0; i < TOTAL_NO_OF_PHASES; ++i) {            
+            expResult     += NO_OF_FRAMES[i];
+            uSecFromStart += PHASE_DURATION[i];          
+            
+            int result = instance.frameNumber(uSecFromStart);
+            
+            assertEquals(expResult, result);    
+        }
     }
 
-     /**
-     * Test of frameNumber method, of class TimeSliceVector.
-     */
-    @Test
-    public void testPhaseNumber() {
-        System.out.println("frameNumber");
-        long uSecFromStart = 0L;
-        TimeSliceVector instance = new TimeSliceVector(phi);
-        
-        int ret = instance.phaseNumber(0);
-        assertEquals(0, ret);
-        
-        ret = instance.phaseNumber(PHASE_DURATION[0] + 1);
-        assertEquals(1, ret);
-        
-        ret = instance.phaseNumber(PHASE_DURATION[0] + PHASE_DURATION[1] + 1);
-        assertEquals(2, ret);
-        
-        ret = instance.phaseNumber(PHASE_DURATION[0] + PHASE_DURATION[1] / 2);        
-        assertEquals(1, ret);
-        
-    }
+     
     
     
      /**
@@ -289,8 +301,6 @@ public class TimeSliceVectorTest {
 
             from += PHASE_DURATION[i];        
         }
-        
-        
     }
     
     /**
