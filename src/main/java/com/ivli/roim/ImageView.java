@@ -1,7 +1,6 @@
 
 package com.ivli.roim;
 
-
 import java.io.IOException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -42,9 +41,10 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
     private final Controller      iController;    
     private final AffineTransform iZoom;
     private final Point           iOrigin;       
-    private final ROIManager      iROIMgr;
+    
     private final IWLManager      iLUTMgr;        
-    private final EventListenerList iList = new EventListenerList();
+    private final ROIManager      iROIMgr;
+    private final EventListenerList iList;
     
     private BufferedImage iBuf; 
     
@@ -55,15 +55,16 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
         iZoom   = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
         iOrigin = new Point(0, 0); 
         iLUTMgr = new WLManager();        
-        iROIMgr = new ROIManager(this);
-         
-        
+        iROIMgr = new ROIManager(this);         
+        iList = new EventListenerList();
+    
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {invalidateBuffer();}                                               
             public void componentHidden(ComponentEvent e) {}
             public void componentMoved(ComponentEvent e) {}
             public void componentShown(ComponentEvent e) {}                    
             });
+        
     }
        
     public AffineTransform getZoom() {
@@ -240,8 +241,6 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
         //updateBufferedImage();
         invalidateBuffer();
     }    
-    
-    
     
     public static WritableRaster filter(Raster aR) {
         final float[] emboss = new float[] { -2,0,0,   0,1,0,   0,0,2 };

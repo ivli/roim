@@ -125,23 +125,14 @@ public class ROIManager implements java.io.Serializable {
     public Iterator<Overlay> getOverlaysList() {        
         return iOverlays.iterator();// listIterator();
     }     
-       
-    void externalize(String aFileName) {        
-        try(java.io.FileOutputStream fos = new java.io.FileOutputStream(aFileName)) {
-            java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(fos);
-            oos.writeObject(iOverlays);
-            oos.close();
-        } catch (IOException ex){
-           logger.error("Unable to externalize objects" + ex); 
-        } 
+           
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+         out.writeObject(iOverlays);
     }
-     
-    void internalize(String aFileName) {
-        try(java.io.FileInputStream fis = new java.io.FileInputStream(aFileName)) {
-            java.io.ObjectInputStream ois = new java.io.ObjectInputStream(fis);
-            iOverlays = (HashSet<Overlay>)(ois.readObject());            
-            ois.close();
-             
+    
+    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        
+            iOverlays = (HashSet<Overlay>)(ois.readObject());  
             iView.notifyROIChanged(null, EStateChanged.Emptied);
             
             for (Overlay r : iOverlays) {
@@ -154,9 +145,30 @@ public class ROIManager implements java.io.Serializable {
                             iOverlays.add(o);
                 }
             }
+    }
+    
+    void externalize(String aFileName) {        
+        try(java.io.FileOutputStream fos = new java.io.FileOutputStream(aFileName)) {
+            java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(fos);
+            writeObject(oos);
+            oos.close();
+            fos.close();
+        } catch (IOException ex){
+           logger.error("Unable to externalize objects" + ex); 
+        } 
+    }
+             
+    void internalize(String aFileName) {
+        try(java.io.FileInputStream fis = new java.io.FileInputStream(aFileName)) {
+            java.io.ObjectInputStream ois = new java.io.ObjectInputStream(fis);
+            readObject(ois);           
+            ois.close();
+            fis.close();
+            
         } catch (IOException|ClassNotFoundException ex) {
             logger.error("Unable to deserialize" + ex);
         } 
+        
     }
     
     private static final Logger logger = LogManager.getLogger(ROIManager.class);
