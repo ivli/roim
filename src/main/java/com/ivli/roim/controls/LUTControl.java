@@ -108,9 +108,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         return iWLM.makeXYSeries(ret);
     }   
 
-    private void invalidateBuffer() {        
-        iBuf = null;
-    }    
+    
       
     @Override
     public void windowChanged(WindowChangeEvent anE) {   
@@ -286,7 +284,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         
        // iBuf = iView.getPLut().transform(iBuf, null);     
     }
-     
+            
     public void paintComponent(Graphics g) {  
         if (null == iBuf) { 
             updateBufferedImage();
@@ -315,7 +313,11 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         g.setColor(clr);
     }
      
-    void extend() {
+    private void invalidateBuffer() {        
+        iBuf = null;
+    }    
+    
+    private void extend() {
         if (WEDGE_EXTEND_WHEN_FOCUSED) {
             setSize(ACTIVATED_BAR_WIDTH, getHeight());
             setLocation(getLocation().x - (ACTIVATED_BAR_WIDTH - INACTIVE_BAR_WIDTH), getLocation().y);
@@ -326,7 +328,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         }                
     }
     
-    void shrink() {
+    private void shrink() {
         if(WEDGE_EXTEND_WHEN_FOCUSED) {
             setSize(INACTIVE_BAR_WIDTH, getHeight());
             getParent().setComponentZOrder(this, 1);
@@ -336,28 +338,27 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         }
     }
   
-    double imageToScreen(double aY) {
-        final double screenRange = this.getHeight() - (TOP_GAP + BOTTOM_GAP);
-        final double imageRange  = iWLM.getRange().getRange();        
-        return aY*screenRange/imageRange;       
+    private double imageToScreen(double aY) {              
+        return aY * ((this.getHeight() - (TOP_GAP + BOTTOM_GAP)) / iWLM.getRange().getRange());       
     }
     
-    double screenToImage(double aY) {
-        final double screenRange = this.getHeight() - (TOP_GAP + BOTTOM_GAP);
-        final double imageRange  = iWLM.getRange().getRange();        
-        return aY*imageRange/screenRange;    
+    private double screenToImage(double aY) {             
+        return aY * (iWLM.getRange().getRange() /(this.getHeight() - (TOP_GAP + BOTTOM_GAP)));  
     }       
     
+    @Override
     public Dimension getMinimumSize() {
         return new Dimension(ACTIVATED_BAR_WIDTH, NUMBER_OF_SHADES + (TOP_GAP + BOTTOM_GAP));
     }
     
+    @Override
     public Dimension getPreferredSize() {
         return new Dimension(ACTIVATED_BAR_WIDTH, NUMBER_OF_SHADES + (TOP_GAP + BOTTOM_GAP));
     }
     
+    @Override
     public Dimension getMaximumSize() {
-        return new Dimension(ACTIVATED_BAR_WIDTH, Short.MAX_VALUE);///NUMBER_OF_SHADES + 2*VERTICAL_BAR_EXCESS); //
+        return new Dimension(ACTIVATED_BAR_WIDTH, Short.MAX_VALUE);
     }
     
     final class Marker {

@@ -8,9 +8,9 @@ package com.ivli.roim.Events;
 public final class ZoomChangeEvent extends java.util.EventObject {
     final double iZoom;
     
-    public ZoomChangeEvent(Object aO, double aZoom) {
+    public ZoomChangeEvent(Object aO, double aX, double aY) {
         super(aO);
-        iZoom = aZoom;
+        iZoom = aX;
     }
     
     public double getZoom() {

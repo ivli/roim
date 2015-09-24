@@ -1,9 +1,8 @@
 
 package com.ivli.roim;
 
-import com.ivli.roim.Events.*;
+
 import java.io.IOException;
-import java.util.HashSet;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -18,14 +17,16 @@ import java.awt.image.Raster;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import javax.swing.event.EventListenerList;
 import javax.swing.JComponent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jfree.data.xy.XYSeries;
 
+import com.ivli.roim.Events.*;
 
-public class ImageView extends JComponent implements WindowChangeNotifier {
+public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
 
     private static final boolean DRAW_OVERLAYS_ON_BUFFERED_IMAGE = false; //i cry ther's no #ifdef     
     private static final double  DEFAULT_SCALE_X = 1.;
@@ -36,23 +37,15 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         Visible, Width, Height, Zoom; 
     }
     
-    private EFit iFit = EFit.Zoom;  // 
-    
-    private final IMultiframeImage iImage;                 
-    
+    private EFit iFit = EFit.Zoom;  //     
+    private final IMultiframeImage iImage;                     
     private final Controller      iController;    
     private final AffineTransform iZoom;
-    private final Point           iOrigin;   
-    
+    private final Point           iOrigin;       
     private final ROIManager      iROIMgr;
-    private final IWLManager      iLUTMgr;
+    private final IWLManager      iLUTMgr;        
+    private final EventListenerList iList = new EventListenerList();
     
-     //TODO: to all following - change allocation model to create-as-first-client-comes
-    private HashSet<WindowChangeListener> iWinListeners;      
-    private HashSet<ZoomChangeListener>   iZoomListeners;
-    private HashSet<FrameChangeListener>  iFrameListeners;
-    private HashSet<ROIChangeListener>    iROIListeners;
-        
     private BufferedImage iBuf; 
     
     ImageView(IMultiframeImage aImage) {  
@@ -63,11 +56,7 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         iOrigin = new Point(0, 0); 
         iLUTMgr = new WLManager();        
         iROIMgr = new ROIManager(this);
-         //observers
-        iWinListeners   = new HashSet(); 
-        iZoomListeners  = new HashSet();
-        iFrameListeners = new HashSet();  
-        iROIListeners   = new HashSet();
+         
         
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {invalidateBuffer();}                                               
@@ -121,60 +110,75 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
     }
           
     public void addROIChangeListener(ROIChangeListener aL) {
-        iROIListeners.add(aL);
-        ///aL.windowChanged(new WindowChangeEvent(this, iLUTMgr.getWindow(), getMin(), getMax(), true));
+        ///iROIListeners.add(aL);
+        iList.add(ROIChangeListener.class, aL);
     }
     
     void notifyROIChanged(ROI aR, EStateChanged aS) {
        ROIChangeEvent evt = new ROIChangeEvent(this, aR, aS);
        
-       for (ROIChangeListener l : iROIListeners)
+       ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);
+       
+       for (ROIChangeListener l : arr)
            l. ROIChanged(evt);
     }
-    
-    @Override
+       
     public void addWindowChangeListener(WindowChangeListener aL) {
-        iWinListeners.add(aL);
+        //iWinListeners.add(aL);
+        iList.add(WindowChangeListener.class, aL);
         aL.windowChanged(new WindowChangeEvent(this, iLUTMgr.getWindow(), getMin(), getMax(), true));
     }
-
-    @Override
+   
     public void removeWindowChangeListener(WindowChangeListener aL) {
-        iWinListeners.remove(aL);
+        iList.remove(WindowChangeListener.class, aL);
+        //iWinListeners.remove(aL);
     }
             
     private void notifyWindowChanged(boolean aRC) {
         final WindowChangeEvent evt = new WindowChangeEvent(this, iLUTMgr.getWindow(), getMin(), getMax(), aRC);
-        iWinListeners.stream().forEach((l) -> {
-            l.windowChanged(evt);
-            });
+        
+        WindowChangeListener arr[] = iList.getListeners(WindowChangeListener.class);
+        
+        for (WindowChangeListener l : arr)
+            l.windowChanged(evt);     
     }
     
     public void addFrameChangeListener(FrameChangeListener aL) {
-        iFrameListeners.add(aL);
+        iList.add(FrameChangeListener.class, aL);
         aL.frameChanged(new FrameChangeEvent(this, iImage.getCurrent(), iImage.getNumFrames()));
     }
     
     public void removeFrameChangeListener(FrameChangeListener aL) {
-        iFrameListeners.remove(aL);
+        iList.remove(FrameChangeListener.class, aL);
     } 
     
     private void notifyFrameChanged(int aN) {
         final FrameChangeEvent evt = new FrameChangeEvent(this, aN, iImage.getNumFrames());        
-        iFrameListeners.stream().forEach((f) -> {
-            f.frameChanged(evt);
-            });
+        
+        FrameChangeListener arr[] = iList.getListeners(FrameChangeListener.class);
+        
+        for (FrameChangeListener l : arr)
+            l.frameChanged(evt);       
     }
     
     public void addZoomChangeListener(ZoomChangeListener aL) {
-        iZoomListeners.add(aL);
-        aL.zoomChanged(new ZoomChangeEvent(this,iZoom.getScaleX()));
+        iList.add(ZoomChangeListener.class, aL);
+        aL.zoomChanged(new ZoomChangeEvent(this, iZoom.getScaleX(), iZoom.getScaleY()));
     }
     
     public void removeZoomChangeListener(ZoomChangeListener aL) {
-        iZoomListeners.remove(aL);
+        iList.remove(ZoomChangeListener.class,aL);
     }
      
+    private void notifyZoomChanged(double aX, double aY) {
+        final ZoomChangeEvent evt = new ZoomChangeEvent(this, aX, aY);        
+        
+        ZoomChangeListener arr[] = iList.getListeners(ZoomChangeListener.class);
+        
+        for (ZoomChangeListener l : arr)
+            l.zoomChanged(evt);       
+    }
+    
     public AffineTransform screenToVirtual() {
         AffineTransform ret = AffineTransform.getTranslateInstance(iOrigin.x, iOrigin.y); 
         ret.concatenate(iZoom);
@@ -218,11 +222,9 @@ public class ImageView extends JComponent implements WindowChangeNotifier {
         
         iZoom.setToScale(iZoom.getScaleX() + aFactor, iZoom.getScaleY() + aFactor);        
         
+        notifyZoomChanged(iZoom.getScaleX(), iZoom.getScaleY());
         invalidateBuffer();
-        repaint();
-
-        for (ZoomChangeListener l: iZoomListeners)
-            l.zoomChanged(new ZoomChangeEvent(this, iZoom.getScaleX()));
+        repaint();            
     }
      
     public void pan(int adX, int adY) {

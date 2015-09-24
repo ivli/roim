@@ -46,7 +46,7 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
     public TimeSliceVector(ArrayList<PhaseInformation> aP) {                
         iPhases =  new ArrayList();
         
-        for (PhaseInformation p: aP)
+        for (PhaseInformation p : aP)
             iPhases.add(new PhaseInformation(p));
         
         ///iPhases.
