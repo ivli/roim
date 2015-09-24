@@ -41,14 +41,14 @@ import com.ivli.roim.IWLManager;
  *
  * @author likhachev
  */
-public class LUTControl extends JComponent implements ActionListener, MouseMotionListener, MouseListener, MouseWheelListener, WindowChangeListener {
+public class LUTControl extends JComponent implements  WindowChangeListener, ActionListener {
     
     private static final boolean MARKERS_DISPLAY_WL_VALUES = false;
     private static final boolean MARKERS_DISPLAY_PERCENT   = false;
     private static final boolean WEDGE_EXTEND_WHEN_FOCUSED = false;      
     
     private static final int NUMBER_OF_SHADES = 255;    
-    private static final int VGAP_DEVAULT = 4;
+    private static final int VGAP_DEFAULT = 4;
     private static final int INACTIVE_BAR_WIDTH  = 32 / (WEDGE_EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out    
     private static final int ACTIVATED_BAR_WIDTH = 32; //mouse inside
     private static final int LEFT_GAP  = 2;  //reserve border at left & right
@@ -65,20 +65,22 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
     private final Marker   iTop;
     private final Marker   iBottom;
     private ActionItem     iAction;
-     private BufferedImage iBuf;
+    private BufferedImage iBuf;
+    
+    private final Controller iCtrl = new Controller();
      /* 
       * passive mode constructor, only to display W/L not to control 
       */
     public LUTControl(LUTControl aControl) {            
         iWLM = aControl.iWLM;        
-        TOP_GAP = BOTTOM_GAP = VGAP_DEVAULT; 
+        TOP_GAP = BOTTOM_GAP = VGAP_DEFAULT; 
         iTop = iBottom = null; //no markers needed
     } 
     
      /* 
       * complete object constructor
       */
-     @SuppressWarnings("LeakingThisInConstructor")
+    
     public LUTControl(IWLManager aW) {    
         if (null == aW)
             throw new java.lang.NullPointerException();
@@ -98,18 +100,16 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
             public void componentShown(ComponentEvent e) {iWLM.setWindow(iWLM.getWindow());}                    
             });
               
-        addMouseMotionListener(this);
-        addMouseListener(this);  
-        addMouseWheelListener(this);   
+        addMouseMotionListener(iCtrl);
+        addMouseListener(iCtrl);  
+        addMouseWheelListener(iCtrl);   
     }
     
      
     public XYSeries makeXYSeries(XYSeries ret) {
         return iWLM.makeXYSeries(ret);
     }   
-
     
-      
     @Override
     public void windowChanged(WindowChangeEvent anE) {   
         if (null != iTop && null != iBottom) { //theoretically we'd never get here in passive mode
@@ -120,7 +120,9 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         invalidateBuffer();
         repaint();              
     }   
-           
+    
+    private class Controller implements MouseMotionListener, MouseListener, MouseWheelListener {
+   
     @Override
     public void mouseDragged(MouseEvent e) {
         if (null != iAction) 
@@ -251,7 +253,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 }
         }
     }
-    
+    } ///Controller
      private void updateBufferedImage() {
         final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
         final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
@@ -426,6 +428,8 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         }         
     }
         
+    
+   // private class Actioner implements ActionListener {
     private static final String KCommandTriggerLinear = "COMMAND_LUTCONTROL_TRIGGER_LINEAR"; // NOI18N
     private static final String KCommandTriggerDirect = "COMMAND_LUTCONTROL_TRIGGER_DIRECT"; // NOI18N
     private static final String KCommandShowDialog    = "COMMAND_LUTCONTROL_SHOW_DIALOG"; // NOI18N
@@ -451,7 +455,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
                 break;
             case KCommandShowDialog:    /**    TODO: refactor the dialog     **/     
                 
-                VOILUTPanel panel = new VOILUTPanel(this, null);//iView.getImage().image());
+                VOILUTPanel panel = new VOILUTPanel(this, null);
                 
                 javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
                 dialog.setContentPane(panel);
@@ -521,6 +525,7 @@ public class LUTControl extends JComponent implements ActionListener, MouseMotio
         mnu.show(this, aX, aY);
     }   
     
+   // }
     
     private static final Logger logger = LogManager.getLogger(LUTControl.class);
 }
