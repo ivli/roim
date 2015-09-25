@@ -487,7 +487,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 
                 for (int n = 0; n < c.getNumFrames(); ++n) {
                     long dur = iPanel.iProvider.getTimeSliceVector().getSlices().get(n) / 1000;
-                    s.add(dur, c.get(n).iIden);
+                    s.add(dur, c.get(n).getIden());
                 }
                } break;
                 
@@ -503,7 +503,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 
                 for (int n = 0; n < c.getNumFrames(); ++n) {
                     long dur = iPanel.iProvider.getTimeSliceVector().getSlices().get(n) / 1000;
-                    s.add(dur, c.get(n).iIden);
+                    s.add(dur, c.get(n).getIden());
                 }
 
                 ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   

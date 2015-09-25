@@ -5,15 +5,13 @@ import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.io.Serializable;
 
-/**
- *
- * @author likhachev
- * @param <T>
- */
+
 public class Measure implements Serializable {
-    double iMin;  //min value 
-    double iMax;  //max value
-    double iIden; //integral density (a sum of pixel values)  
+    private static final long serialVersionUID = 42L;
+          
+    private final double iMin;  //min value 
+    private final double iMax;  //max value
+    private final double iIden; //a sum of pixel values aka integral density  
     
     Measure(double aMin, double aMax, double aIden) {
         iMin  = aMin; 
@@ -21,23 +19,32 @@ public class Measure implements Serializable {
         iIden = aIden;
     }
     
-    //Measure(){}    
+    Measure(Measure aM) {    
+        iMin  = aM.iMin; 
+        iMax  = aM.iMax; 
+        iIden = aM.iIden;
+    }    
+    
+    Measure() {
+        this(Double.NaN, Double.NaN, Double.NaN);
+    }
     
     public double getMin()  {return iMin;}
     public double getMax()  {return iMax;}
     public double getIden() {return iIden;}
     
-    static Measure Measure (Raster aRaster, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
+    static Measure New (Raster aRaster, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
             final Rectangle bnds = aShape.getBounds();
          
-            double min = Double.MAX_VALUE, max = Double.MIN_VALUE, sum = .0, pix = .0;
-
+            double min = Double.MAX_VALUE; 
+            double max = Double.MIN_VALUE;
+            double sum = .0;//, pix = .0;
             double temp[] = new double [aRaster.getNumBands()];
 
             for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
                 for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) //{ 
                     if (aShape.contains(i, j)) {
-                        ++pix;
+                       /// ++pix;
                         temp = aRaster.getPixel(i, j, temp);
                         if (temp[0] > max) 
                             max = temp[0];

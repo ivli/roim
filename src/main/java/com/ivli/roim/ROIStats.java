@@ -6,20 +6,21 @@ package com.ivli.roim;
  */
 
 public class ROIStats extends Measure {   
-    double iPixels;
-    double iArea;
+    private final double iPixels;
+    private final double iArea;
        
     ROIStats() {
-        super(Double.NaN, Double.NaN, Double.NaN);
+        super();
         iPixels = Double.NaN;  
         iArea   = Double.NaN;             
     }
     
     ROIStats(ROIStats aS) {
-        super(aS.iMin, aS.iMax, aS.iIden);
+        super(aS);
         iPixels = aS.iPixels;        
         iArea   = aS.iArea;        
     }    
+    
     
     ROIStats(double aP, double aA, double aMi, double aMa, double aI) {
         super(aMi, aMa, aI);

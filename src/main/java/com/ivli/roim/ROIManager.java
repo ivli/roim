@@ -139,10 +139,11 @@ public class ROIManager implements java.io.Serializable {
                 if (r instanceof ROI) {
                     ((ROI)r).iMgr = this;
                     iView.notifyROIChanged(((ROI)r), EStateChanged.Created);
-                    
+                    /*
                     if (null != ((ROI)r).iAnnos)
                         for (Overlay o : ((ROI)r).iAnnos)   
                             iOverlays.add(o);
+                            */
                 }
             }
     }

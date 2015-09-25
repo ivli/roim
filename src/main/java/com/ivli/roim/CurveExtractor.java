@@ -20,7 +20,7 @@ public class CurveExtractor {
         Series c = new Series(aRoi.getName());
         
         for (ImageFrame f : iImages) {             
-            c.add(Measure.Measure(f.getRaster(), aRoi.getShape()));           
+            c.add(Measure.New(f.getRaster(), aRoi.getShape()));           
         } 
         
         return c;

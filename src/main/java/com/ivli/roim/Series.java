@@ -20,4 +20,8 @@ public class Series extends java.util.ArrayList<Measure> {
     public int getNumFrames() {
         return size();
     }
+    
+    public void fit() {
+        
+    }
 }

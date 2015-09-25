@@ -13,17 +13,18 @@ import org.apache.logging.log4j.Logger;
 
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {      
     transient ROIManager iMgr; 
-    Color              iColor;
-    ROIStats           iStats;
-    HashSet<Overlay>   iAnnos;               
-    Series              iCurve;
+    private Color iColor;
+    private ROIStats iStats;
+              
+    private Series iCurve;
+    private HashSet<Overlay> iAnnos; 
     
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE;}
     
     ROI(Shape aS, ROIManager aSrc, Color aC) {
         super(aS, new String()); 
-        iColor = (null != aC ? aC : Colorer.getNextColor(ROI.class));
+        iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);
         iMgr = aSrc;
         iStats = new ROIStats();     
         makeCurve();
@@ -54,11 +55,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }   
        
     public ROIStats getStats() {
-        return iStats;
-    }
-    
-    public ROIStats setStats(ROIStats aS) {
-        return iStats = aS;
+        return iStats;//iCurve.get(getManager().getImage().getCurrent());
     }
     
     public Color getColor() {
@@ -103,12 +100,15 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     
     @Override
     void update() {        
+        /**/
         Measure mes = iCurve.get(getManager().getImage().getCurrent());
         
-        iStats.iMax  = mes.iMax;
-        iStats.iMin  = mes.iMin;
-        iStats.iIden = mes.iIden;
-       
+        iStats = new ROIStats(iStats.getPixels(), iStats.getArea(), mes.getMin(), mes.getMax(), mes.getIden());
+        
+        //iStats.iMax  = mes.iMax;
+        ///iStats.iMin  = mes.iMin;
+        ///iStats.iIden = mes.iIden;
+         
         if (null != iAnnos) {
             iAnnos.stream().forEach((o) -> {
                 o.update();

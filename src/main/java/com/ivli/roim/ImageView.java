@@ -212,7 +212,7 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
         notifyFrameChanged(aN);
          
         //iLUTMgr.setImage(iImage.image());
-        iLUTMgr.setRange(new Range(iImage.image().iStats.iMin, iImage.image().iStats.iMax));// frameChanged();
+        iLUTMgr.setRange(new Range(iImage.image().iStats.getMin(), iImage.image().iStats.getMax()));// frameChanged();
         
         notifyWindowChanged(true);
         

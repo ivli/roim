@@ -57,7 +57,7 @@ public class HistogramExtractor implements Extractor {
         
         rex.apply(aRaster);
         
-        final double step = (rex.iStats.iMax - rex.iStats.iMin ) / 256.0;
+        final double step = (rex.iStats.getMax() - rex.iStats.getMin()) / 256.0;
                                 
         for (int i=bnds.x; i < (bnds.x + bnds.width); ++i)
             for (int j=bnds.y; j < (bnds.y + bnds.height); ++j) 

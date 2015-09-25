@@ -107,7 +107,7 @@ public class VOILut implements Transformation {
         iLok  = new LookupOp(new ByteLookupTable(0, iBuffer.bytes), null);	
     }
     
-    private static final int GREYSCALES = 255;
+    private static final int GREYSCALES = 256;
     private static final int GREYSCALES_MAX = 255;
     private static final int GREYSCALES_MIN = 0;
     

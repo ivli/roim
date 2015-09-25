@@ -54,17 +54,17 @@ public class Annotation extends Overlay {
         aGC.setColor(iRoi.getColor());
         
         if(0 != (iFields & ANNOTATION_DISPLAY_AREA_PIXELS))
-            out += String.format("pix=%.0f", s.iPixels);
+            out += String.format("pix=%.0f", s.getPixels());
         //if(0 != (iFields & ANNOTATION_DISPLAY_AREA_PIXELS))
         //    out += String.format("pixels=%.1f", s.iBounds);
         if(0 != (iFields & ANNOTATION_DISPLAY_AREA_UNITS))
-            out += String.format(", area=%.1f", s.iArea);
+            out += String.format(", area=%.1f", s.getArea());
         if(0 != (iFields & ANNOTATION_DISPLAY_CNTS_MIN))
-            out += String.format(", min=%.1f", s.iMin);
+            out += String.format(", min=%.1f", s.getMin());
         if(0 != (iFields & ANNOTATION_DISPLAY_CNTS_MAX))
-            out += String.format(", max=%.1f", s.iMax);      
+            out += String.format(", max=%.1f", s.getMax());      
         if(0 != (iFields & ANNOTATION_DISPLAY_CNTS_IDEN))
-            out += String.format(", iden=%.1f", s.iIden);        
+            out += String.format(", iden=%.1f", s.getIden());        
         out += ".";        
         aGC.drawString(out, (int)temp.getX(), (int)temp.getY());       
     }
