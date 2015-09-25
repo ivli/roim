@@ -9,7 +9,7 @@ public class Range {
     double iMax;
     double iMin;
     
-    public Range(double aMax, double aMin) {
+    public Range(double aMin, double aMax) {
         iMax = aMax;
         iMin = aMin;
     }
@@ -19,10 +19,11 @@ public class Range {
         iMin = aW.getBottom();
     }
     
-    public Window Window() {
-        return new Window(getRange()/2.0, getRange());
+    public Range(Range aR) {
+        iMax = aR.iMax;
+        iMin = aR.iMin;
     }
-    
+           
     public boolean contains(Range aR) {
         return iMax >=aR.iMax && iMin <= aR.iMin;
     }
@@ -30,8 +31,7 @@ public class Range {
     public boolean contains(Window aW) {
         return this.contains(new Range(aW));
     }
-    
-    
+        
     public double getMax() {
         return iMax;
     }
@@ -43,4 +43,9 @@ public class Range {
     public double getRange() {
         return iMax - iMin;
     }
+    
+    public double getWidth() {
+        return getRange();
+    }
+    
 }

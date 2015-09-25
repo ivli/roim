@@ -207,13 +207,15 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
     }    
            
     void loadFrame(int aN) throws IndexOutOfBoundsException {                        
-        iImage.current(aN);   
+        iImage.moveTo(aN);   
         ///iWM.reset(iImage);
         notifyFrameChanged(aN);
          
         //iLUTMgr.setImage(iImage.image());
-        iLUTMgr.frameChanged();
-        notifyWindowChanged(true);      
+        iLUTMgr.setRange(new Range(iImage.image().iStats.iMin, iImage.image().iStats.iMax));// frameChanged();
+        
+        notifyWindowChanged(true);
+        
         iROIMgr.update();                
         invalidateBuffer();
     }
@@ -296,15 +298,21 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
             iVLUT = new VOILut(iImage.image());
             iPLUT = new PresentationLut(null);
         }
-
+/*
         public void frameChanged() {   
             iVLUT.setImage(iImage.image());
         }
-
+*/
+        
+        public void setRange(Range aR) {
+            iVLUT.setRange(aR);
+                    
+        }
+        
         public void setLUT(String aL) {
             iPLUT.open(aL);
-             invalidateBuffer();  
-             repaint();
+            invalidateBuffer();  
+            repaint();
         }
 
         public void setWindow(Window aW) {

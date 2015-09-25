@@ -18,7 +18,7 @@ public interface IMultiframeImage extends Iterable<ImageFrame>, java.io.Serializ
     
     /*TODO rework to let collection be a collection and iterator be an iterator*/
      //moves cursor to aFrameNumber
-    ImageFrame current(int aFrameNumber) throws java.util.NoSuchElementException; 
+    ImageFrame moveTo(int aFrameNumber) throws java.util.NoSuchElementException; 
     
      //returns frame at cursor position
     ImageFrame image();    

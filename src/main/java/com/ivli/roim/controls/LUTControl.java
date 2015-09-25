@@ -65,7 +65,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Act
     private final Marker   iTop;
     private final Marker   iBottom;
     private ActionItem     iAction;
-    private BufferedImage iBuf;
+    private BufferedImage  iBuf;
     
     private final Controller iCtrl = new Controller();
      /* 
@@ -249,7 +249,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Act
             showPopupMenu(e.getX(), e.getY());
         else if (SwingUtilities.isLeftMouseButton(e)) {
                 if(e.getClickCount() == 2){                        
-                    iWLM.setWindow(iWLM.getRange().Window());
+                    iWLM.setWindow(new Window(iWLM.getRange()));
                 }
         }
     }

@@ -14,50 +14,46 @@ import org.apache.logging.log4j.Logger;
 public class VOILut implements Transformation {
     private boolean   iInverted;            
     private boolean        iLog;
-    private boolean iKeepWindow;     
+    private boolean iKeepWindow = true;     
     
-    private PValueTransform iPVt;
-    private Buffer       iBuffer;
-    private LookupOp        iLok; 
-    private Window          iWin;
-    private Window        iRange; 
+    private final PValueTransform iPVt;
+    private final Buffer       iBuffer;
+    private LookupOp iLok; 
+    private Window iWin;
+    private Range iRange; 
     
     public VOILut(ImageFrame aI) {
-        reset(aI);
+        iPVt = new PValueTransform();
+        iBuffer = new Buffer(aI.getRaster().getSampleModel().getDataType());
+                
+        reset(new Range(aI.getStats().getMin(), aI.getStats().getMax()));
     }  
-    
-    public void setImage(ImageFrame aI) {
-        reset(aI);
-    }
-    
+          
     public Window getWindow() {
         return iWin;
     }
     
-    public Window getRange() {
+    public Range getRange() {
         return iRange;
     }
         
-    private void reset(ImageFrame aI) {
-        
-        iPVt = new PValueTransform();
-        iBuffer = new Buffer(aI.getRaster().getSampleModel().getDataType());
-        
-        final double min = aI.getStats().getMin();
-        final double max = aI.getStats().getMax();
-        
-        
-        if (null == iWin || !iKeepWindow) {
-            iRange = new Window(min + (max - min) / 2., max - min);
-            iWin = new Window(iRange); 
+    public void setRange(Range aR) {
+        reset(aR);
+    }
+     
+    private void reset(Range aR) {        
+    
+       if(iKeepWindow && null != iWin && null != iRange) {        
+            final double percentTop    = iWin.getTop() / iRange.getWidth();
+            final double percentBottom = iWin.getBottom() / iRange.getWidth();
+            iRange = aR;
+            iWin   = new Window(new Range(percentBottom * iRange.getWidth(), percentTop * iRange.getWidth()));
+            //iWin.setTop(percentTop * iRange.getWidth()); 
+            //iWin.setBottom(percentBottom * iRange.getWidth()); 
         } else {
-            final double percentTop = iWin.getTop()/iRange.getWidth();
-            final double percentBottom = iWin.getBottom()/iRange.getWidth();
-            iRange = new Window(min + (max - min) / 2., max - min);
-            iWin = new Window(iRange);//percentTop * iMax.getWidth()/2, (percentTop - percentBottom) * iMax.getWidth()); 
-            iWin.setTop(percentTop*iRange.getWidth()); 
-            iWin.setBottom(percentBottom*iRange.getWidth()); 
-        } 
+            iRange = aR;
+            iWin = new Window(aR);
+       }
         
         makeLUT();            
     }

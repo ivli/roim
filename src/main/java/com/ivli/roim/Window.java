@@ -24,6 +24,11 @@ public class Window implements java.io.Serializable {
         iWidth = aW.iWidth;
     }
     
+    public Window(Range aR) {
+        iLevel = aR.getRange() / 2.0; 
+        iWidth = aR.getRange();
+    }
+    
     public Window(double aL, double aW) {
         iLevel = aL; 
         iWidth = Math.max(MINIMAL_WINDOW_WIDTH, aW);   
