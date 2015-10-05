@@ -1,12 +1,9 @@
 
 package com.ivli.roim;
 
-import java.awt.Rectangle;
-import java.awt.image.Raster;
-import java.io.Serializable;
 
 
-public class Measure implements Serializable {
+public class Measure implements java.io.Serializable {
     private static final long serialVersionUID = 42L;
           
     private final double iMin;  //min value 
@@ -33,12 +30,13 @@ public class Measure implements Serializable {
     public double getMax()  {return iMax;}
     public double getIden() {return iIden;}
     
-    static Measure New (Raster aRaster, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
-            final Rectangle bnds = aShape.getBounds();
+    static Measure New (java.awt.image.Raster aRaster, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
+            final java.awt.Rectangle bnds = aShape.getBounds();
          
             double min = Double.MAX_VALUE; 
             double max = Double.MIN_VALUE;
             double sum = .0;//, pix = .0;
+            
             double temp[] = new double [aRaster.getNumBands()];
 
             for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
@@ -46,6 +44,7 @@ public class Measure implements Serializable {
                     if (aShape.contains(i, j)) {
                        /// ++pix;
                         temp = aRaster.getPixel(i, j, temp);
+                        
                         if (temp[0] > max) 
                             max = temp[0];
                         else if (temp[0] < min) 

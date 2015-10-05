@@ -22,7 +22,7 @@ import com.ivli.roim.Events.EStateChanged;
 public class ROIManager implements java.io.Serializable {  
     private static final long serialVersionUID = 42L;
     
-    private static final boolean ROI_HAS_ANNOTATIONS = false;
+    private static final boolean ROI_HAS_ANNOTATIONS = true;
     
     transient private final ImageView  iView; 
     
@@ -57,6 +57,7 @@ public class ROIManager implements java.io.Serializable {
             
     public void createRoiFromShape(Shape aS) { 
         final Shape r = iView.screenToVirtual().createTransformedShape(aS);
+        
         final ROI newRoi = new ROI(r, this, null);       
   
         iOverlays.add(newRoi);

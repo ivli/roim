@@ -9,10 +9,10 @@ public class ROIStats extends Measure {
     private final double iPixels;
     private final double iArea;
        
-    ROIStats() {
-        super();
-        iPixels = Double.NaN;  
-        iArea   = Double.NaN;             
+    ROIStats(int anAreaInPixels) {
+        super();    
+        iPixels = anAreaInPixels;  
+        iArea   = Double.NaN;         
     }
     
     ROIStats(ROIStats aS) {
@@ -30,4 +30,8 @@ public class ROIStats extends Measure {
            
    public double getPixels() {return iPixels;}
    public double getArea() {return iArea;}
+   
+   
+    
+   
 }

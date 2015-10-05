@@ -16,7 +16,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     private Color iColor;
     private ROIStats iStats;
               
-    private Series iCurve;
+    private Series iSeries;
     private HashSet<Overlay> iAnnos; 
     
     @Override
@@ -26,7 +26,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         super(aS, new String()); 
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);
         iMgr = aSrc;
-        iStats = new ROIStats();     
+        iStats = new ROIStats(this.calculateAreaInPixels());     
         makeCurve();
     }
     
@@ -87,21 +87,34 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
             });
         }
     }  
+            
+    private int calculateAreaInPixels() {
+
+        final java.awt.Rectangle bnds = getShape().getBounds();
+        int AreaInPixels = 0;
+
+        for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
+            for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) //{ 
+                if (getShape().contains(i, j)) 
+                  ++AreaInPixels;
+        
+        return AreaInPixels;
+    }                 
     
     private void makeCurve() {
         CurveExtractor ce = new CurveExtractor(getManager().getImage());
         Series cv = ce.extract(this);
-        iCurve = cv;
+        iSeries = cv;
     }
     
     public Series getCurve() {      
-        return iCurve;
+        return iSeries;
     }
     
     @Override
     void update() {        
         /**/
-        Measure mes = iCurve.get(getManager().getImage().getCurrent());
+        Measure mes = iSeries.get(getManager().getImage().getCurrent());
         
         iStats = new ROIStats(iStats.getPixels(), iStats.getArea(), mes.getMin(), mes.getMax(), mes.getIden());
         
@@ -130,6 +143,8 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
  
     }
   
+    
+    
     byte [] treshold(int aValue, int [] aData, int aW, int aH) {
         
         byte [] ret = new byte [aW*aH];
