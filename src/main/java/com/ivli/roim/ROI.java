@@ -22,11 +22,11 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE;}
     
-    ROI(Shape aS, ROIManager aSrc, Color aC) {
+    ROI(Shape aS, ROIManager aMgr, Color aC) {
         super(aS, new String()); 
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);
-        iMgr = aSrc;
-        iStats = new ROIStats(this.calculateAreaInPixels());     
+        iMgr   = aMgr;
+        iStats = new ROIStats(this.calculateAreaInPixels(), aMgr.getImage().getPixelSpacing());     
         makeCurve();
     }
     
