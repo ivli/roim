@@ -2,14 +2,14 @@
 package com.ivli.roim;
 
 /**
- *
+ * Pixel Spacing in mm as described in (0028,0030) 
  * @author likhachev
  */
-public class PixelSpacing {
+public class PixelSpacing { 
     protected final double DEFAULT_PIXEL_SPACING_X = 1.0;
     protected final double DEFAULT_PIXEL_SPACING_Y = 1.0;
     
-    public final double iX;
+    public final double iX; 
     public final double iY;
     
     public PixelSpacing() {
@@ -22,7 +22,7 @@ public class PixelSpacing {
         iY = aY;
     }
     
-    public double getX() {return iX;}
-    public double getY() {return iY;}
+    public double getX() {return iX;} //column spacing in mm
+    public double getY() {return iY;} //row spacing in mm
     
 }
