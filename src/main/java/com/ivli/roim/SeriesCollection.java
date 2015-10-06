@@ -11,21 +11,28 @@ import org.apache.logging.log4j.Logger;
 public class SeriesCollection implements java.io.Serializable {
     private static final long serialVersionUID = 42L;
     
-    TimeSliceVector iTimeSliceVector = null;
-    final java.util.ArrayList<Series> iSeries = new java.util.ArrayList<>(); 
+    //private TimeSliceVector iTimeSliceVector = null;
+    private final java.util.HashMap<Integer, Series> iSeries = new java.util.HashMap<>(); 
     
     
-    SeriesCollection(TimeSliceVector aV) {
-        iTimeSliceVector = aV;
+    public SeriesCollection(/*TimeSliceVector aV*/) {
+      //  iTimeSliceVector = aV;
     }
     
+    //public SeriesCollection() {}
+    
+    
     public void addSeries(Series aC) {
-        if (iTimeSliceVector.getNumFrames() != aC.getNumFrames())
-            throw new IllegalArgumentException();      
+        //if (iTimeSliceVector.getNumFrames() != aC.getNumFrames())
+        //   throw new IllegalArgumentException();      
                
-        iSeries.add(aC);               
+        iSeries.put(aC.getId(), aC);               
     } 
     
+    public Series get(int anId) {
+        
+        return iSeries.get(anId);
+    }
         
     
     private static final Logger logger = LogManager.getLogger(SeriesCollection.class); 

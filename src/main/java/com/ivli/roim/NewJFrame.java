@@ -481,19 +481,19 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             case Changed: {
                 int ndx = col.indexOf(aE.getROI().getName());
                
-                Series c = aE.getROI().getCurve();
+                Series c = aE.getROI().getSeries(Measurement.DENSITY);
                 XYSeries s = col.getSeries(ndx); 
                 s.clear();
                 
                 for (int n = 0; n < c.getNumFrames(); ++n) {
                     long dur = iPanel.iProvider.getTimeSliceVector().getSlices().get(n) / 1000;
-                    s.add(dur, c.get(n).getIden());
+                    s.add(dur, c.get(n));
                 }
                } break;
                 
             case Created: 
                 XYSeries s = new XYSeries(aE.getROI().getName());
-                Series c = aE.getROI().getCurve();
+                Series c = aE.getROI().getSeries(Measurement.DENSITY);
                 
                 int x = 0;
                                 
@@ -503,7 +503,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 
                 for (int n = 0; n < c.getNumFrames(); ++n) {
                     long dur = iPanel.iProvider.getTimeSliceVector().getSlices().get(n) / 1000;
-                    s.add(dur, c.get(n).getIden());
+                    s.add(dur, c.get(n));
                 }
 
                 ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   

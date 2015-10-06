@@ -48,15 +48,17 @@ public class Annotation extends Overlay {
     @Override
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();
-        ROIStats s = iRoi.getStats();
+        
+        //ROIStats s = iRoi.getStats();
         String out = new String();
         
         aGC.setColor(iRoi.getColor());
         
         if(0 != (iFields & ANNOTATION_DISPLAY_AREA_PIXELS))
-            out += String.format("pix=%.0f", s.getPixels());
+            out += String.format("pix=%d", iRoi.getAreaInPixels());
         //if(0 != (iFields & ANNOTATION_DISPLAY_AREA_PIXELS))
         //    out += String.format("pixels=%.1f", s.iBounds);
+        /*
         if(0 != (iFields & ANNOTATION_DISPLAY_AREA_UNITS))
             out += String.format(", area=%.1f", s.getArea());
         if(0 != (iFields & ANNOTATION_DISPLAY_CNTS_MIN))
@@ -65,7 +67,10 @@ public class Annotation extends Overlay {
             out += String.format(", max=%.1f", s.getMax());      
         if(0 != (iFields & ANNOTATION_DISPLAY_CNTS_IDEN))
             out += String.format(", iden=%.1f", s.getIden());        
-        out += ".";        
+        out += "."; 
+        
+        */
+        
         aGC.drawString(out, (int)temp.getX(), (int)temp.getY());       
     }
     

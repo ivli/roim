@@ -5,6 +5,7 @@
  */
 package com.ivli.roim.controls;
 
+import com.ivli.roim.Measurement;
 import com.ivli.roim.Overlay;
 import com.ivli.roim.ROI;
 import com.ivli.roim.ROIStats;
@@ -76,10 +77,10 @@ public class ROIListPanel extends javax.swing.JPanel implements TableModelListen
             Overlay o = aLit.next();
             if (o instanceof ROI) {       
                 ROI r = (ROI)o;
-                ROIStats s = r.getStats();
+                //ROIStats s = r.getStats();
                 DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
                 //jTable1.setModel(new TableModel());
-                model.addRow(new Object[]{r, r.getName(), r.getStats().getPixels(), r.getStats().getIden(), r.getColor()});                
+                model.addRow(new Object[]{r, r.getName(), r.getAreaInPixels(), r.getSeries(Measurement.DENSITY).get(r.getManager().getImage().getCurrent()), r.getColor()});                
             }
         }
         

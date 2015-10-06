@@ -10,19 +10,22 @@ import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
  * @author likhachev
  */
 
-public class Series extends java.util.ArrayList<Measure> {
+public class Series extends java.util.ArrayList<Double> {
    
-    String iName;
+    private final Measurement iId; 
+    private final String iName;
     
-    Series(String aName) {
+    public Series(Measurement anId, String aName) {
         iName = aName;
+        iId = anId;
     }
     
+    public int getId() {return iId.getId();}
     public int getNumFrames() {
         return size();
     }
     
-    /*
+   /* 
     public Series fit() {
         
      SplineInterpolator ipo = new SplineInterpolator();
@@ -33,7 +36,7 @@ public class Series extends java.util.ArrayList<Measure> {
      for (int n=0; n < size(); ++n)
          x[n] = (double)n;
      
-     ipo.interpolate(x, this.toArray(y));
+     //ipo.interpolate(x, this.toArray(y));
         
         
     }

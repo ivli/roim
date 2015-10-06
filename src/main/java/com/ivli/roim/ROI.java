@@ -11,12 +11,16 @@ import java.awt.geom.AffineTransform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {      
+public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {   
+    
     transient ROIManager iMgr; 
     private Color iColor;
-    private ROIStats iStats;
-              
-    private Series iSeries;
+    //private ROIStats iStats;
+      
+    final int iAreaInPixels;    
+    
+    private SeriesCollection iSeries;
+        
     private HashSet<Overlay> iAnnos; 
     
     @Override
@@ -26,18 +30,21 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         super(aS, new String()); 
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);
         iMgr   = aMgr;
-        iStats = new ROIStats(this.calculateAreaInPixels(), aMgr.getImage().getPixelSpacing());     
-        makeCurve();
+        //iStats = new ROIStats(this.calculateAreaInPixels(), aMgr.getImage().getPixelSpacing());     
+        iAreaInPixels = calculateAreaInPixels();
+        makeSeries();
     }
     
     ROI(ROI aR) {
         super(aR.iShape, aR.iName);  
         iColor = aR.iColor; 
         iMgr   = aR.iMgr;        
-        iStats = new ROIStats(aR.iStats);   
+        //iStats = new ROIStats(aR.iStats);   
+        iAreaInPixels = aR.iAreaInPixels;
+        iSeries = aR.iSeries;
     }
            
-    ROIManager getManager() {
+    public ROIManager getManager() {
         return iMgr;
     }
     
@@ -53,9 +60,13 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         }
         return false;
     }   
-       
-    public ROIStats getStats() {
-        return iStats;//iCurve.get(getManager().getImage().getCurrent());
+           
+    public int getAreaInPixels() {
+        return iAreaInPixels;
+    }
+    
+    public Series getSeries(int anId) {       
+        return iSeries.get(anId);
     }
     
     public Color getColor() {
@@ -77,7 +88,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
         iShape = trans.createTransformedShape(iShape);
         
-        makeCurve();    
+        makeSeries();    
         
         update();
         
@@ -101,27 +112,23 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         return AreaInPixels;
     }                 
     
-    private void makeCurve() {
+    private void makeSeries() {
         CurveExtractor ce = new CurveExtractor(getManager().getImage());
-        Series cv = ce.extract(this);
-        iSeries = cv;
+        //Series cv = ce.extract(this);
+        //iSeries = cv;
+        iSeries = ce.extract(this);
+    
     }
     
+    /*
     public Series getCurve() {      
         return iSeries;
     }
+    */
     
     @Override
     void update() {        
-        /**/
-        Measure mes = iSeries.get(getManager().getImage().getCurrent());
         
-        iStats = new ROIStats(iStats.getPixels(), iStats.getArea(), mes.getMin(), mes.getMax(), mes.getIden());
-        
-        //iStats.iMax  = mes.iMax;
-        ///iStats.iMin  = mes.iMin;
-        ///iStats.iIden = mes.iIden;
-         
         if (null != iAnnos) {
             iAnnos.stream().forEach((o) -> {
                 o.update();
