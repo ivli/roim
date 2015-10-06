@@ -119,13 +119,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iSeries = ce.extract(this);
     
     }
-    
-    /*
-    public Series getCurve() {      
-        return iSeries;
-    }
-    */
-    
+       
     @Override
     void update() {        
         

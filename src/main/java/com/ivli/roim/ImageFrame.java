@@ -1,6 +1,7 @@
 
 package com.ivli.roim;
 
+import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -13,17 +14,16 @@ import java.awt.image.WritableRaster;
  * @author likhachev
  */
 public class ImageFrame implements java.io.Serializable {
-    Raster   iRaster;  
-    ROIStats iStats;   
+    private final Raster iRaster;  
+    
+    private double iMin;
+    private double iMax; 
+    private double iIden;
     
     public Raster getRaster() {
         return iRaster;
     }
-    
-    public ROIStats getStats() {
-        return iStats;
-    }
-    
+        
     public int getWidth() {
         return iRaster.getWidth();
     }
@@ -31,12 +31,29 @@ public class ImageFrame implements java.io.Serializable {
     public int getHeight() {
         return iRaster.getHeight();
     }
-           
+     
+    public double getMin() {
+        return iMin;
+    }
+    
+    public double getMax() {
+        return iMax;
+    } 
+    
+    public double getIden() {
+        return iIden;
+    }
+    
     ImageFrame(Raster aRaster) {
         iRaster = aRaster;
-        ROIExtractor ex = new ROIExtractor(iRaster.getBounds());
-        ex.apply(aRaster);
-        iStats = ex.iStats;
+        
+        computeStatistics();
+        
+        //ROIExtractor ex = new ROIExtractor(iRaster.getBounds());
+        //ex.apply(aRaster);
+        //iMin = ex.iStats.getMin();
+        //iMax = ex.iStats.getMax();
+        //iIden = ex.iStats.getIden();
     }
     
     public BufferedImage getBufferedImage() {
@@ -54,7 +71,31 @@ public class ImageFrame implements java.io.Serializable {
     }     
     
    
+           
+    private void computeStatistics() throws ArrayIndexOutOfBoundsException {
+        final Rectangle bnds = iRaster.getBounds();
+        
+        iMin  = 65535; 
+        iMax  = .0; 
+        iIden = .0;
+
+        double temp[] = new double [iRaster.getNumBands()];
+
+        for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
+            for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) { 
+
+                    temp = iRaster.getPixel(i, j, temp);
+                    if (temp[0] > iMax) 
+                        iMax = temp[0];
+                    else if (temp[0] < iMin) 
+                        iMin = temp[0];
+                    iIden += temp[0];
+        }
+    }
+   
+        
     public void extract(Extractor aEx) {
         aEx.apply(iRaster);
     }
+        
 }

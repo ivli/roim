@@ -26,7 +26,7 @@ public class VOILut implements Transformation {
         iPVt = new PValueTransform();
         iBuffer = new Buffer(aI.getRaster().getSampleModel().getDataType());
                 
-        reset(new Range(aI.getStats().getMin(), aI.getStats().getMax()));
+        reset(new Range(aI.getMin(), aI.getMax()));
     }  
           
     public Window getWindow() {

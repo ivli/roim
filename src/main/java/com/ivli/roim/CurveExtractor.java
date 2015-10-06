@@ -15,41 +15,47 @@ public class CurveExtractor {
     /* */
     public SeriesCollection extract(ROI aRoi) {
         SeriesCollection c = new SeriesCollection();
-       // c.addSeries(new Series(new Measurement(Measurement.DENSITY), "IntDen"));
+       
         Series density = new Series(new Measurement(Measurement.DENSITY), "IntDen");
+        Series mins    = new Series(new Measurement(Measurement.MINIMUM), "Mins");
+        Series maxs    = new Series(new Measurement(Measurement.MAXIMUM), "Maxs");
         
         for (ImageFrame f : iImages) {                           
             Measure m = measure(f.getRaster(), aRoi.getShape()); 
-            density.add(m.getIden());            
+            density.add(m.getIden());   
+            mins.add(m.getMin());
+            maxs.add(m.getMax());
         } 
         
         c.addSeries(density);
+        c.addSeries(mins);
+        c.addSeries(maxs);
         
         return c;
     }    
    
     Measure measure(java.awt.image.Raster aRaster, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
-            final java.awt.Rectangle bnds = aShape.getBounds();
-         
-            double min = Double.MAX_VALUE; 
-            double max = Double.MIN_VALUE;
-            double sum = .0;//, pix = .0;
-            
-            double temp[] = new double [aRaster.getNumBands()];
+        final java.awt.Rectangle bnds = aShape.getBounds();
 
-            for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
-                for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) //{ 
-                    if (aShape.contains(i, j)) {
-                       /// ++pix;
-                        temp = aRaster.getPixel(i, j, temp);
-                        
-                        if (temp[0] > max) 
-                            max = temp[0];
-                        else if (temp[0] < min) 
-                            min = temp[0];
-                        sum += temp[0];
-                    }
-                      
-            return new Measure(min, max, sum);
+        double min = Double.MAX_VALUE; 
+        double max = Double.MIN_VALUE;
+        double sum = .0;//, pix = .0;
+
+        double temp[] = new double [aRaster.getNumBands()];
+
+        for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
+            for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) //{ 
+                if (aShape.contains(i, j)) {
+                   /// ++pix;
+                    temp = aRaster.getPixel(i, j, temp);
+
+                    if (temp[0] > max) 
+                        max = temp[0];
+                    else if (temp[0] < min) 
+                        min = temp[0];
+                    sum += temp[0];
+                }
+
+        return new Measure(min, max, sum);
         }   
 }

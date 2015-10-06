@@ -92,9 +92,9 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
                 iFrames.add(anIndex, f);
                  //record only cache misses
                 logger.info("Frame -" + anIndex +                                  
-                            ", MIN"   + f.getStats().getMin() +  // NOI18N
-                            ", MAX"   + f.getStats().getMax() +  // NOI18N
-                            ", DEN"   + f.getStats().getIden()); // NOI18N     
+                            ", MIN"   + f.getMin() +  // NOI18N
+                            ", MAX"   + f.getMax() +  // NOI18N
+                            ", DEN"   + f.getIden()); // NOI18N     
       
             //} catch (IOException ioex) {
             //    logger.error(ioex); 
@@ -124,10 +124,10 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
         
         ret.iTimeSlices = iTimeSlices.slice(aS);
         
-        java.awt.image.WritableRaster comp = iFrames.get(0).iRaster.createCompatibleWritableRaster();
+        java.awt.image.WritableRaster comp = iFrames.get(0).getRaster().createCompatibleWritableRaster();
                 
         for (int n = frameFrom; n < frameTo; ++n) {
-            final java.awt.image.Raster r = iFrames.get(n).iRaster;
+            final java.awt.image.Raster r = iFrames.get(n).getRaster();
             for (int i = 0; i < getWidth(); ++i)
                for (int j = 0; j < getHeight(); ++j) 
                    comp.setSample(i, j, 0, comp.getSample(i, j, 0) + r.getSample(i, j, 0));           

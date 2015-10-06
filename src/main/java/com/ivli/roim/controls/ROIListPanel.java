@@ -8,7 +8,6 @@ package com.ivli.roim.controls;
 import com.ivli.roim.Measurement;
 import com.ivli.roim.Overlay;
 import com.ivli.roim.ROI;
-import com.ivli.roim.ROIStats;
 import static com.ivli.roim.controls.ColorEditor.EDIT;
 import java.util.Iterator;
 import javax.swing.table.DefaultTableModel;

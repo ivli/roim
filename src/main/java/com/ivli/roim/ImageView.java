@@ -199,8 +199,8 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
    
     private void invalidateBuffer() {iBuf = null;}
         
-    private double getMin() {return iImage.image().getStats().getMin();} 
-    private double getMax() {return iImage.image().getStats().getMax();} 
+    private double getMin() {return iImage.image().getMin();} 
+    private double getMax() {return iImage.image().getMax();} 
     
     public int getNumFrames() throws IOException {
         return iImage.getNumFrames();
@@ -212,7 +212,7 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
         notifyFrameChanged(aN);
          
         //iLUTMgr.setImage(iImage.image());
-        iLUTMgr.setRange(new Range(iImage.image().iStats.getMin(), iImage.image().iStats.getMax()));// frameChanged();
+        iLUTMgr.setRange(new Range(iImage.image().getMin(), iImage.image().getMax()));// frameChanged();
         
         notifyWindowChanged(true);
         
