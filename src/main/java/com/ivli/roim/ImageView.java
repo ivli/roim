@@ -207,7 +207,7 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
     }    
            
     void loadFrame(int aN) throws IndexOutOfBoundsException {                        
-        iImage.moveTo(aN);   
+        iImage.advance(aN);   
         ///iWM.reset(iImage);
         notifyFrameChanged(aN);
          

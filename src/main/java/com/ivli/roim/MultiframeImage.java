@@ -27,7 +27,7 @@ public class MultiframeImage implements IMultiframeImage {
     }
     
     @Override
-    public ImageFrame moveTo(int aFrameNumber) throws java.util.NoSuchElementException {           
+    public ImageFrame advance(int aFrameNumber) throws java.util.NoSuchElementException {           
         ImageFrame ret = null;
         try {
             ret = iSrc.frame(aFrameNumber); //prevent iCurrent from change in the case of exception

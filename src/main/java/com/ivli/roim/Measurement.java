@@ -5,7 +5,7 @@ package com.ivli.roim;
  *
  * @author likhachev
  */
-public class Measurement {
+public class Measurement implements java.io.Serializable {
     public static final int MINIMUM = 2;
     public static final int MAXIMUM = 4; 
     public static final int DENSITY = 8;
