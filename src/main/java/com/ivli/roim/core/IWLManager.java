@@ -1,5 +1,6 @@
 
-package com.ivli.roim;
+package com.ivli.roim.core;
+
 
 import org.jfree.data.xy.XYSeries;
 

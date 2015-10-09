@@ -1,6 +1,8 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.core.TimeSliceVector;
+import com.ivli.roim.core.PixelSpacing;
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.Raster;

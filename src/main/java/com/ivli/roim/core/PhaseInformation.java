@@ -1,5 +1,5 @@
 
-package com.ivli.roim;
+package com.ivli.roim.core;
 
 /**
  *
@@ -13,12 +13,12 @@ public class PhaseInformation implements java.io.Serializable, Comparable<PhaseI
     int iNumberOfFrames;
     int iFrameDuration;
    
-    PhaseInformation(int aNoOfFRames, int aFrameDurationMilliseconds) {
+    public PhaseInformation(int aNoOfFRames, int aFrameDurationMilliseconds) {
         iNumberOfFrames = aNoOfFRames;
         iFrameDuration  = aFrameDurationMilliseconds;          
     }
     
-    PhaseInformation(PhaseInformation aP) {
+    public PhaseInformation(PhaseInformation aP) {
         iNumberOfFrames = aP.iNumberOfFrames;
         iFrameDuration  = aP.iFrameDuration;      
     }

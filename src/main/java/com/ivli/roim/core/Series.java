@@ -1,7 +1,7 @@
 /*
  * 
  */
-package com.ivli.roim;
+package com.ivli.roim.core;
 
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;

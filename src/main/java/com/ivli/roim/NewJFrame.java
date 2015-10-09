@@ -1,5 +1,7 @@
 package com.ivli.roim;
 
+import com.ivli.roim.core.Measurement;
+import com.ivli.roim.core.Series;
 import java.awt.*;
 import java.io.IOException;
 import javax.swing.BoxLayout;

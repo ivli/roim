@@ -1,6 +1,7 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.core.Series;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

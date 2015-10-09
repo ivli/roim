@@ -1,6 +1,8 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.core.PixelSpacing;
+
 /**
  *
  * @author likhachev

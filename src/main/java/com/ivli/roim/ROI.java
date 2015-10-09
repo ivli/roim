@@ -1,6 +1,7 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.core.Series;
 import java.util.HashSet;
 import java.awt.Color;
 import java.awt.Graphics2D;

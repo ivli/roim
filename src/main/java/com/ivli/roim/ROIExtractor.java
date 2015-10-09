@@ -1,6 +1,7 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.core.ROIStats;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;

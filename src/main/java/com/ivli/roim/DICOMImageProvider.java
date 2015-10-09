@@ -1,6 +1,9 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.core.TimeSliceVector;
+import com.ivli.roim.core.TimeSlice;
+import com.ivli.roim.core.PixelSpacing;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;

@@ -5,6 +5,7 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.core.Window;
 import java.awt.Graphics2D;
 import java.awt.Cursor;
 import java.awt.Point;

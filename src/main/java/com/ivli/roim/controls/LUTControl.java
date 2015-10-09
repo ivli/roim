@@ -34,8 +34,8 @@ import com.ivli.roim.events.WindowChangeEvent;
 
 import com.ivli.roim.LutLoader;
 import com.ivli.roim.Settings;
-import com.ivli.roim.Window;
-import com.ivli.roim.IWLManager;
+import com.ivli.roim.core.Window;
+import com.ivli.roim.core.IWLManager;
 
 /**
  *

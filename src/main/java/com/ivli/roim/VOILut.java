@@ -2,6 +2,10 @@
 package com.ivli.roim;
 
 
+import com.ivli.roim.core.PValueTransform;
+import com.ivli.roim.core.Ranger;
+import com.ivli.roim.core.Range;
+import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
 import java.awt.image.ByteLookupTable;
 import java.awt.image.DataBuffer;
@@ -11,7 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class VOILut implements Transformation {
+public class VOILut implements com.ivli.roim.core.Transformation {
     private boolean   iInverted;            
     private boolean        iLog;
     private boolean iKeepWindow = true;     

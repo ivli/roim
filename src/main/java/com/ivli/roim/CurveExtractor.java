@@ -1,6 +1,10 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.core.Measurement;
+import com.ivli.roim.core.Measure;
+import com.ivli.roim.core.Series;
+
 /**
  *
  * @author likhachev

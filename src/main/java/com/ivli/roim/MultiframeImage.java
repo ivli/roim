@@ -1,8 +1,10 @@
 
 package com.ivli.roim;
 
-
+import com.ivli.roim.core.TimeSlice;
 import java.io.IOException;
+import com.ivli.roim.core.PixelSpacing;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

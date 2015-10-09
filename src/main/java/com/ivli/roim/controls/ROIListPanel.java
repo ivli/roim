@@ -5,7 +5,7 @@
  */
 package com.ivli.roim.controls;
 
-import com.ivli.roim.Measurement;
+import com.ivli.roim.core.Measurement;
 import com.ivli.roim.Overlay;
 import com.ivli.roim.ROI;
 import static com.ivli.roim.controls.ColorEditor.EDIT;

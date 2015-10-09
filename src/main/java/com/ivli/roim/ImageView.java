@@ -1,6 +1,9 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.core.IWLManager;
+import com.ivli.roim.core.Range;
+import com.ivli.roim.core.Window;
 import java.io.IOException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;

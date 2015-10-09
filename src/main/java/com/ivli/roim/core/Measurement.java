@@ -1,5 +1,5 @@
 
-package com.ivli.roim;
+package com.ivli.roim.core;
 
 /**
  *

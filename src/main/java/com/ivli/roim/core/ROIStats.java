@@ -1,4 +1,4 @@
-package com.ivli.roim;
+package com.ivli.roim.core;
 
 /**
  *
@@ -9,19 +9,19 @@ public class ROIStats extends Measure {
     private final double iPixels;
     private final double iArea;
        
-    ROIStats(double anAreaInPixels, PixelSpacing aSpacing) {
+    public ROIStats(double anAreaInPixels, PixelSpacing aSpacing) {
         super();    
         iPixels = anAreaInPixels;  
         iArea   = anAreaInPixels * aSpacing.iX;         
     }
     
-    ROIStats(ROIStats aS) {
+    public ROIStats(ROIStats aS) {
         super(aS);
         iPixels = aS.iPixels;        
         iArea   = aS.iArea;        
     }    
         
-    ROIStats(double aP, double aA, double aMi, double aMa, double aI) {
+    public ROIStats(double aP, double aA, double aMi, double aMa, double aI) {
         super(aMi, aMa, aI);
         iPixels = aP;
         iArea = aA;

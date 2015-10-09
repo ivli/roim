@@ -1,7 +1,7 @@
 
 package com.ivli.roim.events;
 
-import com.ivli.roim.Window;
+import com.ivli.roim.core.Window;
 
 /**
  *

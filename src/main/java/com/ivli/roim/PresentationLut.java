@@ -10,7 +10,7 @@ import java.awt.image.WritableRaster;
  *
  * @author likhachev
  */
-public final class PresentationLut implements Transformation {
+public final class PresentationLut implements com.ivli.roim.core.Transformation {
     protected String          iName;
     protected IndexColorModel iLUT;
     

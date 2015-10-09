@@ -1,5 +1,5 @@
 
-package com.ivli.roim;
+package com.ivli.roim.core;
 
 /**
  * Pixel Spacing in mm as described in (0028,0030) 

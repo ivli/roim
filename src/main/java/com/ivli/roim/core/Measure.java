@@ -1,5 +1,5 @@
 
-package com.ivli.roim;
+package com.ivli.roim.core;
 
 
 
@@ -14,19 +14,19 @@ public class Measure implements java.io.Serializable {
     private final double iMax;  //max value
     private final double iIden; //a sum of pixel values aka integral density  
     
-    Measure(double aMin, double aMax, double aIden) {
+    public Measure(double aMin, double aMax, double aIden) {
         iMin  = aMin; 
         iMax  = aMax; 
         iIden = aIden;
     }
     
-    Measure(Measure aM) {    
+    public Measure(Measure aM) {    
         iMin  = aM.iMin; 
         iMax  = aM.iMax; 
         iIden = aM.iIden;
     }    
     
-    Measure() {
+    public Measure() {
         this(Double.NaN, Double.NaN, Double.NaN);
     }
     
