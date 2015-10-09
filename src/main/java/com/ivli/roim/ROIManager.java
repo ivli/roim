@@ -14,7 +14,7 @@ import java.awt.geom.AffineTransform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.ivli.roim.Events.EStateChanged;
+import com.ivli.roim.events.EStateChanged;
 /**
  *
  * @author likhachev

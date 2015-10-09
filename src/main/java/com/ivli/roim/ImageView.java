@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jfree.data.xy.XYSeries;
 
-import com.ivli.roim.Events.*;
+import com.ivli.roim.events.*;
 
 public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
 

@@ -1,5 +1,5 @@
 
-package com.ivli.roim.Events;
+package com.ivli.roim.events;
 
 import com.ivli.roim.ROI;
 /**

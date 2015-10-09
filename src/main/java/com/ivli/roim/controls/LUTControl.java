@@ -29,8 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.ActionItem;
-import com.ivli.roim.Events.WindowChangeListener;
-import com.ivli.roim.Events.WindowChangeEvent;
+import com.ivli.roim.events.WindowChangeListener;
+import com.ivli.roim.events.WindowChangeEvent;
 
 import com.ivli.roim.LutLoader;
 import com.ivli.roim.Settings;

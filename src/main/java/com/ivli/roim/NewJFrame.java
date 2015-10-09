@@ -8,8 +8,7 @@ import javax.swing.JDialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.ivli.roim.controls.*;
-import com.ivli.roim.Events.*;
+
 import org.apache.logging.log4j.Level;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -19,6 +18,9 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+
+import com.ivli.roim.controls.*;
+import com.ivli.roim.events.*;
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
 
