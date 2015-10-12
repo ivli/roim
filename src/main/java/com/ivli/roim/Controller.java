@@ -45,9 +45,13 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
     protected int iRightAction  = MOUSE_ACTION_WINDOW;
     protected int iWheelAction  = MOUSE_ACTION_LIST;
 
-    class BaseActionItem extends ActionItem {
-        BaseActionItem(int aX, int aY){super(aX, aY);}
-        protected  void DoAction(int aX, int aY){} 
+    abstract class BaseActionItem extends ActionItem {
+        BaseActionItem(int aX, int aY) {
+            super(aX, aY);
+        }
+        
+        //protected  void DoAction(int aX, int aY){} 
+        
         protected  boolean DoWheel(int aX) {
             iControlled.zoom(-aX/Settings.ZOOM_SENSITIVITY_FACTOR, 0, 0);
             iControlled.repaint();
@@ -112,9 +116,9 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
                 }};                 
             case MOUSE_ACTION_LIST: return new BaseActionItem(aX, aY) {
                     public void DoAction(int aX, int aY) {
-                        try {
-                            iControlled.loadFrame(iX+aX);
-                            iX+=aX; //if the index corract and exception haven't been raised
+                        try {                            
+                            iControlled.loadFrame(iX + aX);
+                            iX += aX; //if the index correct and exception haven't been raised
                             iControlled.repaint();
                         }catch (IndexOutOfBoundsException ex) {
                             logger.info(ex);
@@ -123,15 +127,15 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
             case MOUSE_ACTION_WHEEL: 
             case MOUSE_ACTION_ROI: 
             case MOUSE_ACTION_MENU:
-            case MOUSE_ACTION_NONE:
-            default: return new BaseActionItem(aX, aY);      
+            case MOUSE_ACTION_NONE: 
+            default: throw new UnsupportedOperationException();//return new BaseActionItem(aX, aY);      
         }        
     }  
     
     private final ImageView iControlled;
-    private ActionItem          iAction;   
-    private Overlay           iSelected;
-    private ActionItem        iWheel = NewAction(iWheelAction, 0, 0); 
+    private ActionItem iAction;   
+    private Overlay iSelected;
+    private ActionItem iWheel = NewAction(iWheelAction, 0, 0); 
     
     protected ImageView getObject() {return iControlled;}
     
@@ -275,6 +279,9 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
     private static final String KCommandRoiCreateRect = "COMMAND_ROI_CREATE_RECT"; // NOI18N
     private static final String KCommandRoiCreateOval = "COMMAND_ROI_CREATE_OVAL"; // NOI18N
     private static final String KCommandRoiCreateFree = "COMMAND_ROI_CREATE_FREE"; // NOI18N
+    private static final String KCommandRoiCreateIso  = "COMMAND_ROI_CREATE_ISO"; // NOI18N
+    private static final String KCommandRoiCreateProfile = "COMMAND_ROI_CREATE_PROFILE"; // NOI18N
+    private static final String KCommandRoiCreateRuler = "COMMAND_ROI_CREATE_RULER"; // NOI18N
     private static final String KCommandRoiCreate = "COMMAND_ROI_OPERATIONS_CREATE"; // NOI18N
     private static final String KCommandRoiDelete = "COMMAND_ROI_OPERATIONS_DELETE"; // NOI18N
     private static final String KCommandRoiMove   = "COMMAND_ROI_OPERATIONS_MOVE"; // NOI18N
@@ -327,6 +334,25 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
                 iAction = new RectangularRoiCreator(new Rectangle2D.Double());
             break;
                 
+            case KCommandRoiCreateProfile: //
+                iAction = new RectangularRoiCreator(new Rectangle2D.Double()) {
+                    
+                    public boolean DoRelease(int aX, int aY) {
+                        iControlled.getROIMgr().createProfile(iShape);
+                        iControlled.repaint();
+                        return false;
+                    }
+                    public void DoPaint(Graphics2D gc) {
+                        if (null != iShape) {                         
+                           final java.awt.Rectangle cr = gc.getClipBounds();
+                           final java.awt.Rectangle bn = iShape.getBounds();                           
+                           gc.drawLine(cr.x, bn.y, cr.x+cr.width, bn.y);                           
+                           gc.drawLine(cr.x, bn.y+bn.height, cr.x+cr.width, bn.y+bn.height);
+                        }
+                    }
+                };
+            break;
+                
             case KCommandRoiClone:   
                 iControlled.getROIMgr().cloneRoi((ROI)iSelected);
                 iControlled.repaint();
@@ -345,7 +371,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
                 iControlled.repaint();
                 break;
             case KCommandRoiFlipVert:
-                ((Overlay.IFlip)iSelected).flip(false);
+                ((Overlay.IFlip)iSelected).flip(true);
                 iControlled.repaint();
                 break;
             case KCommandRoiRotate90CW:
@@ -377,86 +403,100 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
     }
     
     void showPopupMenu_Context(int aX, int aY) {
-        final JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI creation")); 
-       
-        { 
-            JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ADD ROI"));
-
-            JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("RECTANGULAR"));
-            mi11.addActionListener(this);
-            mi11.setActionCommand(KCommandRoiCreateRect);
-            m1.add(mi11);
-
-            JMenuItem mi12 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("OVAL"));
-            mi12.addActionListener(this);
-            mi12.setActionCommand(KCommandRoiCreateOval); 
-            m1.add(mi12);
-
-            JMenuItem mi13 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("FREE"));
-            mi13.addActionListener(this);
-            mi13.setActionCommand(KCommandRoiCreateFree);
-            m1.add(mi13);
-
+        JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_OVERLAY_CREATE")); 
+        {
+            JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CREATE_OVERLAY"));
+            {
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CREATE_OVERLAY.RECTANGULAR"));
+            mi.addActionListener(this);
+            mi.setActionCommand(KCommandRoiCreateRect);
+            m1.add(mi);
+            } 
+            { 
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CREATE_OVERLAY.OVAL"));
+            mi.addActionListener(this);
+            mi.setActionCommand(KCommandRoiCreateOval); 
+            m1.add(mi);
+            } 
+            { 
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CREATE_OVERLAY.FREE"));
+            mi.addActionListener(this);
+            mi.setActionCommand(KCommandRoiCreateFree);
+            m1.add(mi);
+            } 
+            
             mnu.add(m1);
         }
+        { 
+        JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CREATE_OVERLAY.RULER"));
+        mi.addActionListener(this);
+        mi.setActionCommand(KCommandRoiCreateRuler);
+        mnu.add(mi);
+        } 
+        {            
+        JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CREATE_OVERLAY.PROFILE"));
+        mi.addActionListener(this);
+        mi.setActionCommand(KCommandRoiCreateProfile);
+        mnu.add(mi);
+        }
         {       
-            JMenuItem m2 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("DELETE ALL"));
-            m2.addActionListener(this);
-            m2.setActionCommand(KCommandRoiDeleteAll);
-            mnu.add(m2);
+        JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.DELETE_ALL"));
+        mi.addActionListener(this);
+        mi.setActionCommand(KCommandRoiDeleteAll);
+        mnu.add(mi);
         }
         
         mnu.show(iControlled, aX, aY);
     }
     
     void showPopupMenu_Roi(int aX, int aY) {
-        final JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI operations")); 
+        final JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS")); 
         
         if (!iSelected.isPermanent()) {
-            JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("DELETE"));
+            JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.DELETE"));
             mi11.addActionListener(this);
             mi11.setActionCommand(KCommandRoiDelete);
             mnu.add(mi11);
         }
         
         if (iSelected.isMovable()) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MOVE"));
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.MOVE"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiMove); 
             mnu.add(mi);
         }
         
         if (iSelected.isCloneable()) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CLONE"));
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CLONE"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiClone); 
             mnu.add(mi);
         }
         
         if (iSelected instanceof Overlay.IFlip/*iSelected.canFlip()*/) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("FLIP HORZ"));
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_HORZ"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiFlipHorz);
             mnu.add(mi);
-            mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("FLIP VERT"));
+            mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_VERT"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiFlipVert);
             mnu.add(mi);         
         }
         
         if (iSelected instanceof Overlay.IRotate/*iSelected.canRotate()*/) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROTATE 90 CW"));
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.ROTATE_90_CW"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiRotate90CW);
             mnu.add(mi);
-            mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROTATE 90 CCW"));
+            mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.ROTATE_90_CCW"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiRotate90CCW);
             mnu.add(mi);
         }
          
         if (iSelected instanceof Overlay.IIsoLevel/*iSelected.canFlip()*/) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CONVERT TO ISO LEVEL"));
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CONVERT_TO_ISO"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiConvertToIso);
             mnu.add(mi);           

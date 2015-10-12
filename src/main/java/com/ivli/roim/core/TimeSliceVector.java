@@ -1,8 +1,5 @@
-
-
 package com.ivli.roim.core;
 
-//import com.ivli.roim.PhaseInformation;
 import java.util.ArrayList;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Sequence;

@@ -12,13 +12,12 @@ import java.awt.geom.AffineTransform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {   
-    
+public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {       
     transient ROIManager iMgr; 
+    
     private Color iColor;
-    //private ROIStats iStats;
-      
-    final int iAreaInPixels;    
+          
+    private final int iAreaInPixels;    
     
     private SeriesCollection iSeries;
         
@@ -33,7 +32,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iMgr   = aMgr;
         //iStats = new ROIStats(this.calculateAreaInPixels(), aMgr.getImage().getPixelSpacing());     
         iAreaInPixels = calculateAreaInPixels();
-        makeSeries();
+        iSeries = CurveExtractor.extract(this);
     }
     
     ROI(ROI aR) {
@@ -86,22 +85,20 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     
     @Override
     protected void move(double adX, double adY) {
-        AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
-        iShape = trans.createTransformedShape(iShape);
+        //AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
+        iShape  = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);        
+        iSeries = CurveExtractor.extract(this);    
         
-        makeSeries();    
-        
-        update();
-        
-         if (null != iAnnos) {
-             iAnnos.stream().forEach((o) -> {
-                 o.move(adX, adY);
+        if (null != iAnnos) {
+            iAnnos.stream().forEach((o) -> {
+                o.move(adX, adY);
             });
         }
+        
+        update();
     }  
             
     private int calculateAreaInPixels() {
-
         final java.awt.Rectangle bnds = getShape().getBounds();
         int AreaInPixels = 0;
 
@@ -112,15 +109,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         
         return AreaInPixels;
     }                 
-    
-    private void makeSeries() {
-        CurveExtractor ce = new CurveExtractor(getManager().getImage());
-        //Series cv = ce.extract(this);
-        //iSeries = cv;
-        iSeries = ce.extract(this);
-    
-    }
-       
+        
     @Override
     void update() {        
         
@@ -132,18 +121,34 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }
     
     @Override
-    public void flip(boolean aV) {}
+    public void flip(boolean aV) {                
+        
+        Rectangle r = iShape.getBounds();
+        AffineTransform tx;
+        
+        if (aV) {
+            tx = AffineTransform.getScaleInstance(1, -1);
+            tx.translate(0, -getShape().getBounds().getHeight());
+        } else {
+            tx = AffineTransform.getScaleInstance(-1, 1);
+            tx.translate(-getShape().getBounds().getWidth(), 0);       
+        }
+        
+        
+        iShape = tx.createTransformedShape(iShape);
+        
+        r = iShape.getBounds();
+    }
+    
     @Override
     public void rotate(int aV) {
-        Rectangle rect = getShape().getBounds();
-        AffineTransform at = new AffineTransform();
-        at.rotate(Math.toRadians(aV), rect.getX() + rect.width/2, rect.getY() + rect.height/2);
-        //at.scale(modifier / 100.0, modifier/ 100.0);
-        //at.translate(modifier, modifier);
-      
-        iShape = at.createTransformedShape(iShape);
- 
-    }
+        final Rectangle rect = getShape().getBounds();
+        AffineTransform tx = new AffineTransform();
+        
+        tx.rotate(Math.toRadians(aV), rect.getX() + rect.width/2, rect.getY() + rect.height/2);
+              
+        iShape = tx.createTransformedShape(iShape);
+     }
   
     
     

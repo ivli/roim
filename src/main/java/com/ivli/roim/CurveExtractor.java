@@ -10,21 +10,23 @@ import com.ivli.roim.core.Series;
  * @author likhachev
  */
 public class CurveExtractor {
-    final IMultiframeImage iImages;
+    //final IMultiframeImage iImages;
 
-    public CurveExtractor (IMultiframeImage aI) {
-        iImages = aI;
-    }
+    //public CurveExtractor (IMultiframeImage aI) {
+    //    iImages = aI;
+    //}
     
     /* */
-    public SeriesCollection extract(ROI aRoi) {
+    public static SeriesCollection extract(ROI aRoi) {
         SeriesCollection c = new SeriesCollection();
        
         Series density = new Series(new Measurement(Measurement.DENSITY), "IntDen");
         Series mins    = new Series(new Measurement(Measurement.MINIMUM), "Mins");
         Series maxs    = new Series(new Measurement(Measurement.MAXIMUM), "Maxs");
         
-        for (ImageFrame f : iImages) {                           
+        IMultiframeImage img = aRoi.getManager().getImage();
+        
+        for (ImageFrame f : img) {                           
             Measure m = measure(f.getRaster(), aRoi.getShape()); 
             density.add(m.getIden());   
             mins.add(m.getMin());
@@ -38,7 +40,7 @@ public class CurveExtractor {
         return c;
     }    
    
-    Measure measure(java.awt.image.Raster aRaster, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
+    private static Measure measure(java.awt.image.Raster aRaster, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
         final java.awt.Rectangle bnds = aShape.getBounds();
 
         double min = Double.MAX_VALUE; 

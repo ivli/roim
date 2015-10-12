@@ -22,13 +22,12 @@ import com.ivli.roim.events.EStateChanged;
 public class ROIManager implements java.io.Serializable {  
     private static final long serialVersionUID = 42L;
     
-    private static final boolean ROI_HAS_ANNOTATIONS = true;
+    private static final boolean ROI_HAS_ANNOTATIONS = !true;
     
     transient private final ImageView  iView; 
     
     private HashSet<Overlay> iOverlays;      
-           
-    
+              
     ROIManager(ImageView aV) { 
         iView = aV;
         iOverlays = new HashSet();          
@@ -54,6 +53,16 @@ public class ROIManager implements java.io.Serializable {
             o.paint(aGC, aT);
         });
     }            
+
+    public void createProfile(Shape aS) {
+        Rectangle r = iView.screenToVirtual().createTransformedShape(aS).getBounds();
+        
+        r.x = 0;
+        r.width = getImage().getWidth();
+        
+        Profile newRoi = new Profile(r, this);     
+        iOverlays.add(newRoi);                
+    }
             
     public void createRoiFromShape(Shape aS) { 
         final Shape r = iView.screenToVirtual().createTransformedShape(aS);

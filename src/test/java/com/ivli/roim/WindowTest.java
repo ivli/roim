@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ivli.roim.core;
+package com.ivli.roim;
 
 import com.ivli.roim.core.Window;
 import org.junit.After;

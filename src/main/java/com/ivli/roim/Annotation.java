@@ -35,7 +35,9 @@ public class Annotation extends Overlay {
     Annotation(ROI aRoi) {
         super(new Rectangle2D.Double(), null);
         iRoi = aRoi;        
+        
         ((Rectangle2D.Double)iShape).setRect(aRoi.getShape().getBounds2D());
+        
         aRoi.register(this);
     }
     

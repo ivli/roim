@@ -13,7 +13,10 @@ public abstract class ActionItem {
     protected int iX;
     protected int iY;
 
-    public ActionItem(int aX, int aY){iX = aX; iY = aY;}
+    public ActionItem(int aX, int aY) {
+        iX = aX; 
+        iY = aY;
+    }
 
     public final boolean release(int aX, int aY) {
        return DoRelease(aX, aY);
