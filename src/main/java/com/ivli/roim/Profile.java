@@ -19,7 +19,7 @@ public class Profile extends ROIBase {
     private double  iHist[];
     
     public Profile(Rectangle2D aS, ROIManager aMgr) {
-        super(aS, aMgr, "RULER"); 
+        super(aS, aMgr, "PROFILE"); 
         makeHistogram();
     }
     
@@ -111,6 +111,7 @@ public class Profile extends ROIBase {
         for (int n = 1; n < iHist.length; ++n) 
             s.lineTo(n, iShape.getBounds().getY() - iHist[n] * scale);
         
+       
         aGC.setXORMode(Color.WHITE);
         
         
