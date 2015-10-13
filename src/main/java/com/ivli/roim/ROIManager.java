@@ -86,21 +86,28 @@ public class ROIManager implements java.io.Serializable {
         iView.notifyROIChanged(newRoi, EStateChanged.Created);
     }
     
-    public void moveRoi(Overlay aO, double adX, double adY) {           
-        AffineTransform trans = iView.virtualToScreen();
-        trans.concatenate(AffineTransform.getTranslateInstance(adX, adY));    
+    public void moveRoi(Overlay aO, double adX, double adY) {
+        
+        logger.info("-->Move ROI: adX" + adX + ", adY =" + adY);
+        
+        //AffineTransform trans = iView.virtualToScreen();
+        //trans.concatenate(AffineTransform.getTranslateInstance(adX, adY));    
                
-        if (iView.getBounds().contains(trans.createTransformedShape(aO.getShape().getBounds()).getBounds())) {           
+        //if (iView.getBounds().contains(trans.createTransformedShape(aO.getShape().getBounds()).getBounds())) {           
             aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));  
+            
             if (aO instanceof ROI)
                 iView.notifyROIChanged((ROI)aO, EStateChanged.Changed);
-        }       
+       // }       
     }
     
     public Overlay findOverlay(Point aP) {      
         final Rectangle temp = iView.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();
         
+        logger.info("--> find overlay " + temp.toString());
+        
         for (Overlay r : iOverlays) {
+            logger.info("--! evaluate overlay " + r.getShape().toString());
             if (r.isSelectable() && r.getShape().intersects(temp)) 
                 return r;                                   
         }
@@ -146,8 +153,8 @@ public class ROIManager implements java.io.Serializable {
             iView.notifyROIChanged(null, EStateChanged.Emptied);
             
             for (Overlay r : iOverlays) {
-                if (r instanceof ROI) {
-                    ((ROI)r).iMgr = this;
+                if (r instanceof ROIBase) {
+                    ((ROIBase)r).iMgr = this;
                     iView.notifyROIChanged(((ROI)r), EStateChanged.Created);
                     /*
                     if (null != ((ROI)r).iAnnos)

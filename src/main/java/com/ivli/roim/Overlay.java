@@ -33,10 +33,12 @@ public abstract class Overlay implements java.io.Serializable {
     
     protected Overlay(Shape aShape, String aName) {
         iShape = aShape; 
+        
         if(null != aName) 
             iName = aName; 
         else
             iName = new String();
+        
         patchName();
         
         iId = staticId++;

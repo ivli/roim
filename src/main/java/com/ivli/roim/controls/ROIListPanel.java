@@ -79,7 +79,7 @@ public class ROIListPanel extends javax.swing.JPanel implements TableModelListen
                 //ROIStats s = r.getStats();
                 DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
                 //jTable1.setModel(new TableModel());
-                model.addRow(new Object[]{r, r.getName(), r.getAreaInPixels(), r.getSeries(Measurement.DENSITY).get(r.getManager().getImage().getCurrent()), r.getColor()});                
+                model.addRow(new Object[]{r, r.getName(), r.getAreaInPixels(), r.getDensity(), r.getColor()});                
             }
         }
         

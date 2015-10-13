@@ -1,49 +1,117 @@
 
 package com.ivli.roim;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import javafx.scene.paint.Color;
+import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
+import java.awt.image.Raster;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  *
  * @author likhachev
  */
-public class Profile extends Overlay {
+public class Profile extends ROIBase {      
     
-    transient ROIManager iMgr; 
+    double iHist[];
     
-    public Profile(java.awt.Shape aS, ROIManager aMgr) {
-        super(aS, "RULER");
-        iMgr = aMgr;
+    public Profile(Rectangle2D aS, ROIManager aMgr) {
+        super(aS, aMgr, "RULER"); 
+        makeHistogram();
     }
     
-    public int getCaps() {
-        return MOVEABLE & SELECTABLE;
+    @Override
+    int getCaps() {
+        return MOVEABLE | SELECTABLE;
     }
     
+    @Override
     public void paint(Graphics2D aGC, AffineTransform aTrans) {
-
-        //final java.awt.Rectangle cr = aGC.getClipBounds();
-        final java.awt.Rectangle bn = aTrans.createTransformedShape(iShape).getBounds();  
-        
+        final Rectangle bn = aTrans.createTransformedShape(iShape).getBounds();          
         final java.awt.Color tmp = aGC.getColor();
         
-        aGC.setColor(java.awt.Color.MAGENTA);
+        aGC.setColor(Settings.BLUEVIOLET);
         aGC.drawLine(bn.x, bn.y, bn.x+bn.width, bn.y);                           
         
         aGC.setColor(java.awt.Color.RED);
         aGC.drawLine(bn.x, bn.y+bn.height, bn.x+bn.width, bn.y+bn.height);
       
         aGC.setColor(tmp);
+        
+        drawHistogram(aGC, aTrans);
     } 
    
-    public void update(){}    
-    public void move(double adX, double adY) {
-        iShape  = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);  
-    } 
+    @Override
+    public void update() {
+        makeHistogram();        
+    }    
+    
+    
+    @Override
+    public void move(double adX, double adY) {      
        
-   
+        final Rectangle2D r = iShape.getBounds2D();
+        
+        java.awt.Shape temp = AffineTransform.getTranslateInstance(.0, adY).createTransformedShape(
+                                 new Rectangle2D.Double(r.getX(), r.getY(), r.getWidth(), Math.max(1.0, r.getHeight() + adX))
+                              );  
+        
+        Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
+        
+        if (bounds.contains(temp.getBounds())) {
+            iShape = temp;
+            update();
+        }
+    } 
+ 
     
+    private void makeHistogram() {
+        final java.awt.Rectangle bounds = iShape.getBounds();
+
+        getManager().getImage().image().extract( new Extractor() {
+            
+                public void apply(Raster aR) throws ArrayIndexOutOfBoundsException {
+                    iHist = new double[bounds.width];
+
+                    double temp[] = new double [aR.getNumBands()];
+
+                    for (int i = 0; i < bounds.width; ++i)
+                        for (int j = bounds.y; j < bounds.y + bounds.height; ++j) 
+                            iHist[i] += aR.getPixel(i, j, temp)[0];
+
+                }
+            });
     
+    }
+    
+    private void drawHistogram(Graphics2D aGC, AffineTransform aTrans) {        
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+        
+        for (double d : iHist) {
+            min = Math.min(min, d);
+            max = Math.max(max, d);
+        }
+        
+        double range = max - min;
+        Rectangle bounds = new Rectangle(0, 0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
+        
+        final double scale = bounds.getHeight() / (4*range);  
+                
+        java.awt.geom.Path2D.Double s = new java.awt.geom.Path2D.Double();
+        
+        s.moveTo(0, iHist[0]);
+        
+        for (int n = 1; n < iHist.length; ++n) 
+            s.lineTo(n, (max - iHist[n]) * scale);
+        
+        aGC.setXORMode(Color.WHITE);
+        aGC.draw(aTrans.createTransformedShape(s));
+                
+    }
+    
+    private static final Logger logger = LogManager.getLogger(Profile.class);
 }

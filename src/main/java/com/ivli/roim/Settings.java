@@ -19,6 +19,9 @@ public class Settings {
     public static final String DEFAULT_FOLDER_ROILIST = ".\\"; //NOI18N
     public static final String FILE_SUFFIX_ROILIST          = "*"; //NOI18N
     
+    public static final Color BLUEVIOLET = new Color(0.5411765f, 0.16862746f, 0.8862745f);
+    public static final Color VIOLET     = new Color(0.93333334f, 0.50980395f, 0.93333334f);
+    
     public enum EDISPLAY_UNITS {
         DISPLAY_UNITS_MM, DISPLAY_UNITS_CM;
         public static final String getFormatString() {

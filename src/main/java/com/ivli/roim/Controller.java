@@ -200,7 +200,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
                 //iControlled.deleteRoi(iSelected);
                 iAction = new BaseActionItem(e.getX(), e.getY()) {
                     protected void DoAction(int aX, int aY) {
-
+                                               
                         iControlled.getROIMgr().moveRoi(iSelected, aX-iX, aY-iY);
                         iControlled.repaint();//old.createIntersection(iSelected.iShape.getBounds2D())); 
                     }    

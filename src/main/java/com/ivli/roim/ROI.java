@@ -1,6 +1,7 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
 import java.util.HashSet;
 import java.awt.Color;
@@ -8,46 +9,35 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {       
-    transient ROIManager iMgr; 
-    
-    private Color iColor;
-          
-    private final int iAreaInPixels;    
-    
-    private SeriesCollection iSeries;
-        
+public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {          
+    private Color iColor;          
+    private final int iAreaInPixels;        
+    private SeriesCollection iSeries;        
     private HashSet<Overlay> iAnnos; 
     
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE;}
     
     ROI(Shape aS, ROIManager aMgr, Color aC) {
-        super(aS, new String()); 
+        super(aS, aMgr, new String()); 
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);
-        iMgr   = aMgr;
-        //iStats = new ROIStats(this.calculateAreaInPixels(), aMgr.getImage().getPixelSpacing());     
+          
         iAreaInPixels = calculateAreaInPixels();
         iSeries = CurveExtractor.extract(this);
     }
     
     ROI(ROI aR) {
-        super(aR.iShape, aR.iName);  
-        iColor = aR.iColor; 
-        iMgr   = aR.iMgr;        
-        //iStats = new ROIStats(aR.iStats);   
+        super(aR.iShape, aR.getManager(), aR.getName());          
+        iColor = aR.getColor();         
         iAreaInPixels = aR.iAreaInPixels;
         iSeries = aR.iSeries;
     }
-           
-    public ROIManager getManager() {
-        return iMgr;
-    }
-    
+                  
     void register(Overlay aO) {
         if (null == iAnnos)
             iAnnos = new HashSet();
@@ -63,6 +53,10 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
            
     public int getAreaInPixels() {
         return iAreaInPixels;
+    }
+    
+    public double getDensity() {
+        return getSeries(Measurement.DENSITY).get(getManager().getImage().getCurrent());
     }
     
     public Series getSeries(int anId) {       
@@ -86,7 +80,14 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     @Override
     protected void move(double adX, double adY) {
         //AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
-        iShape  = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);        
+        Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);        
+        Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
+        
+        if (!bounds.contains(temp.getBounds())) {
+            logger.info("!!movement out of range");
+        } else {
+       
+        iShape  = temp;    
         iSeries = CurveExtractor.extract(this);    
         
         if (null != iAnnos) {
@@ -96,6 +97,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         }
         
         update();
+        }
     }  
             
     private int calculateAreaInPixels() {
