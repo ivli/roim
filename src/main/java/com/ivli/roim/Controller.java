@@ -169,10 +169,12 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
     public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
             if (null != (iSelected = iControlled.getROIMgr().findOverlay(e.getPoint()))) {
-                if (0 == (iSelected.getCaps() & Overlay.HASCUSTOMMNU))
-                    showPopupMenu_Roi(e.getX(), e.getY());
-                
-                
+                if (iSelected.hasMenu()) {
+                    final JPopupMenu mnu = buildObjectSpecificPopupMenu(iSelected);
+                    
+                    
+                     mnu.show(iControlled, e.getX(), e.getY());
+                }
             } else 
                 showPopupMenu_Context(e.getX(), e.getY());
         }
@@ -292,6 +294,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
     private static final String KCommandRoiRotate90CW   = "COMMAND_ROI_OPERATIONS_ROTATE_90_CW"; // NOI18N
     private static final String KCommandRoiRotate90CCW  = "COMMAND_ROI_OPERATIONS_ROTATE_90_CCW"; // NOI18N
     private static final String KCommandRoiConvertToIso = "COMMAND_ROI_OPERATIONS_CONVERT_TO_ISO"; // NOI18N
+    private static final String KCommandProfileShow     = "COMMAND_ROI_OPERATIONS_PROFILE_SHOW_ON-OFF"; // NOI18N
 
     public void actionPerformed(ActionEvent e) {
         logger.info(e.getActionCommand() +  e.paramString()); // NOI18N
@@ -391,7 +394,10 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
                 iControlled.getROIMgr().clear();//deleteAllOverlays(); 
                 iControlled.repaint();
                 break;
-                
+            case KCommandProfileShow:
+                ((Profile)iSelected).showHistogram();
+                iControlled.repaint();
+                break;
             default: 
                 handleCustomCommand(iSelected);
                 break;
@@ -449,8 +455,21 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
         mnu.show(iControlled, aX, aY);
     }
     
-    void showPopupMenu_Roi(int aX, int aY) {
-        final JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS")); 
+    JPopupMenu buildObjectSpecificPopupMenu(Overlay aO) {
+       JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS")); 
+
+
+        buildPopupMenu_Roi(mnu);
+        
+        if(iSelected instanceof Profile)
+            buildPopupMenu_Profile(mnu);
+        
+                
+        return mnu;    
+    }
+    
+    void buildPopupMenu_Roi(JPopupMenu mnu) {
+        
         
         if (!iSelected.isPermanent()) {
             JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.DELETE"));
@@ -502,9 +521,19 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
             mnu.add(mi);           
         } 
        
-        mnu.show(iControlled, aX, aY);
+       
     }
 
+    void buildPopupMenu_Profile(JPopupMenu mnu) {
+        {
+            JMenuItem mi11 = new JMenuItem("MNU_ROI_OPERATIONS.PROFILE_SHOW");
+            mi11.addActionListener(this);
+            mi11.setActionCommand(KCommandProfileShow);
+            mnu.add(mi11);
+        }
+ 
+    }
+        
     public void paint(Graphics2D gc) {
         if (null != iAction) 
             iAction.paint(gc);

@@ -22,7 +22,7 @@ public abstract class Overlay implements java.io.Serializable {
     protected static final int CANFLIP    = 0x10;
     protected static final int CANROTATE  = 0x20;
     protected static final int RESIZABLE  = 0x40;
-    protected static final int HASCUSTOMMNU  = 0x100;    
+    protected static final int HASMENU    = 0x100;    
     
     private static int staticId = 0;
      
@@ -60,6 +60,7 @@ public abstract class Overlay implements java.io.Serializable {
     boolean isMovable() {return 0 != (getCaps() & MOVEABLE);}
     boolean isPermanent() {return 0 != (getCaps() & PERMANENT);}
     boolean isCloneable() {return 0 != (getCaps() & CLONEABLE);}
+    boolean hasMenu() {return 0 != (getCaps() & HASMENU);}
     boolean canFlip() {return 0 != (getCaps() & CANFLIP);} 
     boolean canRotate() {return 0 != (getCaps() & CANROTATE);} 
     

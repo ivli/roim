@@ -15,8 +15,8 @@ import org.apache.logging.log4j.Logger;
  * @author likhachev
  */
 public class Profile extends ROIBase {      
-    
-    double iHist[];
+    private boolean iShow = true;
+    private double  iHist[];
     
     public Profile(Rectangle2D aS, ROIManager aMgr) {
         super(aS, aMgr, "RULER"); 
@@ -25,7 +25,7 @@ public class Profile extends ROIBase {
     
     @Override
     int getCaps() {
-        return MOVEABLE | SELECTABLE;
+        return MOVEABLE | SELECTABLE | HASMENU;
     }
     
     @Override
@@ -41,7 +41,8 @@ public class Profile extends ROIBase {
       
         aGC.setColor(tmp);
         
-        drawHistogram(aGC, aTrans);
+        if (iShow)
+            drawHistogram(aGC, aTrans);
     } 
    
     @Override
@@ -116,6 +117,10 @@ public class Profile extends ROIBase {
         
         aGC.draw(aTrans.createTransformedShape(s));
                 
+    }
+    
+    public boolean showHistogram() {
+        return iShow = !iShow; 
     }
     
     private static final Logger logger = LogManager.getLogger(Profile.class);

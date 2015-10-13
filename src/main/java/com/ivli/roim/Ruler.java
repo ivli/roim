@@ -19,7 +19,7 @@ public class Ruler extends Overlay {
               null != aN? aN : "RULER");
     }
     
-    int getCaps(){return CANFLIP|CANROTATE|HASCUSTOMMNU|PERMANENT;}
+    int getCaps(){return CANFLIP|CANROTATE|HASMENU|PERMANENT;}
     
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         

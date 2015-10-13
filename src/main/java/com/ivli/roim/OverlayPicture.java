@@ -29,7 +29,7 @@ public class OverlayPicture extends Overlay {
         iPicture = aP;
     }
     
-    int getCaps(){return CANFLIP|CANROTATE|HASCUSTOMMNU|PERMANENT;}
+    int getCaps(){return CANFLIP|CANROTATE|HASMENU|PERMANENT;}
     
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         

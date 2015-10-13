@@ -21,7 +21,7 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     private HashSet<Overlay> iAnnos; 
     
     @Override
-    int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE;}
+    int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU;}
     
     ROI(Shape aS, ROIManager aMgr, Color aC) {
         super(aS, aMgr, new String()); 
