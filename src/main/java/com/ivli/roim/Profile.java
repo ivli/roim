@@ -96,19 +96,24 @@ public class Profile extends ROIBase {
             max = Math.max(max, d);
         }
         
-        double range = max - min;
-        Rectangle bounds = new Rectangle(0, 0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
+        final double range = max - min;
         
-        final double scale = bounds.getHeight() / (4*range);  
-                
+        Rectangle bounds = new Rectangle(0, 0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
+                       
+        final double scale = Math.min(iShape.getBounds().getY() / (range), 
+                                      bounds.getHeight() / (4*range) );
+        
         java.awt.geom.Path2D.Double s = new java.awt.geom.Path2D.Double();
         
         s.moveTo(0, iHist[0]);
         
         for (int n = 1; n < iHist.length; ++n) 
-            s.lineTo(n, (max - iHist[n]) * scale);
+            s.lineTo(n, iShape.getBounds().getY() - iHist[n] * scale);
         
         aGC.setXORMode(Color.WHITE);
+        
+        
+        
         aGC.draw(aTrans.createTransformedShape(s));
                 
     }
