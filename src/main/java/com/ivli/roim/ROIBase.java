@@ -5,7 +5,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 /**
  *
- * @author likhachev
+ * 
  */
 public abstract class ROIBase extends Overlay {
     transient ROIManager iMgr; 
@@ -14,6 +14,8 @@ public abstract class ROIBase extends Overlay {
         super(aS, aN);
         iMgr = aM;
     }
+    
+    int getCaps() {return SELECTABLE|MOVEABLE|HASMENU;}
     
     protected ROIManager getManager() {return iMgr;}
     

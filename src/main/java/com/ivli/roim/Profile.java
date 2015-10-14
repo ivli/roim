@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class Profile extends ROIBase {      
     private boolean iShow = true;
+    
+    private boolean iNormalize = false;
     private double  iHist[];
     
     public Profile(Rectangle2D aS, ROIManager aMgr) {
@@ -52,8 +54,7 @@ public class Profile extends ROIBase {
     
     
     @Override
-    public void move(double adX, double adY) {      
-       
+    public void move(double adX, double adY) {             
         final Rectangle2D r = iShape.getBounds2D();
         
         java.awt.Shape temp = AffineTransform.getTranslateInstance(.0, adY).createTransformedShape(
@@ -72,19 +73,15 @@ public class Profile extends ROIBase {
     private void makeHistogram() {
         final java.awt.Rectangle bounds = iShape.getBounds();
 
-        getManager().getImage().image().extract( new Extractor() {
+        getManager().getImage().image().extract((Raster aR) -> {
+            iHist = new double[bounds.width];
             
-                public void apply(Raster aR) throws ArrayIndexOutOfBoundsException {
-                    iHist = new double[bounds.width];
-
-                    double temp[] = new double [aR.getNumBands()];
-
-                    for (int i = 0; i < bounds.width; ++i)
-                        for (int j = bounds.y; j < bounds.y + bounds.height; ++j) 
-                            iHist[i] += aR.getPixel(i, j, temp)[0];
-
-                }
-            });
+            double temp[] = new double [aR.getNumBands()];
+            
+            for (int i = 0; i < bounds.width; ++i)
+                for (int j = bounds.y; j < bounds.y + bounds.height; ++j)
+                    iHist[i] += aR.getPixel(i, j, temp)[0];
+        });
     
     }
     
@@ -106,18 +103,22 @@ public class Profile extends ROIBase {
         
         java.awt.geom.Path2D.Double s = new java.awt.geom.Path2D.Double();
         
-        s.moveTo(0, iHist[0]);
+        int n = 0;
+        s.moveTo(0, iShape.getBounds().getY() - iHist[n] * scale);
         
-        for (int n = 1; n < iHist.length; ++n) 
+        for (;n < iHist.length; ++n) 
             s.lineTo(n, iShape.getBounds().getY() - iHist[n] * scale);
         
        
-        aGC.setXORMode(Color.WHITE);
-        
-        
+        aGC.setXORMode(Color.WHITE);     
         
         aGC.draw(aTrans.createTransformedShape(s));
-                
+        
+        aGC.setPaintMode(); //turn XOR mode off
+    }
+    
+    public boolean normalize() {
+        return iNormalize = !iNormalize; 
     }
     
     public boolean showHistogram() {

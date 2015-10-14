@@ -12,15 +12,13 @@ import java.awt.image.AffineTransformOp;
  *
  * @author likhachev
  */
-public class Ruler extends Overlay {
+public class Ruler extends ROIBase {
     
-    Ruler(ImageFrame aI, String aN) { 
-        super(new Rectangle(aI.getWidth(), aI.getHeight()), 
-              null != aN? aN : "RULER");
+    Ruler(Rectangle aS, ROIManager aM) { 
+        super(aS, aM, "RULER");              
     }
-    
-    int getCaps(){return CANFLIP|CANROTATE|HASMENU|PERMANENT;}
-    
+           
+    @Override
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
@@ -37,9 +35,12 @@ public class Ruler extends Overlay {
         //aGC.drawImage(iBuf, trans, null);        
     } 
      
-    void update(){
+    @Override
+    void update() {
+        
     }
      
+    @Override
     void move(double adX, double adY) {
          
         AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
