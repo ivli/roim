@@ -103,7 +103,7 @@ public class ROIManager implements java.io.Serializable {
         final Rectangle temp = iView.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();
                 
         for (Overlay r : iOverlays) {
-            logger.info("--! evaluate overlay " + r.getShape().toString());
+           // logger.info("--! evaluate overlay " + r.getShape().toString());
             if (r.isSelectable() && r.getShape().intersects(temp)) 
                 return r;                                   
         }
