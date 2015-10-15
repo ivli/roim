@@ -181,8 +181,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu2.add(jMenuItem3);
 
-        jMenuItem5.setText(bundle.getString("NewJFrame.jMenuItem5.text")); // NOI18N
-        jMenuItem5.setActionCommand(bundle.getString("NewJFrame.jMenuItem5.actionCommand")); // NOI18N
+        jMenuItem5.setText(bundle.getString("LUT_MENU.CHOOSE_LUT_FILE")); // NOI18N
         jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem5ActionPerformed(evt);

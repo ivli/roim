@@ -465,7 +465,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Act
                 dialog.setVisible(true);                 
                 break;
             case KCommandChangeLUT:
-                FileDialog fd = new FileDialog((Frame)null , java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_A_FILE"), FileDialog.LOAD);
+                FileDialog fd = new FileDialog((Frame)null , java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_LUT_FILE"), FileDialog.LOAD);
                 fd.setDirectory(Settings.DEFAULT_FOLDER_LUT);
                 fd.setFile(Settings.FILE_SUFFIX_LUT);
                 fd.setVisible(true);
