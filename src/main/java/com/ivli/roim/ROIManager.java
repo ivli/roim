@@ -88,8 +88,6 @@ public class ROIManager implements java.io.Serializable {
     
     public void moveRoi(Overlay aO, double adX, double adY) {
         
-        logger.info("-->Move ROI: adX" + adX + ", adY =" + adY);
-        
         //AffineTransform trans = iView.virtualToScreen();
         //trans.concatenate(AffineTransform.getTranslateInstance(adX, adY));    
                
@@ -103,9 +101,7 @@ public class ROIManager implements java.io.Serializable {
     
     public Overlay findOverlay(Point aP) {      
         final Rectangle temp = iView.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();
-        
-        logger.info("--> find overlay " + temp.toString());
-        
+                
         for (Overlay r : iOverlays) {
             logger.info("--! evaluate overlay " + r.getShape().toString());
             if (r.isSelectable() && r.getShape().intersects(temp)) 
