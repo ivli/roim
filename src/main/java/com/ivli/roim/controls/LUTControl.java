@@ -67,7 +67,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Act
     private ActionItem     iAction;
     private BufferedImage  iBuf;
     
-    private final Controller iCtrl = new Controller();
+    private final Bobcat iCtrl = new Bobcat();
      /* 
       * passive mode constructor, only to display W/L not to control 
       */
@@ -121,140 +121,141 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Act
         repaint();              
     }   
     
-    private class Controller implements MouseMotionListener, MouseListener, MouseWheelListener {
+    private class Bobcat implements MouseMotionListener, MouseListener, MouseWheelListener {
    
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        if (null != iAction) 
-            iAction.action(e.getX(), e.getY());
-    }
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (null != iAction) 
+                iAction.action(e.getX(), e.getY());
+        }
     
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        if (null != iAction)
-            iAction.wheel(e.getWheelRotation());
-        else {
-            final Window win = new Window(iWLM.getWindow());                     
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            if (null != iAction)
+                iAction.wheel(e.getWheelRotation());
+            else {
+                final Window win = new Window(iWLM.getWindow());                     
 
-            win.setLevel(win.getLevel() - e.getWheelRotation());                 
+                win.setLevel(win.getLevel() - e.getWheelRotation());                 
 
-            if (iWLM.getRange().contains(win)) {
-                iWLM.setWindow(win);
+                if (iWLM.getRange().contains(win)) {
+                    iWLM.setWindow(win);
 
-                ///iWLM.setWindow(win);     
+                    ///iWLM.setWindow(win);     
+                }
+            }            
+        } 
+    
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            final int ypos = getHeight() - e.getPoint().y;
+
+            if (iTop.contains(ypos) || iBottom.contains(ypos))
+                setCursor(java.awt.Cursor.getPredefinedCursor(MARKER_CURSOR));
+            else if (ypos < iTop.getPosition() && ypos > iBottom.getPosition())
+                setCursor(java.awt.Cursor.getPredefinedCursor(WINDOW_CURSOR));
+            else 
+                setCursor(java.awt.Cursor.getDefaultCursor());                                     
+        }
+       
+        @Override
+        public void mousePressed(MouseEvent e) {        
+            final int ypos = getHeight() - e.getPoint().y;
+
+            if (iTop.contains(ypos) || iBottom.contains(ypos) || iTop.getPosition() + 4 > ypos && iBottom.getPosition() - 4 < ypos) {  
+
+
+                iAction = new ActionItem(e.getX(), e.getY()) {
+
+                    boolean first = true;
+                    final boolean iMoveTop = iTop.contains(ypos);    
+
+                    final boolean iMoveBoth = !(iMoveTop || iBottom.contains(ypos)) && iTop.getPosition() > ypos && iBottom.getPosition() < ypos;  
+
+                    protected void DoAction(int aX, int aY) {
+
+
+                        final double delta = screenToImage(aY - iY);
+                        final Window win = new Window(iWLM.getWindow());                     
+
+                        if (iMoveTop) {               
+                           win.setTop(win.getTop() - delta);
+                          // iTop.move(iTop.getPosition() + aX - iX);
+                        } else if (iMoveBoth) {
+                            win.setLevel(win.getLevel() - delta);
+                        } else {   
+                          // iBottom.move(iBottom.getPosition() + aX - iX); 
+                           win.setBottom(win.getBottom() - delta);
+                        }
+
+                        if (iWLM.getRange().contains(win)) {
+                            iWLM.setWindow(win);
+                           // changeWindow(win);                          
+                        }
+                    }   
+                    protected boolean DoWheel(int aX) {
+
+                        final Window win = new Window(iWLM.getWindow());                     
+
+                        win.setLevel(win.getLevel() - aX);                 
+
+                        if (iWLM.getRange().contains(win)) {
+                            if (null != iWLM) 
+                                iWLM.setWindow(win);
+
+                            //changeWindow(win);     
+                        }
+
+                        return false;
+                    }
+                };                
+            } 
+            else if (SwingUtilities.isLeftMouseButton(e)) {
+                //iAction = NewAction(iLeftAction, e.getX(), e.getY());
             }
-        }            
+            else if (SwingUtilities.isMiddleMouseButton(e)) {
+                //iAction = NewAction(iMiddleAction, e.getX(), e.getY());
+            }
+            else if (SwingUtilities.isRightMouseButton(e)) {
+                //iRight.Activate(e.getX(), e.getY());
+                //iAction = NewAction(iRightAction, e.getX(), e.getY());
+            }                
+        }
+
+        public void mouseReleased(MouseEvent e) {                    
+            iAction = null;  
+            if (!getBounds().contains(e.getPoint())){
+               shrink(); 
+               //iActive = true;
+            }
+        }
+   
+        public void mouseEntered(MouseEvent e) {        
+            //iActive = true;
+            if (null == iAction) {
+                extend();
+            }
+        }
+
+        public void mouseExited(MouseEvent e) {
+            if (null == iAction) {
+                shrink();
+               // iActive = false;
+            }
+        }
+
+        public void mouseClicked(MouseEvent e) {    
+            if (SwingUtilities.isRightMouseButton(e)) 
+                showPopupMenu(e.getX(), e.getY());
+            else if (SwingUtilities.isLeftMouseButton(e)) {
+                    if(e.getClickCount() == 2){                        
+                        iWLM.setWindow(new Window(iWLM.getRange()));
+                    }
+            }
+        }
     } 
     
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        final int ypos = getHeight() - e.getPoint().y;
-                              
-        if (iTop.contains(ypos) || iBottom.contains(ypos))
-            setCursor(java.awt.Cursor.getPredefinedCursor(MARKER_CURSOR));
-        else if (ypos < iTop.getPosition() && ypos > iBottom.getPosition())
-            setCursor(java.awt.Cursor.getPredefinedCursor(WINDOW_CURSOR));
-        else 
-            setCursor(java.awt.Cursor.getDefaultCursor());                                     
-    }
-       
-    @Override
-    public void mousePressed(MouseEvent e) {        
-        final int ypos = getHeight() - e.getPoint().y;
-                      
-        if (iTop.contains(ypos) || iBottom.contains(ypos) || iTop.getPosition() + 4 > ypos && iBottom.getPosition() - 4 < ypos) {  
-           
-            
-            iAction = new ActionItem(e.getX(), e.getY()) {
-                 
-                boolean first = true;
-                final boolean iMoveTop = iTop.contains(ypos);    
-
-                final boolean iMoveBoth = !(iMoveTop || iBottom.contains(ypos)) && iTop.getPosition() > ypos && iBottom.getPosition() < ypos;  
-
-                protected void DoAction(int aX, int aY) {
-                    
-                    
-                    final double delta = screenToImage(aY - iY);
-                    final Window win = new Window(iWLM.getWindow());                     
-
-                    if (iMoveTop) {               
-                       win.setTop(win.getTop() - delta);
-                      // iTop.move(iTop.getPosition() + aX - iX);
-                    } else if (iMoveBoth) {
-                        win.setLevel(win.getLevel() - delta);
-                    } else {   
-                      // iBottom.move(iBottom.getPosition() + aX - iX); 
-                       win.setBottom(win.getBottom() - delta);
-                    }
-                    
-                    if (iWLM.getRange().contains(win)) {
-                        iWLM.setWindow(win);
-                       // changeWindow(win);                          
-                    }
-                }   
-                protected boolean DoWheel(int aX) {
-                    
-                    final Window win = new Window(iWLM.getWindow());                     
-                    
-                    win.setLevel(win.getLevel() - aX);                 
-                    
-                    if (iWLM.getRange().contains(win)) {
-                        if (null != iWLM) 
-                            iWLM.setWindow(win);
-
-                        //changeWindow(win);     
-                    }
-                  
-                    return false;
-                }
-            };                
-        } 
-        else if (SwingUtilities.isLeftMouseButton(e)) {
-            //iAction = NewAction(iLeftAction, e.getX(), e.getY());
-        }
-        else if (SwingUtilities.isMiddleMouseButton(e)) {
-            //iAction = NewAction(iMiddleAction, e.getX(), e.getY());
-        }
-        else if (SwingUtilities.isRightMouseButton(e)) {
-            //iRight.Activate(e.getX(), e.getY());
-            //iAction = NewAction(iRightAction, e.getX(), e.getY());
-        }                
-    }
-    
-    public void mouseReleased(MouseEvent e) {                    
-        iAction = null;  
-        if (!getBounds().contains(e.getPoint())){
-           shrink(); 
-           //iActive = true;
-        }
-    }
-   
-    public void mouseEntered(MouseEvent e) {        
-        //iActive = true;
-        if (null == iAction) {
-            extend();
-        }
-    }
-    
-    public void mouseExited(MouseEvent e) {
-        if (null == iAction) {
-            shrink();
-           // iActive = false;
-        }
-    }
-    
-    public void mouseClicked(MouseEvent e) {    
-        if (SwingUtilities.isRightMouseButton(e)) 
-            showPopupMenu(e.getX(), e.getY());
-        else if (SwingUtilities.isLeftMouseButton(e)) {
-                if(e.getClickCount() == 2){                        
-                    iWLM.setWindow(new Window(iWLM.getRange()));
-                }
-        }
-    }
-    } ///Controller
-     private void updateBufferedImage() {
+    private void updateBufferedImage() {
         final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
         final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
        
@@ -272,17 +273,17 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Act
             }                      
         }
        
-        final WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0})             
-                                                             , data, new Point(0,0)
+        final WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
+                                                             data, new Point(0,0)
                                                              );        
         
-        iBuf = iWLM.transform(new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY)                                                               
-                                                    , new int[] {8}
-                                                    , false		// has alpha
-                                                    , false		// alpha premultipled
-                                                    , Transparency.OPAQUE
-                                                    , data.getDataType())                                                                                                                                  
-                                                , wr, true, null), null);
+        iBuf = iWLM.transform(new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
+                                                    new int[] {8},
+                                                    false,		// has alpha
+                                                    false,		// alpha premultipled
+                                                    Transparency.OPAQUE,
+                                                    data.getDataType()),                                                                                                                                  
+                                                wr, true, null), null);
         
        // iBuf = iView.getPLut().transform(iBuf, null);     
     }
@@ -381,7 +382,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Act
                 logger.info("Knobs are here :-)");
                 
              } catch (IOException ex) {              
-                 logger.info("Some shit happened -{}",ex);                 
+                 logger.info("Some shit happened -{}", ex);                 
              } 
         
         }
@@ -517,7 +518,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Act
         
         mnu.add(m1);
         
-        JMenuItem mi14 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.OPEN_LUT_ONDISC"));
+        JMenuItem mi14 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.CHOOSE_LUT_FILE"));
         mi14.addActionListener(this);
         mi14.setActionCommand(KCommandChangeLUT); 
         mnu.add(mi14);

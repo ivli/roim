@@ -59,7 +59,8 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
     private final IMultiframeImage iImage;                     
     private final Controller      iController;    
     private final AffineTransform iZoom;
-    private final Point           iOrigin;       
+    private final Point           iOrigin;    
+    private       Object    iInterpolation = Settings.INTERPOLATION_METHOD;
     
     private final IWLManager      iLUTMgr;        
     private final ROIManager      iROIMgr;
@@ -111,8 +112,14 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
         iFit = EFit.Height; 
         invalidateBuffer();
     }
-        
-    private void scale() {
+    
+    public void setInterpolationMethod(Object aMethod) {
+        iInterpolation = aMethod;
+        invalidateBuffer();
+        repaint();
+    }
+    
+    private void scaleUpdate() {
         double scale;
         
         switch (iFit) {
@@ -121,12 +128,13 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
                                     , (double)getHeight() / (double)iImage.getHeight()); break;                
             case Height: scale = (double)getHeight() / (double)iImage.getHeight(); break;
             case Width:  scale = (double)getWidth() / (double)iImage.getWidth(); break;
+            case Zoom: //falltrough to default
             default: 
                 return;                            
         }        
-        
+        // scale;
         iZoom.setToScale(scale, scale); //does it make sense to implement non isomorphic scale?
-        invalidateBuffer();
+        ///invalidateBuffer();
     }
           
     public void addROIChangeListener(ROIChangeListener aL) {
@@ -283,9 +291,9 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
         iBuf = z.filter(iLUT.transform(src, null), null);   
         */
         
-        scale();
+        scaleUpdate();
         
-        RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
+        RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(iZoom, hts);
         BufferedImage src  = iLUTMgr.transform(iImage.image().getBufferedImage(), null);
         //BufferedImage src = iPLut.transform(s1, null);

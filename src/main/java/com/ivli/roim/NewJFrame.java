@@ -104,6 +104,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem10 = new javax.swing.JMenuItem();
+        jMenuItem11 = new javax.swing.JMenuItem();
+        jMenuItem12 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -243,6 +247,34 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu2.add(jMenuItem8);
 
+        jMenu3.setText(bundle.getString("NewJFrame.jMenu3.text")); // NOI18N
+
+        jMenuItem10.setText(bundle.getString("NewJFrame.jMenuItem10.text")); // NOI18N
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem10);
+
+        jMenuItem11.setText(bundle.getString("NewJFrame.jMenuItem11.text")); // NOI18N
+        jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem11ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem11);
+
+        jMenuItem12.setText(bundle.getString("NewJFrame.jMenuItem12.text")); // NOI18N
+        jMenuItem12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem12ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem12);
+
+        jMenu2.add(jMenu3);
+
         jMenuItem4.setText(bundle.getString("NewJFrame.jMenuItem4.text")); // NOI18N
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -346,96 +378,108 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
     
-        
+    private void jTabbedPane1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jTabbedPane1ComponentShown
+        // TODO add your handling code here:
+        logger.info(evt);
+    }//GEN-LAST:event_jTabbedPane1ComponentShown
+
+            //static boolean b = true; 
+                    
+    private void jMenu2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu2ComponentShown
+        // TODO add your handling code here:
+        if (null == iPanel)
+        jMenuItem8.setEnabled(false);
+        else
+        jMenuItem8.setEnabled(true);
+    }//GEN-LAST:event_jMenu2ComponentShown
+
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        if(null != iPanel) 
-            iPanel.resetView();
+        if(null != iPanel)
+        iPanel.resetView();
         jPanel1.repaint();
     }//GEN-LAST:event_jMenuItem4ActionPerformed
-    //static boolean b = true; 
-    
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        FileDialog fd = new FileDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_LUT_FILE"), FileDialog.LOAD);
-        fd.setDirectory(Settings.DEFAULT_FOLDER_LUT); 
-        fd.setFile(Settings.FILE_SUFFIX_LUT); 
-        fd.setVisible(true);
-        String cm ;        
-        if (null != fd.getFile() && null != (cm = fd.getDirectory() + fd.getFile())) {
-            iPanel.setLUT(cm);  
-            jPanel1.repaint();
-            //iLut.setLUT(cm);
-            //iLut.repaint();
-            logger.info("LUT changed"); // NOI18N               
-        }
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
-                
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        VOILUTPanel panel = new VOILUTPanel(iPanel.iLut, iPanel.iView.getImage().image());       
-        JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
-        
-        dialog.setContentPane(panel);
-        dialog.validate();
-        dialog.pack();
-        dialog.setResizable(false);
-        dialog.setVisible(true);   
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
-    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        ROIListPanel panel = new ROIListPanel(null != iPanel?iPanel.getOverlaysList():null);
-        JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);        
-        dialog.setContentPane(panel);
-        dialog.validate();
-        dialog.pack();
-        dialog.setResizable(true);
-        dialog.setVisible(true);     
-        repaint();
-    }//GEN-LAST:event_jMenuItem7ActionPerformed
+    private void jMenuItem8PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jMenuItem8PropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem8PropertyChange
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
         iPanel.fitWidth();
         iPanel.repaint();
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
-    private void jMenuItem8PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jMenuItem8PropertyChange
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem8PropertyChange
-
-    private void jMenu2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu2ComponentShown
-        // TODO add your handling code here:
-        if (null == iPanel)
-            jMenuItem8.setEnabled(false);
-        else
-            jMenuItem8.setEnabled(true);
-    }//GEN-LAST:event_jMenu2ComponentShown
-
-    private void jTabbedPane1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jTabbedPane1ComponentShown
-        // TODO add your handling code here:
-        logger.info(evt);
-    }//GEN-LAST:event_jTabbedPane1ComponentShown
-
-    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
-        FileDialog fd = new FileDialog(this, "NEWJFRAME.CHOOSE_ROILIST_FILE", FileDialog.SAVE);
-        fd.setDirectory(Settings.DEFAULT_FOLDER_ROILIST); 
-        fd.setFile(Settings.FILE_SUFFIX_ROILIST); 
-        fd.setVisible(true);
-        String ff ;        
-        if (null != fd.getFile() && null != (ff = fd.getDirectory() + fd.getFile()))         
-            iPanel.iView.getROIMgr().externalize(ff);
-        
-    }//GEN-LAST:event_jMenuItem6ActionPerformed
-
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-       
+
         FileDialog fd = new FileDialog(this, "NEWJFRAME.CHOOSE_ROILIST_FILE", FileDialog.LOAD);
-        fd.setDirectory(Settings.DEFAULT_FOLDER_ROILIST); 
-        fd.setFile(Settings.FILE_SUFFIX_ROILIST); 
+        fd.setDirectory(Settings.DEFAULT_FOLDER_ROILIST);
+        fd.setFile(Settings.FILE_SUFFIX_ROILIST);
         fd.setVisible(true);
-        String ff ;        
+        String ff ;
         if (null != fd.getFile() && null != (ff = fd.getDirectory() + fd.getFile())) {
             iPanel.iView.getROIMgr().internalize(ff);
             iPanel.repaint();
         }
     }//GEN-LAST:event_jMenuItem9ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        FileDialog fd = new FileDialog(this, "NEWJFRAME.CHOOSE_ROILIST_FILE", FileDialog.SAVE);
+        fd.setDirectory(Settings.DEFAULT_FOLDER_ROILIST);
+        fd.setFile(Settings.FILE_SUFFIX_ROILIST);
+        fd.setVisible(true);
+        String ff ;
+        if (null != fd.getFile() && null != (ff = fd.getDirectory() + fd.getFile()))
+        iPanel.iView.getROIMgr().externalize(ff);
+
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        ROIListPanel panel = new ROIListPanel(null != iPanel?iPanel.getOverlaysList():null);
+        JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setContentPane(panel);
+        dialog.validate();
+        dialog.pack();
+        dialog.setResizable(true);
+        dialog.setVisible(true);
+        repaint();
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        FileDialog fd = new FileDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_LUT_FILE"), FileDialog.LOAD);
+        fd.setDirectory(Settings.DEFAULT_FOLDER_LUT);
+        fd.setFile(Settings.FILE_SUFFIX_LUT);
+        fd.setVisible(true);
+        String cm ;
+        if (null != fd.getFile() && null != (cm = fd.getDirectory() + fd.getFile())) {
+            iPanel.setLUT(cm);
+            jPanel1.repaint();
+            //iLut.setLUT(cm);
+            //iLut.repaint();
+            logger.info("LUT changed"); // NOI18N
+        }
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        VOILUTPanel panel = new VOILUTPanel(iPanel.iLut, iPanel.iView.getImage().image());
+        JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+
+        dialog.setContentPane(panel);
+        dialog.validate();
+        dialog.pack();
+        dialog.setResizable(false);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+        iPanel.iView.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    }//GEN-LAST:event_jMenuItem11ActionPerformed
+
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+        iPanel.iView.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
+
+    private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
+        iPanel.iView.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    }//GEN-LAST:event_jMenuItem12ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -547,8 +591,12 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem10;
+    private javax.swing.JMenuItem jMenuItem11;
+    private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
