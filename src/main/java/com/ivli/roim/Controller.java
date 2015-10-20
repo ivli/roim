@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ivli.roim;
 
 import com.ivli.roim.core.Window;
@@ -40,8 +36,8 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
     static final int MOUSE_ACTION_MENU   = 200;
     static final int MOUSE_ACTION_ROI    = 500;
     
-    protected int iLeftAction   = MOUSE_ACTION_PAN;
-    protected int iMiddleAction = MOUSE_ACTION_ZOOM;
+    protected int iLeftAction   = MOUSE_ACTION_ZOOM;
+    protected int iMiddleAction = MOUSE_ACTION_PAN;
     protected int iRightAction  = MOUSE_ACTION_WINDOW;
     protected int iWheelAction  = MOUSE_ACTION_LIST;
 
