@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2015 likhachev
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 package com.ivli.roim;
 
 import com.ivli.roim.core.Measurement;
@@ -295,13 +312,15 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iPanel = new JMedPane();
         
         try{
+           
             iPanel.open(dicomFileName);
-        }catch (IOException ex) {            
+        } catch (IOException ex) {            
             logger.info("Unable to open file " + dicomFileName); //NOI18N            
             javax.swing.JOptionPane.showMessageDialog(null, "Unable to open file " + dicomFileName);
             return;
-        }
+        } 
         
+         logger.info("-->has opened file" + dicomFileName);
         //iPanel.setMinimumSize(new Dimension(jPanel1.getWidth()-50, jPanel1.getHeight()));
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -324,7 +343,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         try {
             openImage(null);//"d:\\images\\H2_res.dcm"); // NOI18N           
         } catch (Exception e) {                   
-            logger.error(e);
+            logger.error("FATAL! ", e);
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
     
@@ -466,8 +485,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     public void frameChanged(FrameChangeEvent aE) {
        jLabel4.setText(String.format("%d:%d", aE.getFrame() + 1, aE.getTotal())); // NOI18N
     }
-    
-    
   
     
     public void ROIChanged(ROIChangeEvent aE) {

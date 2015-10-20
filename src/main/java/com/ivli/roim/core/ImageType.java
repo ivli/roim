@@ -15,28 +15,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.events;
+package com.ivli.roim.core;
 
-import com.ivli.roim.ROI;
 /**
  *
  * @author likhachev
  */
-public final class ROIChangeEvent extends java.util.EventObject { 
-    private final ROI iROI;
-    private final EStateChanged iChange;
-    
-    public ROIChangeEvent(Object aO, ROI aR, EStateChanged aC) {
-        super (aO);
-        iROI = aR;
-        iChange = aC;
-    }
-        
-    public EStateChanged getChange() {
-        return iChange;
-    }
-    
-    public ROI getROI() {
-        return iROI;
-    }    
+public final class ImageType {
+    public static final int PRIMARY   = 0x00;
+    public static final int DERIVED   = 0x01;
+    public static final int STATIC    = 0x00;
+    public static final int DYNAMIC   = 0x10;
+    public static final int WHOLEBODY = 0x20;
+    public static final int TOMO      = 0x40;
+    public static final int VOLUME    = TOMO | DERIVED;
 }
