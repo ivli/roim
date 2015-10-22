@@ -470,7 +470,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Act
                 fd.setDirectory(Settings.DEFAULT_FOLDER_LUT);
                 fd.setFile(Settings.FILE_SUFFIX_LUT);
                 fd.setVisible(true);
-                String cm ;        
+                String cm;        
                 if (null != fd.getFile() && null != (cm = fd.getDirectory() + fd.getFile())) {
                     iWLM.setLUT(cm);
                     invalidateBuffer();                  
@@ -509,7 +509,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Act
         
         JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.OPEN_BUILTIN_LUT"));
                
-        for (String s : LutLoader.getBuiltinLUT()) {
+        for (String s : LutLoader.getInstalledLUT()) {
             JMenuItem mit = new JMenuItem(s);
             mit.addActionListener(this);
             mit.setActionCommand(s); 

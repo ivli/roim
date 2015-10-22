@@ -12,6 +12,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * this file is based on the code of ImageJ a public domain Java image processing program
+ * The author, Wayne Rasband (wayne@codon.nih.gov), is at the Research Services Branch, 
+ * National Institute of Mental Health, Bethesda, Maryland, USA.
  */
 package com.ivli.roim;
 
@@ -29,28 +33,27 @@ import org.apache.logging.log4j.Logger;
 	(256 reds, 256 greens and 256 blues), LUTs in text format, 
 	or generates the LUT specified by the string argument 
 	passed to the run() method. */
-public class LutLoader {
+public final class LutLoader {
     
-        static final String BUILTIN_LUTS[] = {
-        /*0*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_FIRE"),        
-        /*1*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_GRAYS"),
-        /*2*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_ICE"),
-        /*3*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_SPECTRUM"),
-        /*4*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_3-3-2 RGB"),
-        /*5*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_RED"),
-        /*6*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_GREEN"),
-        /*7*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_BLUE"),
-        /*8*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_CYAN"),
-        /*9*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_MAGENTA"),
-        /*10*/   java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_YELLOW"),
-        /*11*/   java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_REDGREEN")
-        };
+    static final String BUILTIN_LUTS[] = {
+    /*0*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_FIRE"),        
+    /*1*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_GRAYS"),
+    /*2*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_ICE"),
+    /*3*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_SPECTRUM"),
+    /*4*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_3-3-2 RGB"),
+    /*5*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_RED"),
+    /*6*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_GREEN"),
+    /*7*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_BLUE"),
+    /*8*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_CYAN"),
+    /*9*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_MAGENTA"),
+    /*10*/   java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_YELLOW"),
+    /*11*/   java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_REDGREEN")
+    };
         
-    public static String[] getBuiltinLUT() {return BUILTIN_LUTS;} 
-	
-    private LutLoader(){};
-        
-        
+    public static String[] getInstalledLUT() {
+        return BUILTIN_LUTS;
+    } 
+	        
 	/** If 'arg'="", displays a file open dialog and opens the specified
 		LUT. If 'arg' is a path, opens the LUT specified by the path. If
 		'arg'="fire", "ice", etc., uses a method to generate the LUT. */
@@ -299,13 +302,13 @@ public class LutLoader {
 
     /** Opens the specified ImageJ LUT and returns
             it as an IndexColorModel. Since 1.43t. */
-    private static IndexColorModel openLut(String path) throws IOException {
+    private static final IndexColorModel openLut(String path) throws IOException {
             return openLut(new FileInputStream(path));
     }
 
     /** Opens an ImageJ LUT using an InputStream
             and returns it as an IndexColorModel. Since 1.43t. */
-    private static IndexColorModel openLut(InputStream stream) throws IOException {
+    private static final IndexColorModel openLut(InputStream stream) throws IOException {
             DataInputStream f = new DataInputStream(stream);
             byte[] reds = new byte[256]; 
             byte[] greens = new byte[256]; 
