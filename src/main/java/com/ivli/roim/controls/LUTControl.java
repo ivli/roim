@@ -470,9 +470,9 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Act
                 fd.setDirectory(Settings.DEFAULT_FOLDER_LUT);
                 fd.setFile(Settings.FILE_SUFFIX_LUT);
                 fd.setVisible(true);
-                String cm;        
-                if (null != fd.getFile() && null != (cm = fd.getDirectory() + fd.getFile())) {
-                    iWLM.setLUT(cm);
+                  
+                if (null != fd.getFile()) {
+                    iWLM.setLUT(fd.getDirectory() + fd.getFile());
                     invalidateBuffer();                  
                     repaint();
                 } 

@@ -27,8 +27,6 @@ import javax.swing.JDialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
-import org.apache.logging.log4j.Level;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
@@ -42,37 +40,42 @@ import com.ivli.roim.controls.*;
 import com.ivli.roim.events.*;
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
-
-    private final XYPlot     iPlot;
-    private final JFreeChart iJfc;    
-    private final ChartPanel iChart;
+    private XYPlot     iPlot;
+    private JFreeChart iJfc;    
+    private ChartPanel iChart;    
+    private JMedPane   iPanel;
     
-    private       JMedPane   iPanel;
+    void initChart() {
+        if (null != iPlot) {
+            ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries();
+        } else {
+            iPlot = new XYPlot();
+            //plot.setDataset(xyc);
+            iPlot.setRenderer(new StandardXYItemRenderer());
+            iPlot.setDomainAxis(new NumberAxis("ROI_CHART.TIME_SERIES_VALUES"));
+            iPlot.setRangeAxis(0, new NumberAxis("ROI_CHART.ROI_INTDEN_VALUES"));
+           // if(iShowHistogram)
+           //     plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
+            iPlot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
+            iPlot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
+
+            iJfc = new JFreeChart(iPlot); 
+
+            iChart = new ChartPanel(iJfc);
+            //iChart.setMouseWheelEnabled(true);
+
+            XYSeriesCollection ds = new XYSeriesCollection();
+            iPlot.setDataset(ds);
+
+            iChart.setPreferredSize(jPanel3.getPreferredSize());
+            iChart.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+            //jPanel3.add(iChart);//, java.awt.BorderLayout.CENTER);              
+        }
+    }
     
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
-        initComponents();
-        
-        iPlot = new XYPlot();
-        //plot.setDataset(xyc);
-        iPlot.setRenderer(new StandardXYItemRenderer());
-        iPlot.setDomainAxis(new NumberAxis("ROI_CHART.TIME_SERIES_VALUES"));
-        iPlot.setRangeAxis(0, new NumberAxis("ROI_CHART.ROI_INTDEN_VALUES"));
-       // if(iShowHistogram)
-       //     plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
-        iPlot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-        iPlot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-        
-        iJfc = new JFreeChart(iPlot); 
-      
-        iChart = new ChartPanel(iJfc);
-        //iChart.setMouseWheelEnabled(true);
-         
-        XYSeriesCollection ds = new XYSeriesCollection();
-        iPlot.setDataset(ds);
-        iChart.setSize(jPanel3.getPreferredSize());
-        iChart.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-        jPanel3.add(iChart);//, java.awt.BorderLayout.CENTER);
+        initComponents();    
     }
     	
     /**
@@ -87,6 +90,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
+        jSplitPane1 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -128,6 +132,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel3.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("NewJFrame.jSplitPane1.TabConstraints.tabTitle"), jSplitPane1); // NOI18N
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -295,7 +300,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 868, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -332,11 +337,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             else
                 return;
         }
-        
-        ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries();
-       
-        ///iChart.removeAll();
-        
+ 
         jPanel1.removeAll();
         iPanel = null;
         
@@ -347,22 +348,30 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             iPanel.open(dicomFileName);
         } catch (IOException ex) {            
             logger.info("Unable to open file " + dicomFileName); //NOI18N            
-            javax.swing.JOptionPane.showMessageDialog(null, "Unable to open file " + dicomFileName);
+            javax.swing.JOptionPane.showMessageDialog(this, "Unable to open file " + dicomFileName);
             return;
         } 
         
-         logger.info("-->has opened file" + dicomFileName);
-        //iPanel.setMinimumSize(new Dimension(jPanel1.getWidth()-50, jPanel1.getHeight()));
+        logger.info("-->has opened file" + dicomFileName);
+       
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-        //iPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-             
         
+        initChart(); 
+        /*            
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iPanel, BorderLayout.CENTER);
+        jPanel3.add(iChart);
+        /**/
+        jSplitPane1.setDividerLocation(.5);
+        jSplitPane1.setLeftComponent(iPanel);
+        jSplitPane1.setRightComponent(iChart);
+        /**/
+        
+        
         
         jPanel1.validate(); 
-        
+                
         iPanel.iView.addFrameChangeListener(this);
         iPanel.iView.addZoomChangeListener(this);
         iPanel.iView.addWindowChangeListener(this);
@@ -409,14 +418,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-
         FileDialog fd = new FileDialog(this, "NEWJFRAME.CHOOSE_ROILIST_FILE", FileDialog.LOAD);
         fd.setDirectory(Settings.DEFAULT_FOLDER_ROILIST);
         fd.setFile(Settings.FILE_SUFFIX_ROILIST);
         fd.setVisible(true);
         String ff ;
-        if (null != fd.getFile() && null != (ff = fd.getDirectory() + fd.getFile())) {
-            iPanel.iView.getROIMgr().internalize(ff);
+        if (null != fd.getFile()) {
+            iPanel.iView.getROIMgr().internalize(fd.getDirectory() + fd.getFile());
             iPanel.repaint();
         }
     }//GEN-LAST:event_jMenuItem9ActionPerformed
@@ -426,9 +434,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         fd.setDirectory(Settings.DEFAULT_FOLDER_ROILIST);
         fd.setFile(Settings.FILE_SUFFIX_ROILIST);
         fd.setVisible(true);
-        String ff ;
-        if (null != fd.getFile() && null != (ff = fd.getDirectory() + fd.getFile()))
-        iPanel.iView.getROIMgr().externalize(ff);
+        
+        if (null != fd.getFile())
+            iPanel.iView.getROIMgr().externalize(fd.getDirectory() + fd.getFile());
 
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
@@ -449,8 +457,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         fd.setFile(Settings.FILE_SUFFIX_LUT);
         fd.setVisible(true);
         String cm ;
-        if (null != fd.getFile() && null != (cm = fd.getDirectory() + fd.getFile())) {
-            iPanel.setLUT(cm);
+        if (null != fd.getFile()) {
+            iPanel.setLUT(fd.getDirectory() + fd.getFile());
             jPanel1.repaint();
             //iLut.setLUT(cm);
             //iLut.repaint();
@@ -609,6 +617,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 

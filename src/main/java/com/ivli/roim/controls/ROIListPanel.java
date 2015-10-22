@@ -5,10 +5,9 @@
  */
 package com.ivli.roim.controls;
 
-import com.ivli.roim.core.Measurement;
+
 import com.ivli.roim.Overlay;
 import com.ivli.roim.ROI;
-import static com.ivli.roim.controls.ColorEditor.EDIT;
 import java.util.Iterator;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -23,23 +22,22 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingUtilities;
 import java.awt.Window;
+import java.util.Locale;
+import javax.swing.UIManager;
 
 /**
  *
  * @author likhachev
  */
 public class ROIListPanel extends javax.swing.JPanel implements TableModelListener {
-
+    private static final String KCommandInvokeColourPicker = "COMMAND_INVOKE_COLOUR_PICKER_DIALOG"; // NOI18N
+    
     public ROIListPanel(Iterator<Overlay> aLit) {
         
-        tableModel = new DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("OBJ"), java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NAME"), java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("PIXELS"), java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INTDEN"), java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NULL")
-            }
-        ) {
+        tableModel = new DefaultTableModel( new Object [][] {},
+                                            new String [] {"OBJ", "NAME", "PIXELS", "INTDEN", "NULL"}
+                                          )
+            {
             Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.awt.Color.class
             };
@@ -170,74 +168,83 @@ public class ROIListPanel extends javax.swing.JPanel implements TableModelListen
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
-}
 
+final class ColorEditor extends javax.swing.AbstractCellEditor
+                             implements javax.swing.table.TableCellEditor,
+                                        java.awt.event.ActionListener {
+        private Color currentColor;
+        private final JButton button;
+        private final JColorChooser colorChooser;
+        private final JDialog dialog;
 
-final class MyRenderer implements TableCellRenderer {
-  public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-    boolean hasFocus, int row, int column) {
+        public ColorEditor() {
+            button = new JButton();
+            button.setActionCommand(KCommandInvokeColourPicker);
+            button.addActionListener(this);
+            button.setBorderPainted(false);
+
+            //Set up the dialog that the button brings up.
+            //JColorChooser.setDefaultLocale(new Locale("fr", "FR"));
+            
+                       
+            colorChooser = new JColorChooser();
+            
+            dialog = JColorChooser.createDialog(button,
+                        java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("PICK A COLOR"),
+                        true,  //modal
+                        colorChooser,
+                        this,  //OK button handler
+                        null); //no CANCEL button handler
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (KCommandInvokeColourPicker.equals(e.getActionCommand())) {
+                //The user has clicked the cell, so
+                //bring up the dialog.
+                button.setBackground(currentColor);
+                colorChooser.setColor(currentColor);
+                dialog.setVisible(true);
+
+                fireEditingStopped(); //Make the renderer reappear.
+
+            } else { //User pressed dialog's "OK" button.
+                currentColor = colorChooser.getColor();
+            }
+        }
+
+        //Implement the one CellEditor method that AbstractCellEditor doesn't.
+        public Object getCellEditorValue() {
+            return currentColor;
+        }
+
+        //Implement the one method defined by TableCellEditor.
+        public Component getTableCellEditorComponent(JTable table,
+                                                     Object value,
+                                                     boolean isSelected,
+                                                     int row,
+                                                     int column) {
+            currentColor = (Color)value;
+            return button;
+        }
+    }
+
+final class MyRenderer implements TableCellRenderer {    
+    
+  
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                 boolean hasFocus, int row, int column) {
         JButton button = new JButton();
-        button.setActionCommand(EDIT);
-       // button.addActionListener(this);
+        button.setActionCommand(KCommandInvokeColourPicker);      
         button.setBorderPainted(false);
         Color clr = (Color )value;
         button.setBackground(clr);
         return button;
     }
+
+    
 }
 
-final class ColorEditor extends javax.swing.AbstractCellEditor
-                         implements javax.swing.table.TableCellEditor,
-                                    java.awt.event.ActionListener {
-    Color currentColor;
-    JButton button;
-    JColorChooser colorChooser;
-    JDialog dialog;
-    protected static final String EDIT = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("EDIT");
-
-    public ColorEditor() {
-        button = new JButton();
-        button.setActionCommand(EDIT);
-        button.addActionListener(this);
-        button.setBorderPainted(false);
-
-        //Set up the dialog that the button brings up.
-        colorChooser = new JColorChooser();
-        dialog = JColorChooser.createDialog(button,
-                    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("PICK A COLOR"),
-                    true,  //modal
-                    colorChooser,
-                    this,  //OK button handler
-                    null); //no CANCEL button handler
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        if (EDIT.equals(e.getActionCommand())) {
-            //The user has clicked the cell, so
-            //bring up the dialog.
-            button.setBackground(currentColor);
-            colorChooser.setColor(currentColor);
-            dialog.setVisible(true);
-
-            fireEditingStopped(); //Make the renderer reappear.
-
-        } else { //User pressed dialog's "OK" button.
-            currentColor = colorChooser.getColor();
-        }
-    }
-
-    //Implement the one CellEditor method that AbstractCellEditor doesn't.
-    public Object getCellEditorValue() {
-        return currentColor;
-    }
-
-    //Implement the one method defined by TableCellEditor.
-    public Component getTableCellEditorComponent(JTable table,
-                                                 Object value,
-                                                 boolean isSelected,
-                                                 int row,
-                                                 int column) {
-        currentColor = (Color)value;
-        return button;
-    }
 }
+
+
+
