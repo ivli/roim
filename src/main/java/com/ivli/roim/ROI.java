@@ -3,6 +3,7 @@ package com.ivli.roim;
 
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
+import com.ivli.roim.events.EStateChanged;
 import java.util.HashSet;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -69,6 +70,13 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     
     public void setColor(Color aC) {
         iColor = aC;
+        getManager().notifyROIChanged(this, EStateChanged.ChangedColor);
+    }
+    
+    @Override
+    public void setName(String aName) {
+       super.setName(aName);
+       getManager().notifyROIChanged(this, EStateChanged.ChangedName);         
     }
     
     @Override

@@ -117,10 +117,11 @@ public class ChartView extends javax.swing.JPanel
                 }
 
                 ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   
-                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getROI().getName()), aE.getROI().getColor());
-              
-            break;
-            
+                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getROI().getName()), aE.getROI().getColor());              
+                break;
+            case ChangedColor:
+                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getROI().getName()), aE.getROI().getColor());                                 
+                break;
             case Emptied: 
                 ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); break;
             default: throw new java.lang.IllegalArgumentException();    

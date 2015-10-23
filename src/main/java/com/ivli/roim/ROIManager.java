@@ -32,6 +32,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.events.EStateChanged;
+import com.ivli.roim.events.ROIChangeEvent;
+import com.ivli.roim.events.ROIChangeListener;
+import javax.swing.event.EventListenerList;
 /**
  *
  * @author likhachev
@@ -41,13 +44,16 @@ public class ROIManager implements java.io.Serializable {
     
     private static final boolean ROI_HAS_ANNOTATIONS = !true;
     
-    transient private final ImageView  iView; 
+    transient private final ImageComponent  iView; 
     
     private HashSet<Overlay> iOverlays;      
-              
-    ROIManager(ImageView aV) { 
+    
+     private final EventListenerList iList;
+    
+    ROIManager(ImageComponent aV) { 
         iView = aV;
-        iOverlays = new HashSet();          
+        iOverlays = new HashSet(); 
+        iList = new EventListenerList();
     }
         
     public IMultiframeImage getImage() {
@@ -56,7 +62,7 @@ public class ROIManager implements java.io.Serializable {
         
     public void clear() {
         iOverlays.clear();
-        iView.notifyROIChanged(null, EStateChanged.Emptied);
+        notifyROIChanged(null, EStateChanged.Emptied);
     }
     
     public void update() {
@@ -92,7 +98,7 @@ public class ROIManager implements java.io.Serializable {
             iOverlays.add(new Annotation(newRoi));      
        
         newRoi.update();
-        iView.notifyROIChanged(newRoi, EStateChanged.Created);
+        notifyROIChanged(newRoi, EStateChanged.Created);
     }
     
     public void cloneRoi(ROI aR) {
@@ -100,7 +106,7 @@ public class ROIManager implements java.io.Serializable {
         newRoi.iName = aR.iName + "(2)"; // NOI18N
         iOverlays.add(newRoi); 
         iOverlays.add(new Annotation(newRoi));
-        iView.notifyROIChanged(newRoi, EStateChanged.Created);
+        notifyROIChanged(newRoi, EStateChanged.Created);
     }
     
     public void moveRoi(Overlay aO, double adX, double adY) {
@@ -112,7 +118,7 @@ public class ROIManager implements java.io.Serializable {
             aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));  
             
             if (aO instanceof ROI)
-                iView.notifyROIChanged((ROI)aO, EStateChanged.Changed);
+                notifyROIChanged((ROI)aO, EStateChanged.Changed);
        // }       
     }
     
@@ -136,7 +142,7 @@ public class ROIManager implements java.io.Serializable {
                 it.remove();
         } 
         
-        iView.notifyROIChanged(aR, EStateChanged.Cleared);
+        notifyROIChanged(aR, EStateChanged.Cleared);
         
         return iOverlays.remove(aR);   
     }  
@@ -163,12 +169,12 @@ public class ROIManager implements java.io.Serializable {
     private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {
         
             iOverlays = (HashSet<Overlay>)(ois.readObject());  
-            iView.notifyROIChanged(null, EStateChanged.Emptied);
+            notifyROIChanged(null, EStateChanged.Emptied);
             
             for (Overlay r : iOverlays) {
                 if (r instanceof ROIBase) {
                     ((ROIBase)r).iMgr = this;
-                    iView.notifyROIChanged(((ROI)r), EStateChanged.Created);
+                    notifyROIChanged(((ROI)r), EStateChanged.Created);
                     /*
                     if (null != ((ROI)r).iAnnos)
                         for (Overlay o : ((ROI)r).iAnnos)   
@@ -201,6 +207,26 @@ public class ROIManager implements java.io.Serializable {
         } 
         
     }
+    
+    public void addROIChangeListener(ROIChangeListener aL) {
+        ///iROIListeners.add(aL);
+        iList.add(ROIChangeListener.class, aL);
+    }
+    
+    public void removeROIChangeListener(ROIChangeListener aL) {
+        ///iROIListeners.add(aL);
+        iList.remove(ROIChangeListener.class, aL);
+    }
+    
+    void notifyROIChanged(ROI aR, EStateChanged aS) {
+       ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR);
+       
+       ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);
+       
+       for (ROIChangeListener l : arr)
+           l. ROIChanged(evt);
+    }
+    
     
     private static final Logger logger = LogManager.getLogger(ROIManager.class);
 }

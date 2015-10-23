@@ -1,6 +1,7 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.events.EStateChanged;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 /**
@@ -20,6 +21,8 @@ public abstract class ROIBase extends Overlay {
     public ROIManager getManager() {
         return iMgr;
     }
+    
+    
     
     public boolean canMove(double adX, double adY) {           
         Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());

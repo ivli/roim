@@ -128,14 +128,14 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
         }        
     }  
     
-    private final ImageView iControlled;
+    private final ImageComponent iControlled;
     private ActionItem iAction;   
     private Overlay iSelected;
     private ActionItem iWheel = NewAction(iWheelAction, 0, 0); 
     
-    protected ImageView getObject() {return iControlled;}
+    protected ImageComponent getObject() {return iControlled;}
     
-    public Controller(ImageView aC) {
+    public Controller(ImageComponent aC) {
         iControlled = aC;
         register();
     }

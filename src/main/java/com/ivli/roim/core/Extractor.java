@@ -10,6 +10,7 @@ import java.awt.image.Raster;
  *
  * @author likhachev
  */
+ @FunctionalInterface
 public interface Extractor {
     void apply(Raster aR) throws ArrayIndexOutOfBoundsException;
 }

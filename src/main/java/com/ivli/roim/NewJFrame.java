@@ -17,8 +17,7 @@
  */
 package com.ivli.roim;
 
-import com.ivli.roim.core.Measurement;
-import com.ivli.roim.core.Series;
+
 import java.awt.*;
 import java.io.IOException;
 import javax.swing.BoxLayout;
@@ -27,21 +26,12 @@ import javax.swing.JDialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.AxisLocation;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-
 import com.ivli.roim.controls.*;
 import com.ivli.roim.events.*;
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
      
-    private JMedPane   iPanel;
+    private ImageView  iPanel;
     private ChartView iChart;
     
     
@@ -313,28 +303,28 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1.removeAll();
         iPanel = null;
         
-        iPanel = new JMedPane();
+        iPanel = new ImageView();
         
         try{
            
             iPanel.open(dicomFileName);
         } catch (IOException ex) {            
-            logger.info("Unable to open file " + dicomFileName); //NOI18N            
+            logger.info("Unable to open file: " + dicomFileName); //NOI18N            
             javax.swing.JOptionPane.showMessageDialog(this, "Unable to open file " + dicomFileName);
             return;
         } 
         
-        logger.info("-->has opened file" + dicomFileName);
-       
+        logger.info("-->open file: " + dicomFileName);
+        
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         
-        iPanel.iView.removeROIChangeListener(iChart);
+        iPanel.iView.getROIMgr().removeROIChangeListener(iChart);
         
         iChart = null;
         iChart = new ChartView();
         iChart.initChart();
-        iPanel.iView.addROIChangeListener(iChart);
+        iPanel.iView.getROIMgr().addROIChangeListener(iChart);
         
         /*           
         jPanel1.setLayout(new BorderLayout());
@@ -345,16 +335,14 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jSplitPane1.setDividerLocation(.5);
         jSplitPane1.setLeftComponent(iPanel);
         jSplitPane1.setRightComponent(iChart);
-        /**/
-        
-        
+        /**/ 
         
         jPanel1.validate(); 
                 
         iPanel.iView.addFrameChangeListener(this);
         iPanel.iView.addZoomChangeListener(this);
         iPanel.iView.addWindowChangeListener(this);
-        iPanel.iView.addROIChangeListener(this);  
+        iPanel.iView.getROIMgr().addROIChangeListener(this);  
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -420,14 +408,16 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        ROIListPanel panel = new ROIListPanel(null != iPanel?iPanel.getOverlaysList():null);
-        JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
-        dialog.setContentPane(panel);
-        dialog.validate();
-        dialog.pack();
-        dialog.setResizable(true);
-        dialog.setVisible(true);
-        repaint();
+        if (null != iPanel) {
+            ROIListPanel panel = new ROIListPanel(iPanel);
+            JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+            dialog.setContentPane(panel);
+            dialog.validate();
+            dialog.pack();
+            dialog.setResizable(true);
+            dialog.setVisible(true);
+            repaint();
+        }
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed

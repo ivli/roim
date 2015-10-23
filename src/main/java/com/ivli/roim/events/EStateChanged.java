@@ -8,6 +8,8 @@ package com.ivli.roim.events;
 public enum EStateChanged {    
     Created,  
     Cleared, 
-    Changed,    
+    Changed, 
+    ChangedColor,
+    ChangedName,
     Emptied;   
 }

@@ -29,10 +29,14 @@ import javax.swing.UIManager;
  *
  * @author likhachev
  */
-public class ROIListPanel extends javax.swing.JPanel implements TableModelListener {
+public class ROIListPanel extends javax.swing.JPanel {
     private static final String KCommandInvokeColourPicker = "COMMAND_INVOKE_COLOUR_PICKER_DIALOG"; // NOI18N
     
-    public ROIListPanel(Iterator<Overlay> aLit) {
+    private com.ivli.roim.ImageView iView;
+    
+    public ROIListPanel(com.ivli.roim.ImageView aView) {
+        
+        iView = aView;
         
         tableModel = new DefaultTableModel( new Object [][] {},
                                             new String [] {"OBJ", "NAME", "PIXELS", "INTDEN", "NULL"}
@@ -70,8 +74,9 @@ public class ROIListPanel extends javax.swing.JPanel implements TableModelListen
             jTable1.getColumnModel().getColumn(4).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("COLOR"));
         }
         
-        while (null!=aLit && aLit.hasNext()) {
-            Overlay o = aLit.next();
+        Iterator<Overlay> it = iView.getOverlaysList();
+        while (null!=it && it.hasNext()) {
+            Overlay o = it.next();
             if (o instanceof ROI) {       
                 ROI r = (ROI)o;
                 //ROIStats s = r.getStats();
@@ -81,30 +86,35 @@ public class ROIListPanel extends javax.swing.JPanel implements TableModelListen
             }
         }
         
-        jTable1.getModel().addTableModelListener(this);
+        
         jTable1.setDefaultEditor(Color.class, new ColorEditor());
         jTable1.setDefaultRenderer(Color.class, new MyRenderer());
+        
+        jTable1.getModel().addTableModelListener((TableModelEvent e) -> {
+            final int row = e.getFirstRow();
+            final int col = e.getColumn();
+            
+            if (col == 1 || col == 4) {
+                final TableModel model = (TableModel)e.getSource();
+                
+                assert(model.getValueAt(row, 0) instanceof ROI);
+                
+                final ROI r = (ROI)model.getValueAt(row, 0);
+                
+                if (col == 1) {
+                    r.setName((String)model.getValueAt(row, 1));
+                    
+                }else if (col == 4) {
+                    r.setColor((Color)model.getValueAt(row, 4));        
+                }
+                
+                getParent().invalidate();
+            }
+        });
+             
     }
 
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        final int row = e.getFirstRow();   
-        final int col = e.getColumn();
-        
-        if (col == 1 || col == 4) {
-            TableModel model = (TableModel)e.getSource();
-
-            assert(model.getValueAt(row, 0) instanceof ROI);
-
-            ROI r = (ROI)model.getValueAt(row, 0);
-            if (col == 1)
-                r.setName((String)model.getValueAt(row, 1));
-            else if (col == 4)
-                r.setColor((Color)model.getValueAt(row, 4));
-            this.getParent().invalidate();
-        }
-        
-    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
