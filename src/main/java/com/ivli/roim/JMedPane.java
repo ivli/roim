@@ -1,6 +1,7 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.controls.LUTControl;
 import java.util.Iterator;
 import java.io.IOException;

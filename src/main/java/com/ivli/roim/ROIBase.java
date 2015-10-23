@@ -17,7 +17,9 @@ public abstract class ROIBase extends Overlay {
     
     int getCaps() {return SELECTABLE|MOVEABLE|HASMENU;}
     
-    protected ROIManager getManager() {return iMgr;}
+    public ROIManager getManager() {
+        return iMgr;
+    }
     
     public boolean canMove(double adX, double adY) {           
         Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());

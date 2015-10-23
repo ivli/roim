@@ -18,6 +18,7 @@
 package com.ivli.roim;
 
 
+import com.ivli.roim.core.IMultiframeImage;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;

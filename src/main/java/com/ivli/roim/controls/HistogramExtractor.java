@@ -1,6 +1,8 @@
 
-package com.ivli.roim;
+package com.ivli.roim.controls;
 
+import com.ivli.roim.core.Extractor;
+import com.ivli.roim.ROIExtractor;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.image.Raster;

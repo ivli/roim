@@ -15,9 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim;
+package com.ivli.roim.core;
 
-import com.ivli.roim.core.PixelSpacing;
+///import com.ivli.roim.ImageFrame;
+///import com.ivli.roim.core.PixelSpacing;
 
 /**
  *
@@ -27,7 +28,8 @@ public interface IMultiframeImage extends Iterable<ImageFrame>, java.io.Serializ
    
     int getWidth();  
     int getHeight();
-    PixelSpacing getPixelSpacing();    
+    PixelSpacing    getPixelSpacing();   
+    TimeSliceVector getTimeSliceVector();
     int getNumFrames();  
     
     boolean hasAt(int aFrameNumber);

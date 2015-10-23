@@ -1,5 +1,5 @@
 
-package com.ivli.roim;
+package com.ivli.roim.core;
 
 import java.awt.Rectangle;
 import java.awt.Transparency;
@@ -44,16 +44,9 @@ public class ImageFrame implements java.io.Serializable {
         return iIden;
     }
     
-    ImageFrame(Raster aRaster) {
-        iRaster = aRaster;
-        
-        computeStatistics();
-        
-        //ROIExtractor ex = new ROIExtractor(iRaster.getBounds());
-        //ex.apply(aRaster);
-        //iMin = ex.iStats.getMin();
-        //iMax = ex.iStats.getMax();
-        //iIden = ex.iStats.getIden();
+    public ImageFrame(Raster aRaster) {
+        iRaster = aRaster;        
+        computeStatistics();       
     }
     
     public BufferedImage getBufferedImage() {

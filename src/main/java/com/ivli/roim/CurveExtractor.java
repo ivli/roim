@@ -1,9 +1,11 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Measure;
 import com.ivli.roim.core.Series;
+import com.ivli.roim.core.ImageFrame;
 
 /**
  *

@@ -17,9 +17,11 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.core.TimeSliceVector;
 import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.PixelSpacing;
+import com.ivli.roim.core.ImageFrame;
 
 import java.io.IOException;
 import java.util.ArrayList;

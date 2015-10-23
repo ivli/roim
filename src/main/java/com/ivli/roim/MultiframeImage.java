@@ -17,27 +17,38 @@
  */
 package com.ivli.roim;
 
-import com.ivli.roim.core.TimeSlice;
 import java.io.IOException;
+
+import com.ivli.roim.core.IImageProvider;
+import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.TimeSlice;
+import com.ivli.roim.core.Extractor;
 import com.ivli.roim.core.PixelSpacing;
+import com.ivli.roim.core.TimeSliceVector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
 public class MultiframeImage implements IMultiframeImage {
-    private final IImageProvider iSrc;
+    private final IImageProvider iProvider;
     private int iCurrent;
     
-    public MultiframeImage(IImageProvider aSrc) {
-        iSrc = aSrc;
-        iCurrent = 0;
+    public MultiframeImage(IImageProvider aProvider) {
+        iProvider = aProvider;
+        iCurrent  = 0;
     }
    
     @Override
+    public TimeSliceVector getTimeSliceVector() {
+        return iProvider.getTimeSliceVector();
+    }
+    
+    @Override
     public boolean hasAt(int aFrameNumber) {
         try {
-            iSrc.frame(aFrameNumber);
+            iProvider.frame(aFrameNumber);
         } catch (IOException | IndexOutOfBoundsException e) {
             return false;
         }
@@ -48,7 +59,7 @@ public class MultiframeImage implements IMultiframeImage {
     public ImageFrame advance(int aFrameNumber) throws java.util.NoSuchElementException {           
         ImageFrame ret = null;
         try {
-            ret = iSrc.frame(aFrameNumber); //prevent iCurrent from change in the case of exception
+            ret = iProvider.frame(aFrameNumber); //prevent iCurrent from change in the case of exception
             iCurrent = aFrameNumber;
         } catch (IOException ex) {
             throw( new java.util.NoSuchElementException());
@@ -60,7 +71,7 @@ public class MultiframeImage implements IMultiframeImage {
     public ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException {           
         ImageFrame ret = null;
         try {
-            ret = iSrc.frame(aFrameNumber); //prevent iCurrent from change in the case of exception           
+            ret = iProvider.frame(aFrameNumber); //prevent iCurrent from change in the case of exception           
         } catch (IOException ex) {
             throw (new java.util.NoSuchElementException());
         }
@@ -78,7 +89,7 @@ public class MultiframeImage implements IMultiframeImage {
     public int getNumFrames() {
         int ret = 0;
         try {
-            ret = iSrc.getNumFrames();
+            ret = iProvider.getNumFrames();
         } catch (IOException ex) {
             logger.error("FATAL!", ex);
         }
@@ -86,21 +97,21 @@ public class MultiframeImage implements IMultiframeImage {
     }
     
     public int getWidth() {
-        return iSrc.getWidth();
+        return iProvider.getWidth();
     }
     
     public int getHeight() {
-        return iSrc.getHeight();
+        return iProvider.getHeight();
     }  
     
     public PixelSpacing getPixelSpacing() {
-        return iSrc.getPixelSpacing();
+        return iProvider.getPixelSpacing();
     }
               
     public IMultiframeImage makeCompositeFrame(int aFrom, int aTo)  {        
         MultiframeImage ret = null;        
         try {     
-            ret = new MultiframeImage(iSrc.collapse(new TimeSlice (aFrom, aTo))); 
+            ret = new MultiframeImage(iProvider.collapse(new TimeSlice (aFrom, aTo))); 
         } catch (IOException ex) {
             logger.error("FATAL!", ex);
         }

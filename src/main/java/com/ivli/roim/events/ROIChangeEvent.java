@@ -26,7 +26,7 @@ public final class ROIChangeEvent extends java.util.EventObject {
     private final ROI iROI;
     private final EStateChanged iChange;
     
-    public ROIChangeEvent(Object aO, ROI aR, EStateChanged aC) {
+    public ROIChangeEvent(Object aO, EStateChanged aC, ROI aR) {
         super (aO);
         iROI = aR;
         iChange = aC;

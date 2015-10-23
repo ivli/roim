@@ -2,9 +2,10 @@
 package com.ivli.roim;
 
 import com.ivli.roim.core.ROIStats;
+import com.ivli.roim.core.Extractor;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
+
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
@@ -14,9 +15,9 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-class ROIExtractor implements Extractor {
+public class ROIExtractor implements Extractor {
     Shape     iRoi; 
-    ROIStats  iStats;
+    public ROIStats  iStats;
     Extractor iExtractor;  
     
     public ROIExtractor(Shape aRoi) {        

@@ -6,6 +6,8 @@ import com.ivli.roim.core.PValueTransform;
 import com.ivli.roim.core.Ranger;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
+import com.ivli.roim.core.ImageFrame;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.ByteLookupTable;
 import java.awt.image.DataBuffer;

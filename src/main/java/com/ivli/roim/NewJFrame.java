@@ -40,38 +40,10 @@ import com.ivli.roim.controls.*;
 import com.ivli.roim.events.*;
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
-    private XYPlot     iPlot;
-    private JFreeChart iJfc;    
-    private ChartPanel iChart;    
+     
     private JMedPane   iPanel;
+    private ChartView iChart;
     
-    void initChart() {
-        if (null != iPlot) {
-            ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries();
-        } else {
-            iPlot = new XYPlot();
-            //plot.setDataset(xyc);
-            iPlot.setRenderer(new StandardXYItemRenderer());
-            iPlot.setDomainAxis(new NumberAxis("ROI_CHART.TIME_SERIES_VALUES"));
-            iPlot.setRangeAxis(0, new NumberAxis("ROI_CHART.ROI_INTDEN_VALUES"));
-           // if(iShowHistogram)
-           //     plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
-            iPlot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-            iPlot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-
-            iJfc = new JFreeChart(iPlot); 
-
-            iChart = new ChartPanel(iJfc);
-            //iChart.setMouseWheelEnabled(true);
-
-            XYSeriesCollection ds = new XYSeriesCollection();
-            iPlot.setDataset(ds);
-
-            iChart.setPreferredSize(jPanel3.getPreferredSize());
-            iChart.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-            //jPanel3.add(iChart);//, java.awt.BorderLayout.CENTER);              
-        }
-    }
     
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
@@ -357,7 +329,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         
-        initChart(); 
+        iChart = null;
+        iChart = new ChartView();
+        iChart.initChart();
+         
         /*            
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iPanel, BorderLayout.CENTER);
@@ -537,58 +512,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
        jLabel4.setText(String.format("%d:%d", aE.getFrame() + 1, aE.getTotal())); // NOI18N
     }
   
+    public void ROIChanged(ROIChangeEvent anEvt) {
     
-    public void ROIChanged(ROIChangeEvent aE) {
-
-        XYSeriesCollection col = ((XYSeriesCollection)iPlot.getDataset());
-        
-        switch (aE.getChange()) {
-            case Cleared: {
-                
-                int ndx = col.indexOf(aE.getROI().getName());
-                col.removeSeries(ndx); 
-               
-              } break;
-    
-            case Changed: {
-                int ndx = col.indexOf(aE.getROI().getName());
-               
-                Series c = aE.getROI().getSeries(Measurement.DENSITY);
-                XYSeries s = col.getSeries(ndx); 
-                s.clear();
-                
-                for (int n = 0; n < c.getNumFrames(); ++n) {
-                    long dur = iPanel.iProvider.getTimeSliceVector().getSlices().get(n) / 1000;
-                    s.add(dur, c.get(n));
-                }
-               } break;
-                
-            case Created: 
-                XYSeries s = new XYSeries(aE.getROI().getName());
-                Series c = aE.getROI().getSeries(Measurement.DENSITY);
-                
-                int x = 0;
-                                
-                ///java.util.Iterator<Long> tsv = iPanel.iProvider.getTimeSliceVector().iSlices.iterator();
-                  //sanity check
-                assert(c.getNumFrames() == iPanel.iProvider.getTimeSliceVector().getNumFrames());
-                
-                for (int n = 0; n < c.getNumFrames(); ++n) {
-                    long dur = iPanel.iProvider.getTimeSliceVector().getSlices().get(n) / 1000;
-                    s.add(dur, c.get(n));
-                }
-
-                ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   
-                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getROI().getName()), aE.getROI().getColor());
-              
-            break;
-            
-            case Emptied: 
-                ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); break;
-            default: throw new java.lang.IllegalArgumentException();    
-        }
-   
     }
+    
     
     
     

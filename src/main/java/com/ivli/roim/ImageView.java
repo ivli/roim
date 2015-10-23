@@ -17,6 +17,7 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.IWLManager;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
@@ -143,7 +144,7 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
     }
     
     void notifyROIChanged(ROI aR, EStateChanged aS) {
-       ROIChangeEvent evt = new ROIChangeEvent(this, aR, aS);
+       ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR);
        
        ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);
        
