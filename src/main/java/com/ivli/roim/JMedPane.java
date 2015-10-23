@@ -12,7 +12,7 @@ import javax.swing.JComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class JMedPane extends JPanel{
+public class JMedPane extends JPanel {
     private static final boolean SHOW_COMPOSITE = false;
       
     IImageProvider iProvider;
