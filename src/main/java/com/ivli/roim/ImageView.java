@@ -143,6 +143,11 @@ public class ImageView extends JComponent /*implements WindowChangeNotifier*/ {
         iList.add(ROIChangeListener.class, aL);
     }
     
+    public void removeROIChangeListener(ROIChangeListener aL) {
+        ///iROIListeners.add(aL);
+        iList.remove(ROIChangeListener.class, aL);
+    }
+    
     void notifyROIChanged(ROI aR, EStateChanged aS) {
        ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR);
        

@@ -21,6 +21,7 @@ import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -35,7 +36,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  *
  * @author likhachev
  */
-public class ChartView extends javax.swing.JComponent 
+public class ChartView extends javax.swing.JPanel 
                            implements ROIChangeListener { 
                         
     private XYPlot     iPlot;
@@ -65,8 +66,10 @@ public class ChartView extends javax.swing.JComponent
             XYSeriesCollection ds = new XYSeriesCollection();
             iPlot.setDataset(ds);
 
-            ///iChart.setPreferredSize(jPanel3.getPreferredSize());
+            iChart.setPreferredSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
             iChart.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+            setLayout(new BorderLayout()); 
+            
             this.add(iChart);
             
             //jPanel3.add(iChart);//, java.awt.BorderLayout.CENTER);              

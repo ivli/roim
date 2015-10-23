@@ -329,15 +329,19 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         
+        iPanel.iView.removeROIChangeListener(iChart);
+        
         iChart = null;
         iChart = new ChartView();
         iChart.initChart();
-         
-        /*            
+        iPanel.iView.addROIChangeListener(iChart);
+        
+        /*           
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iPanel, BorderLayout.CENTER);
+        iChart.setPreferredSize(jPanel3.getPreferredSize());
         jPanel3.add(iChart);
-        /**/
+        /**/ 
         jSplitPane1.setDividerLocation(.5);
         jSplitPane1.setLeftComponent(iPanel);
         jSplitPane1.setRightComponent(iChart);
