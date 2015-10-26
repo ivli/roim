@@ -134,14 +134,21 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     @Override
     public void frameChanged(FrameChangeEvent anE) {   
         if (null != iTop && null != iBottom) { //theoretically we'd never get here in passive mode
+            iRange = anE.getRange();
+            /*
             Range oldRange = iRange;
             iRange = anE.getRange();
             
-            double oTP = oldRange.getPercent(screenToImage(iTop.iPos));
-            double oBP = oldRange.getPercent(screenToImage(iBottom.iPos));
+            double oT = screenToImage(iTop.iPos);
+            double oB = screenToImage(iBottom.iPos);
+            
+            double oTP = oldRange.getPercent(oT);
+            double oBP = oldRange.getPercent(oB);
+                    
             
             iTop.setPosition((int) imageToScreen(iRange.getRange() * oTP));
-            iBottom.setPosition((int) imageToScreen(iRange.getRange() * oBP));                       
+            iBottom.setPosition((int) imageToScreen(iRange.getRange() * oBP)); 
+            */
         }
         
         invalidateBuffer();

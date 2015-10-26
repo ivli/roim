@@ -32,8 +32,11 @@ public class Settings implements java.io.Serializable {
     public static final int MOUSE_DEFAULT_ACTION_LEFT   = Controller.MOUSE_ACTION_PAN;
     public static final int MOUSE_DEFAULT_ACTION_MIDDLE = Controller.MOUSE_ACTION_ZOOM;
     public static final int MOUSE_DEFAULT_ACTION_RIGHT  = Controller.MOUSE_ACTION_WINDOW;
-    public static final int MOUSE_DEFAULT_ACTION_WHEEL  = Controller.MOUSE_ACTION_LIST;
-       
+    public static final int MOUSE_DEFAULT_ACTION_WHEEL  = Controller.MOUSE_ACTION_LIST;    
+        
+    public static final int DEFAULT_FIT = ImageComponent.FIT_WIDTH;
+    public static final boolean KEEP_WINDOW_AMONG_FRAMES = true;
+    
     private Settings(){}
     
     private static final Settings iInstance = new Settings(); //do i have to place it in static initialization block 

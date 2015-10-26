@@ -13,14 +13,14 @@ import java.awt.image.ByteLookupTable;
 import java.awt.image.DataBuffer;
 import java.awt.image.LookupOp;
 import org.jfree.data.xy.XYSeries;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
 public class VOILut implements com.ivli.roim.core.Transformation {
-    private boolean   iInverted;            
-    private boolean        iLog;
-    private boolean iKeepWindow = true;     
+    private boolean iInverted;            
+    private boolean iLog;   
     
     private final PValueTransform iPVt;
     private final Buffer       iBuffer;
@@ -47,15 +47,18 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         reset(aR);
     }
      
-    private void reset(Range aR) {        
-    
-       if(iKeepWindow && null != iWin && null != iRange) {        
+    private void reset(Range aR) {            
+       if(Settings.KEEP_WINDOW_AMONG_FRAMES && null != iWin && null != iRange) {        
             final double percentTop    = iWin.getTop() / iRange.getWidth();
             final double percentBottom = iWin.getBottom() / iRange.getWidth();
             iRange = aR;
-            iWin   = new Window(new Range(percentBottom * iRange.getWidth(), percentTop * iRange.getWidth()));
-            //iWin.setTop(percentTop * iRange.getWidth()); 
-            //iWin.setBottom(percentBottom * iRange.getWidth()); 
+            
+            final double newTop    = percentTop * iRange.getWidth();
+            final double newBottom = percentBottom * iRange.getWidth();
+            final double newRange  = newTop - newBottom; 
+            
+            iWin = new Window(newBottom + newRange / 2.0, newRange);
+            
         } else {
             iRange = aR;
             iWin = new Window(aR);

@@ -51,12 +51,14 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
     private static final double  DEFAULT_SCALE_X = 1.;
     private static final double  DEFAULT_SCALE_Y = 1.;
     
+    public static final int FIT_NO_FIT  = 0;
+    public static final int FIT_VISIBLE = 1;
+    public static final int FIT_WIDTH   = 2;
+    public static final int FIT_HEIGHT  = 3;
     
-    enum EFit {
-        Visible, Width, Height, Zoom; 
-    }
     
-    private EFit iFit = EFit.Zoom;  //     
+    
+    private int   iFit = Settings.DEFAULT_FIT;  //     
     private final IMultiframeImage iImage;                     
     private final Controller iController;    
     private final AffineTransform iZoom;
@@ -105,12 +107,12 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
     }    
     
     public void fitWidth() {
-        iFit = EFit.Width; 
+        iFit = FIT_WIDTH; 
         invalidateBuffer();
     }
     
     public void fitHeight() {
-        iFit = EFit.Height; 
+        iFit = FIT_HEIGHT; 
         invalidateBuffer();
     }
     
@@ -124,12 +126,12 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         double scale;
         
         switch (iFit) {
-            case Visible:
+            case FIT_VISIBLE:
                 scale = Math.min((double)getWidth() / (double)iImage.getWidth(), 
                                  (double)getHeight() / (double)iImage.getHeight()); break;                
-            case Height: scale = (double)getHeight() / (double)iImage.getHeight(); break;
-            case Width:  scale = (double)getWidth() / (double)iImage.getWidth(); break;
-            case Zoom: //falltrough to default
+            case FIT_HEIGHT: scale = (double)getHeight() / (double)iImage.getHeight(); break;
+            case FIT_WIDTH:  scale = (double)getWidth() / (double)iImage.getWidth(); break;
+            case FIT_NO_FIT: //falltrough to default
             default: 
                 return;                            
         }        
@@ -149,7 +151,7 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         //iWinListeners.remove(aL);
     }
             
-    private void notifyWindowChanged(boolean aRC) {
+    private void notifyWindowChanged() {
         final WindowChangeEvent evt = new WindowChangeEvent(this, iLUTMgr.getWindow()/*, iImage.image().getMin(), iImage.image().getMax(), aRC*/);
         
         WindowChangeListener arr[] = iList.getListeners(WindowChangeListener.class);
@@ -160,16 +162,15 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
     
     public void addFrameChangeListener(FrameChangeListener aL) {
         iList.add(FrameChangeListener.class, aL);
-        aL.frameChanged(new FrameChangeEvent(this, iImage.getCurrent(), iImage.getNumFrames(), 
-                            new Range(iImage.image().getMin(), iImage.image().getMax())));
+        //aL.frameChanged(new FrameChangeEvent(this, iImage.getCurrent(), iImage.getNumFrames(), iLUTMgr.getRange()));                           
     }
     
     public void removeFrameChangeListener(FrameChangeListener aL) {
         iList.remove(FrameChangeListener.class, aL);
     } 
     
-    private void notifyFrameChanged(int aN) {
-        final FrameChangeEvent evt = new FrameChangeEvent(this, aN, iImage.getNumFrames(),
+    private void notifyFrameChanged() {
+        final FrameChangeEvent evt = new FrameChangeEvent(this, iImage.getCurrent(), iImage.getNumFrames(),
                                                             new Range(iImage.image().getMin(), iImage.image().getMax()));        
         
         FrameChangeListener arr[] = iList.getListeners(FrameChangeListener.class);
@@ -223,22 +224,22 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
     //}    
       
        
-    void loadFrame(int aN) throws IndexOutOfBoundsException {                        
+    void loadFrame(int aN) throws IndexOutOfBoundsException {                                
         iImage.advance(aN);   
-        ///iWM.reset(iImage);
-        notifyFrameChanged(aN);
-         
-        //iLUTMgr.setImage(iImage.image());
+        
         iLUTMgr.setRange(new Range(iImage.image().getMin(), iImage.image().getMax()));// frameChanged();
         
-        notifyWindowChanged(true);
+        iROIMgr.update();   
         
-        iROIMgr.update();                
+        notifyFrameChanged();
+        notifyWindowChanged();
+        
+                     
         invalidateBuffer();
     }
     
     public void zoom(double aFactor, int aX, int aY) {
-        iFit = EFit.Zoom;
+        iFit = FIT_NO_FIT;
         
         iZoom.setToScale(iZoom.getScaleX() + aFactor, iZoom.getScaleY() + aFactor);        
         
@@ -315,12 +316,7 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
             iVLUT = new VOILut(iImage.image());
             iPLUT = new PresentationLut(null);
         }
-/*
-        public void frameChanged() {   
-            iVLUT.setImage(iImage.image());
-        }
-*/
-        
+
         public void setRange(Range aR) {
             iVLUT.setRange(aR);                    
         }
@@ -335,7 +331,7 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
             if (!iVLUT.getWindow().equals(aW) && iVLUT.getRange().contains(aW)) {            
                 iVLUT.setWindow(aW);               
                 invalidateBuffer();
-                notifyWindowChanged(false);
+                notifyWindowChanged();
                 repaint();
             }       
         }
@@ -351,7 +347,7 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         public void setInverted(boolean aI) {
             if (iVLUT.setInverted(aI)) {                          
                 invalidateBuffer();
-                notifyWindowChanged(false);
+                notifyWindowChanged();
                 repaint();
             }        
         }
@@ -363,7 +359,7 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         public void setLinear(boolean aI) {
             if (iVLUT.setLinear(aI)) {
                 invalidateBuffer();
-                notifyWindowChanged(false);  
+                notifyWindowChanged();  
                 repaint();
             }
         }
