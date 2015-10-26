@@ -48,7 +48,7 @@ public class ROIManager implements java.io.Serializable {
     
     private HashSet<Overlay> iOverlays;      
     
-     private final EventListenerList iList;
+    private final EventListenerList iList;
     
     ROIManager(ImageComponent aV) { 
         iView = aV;

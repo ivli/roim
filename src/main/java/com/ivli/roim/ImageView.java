@@ -26,6 +26,7 @@ public class ImageView extends JPanel {
         iLut  = new LUTControl(iView.getLUTMgr());                                     
         
         iView.addWindowChangeListener(iLut); //!!!!
+        iView.addFrameChangeListener(iLut);
                 
         setLayout(new BorderLayout());                 
                 

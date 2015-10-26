@@ -24,38 +24,35 @@ import org.apache.logging.log4j.Logger;
  * @author likhachev
  */        
 class Controller implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, ActionListener {
-    static final int MOUSE_ACTION_NONE   =  00;
-    static final int MOUSE_ACTION_SELECT =  01;
-    static final int MOUSE_ACTION_ZOOM   =  02;
-    static final int MOUSE_ACTION_PAN    =  03;
-    static final int MOUSE_ACTION_WINDOW =  04;
-    static final int MOUSE_ACTION_LIST   =  05; //multiframe: scroll through frames
-    static final int MOUSE_ACTION_WHEEL  =  15;
+    public static final int MOUSE_ACTION_NONE   =  00;
+    public static final int MOUSE_ACTION_SELECT =  01;
+    public static final int MOUSE_ACTION_ZOOM   =  02;
+    public static final int MOUSE_ACTION_PAN    =  03;
+    public static final int MOUSE_ACTION_WINDOW =  04;
+    public static final int MOUSE_ACTION_LIST   =  05; //multiframe: scroll through frames
+    public static final int MOUSE_ACTION_WHEEL  =  15;
    
-    static final int MOUSE_ACTION_TOOL   = 100;
-    static final int MOUSE_ACTION_MENU   = 200;
-    static final int MOUSE_ACTION_ROI    = 500;
+    public static final int MOUSE_ACTION_TOOL   = 100;
+    public static final int MOUSE_ACTION_MENU   = 200;
+    public static final int MOUSE_ACTION_ROI    = 500;
     
-    protected int iLeftAction   = MOUSE_ACTION_ZOOM;
-    protected int iMiddleAction = MOUSE_ACTION_PAN;
-    protected int iRightAction  = MOUSE_ACTION_WINDOW;
-    protected int iWheelAction  = MOUSE_ACTION_LIST;
+    protected int iLeftAction   = Settings.MOUSE_DEFAULT_ACTION_LEFT;
+    protected int iMiddleAction = Settings.MOUSE_DEFAULT_ACTION_MIDDLE;
+    protected int iRightAction  = Settings.MOUSE_DEFAULT_ACTION_RIGHT;
+    protected int iWheelAction  = Settings.MOUSE_DEFAULT_ACTION_WHEEL;
 
+    private double iZoomStep = Settings.ZOOM_STEP_FACTOR;
+    
     abstract class BaseActionItem extends ActionItem {
         BaseActionItem(int aX, int aY) {
             super(aX, aY);
         }
-        
-        //protected  void DoAction(int aX, int aY){} 
-        
-        protected  boolean DoWheel(int aX) {
-            iControlled.zoom(-aX/Settings.ZOOM_SENSITIVITY_FACTOR, 0, 0);
+       
+        protected boolean DoWheel(int aX) {
+            iControlled.zoom(-aX/iZoomStep, 0, 0);
             iControlled.repaint();
             return true;
         }
-
-        protected  boolean DoRelease(int aX, int aY) {return false;}
-        protected  void DoPaint(Graphics2D aGC) {}   
     }
     
     class RectangularRoiCreator extends BaseActionItem {
@@ -89,7 +86,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
             if (null != iShape)
                 gc.draw(iShape);
         }
-    };
+    }
     
     ActionItem NewAction(int aType, int aX, int aY) {
         switch (aType){   
@@ -101,7 +98,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
                  }}; 
             case MOUSE_ACTION_ZOOM: return new BaseActionItem(aX, aY) {
                                         public void DoAction(int aX, int aY) {
-                                            iControlled.zoom((aX-iX)/Settings.ZOOM_SENSITIVITY_FACTOR, 0, 0);
+                                            iControlled.zoom((aX-iX)/iZoomStep, 0, 0);
                                             iControlled.repaint();
                 }};  
             case MOUSE_ACTION_PAN: 

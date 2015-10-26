@@ -8,6 +8,8 @@ package com.ivli.roim.controls;
 
 import com.ivli.roim.Overlay;
 import com.ivli.roim.ROI;
+import com.ivli.roim.ImageView;
+
 import java.util.Iterator;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -22,8 +24,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingUtilities;
 import java.awt.Window;
-import java.util.Locale;
-import javax.swing.UIManager;
+
 
 /**
  *
@@ -32,14 +33,15 @@ import javax.swing.UIManager;
 public class ROIListPanel extends javax.swing.JPanel {
     private static final String KCommandInvokeColourPicker = "COMMAND_INVOKE_COLOUR_PICKER_DIALOG"; // NOI18N
     
-    private com.ivli.roim.ImageView iView;
+    private final ImageView iView;              
+    private final DefaultTableModel iModel;
     
     public ROIListPanel(com.ivli.roim.ImageView aView) {
         
         iView = aView;
         
-        tableModel = new DefaultTableModel( new Object [][] {},
-                                            new String [] {"OBJ", "NAME", "PIXELS", "INTDEN", "NULL"}
+        iModel = new DefaultTableModel(new Object [][] {},
+                                           new String [] {"OBJ", "NAME", "PIXELS", "INTDEN", "NULL"}
                                           )
             {
             Class[] types = new Class [] {
@@ -129,7 +131,7 @@ public class ROIListPanel extends javax.swing.JPanel {
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
 
-        jTable1.setModel(tableModel);
+        jTable1.setModel(iModel);
         jScrollPane1.setViewportView(jTable1);
 
         jButton1.setText("OK");
@@ -170,8 +172,7 @@ public class ROIListPanel extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jButton1ActionPerformed
     
-        
-    private DefaultTableModel tableModel;
+  
             
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

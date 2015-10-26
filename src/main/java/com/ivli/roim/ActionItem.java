@@ -38,9 +38,9 @@ public abstract class ActionItem {
     }
 
     protected abstract void DoAction(int aX, int aY); 
-    protected  boolean DoWheel(int aX){return false;}
+    protected boolean DoWheel(int aX){return false;}
     // return true if action shall be continued
-    protected  boolean DoRelease(int aX, int aY) {return false;}
-    protected  void DoPaint(Graphics2D aGC) {}   
+    protected boolean DoRelease(int aX, int aY) {return false;}
+    protected void DoPaint(Graphics2D aGC) {}   
 }
 

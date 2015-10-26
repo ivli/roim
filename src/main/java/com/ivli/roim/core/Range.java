@@ -6,8 +6,8 @@ package com.ivli.roim.core;
  * @author likhachev
  */
 public class Range {
-    double iMax;
-    double iMin;
+    private final double iMax;
+    private final double iMin;
     
     public Range(double aMin, double aMax) {
         iMax = aMax;
@@ -48,4 +48,7 @@ public class Range {
         return getRange();
     }
     
+    public double getPercent(double aVal) {
+        return aVal / getRange();
+    }
 }

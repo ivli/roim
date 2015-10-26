@@ -137,13 +137,11 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         iZoom.setToScale(scale, scale); //does it make sense to implement non isomorphic scale?
         ///invalidateBuffer();
     }
-          
-    
-       
+                     
     public void addWindowChangeListener(WindowChangeListener aL) {
         //iWinListeners.add(aL);
         iList.add(WindowChangeListener.class, aL);
-        aL.windowChanged(new WindowChangeEvent(this, iLUTMgr.getWindow(), iImage.image().getMin(), iImage.image().getMax(), true));
+        //aL.windowChanged(new WindowChangeEvent(this, iLUTMgr.getWindow()/*, iImage.image().getMin(), iImage.image().getMax(), true*/));
     }
    
     public void removeWindowChangeListener(WindowChangeListener aL) {
@@ -152,7 +150,7 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
     }
             
     private void notifyWindowChanged(boolean aRC) {
-        final WindowChangeEvent evt = new WindowChangeEvent(this, iLUTMgr.getWindow(), iImage.image().getMin(), iImage.image().getMax(), aRC);
+        final WindowChangeEvent evt = new WindowChangeEvent(this, iLUTMgr.getWindow()/*, iImage.image().getMin(), iImage.image().getMax(), aRC*/);
         
         WindowChangeListener arr[] = iList.getListeners(WindowChangeListener.class);
         
@@ -162,7 +160,8 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
     
     public void addFrameChangeListener(FrameChangeListener aL) {
         iList.add(FrameChangeListener.class, aL);
-        aL.frameChanged(new FrameChangeEvent(this, iImage.getCurrent(), iImage.getNumFrames()));
+        aL.frameChanged(new FrameChangeEvent(this, iImage.getCurrent(), iImage.getNumFrames(), 
+                            new Range(iImage.image().getMin(), iImage.image().getMax())));
     }
     
     public void removeFrameChangeListener(FrameChangeListener aL) {
@@ -170,7 +169,8 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
     } 
     
     private void notifyFrameChanged(int aN) {
-        final FrameChangeEvent evt = new FrameChangeEvent(this, aN, iImage.getNumFrames());        
+        final FrameChangeEvent evt = new FrameChangeEvent(this, aN, iImage.getNumFrames(),
+                                                            new Range(iImage.image().getMin(), iImage.image().getMax()));        
         
         FrameChangeListener arr[] = iList.getListeners(FrameChangeListener.class);
         
@@ -322,8 +322,7 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
 */
         
         public void setRange(Range aR) {
-            iVLUT.setRange(aR);
-                    
+            iVLUT.setRange(aR);                    
         }
         
         public void setLUT(String aL) {

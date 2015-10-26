@@ -326,12 +326,12 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iChart.initChart();
         iPanel.iView.getROIMgr().addROIChangeListener(iChart);
         
-        /*           
+        /*  */         
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iPanel, BorderLayout.CENTER);
         iChart.setPreferredSize(jPanel3.getPreferredSize());
         jPanel3.add(iChart);
-        /**/ 
+        /* 
         jSplitPane1.setDividerLocation(.5);
         jSplitPane1.setLeftComponent(iPanel);
         jSplitPane1.setRightComponent(iChart);
