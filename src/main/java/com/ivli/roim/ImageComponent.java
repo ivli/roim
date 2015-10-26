@@ -55,8 +55,7 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
     public static final int FIT_VISIBLE = 1;
     public static final int FIT_WIDTH   = 2;
     public static final int FIT_HEIGHT  = 3;
-    
-    
+ 
     
     private int   iFit = Settings.DEFAULT_FIT;  //     
     private final IMultiframeImage iImage;                     
@@ -106,29 +105,28 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         return iLUTMgr;
     }    
     
-    public void fitWidth() {
-        iFit = FIT_WIDTH; 
+    public void setFit(int aFit) {        
+        if (aFit < FIT_NO_FIT || aFit > FIT_HEIGHT)
+            throw new java.lang.IllegalArgumentException();
+        iFit = aFit; 
         invalidateBuffer();
+        repaint();
     }
-    
-    public void fitHeight() {
-        iFit = FIT_HEIGHT; 
-        invalidateBuffer();
-    }
-    
+           
     public void setInterpolationMethod(Object aMethod) {
         iInterpolation = aMethod;
         invalidateBuffer();
         repaint();
     }
     
-    private void scaleUpdate() {
+    private void updateScale() {
         double scale;
         
         switch (iFit) {
             case FIT_VISIBLE:
-                scale = Math.min((double)getWidth() / (double)iImage.getWidth(), 
-                                 (double)getHeight() / (double)iImage.getHeight()); break;                
+                final double scaleX = (double)getWidth() / (double)iImage.getWidth(); 
+                final double scaleY = (double)getHeight() / (double)iImage.getHeight(); 
+                scale = Math.min(scaleX, scaleY); break;                
             case FIT_HEIGHT: scale = (double)getHeight() / (double)iImage.getHeight(); break;
             case FIT_WIDTH:  scale = (double)getWidth() / (double)iImage.getWidth(); break;
             case FIT_NO_FIT: //falltrough to default
@@ -258,7 +256,7 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         iROIMgr.clear();
         iOrigin.x = iOrigin.y = 0;
         iZoom.setToScale(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
-        //updateBufferedImage();
+        
         invalidateBuffer();
     }    
     
@@ -282,7 +280,7 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         iBuf = z.filter(iLUT.transform(src, null), null);   
         */
         
-        scaleUpdate();
+        updateScale();
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(iZoom, hts);

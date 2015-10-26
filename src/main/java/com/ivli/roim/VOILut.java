@@ -62,14 +62,12 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         } else {
             iRange = aR;
             iWin = new Window(aR);
-       }
+        }
         
         makeLUT();            
     }
       
-    public void setWindow(Window aW) {       
-        //final Window tmp = new Window(aW.getLevel(), aW.getWidth());
-        
+    public void setWindow(Window aW) {           
         if (iRange.contains(aW)) {//tmp.getBottom()>=iMax.getBottom() && tmp.getTop()<=iMax.getTop()) {
             iWin.setWindow(aW);
             makeLUT();

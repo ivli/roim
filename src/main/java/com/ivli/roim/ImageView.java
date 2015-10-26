@@ -1,7 +1,6 @@
 
 package com.ivli.roim;
 
-import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.controls.LUTControl;
 import java.util.Iterator;
 import java.io.IOException;
@@ -63,11 +62,7 @@ public class ImageView extends JPanel {
     void loadFrame(int aN) {
         iView.loadFrame(aN);
     }
-    
-    void fitWidth() {        
-        iView.fitWidth();
-    }
-       
+           
     public Iterator<Overlay> getOverlaysList() {        
         return iView.getROIMgr().getOverlaysList();
     }

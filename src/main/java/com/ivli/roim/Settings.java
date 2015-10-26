@@ -29,13 +29,13 @@ public class Settings implements java.io.Serializable {
             return Settings.DISPLAY_UNITS == DISPLAY_UNITS_MM ? java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString(""): java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("");} 
     };
     
-    public static final int MOUSE_DEFAULT_ACTION_LEFT   = Controller.MOUSE_ACTION_PAN;
-    public static final int MOUSE_DEFAULT_ACTION_MIDDLE = Controller.MOUSE_ACTION_ZOOM;
-    public static final int MOUSE_DEFAULT_ACTION_RIGHT  = Controller.MOUSE_ACTION_WINDOW;
-    public static final int MOUSE_DEFAULT_ACTION_WHEEL  = Controller.MOUSE_ACTION_LIST;    
+    public static int MOUSE_DEFAULT_ACTION_LEFT   = Controller.MOUSE_ACTION_PAN;
+    public static int MOUSE_DEFAULT_ACTION_MIDDLE = Controller.MOUSE_ACTION_ZOOM;
+    public static int MOUSE_DEFAULT_ACTION_RIGHT  = Controller.MOUSE_ACTION_WINDOW;
+    public static int MOUSE_DEFAULT_ACTION_WHEEL  = Controller.MOUSE_ACTION_LIST;    
         
-    public static final int DEFAULT_FIT = ImageComponent.FIT_WIDTH;
-    public static final boolean KEEP_WINDOW_AMONG_FRAMES = true;
+    public static int DEFAULT_FIT = ImageComponent.FIT_VISIBLE;
+    public static boolean KEEP_WINDOW_AMONG_FRAMES = true;
     
     private Settings(){}
     

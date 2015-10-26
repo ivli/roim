@@ -69,12 +69,16 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
-        jMenuItem8 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem10 = new javax.swing.JMenuItem();
         jMenuItem11 = new javax.swing.JMenuItem();
         jMenuItem12 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenu5 = new javax.swing.JMenu();
+        jMenuItem13 = new javax.swing.JMenuItem();
+        jMenuItem14 = new javax.swing.JMenuItem();
+        jMenuItem15 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
@@ -201,18 +205,17 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu2.add(jMenuItem9);
 
-        jMenuItem8.setText(bundle.getString("NewJFrame.jMenuItem8.text")); // NOI18N
-        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItem4.setText(bundle.getString("NewJFrame.jMenuItem4.text")); // NOI18N
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem8ActionPerformed(evt);
+                jMenuItem4ActionPerformed(evt);
             }
         });
-        jMenuItem8.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jMenuItem8PropertyChange(evt);
-            }
-        });
-        jMenu2.add(jMenuItem8);
+        jMenu2.add(jMenuItem4);
+
+        jMenuBar1.add(jMenu2);
+
+        jMenu4.setText(bundle.getString("NewJFrame.jMenu4.text")); // NOI18N
 
         jMenu3.setText(bundle.getString("NewJFrame.jMenu3.text")); // NOI18N
 
@@ -240,17 +243,37 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu3.add(jMenuItem12);
 
-        jMenu2.add(jMenu3);
+        jMenu4.add(jMenu3);
 
-        jMenuItem4.setText(bundle.getString("NewJFrame.jMenuItem4.text")); // NOI18N
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+        jMenu5.setText(bundle.getString("NewJFrame.jMenu5.text")); // NOI18N
+
+        jMenuItem13.setText(bundle.getString("NewJFrame.jMenuItem13.text")); // NOI18N
+        jMenuItem13.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem4ActionPerformed(evt);
+                jMenuItem13ActionPerformed(evt);
             }
         });
-        jMenu2.add(jMenuItem4);
+        jMenu5.add(jMenuItem13);
 
-        jMenuBar1.add(jMenu2);
+        jMenuItem14.setText(bundle.getString("NewJFrame.jMenuItem14.text")); // NOI18N
+        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem14ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItem14);
+
+        jMenuItem15.setText(bundle.getString("NewJFrame.jMenuItem15.text")); // NOI18N
+        jMenuItem15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem15ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItem15);
+
+        jMenu4.add(jMenu5);
+
+        jMenuBar1.add(jMenu4);
 
         setJMenuBar(jMenuBar1);
 
@@ -363,10 +386,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                     
     private void jMenu2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu2ComponentShown
         // TODO add your handling code here:
-        if (null == iPanel)
-        jMenuItem8.setEnabled(false);
-        else
-        jMenuItem8.setEnabled(true);
+        if (null == iPanel) {
+        
+        } else {
+        
+        }
     }//GEN-LAST:event_jMenu2ComponentShown
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
@@ -374,15 +398,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iPanel.resetView();
         jPanel1.repaint();
     }//GEN-LAST:event_jMenuItem4ActionPerformed
-
-    private void jMenuItem8PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jMenuItem8PropertyChange
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem8PropertyChange
-
-    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        iPanel.fitWidth();
-        iPanel.repaint();
-    }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
         FileDialog fd = new FileDialog(this, "NEWJFRAME.CHOOSE_ROILIST_FILE", FileDialog.LOAD);
@@ -458,6 +473,18 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iPanel.iView.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
+    private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
+        iPanel.iView.setFit(ImageComponent.FIT_HEIGHT);        
+    }//GEN-LAST:event_jMenuItem14ActionPerformed
+
+    private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
+        iPanel.iView.setFit(ImageComponent.FIT_VISIBLE);
+    }//GEN-LAST:event_jMenuItem15ActionPerformed
+
+    private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem13ActionPerformed
+        iPanel.iView.setFit(ImageComponent.FIT_WIDTH);
+    }//GEN-LAST:event_jMenuItem13ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -522,18 +549,22 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem12;
+    private javax.swing.JMenuItem jMenuItem13;
+    private javax.swing.JMenuItem jMenuItem14;
+    private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
-    private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
