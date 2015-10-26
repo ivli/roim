@@ -462,27 +462,27 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        iPanel.iView.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        iPanel.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
-        iPanel.iView.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        iPanel.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
-        iPanel.iView.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        iPanel.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        iPanel.iView.setFit(ImageComponent.FIT_HEIGHT);        
+        iPanel.setFit(ImageComponent.FIT_HEIGHT);        
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
     private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
-        iPanel.iView.setFit(ImageComponent.FIT_VISIBLE);
+        iPanel.setFit(ImageComponent.FIT_VISIBLE);
     }//GEN-LAST:event_jMenuItem15ActionPerformed
 
     private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem13ActionPerformed
-        iPanel.iView.setFit(ImageComponent.FIT_WIDTH);
+        iPanel.setFit(ImageComponent.FIT_WIDTH);
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
     /**

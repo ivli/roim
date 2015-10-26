@@ -49,7 +49,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
         }
        
         protected boolean DoWheel(int aX) {
-            iControlled.zoom(-aX/iZoomStep, 0, 0);
+            iControlled.zoom(-aX/iZoomStep);
             iControlled.repaint();
             return true;
         }
@@ -98,7 +98,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
                  }}; 
             case MOUSE_ACTION_ZOOM: return new BaseActionItem(aX, aY) {
                                         public void DoAction(int aX, int aY) {
-                                            iControlled.zoom((aX-iX)/iZoomStep, 0, 0);
+                                            iControlled.zoom((aX-iX)/iZoomStep);
                                             iControlled.repaint();
                 }};  
             case MOUSE_ACTION_PAN: 

@@ -15,9 +15,9 @@ import org.apache.logging.log4j.Logger;
 public class ImageView extends JPanel {
     private static final boolean SHOW_COMPOSITE = false;
    
-    ImageComponent iView;
-    ImageComponent iComp;
-    LUTControl iLut;
+    protected ImageComponent iView;
+    private ImageComponent iComp;
+    protected LUTControl iLut;
     
            
     void open(String aName) throws IOException {                                         
@@ -62,7 +62,22 @@ public class ImageView extends JPanel {
     void loadFrame(int aN) {
         iView.loadFrame(aN);
     }
-           
+        
+    public void setInterpolationMethod(Object aMethod) {
+        if (null != iView) {
+            iView.setInterpolationMethod(aMethod);     
+            repaint();
+        }
+    }
+    
+    public void setFit(int aFit) {
+        if (null != iView) {
+            iView.setFit(aFit);     
+            repaint();
+        }
+    }
+    
+    
     public Iterator<Overlay> getOverlaysList() {        
         return iView.getROIMgr().getOverlaysList();
     }

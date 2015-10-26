@@ -109,14 +109,12 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         if (aFit < FIT_NO_FIT || aFit > FIT_HEIGHT)
             throw new java.lang.IllegalArgumentException();
         iFit = aFit; 
-        invalidateBuffer();
-        repaint();
+        invalidateBuffer();       
     }
            
     public void setInterpolationMethod(Object aMethod) {
         iInterpolation = aMethod;
-        invalidateBuffer();
-        repaint();
+        invalidateBuffer();       
     }
     
     private void updateScale() {
@@ -133,9 +131,8 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
             default: 
                 return;                            
         }        
-        // scale;
+        
         iZoom.setToScale(scale, scale); //does it make sense to implement non isomorphic scale?
-        ///invalidateBuffer();
     }
                      
     public void addWindowChangeListener(WindowChangeListener aL) {
@@ -212,17 +209,11 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         return ret;
     }
    
-    private void invalidateBuffer() {iBuf = null;}
-        
-    ///private double getMin() {return iImage.image().getMin();} 
-    ///private double getMax() {return iImage.image().getMax();} 
-    
-    //public int getNumFrames() throws IOException {
-   //     return iImage.getNumFrames();
-    //}    
-      
-       
-    void loadFrame(int aN) throws IndexOutOfBoundsException {                                
+    private void invalidateBuffer() {
+        iBuf = null;
+    }
+                  
+    public void loadFrame(int aN) throws IndexOutOfBoundsException {                                
         iImage.advance(aN);   
         
         iLUTMgr.setRange(new Range(iImage.image().getMin(), iImage.image().getMax()));// frameChanged();
@@ -231,19 +222,18 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         
         notifyFrameChanged();
         notifyWindowChanged();
-        
-                     
+               
         invalidateBuffer();
     }
     
-    public void zoom(double aFactor, int aX, int aY) {
+    public void zoom(double aFactor) {
         iFit = FIT_NO_FIT;
         
         iZoom.setToScale(iZoom.getScaleX() + aFactor, iZoom.getScaleY() + aFactor);        
         
         notifyZoomChanged(iZoom.getScaleX(), iZoom.getScaleY());
         invalidateBuffer();
-        repaint();            
+        ///repaint();            
     }
      
     public void pan(int adX, int adY) {
@@ -252,11 +242,11 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
        // repaint();
     }
              
-    void resetView() {
+    public void resetView() {
         iROIMgr.clear();
         iOrigin.x = iOrigin.y = 0;
         iZoom.setToScale(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
-        
+        iFit = Settings.DEFAULT_FIT;
         invalidateBuffer();
     }    
     
@@ -270,26 +260,17 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
         return op.filter(aR, null);
     }
       
-    private void updateBufferedImage() {          
-        /*
-        RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
-        AffineTransformOp z = new AffineTransformOp(iZoom, hts);
-                    
-        BufferedImage src = iWM.transform(iImage.getBufferedImage(), null);
-        
-        iBuf = z.filter(iLUT.transform(src, null), null);   
-        */
-        
+    private void updateBufferedImage() {                  
         updateScale();
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(iZoom, hts);
         BufferedImage src  = iLUTMgr.transform(iImage.image().getBufferedImage(), null);
-        //BufferedImage src = iPLut.transform(s1, null);
-        
+                
         iBuf = z.filter(src, null);                  
     }
     
+    @Override
     public void paintComponent(Graphics g) {           
         //super.paintComponent(g);
         if (null == iBuf) 
