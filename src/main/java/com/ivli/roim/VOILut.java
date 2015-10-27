@@ -104,152 +104,68 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     
     private static final double LUT_MIN   = .0;
     private static final double LUT_MAX   = 255.;
-    private static final double LUT_RANGE = 255.;
-    
-    private static final byte GREYSCALES_MIN = (byte)0x0;
-    private static final byte GREYSCALES_MAX = (byte)0xff;
-    private static final int  GREYSCALES = 255;
-    
-    private void makeLogarithmic2() {                  
+    private static final double LUT_RANGE = LUT_MAX - LUT_MIN;
+
+    private void makeLogarithmic() {   
+       
         for (int i = 0; i < iBuffer.bytes.length; ++i) {            
             final double val = (1 + Math.exp(-4*(iPVt.transform(iBuffer.min + i) - iWin.getLevel()) / iWin.getWidth())) + LUT_MIN + 0.5;
             final double y = Ranger.range(LUT_RANGE / val, LUT_MIN, LUT_MAX);
             
-            iBuffer.bytes[i]=(byte)(isInverted() ? (LUT_MAX - y) : y);           
+            iBuffer.bytes[i]=(byte)(isInverted() ? (LUT_MAX - y) : y);
         }
+
+        iLok  = new LookupOp(new ByteLookupTable(0, iBuffer.bytes), null);	
     }
     
+    private static final int GREYSCALES = 256;
+    private static final int GREYSCALES_MAX = 255;
+    private static final int GREYSCALES_MIN = 0;
     
-    interface functor {
-        byte function(double i);
-    }
-    
-    private void makeLogarithmic() {          
-        for (int i = 0; i < iBuffer.bytes.length; ++i) {          
-            final double PV = iPVt.transform(i - iBuffer.min);
-            byte y;
-            
-            if (PV <= iWin.getBottom()) 
-                y = GREYSCALES_MIN;
-            else 
-                if (PV > iWin.getTop()) 
-                    y = GREYSCALES_MAX;
+    private void makeLinear() {  
+        final double m = GREYSCALES / iWin.getWidth();
+        final double b = m*iWin.getBottom();
+        final byte max = (byte)(isInverted() ? GREYSCALES_MIN:GREYSCALES_MAX);
+        final byte min = (byte)(isInverted() ? GREYSCALES_MAX:GREYSCALES_MIN);
+        
+        for (int x=0; x < iBuffer.bytes.length; ++x) {
+            if (x <= iWin.getBottom()) 
+                iBuffer.bytes[x] = min;
+            else if (x > iWin.getTop()) 
+                iBuffer.bytes[x] = max;
             else {
-                y = (byte)((1 + Math.exp(-4*(PV - iWin.getLevel()) / iWin.getWidth())) + LUT_MIN + 0.5);
+                final double y = m * iPVt.transform(x) - b;
+                iBuffer.bytes[x] = (byte) (isInverted()? max - y : y);
             }
-            
-            iBuffer.bytes[i] = (byte)(isInverted() ? GREYSCALES_MAX - y : y);
-        }        	
+        }
+
+        iLok = new LookupOp(new ByteLookupTable(0, iBuffer.bytes), null);
     }
     
-    
-    private void makeLinear2() {          
-        for (int i = 0; i < iBuffer.bytes.length; ++i) {          
-            final double PV = iPVt.transform(i-iBuffer.min);
-            byte y;
-            
-            if (PV <= iWin.getBottom()) 
-                y = GREYSCALES_MIN;
-            else 
-                if (PV > iWin.getTop()) 
-                    y = GREYSCALES_MAX;
+    private void makeLinear2() {  	
+        for (int i = 0; i < iBuffer.bytes.length; ++i) {
+            double y = iPVt.transform(i-iBuffer.min);
+
+            if (y <= iWin.getBottom()) y = LUT_MIN;
+            else if (y > iWin.getTop()) y = LUT_MAX;
             else {
-                y = (byte)(((PV - iWin.getLevel())/iWin.getWidth() + .5) * LUT_RANGE + LUT_MIN);
+                y = (((y - iWin.getLevel())/iWin.getWidth() + .5) * LUT_RANGE + LUT_MIN);
             }
-            
-            iBuffer.bytes[i] = (byte)(isInverted() ? GREYSCALES_MAX - y : y);
-        }        	
+
+            iBuffer.bytes[i] = (byte)(isInverted() ? LUT_MAX - y : y);
+        }
+
+        iLok = new LookupOp(new ByteLookupTable(0, iBuffer.bytes), null);	
     }
 
-    private void makeLUT(functor f) {  
-        
-        final byte maxval; 
-        final byte minval;    
-        
-        if (isInverted()) {
-            maxval = GREYSCALES_MIN;
-            minval = GREYSCALES_MAX;
-        } else {
-            minval = GREYSCALES_MIN;
-            maxval = GREYSCALES_MAX;
-        }
-                    
-        
-        for (int i = 0; i < iBuffer.bytes.length; ++i) {          
-            final double PV = iPVt.transform(iBuffer.min + i);
-                        
-            if (PV <= iWin.getBottom()) 
-                iBuffer.bytes[i] = minval;
-            else 
-                if (PV > iWin.getTop()) 
-                    iBuffer.bytes[i] = maxval;
-            else {
-                if(isInverted())                
-                    iBuffer.bytes[i] = (byte)(GREYSCALES_MAX - f.function(PV));
-                else
-                    iBuffer.bytes[i] = f.function(PV);
-            }                        
-        }        	
-    }
-    
-    
-    
     private void makeLUT() {   
         
         logger.info((isLinear() ? "linear, ":"logarithmic, ") + (isInverted() ? "inverted, ":"direct, ") + "level=" + iWin.getLevel() + ", width=" + iWin.getWidth()); //NOI18N
         
         if (isLinear())
-            makeLUT(new functor() { 
-                public byte function(double PV) {
-                    return (byte)(((PV - iWin.getLevel())/iWin.getWidth() + .5) * LUT_RANGE + LUT_MIN);
-                }});               
+            makeLinear2();   
         else 
-            makeLUT(new functor() { 
-                public byte function(double PV) {
-                    return (byte)(LUT_RANGE/(1 + Math.exp(-4*(PV - iWin.getLevel()) / iWin.getWidth())) + LUT_MIN);
-                }});
-              
-        
-        iLok = new LookupOp(new ByteLookupTable(0, iBuffer.bytes), null);
-        /**/
-        
-        String fname = String.format("%s_%.0f-%.0f_%.0f-%.0f.csv", isLinear() ? "Lin" : "Log", 
-                                                                    getWindow().getLevel(), getWindow().getWidth(),
-                                                                        iRange.getMin(), iRange.getMax());
-                                    
-        
-        try (java.io.FileOutputStream fos = new java.io.FileOutputStream(fname)) {
-            try(java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(fos)) {            
-                                 
-                class Formatter {
-                    String format(byte[] a) {
-                         //the code snatched from java.utils.Array  
-                        int iMax = a.length - 1;
-                        if (iMax == -1)
-                            return "[]";
-
-                        StringBuilder b = new StringBuilder();
-                        b.append('[');
-                        for (int i = 0; ; i++) {
-                            b.append(String.valueOf(((int)a[i]) & 0xff));
-                            if (i == iMax)
-                                return b.append(']').toString();
-                            b.append(", ");
-                        }
-                    }
-                }
-                
-                String s = new Formatter().format(iBuffer.bytes);
-                
-                oos.writeObject(s); 
-
-                oos.close();
-                fos.close();
-            }
-        } catch (java.io.IOException ex) {
-            
-        } 
-        
+            makeLogarithmic();     
     }
   
     @Override
