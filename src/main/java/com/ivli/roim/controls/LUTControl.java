@@ -414,12 +414,10 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 if (iTop) 
                     iKnob = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/knob_top.png")); //NOI18N
                 else
-                    iKnob = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/knob_bot.png")); //NOI18N   
-                
-                logger.info("Knobs are here :-)");
+                    iKnob = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/knob_bot.png")); //NOI18N                                   
                 
              } catch (IOException ex) {              
-                 logger.info("Some shit happened -{}", ex);                 
+                 logger.info("Some shit happened ", ex); //NOI18N               
              } 
         
         }

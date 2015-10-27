@@ -45,8 +45,7 @@ import org.jfree.data.xy.XYSeries;
 
 import com.ivli.roim.events.*;
 
-public class ImageComponent extends JComponent /*implements WindowChangeNotifier*/ {
-
+public class ImageComponent extends JComponent {
     private static final boolean DRAW_OVERLAYS_ON_BUFFERED_IMAGE = false; //i cry ther's no #ifdef     
     private static final double  DEFAULT_SCALE_X = 1.;
     private static final double  DEFAULT_SCALE_Y = 1.;
@@ -85,7 +84,7 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
             public void componentHidden(ComponentEvent e) {}
             public void componentMoved(ComponentEvent e) {}
             public void componentShown(ComponentEvent e) {}                    
-            });
+        });
         
     }
        
@@ -271,18 +270,13 @@ public class ImageComponent extends JComponent /*implements WindowChangeNotifier
     }
     
     @Override
-    public void paintComponent(Graphics g) {           
-        //super.paintComponent(g);
+    public void paintComponent(Graphics g) {                   
         if (null == iBuf) 
             updateBufferedImage();
               
-        g.drawImage(iBuf, iOrigin.x, iOrigin.y, iBuf.getWidth(), iBuf.getHeight(), null);
-        
-        if (!DRAW_OVERLAYS_ON_BUFFERED_IMAGE) 
-            iROIMgr.paint((Graphics2D)g, virtualToScreen());
-          
-               
-        iController.paint((Graphics2D)g); //must paint the last   
+        g.drawImage(iBuf, iOrigin.x, iOrigin.y, iBuf.getWidth(), iBuf.getHeight(), null);        
+        iROIMgr.paint((Graphics2D)g, virtualToScreen());                         
+        iController.paint((Graphics2D)g); //must reside last in the paint queue   
     }
      
       

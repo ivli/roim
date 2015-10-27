@@ -23,10 +23,12 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     private boolean iLog;   
     
     private final PValueTransform iPVt;
-    private final Buffer       iBuffer;
-    private LookupOp iLok; 
     private Window iWin;
     private Range iRange; 
+    
+    private final Buffer iBuffer;
+    private LookupOp iLok; 
+    
     
     public VOILut(ImageFrame aI) {
         iPVt = new PValueTransform();
@@ -104,10 +106,12 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     private static final double LUT_MAX   = 255.;
     private static final double LUT_RANGE = LUT_MAX - LUT_MIN;
 
-    private final void makeLogarithmic() {   
+    private void makeLogarithmic() {   
        
-        for (int i = 0; i < iBuffer.length; ++i) {
-            double y = Ranger.range(LUT_RANGE / (1 + Math.exp(-4*(iPVt.transform(iBuffer.min + i) - iWin.getLevel())/iWin.getWidth())) + LUT_MIN + 0.5, LUT_MIN, LUT_MAX);
+        for (int i = 0; i < iBuffer.bytes.length; ++i) {            
+            final double val = (1 + Math.exp(-4*(iPVt.transform(iBuffer.min + i) - iWin.getLevel()) / iWin.getWidth())) + LUT_MIN + 0.5;
+            final double y = Ranger.range(LUT_RANGE / val, LUT_MIN, LUT_MAX);
+            
             iBuffer.bytes[i]=(byte)(isInverted() ? (LUT_MAX - y) : y);
         }
 
@@ -124,7 +128,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         final byte max = (byte)(isInverted() ? GREYSCALES_MIN:GREYSCALES_MAX);
         final byte min = (byte)(isInverted() ? GREYSCALES_MAX:GREYSCALES_MIN);
         
-        for (int x=0; x < iBuffer.length; ++x) {
+        for (int x=0; x < iBuffer.bytes.length; ++x) {
             if (x <= iWin.getBottom()) 
                 iBuffer.bytes[x] = min;
             else if (x > iWin.getTop()) 
@@ -139,7 +143,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     }
     
     private void makeLinear2() {  	
-        for (int i = 0; i < iBuffer.length; ++i) {
+        for (int i = 0; i < iBuffer.bytes.length; ++i) {
             double y = iPVt.transform(i-iBuffer.min);
 
             if (y <= iWin.getBottom()) y = LUT_MIN;
@@ -185,10 +189,11 @@ public class VOILut implements com.ivli.roim.core.Transformation {
 } 
 
 final class Buffer {
-    final byte []bytes;
-    final int  length;
-    final int  min;
-    final int  max;
+    final int min;
+    final int max;
+    
+    final byte []bytes;    
+    
 
     public Buffer(int T) {
         
@@ -196,22 +201,22 @@ final class Buffer {
             case DataBuffer.TYPE_BYTE:
                 min = -128;
                 max = 128;
-                length = 256; 
+                bytes = new byte[256]; 
                 break;
             
             case DataBuffer.TYPE_USHORT: 
                 min =  0;
                 max = 65536;
-                length = 65536;
+                bytes = new byte[65536] ;
                 break;
                 
             case DataBuffer.TYPE_SHORT: 
                 min =  -32768;
                 max =   32768; 
-                length = 65536; break;
+                bytes = new byte[65536]; 
+                break;
             default:
                 throw new IllegalArgumentException();                  
-        }     
-        bytes = new byte[length]; 
+        }             
     }
 }

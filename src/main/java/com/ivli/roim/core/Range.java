@@ -5,7 +5,7 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public class Range {
+public class Range implements java.io.Serializable {
     private final double iMax;
     private final double iMin;
     
