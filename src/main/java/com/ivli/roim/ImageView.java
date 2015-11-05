@@ -56,7 +56,7 @@ public class ImageView extends JComponent {
     public static final int FIT_HEIGHT  = 3; 
     
     private int   iFit = Settings.DEFAULT_FIT;  //     
-    private final IMultiframeImage iImage;                     
+    private final IMultiframeImage iModel;                     
     private final Controller iController;    
     private final AffineTransform iZoom;
     private final Point iOrigin;    
@@ -69,7 +69,7 @@ public class ImageView extends JComponent {
     private BufferedImage iBuf; 
     
     ImageView(IMultiframeImage aImage) {  
-        iImage      = aImage;
+        iModel      = aImage;
         iController = new Controller(this);          
         
         iZoom   = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
@@ -80,7 +80,10 @@ public class ImageView extends JComponent {
         iList = new EventListenerList();
     
         addComponentListener(new ComponentListener() {    
-            public void componentResized(ComponentEvent e) {invalidateBuffer();}                                               
+            public void componentResized(ComponentEvent e) {
+                invalidateBuffer();
+                notifyZoomChanged();
+            }                                               
             public void componentHidden(ComponentEvent e) {}
             public void componentMoved(ComponentEvent e) {}
             public void componentShown(ComponentEvent e) {}                    
@@ -92,7 +95,7 @@ public class ImageView extends JComponent {
     }
     
     public IMultiframeImage getImage() {
-        return iImage;
+        return iModel;
     }
     
     public ROIManager getROIMgr() {
@@ -120,11 +123,11 @@ public class ImageView extends JComponent {
         
         switch (iFit) {
             case FIT_VISIBLE:
-                final double scaleX = (double)getWidth() / (double)iImage.getWidth(); 
-                final double scaleY = (double)getHeight() / (double)iImage.getHeight(); 
+                final double scaleX = (double)getWidth() / (double)iModel.getWidth(); 
+                final double scaleY = (double)getHeight() / (double)iModel.getHeight(); 
                 scale = Math.min(scaleX, scaleY); break;                
-            case FIT_HEIGHT: scale = (double)getHeight() / (double)iImage.getHeight(); break;
-            case FIT_WIDTH:  scale = (double)getWidth() / (double)iImage.getWidth(); break;
+            case FIT_HEIGHT: scale = (double)getHeight() / (double)iModel.getHeight(); break;
+            case FIT_WIDTH:  scale = (double)getWidth() / (double)iModel.getWidth(); break;
             case FIT_NO_FIT: //falltrough to default
             default: 
                 return;                            
@@ -146,18 +149,16 @@ public class ImageView extends JComponent {
             
     private void notifyWindowChanged() {
         final WindowChangeEvent evt = new WindowChangeEvent(this, iLUTMgr.getWindow()/*, iImage.image().getMin(), iImage.image().getMax(), aRC*/);
-        
-        WindowChangeListener arr[] = iList.getListeners(WindowChangeListener.class);
-        
-        for (WindowChangeListener l : arr)
+                
+        for (WindowChangeListener l : iList.getListeners(WindowChangeListener.class))
             l.windowChanged(evt);     
     }
     
     public void addFrameChangeListener(FrameChangeListener aL) {
         iList.add(FrameChangeListener.class, aL);
-        aL.frameChanged(new FrameChangeEvent(this, iImage.getCurrent(), iImage.getNumFrames(),
-                                                            new Range(iImage.image().getMin(), iImage.image().getMax()),
-                                                                iImage.getTimeSliceVector().getSlice(iImage.getCurrent())));                           
+        aL.frameChanged(new FrameChangeEvent(this, iModel.getCurrent(), iModel.getNumFrames(),
+                                                            new Range(iModel.image().getMin(), iModel.image().getMax()),
+                                                                iModel.getTimeSliceVector().getSlice(iModel.getCurrent())));                           
     }
     
     public void removeFrameChangeListener(FrameChangeListener aL) {
@@ -165,13 +166,11 @@ public class ImageView extends JComponent {
     } 
     
     private void notifyFrameChanged() {
-        final FrameChangeEvent evt = new FrameChangeEvent(this, iImage.getCurrent(), iImage.getNumFrames(),
-                                                            new Range(iImage.image().getMin(), iImage.image().getMax()),
-                                                                iImage.getTimeSliceVector().getSlice(iImage.getCurrent()));                
-        
-        FrameChangeListener arr[] = iList.getListeners(FrameChangeListener.class);
-        
-        for (FrameChangeListener l : arr)
+        final FrameChangeEvent evt = new FrameChangeEvent(this, iModel.getCurrent(), iModel.getNumFrames(),
+                                                            new Range(iModel.image().getMin(), iModel.image().getMax()),
+                                                                iModel.getTimeSliceVector().getSlice(iModel.getCurrent()));                
+      
+        for (FrameChangeListener l : iList.getListeners(FrameChangeListener.class))
             l.frameChanged(evt);       
     }
     
@@ -184,12 +183,10 @@ public class ImageView extends JComponent {
         iList.remove(ZoomChangeListener.class,aL);
     }
      
-    private void notifyZoomChanged(double aX, double aY) {
-        final ZoomChangeEvent evt = new ZoomChangeEvent(this, aX, aY);        
-        
-        ZoomChangeListener arr[] = iList.getListeners(ZoomChangeListener.class);
-        
-        for (ZoomChangeListener l : arr)
+    private void notifyZoomChanged() {
+        final ZoomChangeEvent evt = new ZoomChangeEvent(this, iZoom.getScaleX(), iZoom.getScaleY());        
+                
+        for (ZoomChangeListener l : iList.getListeners(ZoomChangeListener.class))
             l.zoomChanged(evt);       
     }
   
@@ -216,9 +213,9 @@ public class ImageView extends JComponent {
     }
                   
     public void loadFrame(int aN) throws IndexOutOfBoundsException {                                
-        iImage.advance(aN);   
+        iModel.advance(aN);   
         
-        iLUTMgr.setRange(new Range(iImage.image().getMin(), iImage.image().getMax()));// frameChanged();
+        iLUTMgr.setRange(new Range(iModel.image().getMin(), iModel.image().getMax()));// frameChanged();
         
         iROIMgr.update();   
         
@@ -233,7 +230,7 @@ public class ImageView extends JComponent {
         
         iZoom.setToScale(iZoom.getScaleX() + aFactor, iZoom.getScaleY() + aFactor);        
         
-        notifyZoomChanged(iZoom.getScaleX(), iZoom.getScaleY());
+        notifyZoomChanged();
         invalidateBuffer();
         ///repaint();            
     }
@@ -267,7 +264,7 @@ public class ImageView extends JComponent {
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(iZoom, hts);
-        BufferedImage src  = iLUTMgr.transform(iImage.image().getBufferedImage(), null);
+        BufferedImage src  = iLUTMgr.transform(iModel.image().getBufferedImage(), null);
                 
         iBuf = z.filter(src, null);                  
     }
@@ -288,7 +285,7 @@ public class ImageView extends JComponent {
 
         //private 
         WLManager() {       
-            iVLUT = new VOILut(iImage.image());
+            iVLUT = new VOILut(iModel.image());
             iPLUT = new PresentationLut(null);
         }
 

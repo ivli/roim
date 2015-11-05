@@ -164,19 +164,8 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
     public long frameStarts(int aFrameNumber) {
         if (0 == aFrameNumber)
             return 0L;
-        else {
-            long ret   = 0L;
-            int  frame = 0;   
-            int  phase = 1, ctr = 0;
-            
-            for (PhaseInformation p : iPhases) {
-                if (aFrameNumber > ctr &&  aFrameNumber < (ctr += p.iNumberOfFrames))                                          
-                    return ret += (aFrameNumber - ctr) * p.iFrameDuration;
-                
-                ret += p.iNumberOfFrames * p.iFrameDuration;                        
-            }
-  
-            return ret;
+        else {             
+            return iSlices.get(aFrameNumber-1);
         }
     }
     

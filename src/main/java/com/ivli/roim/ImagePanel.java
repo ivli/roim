@@ -21,6 +21,8 @@ public class ImagePanel extends JPanel {
            
     void open(String aName) throws IOException {                                         
         iView = new ImageView(new MultiframeImage(DICOMImageProvider.New(aName)));        
+        
+         /*TODO: registration instead of instantiation */
         iLut  = new LUTControl(iView.getLUTMgr());                                     
         
         iView.addWindowChangeListener(iLut); 
