@@ -44,13 +44,13 @@ public class ROIManager implements java.io.Serializable {
     
     private static final boolean ROI_HAS_ANNOTATIONS = !true;
     
-    transient private final ImageComponent  iView; 
+    transient private final ImageView  iView; 
     
     private HashSet<Overlay> iOverlays;      
     
     private final EventListenerList iList;
     
-    ROIManager(ImageComponent aV) { 
+    ROIManager(ImageView aV) { 
         iView = aV;
         iOverlays = new HashSet(); 
         iList = new EventListenerList();

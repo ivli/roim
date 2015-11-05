@@ -21,7 +21,7 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public class TimeSlice {
+public class TimeSlice implements java.io.Serializable {
     public static final long TIME_END = -1L;
     private final long iFrom;
     private final long iTo;
@@ -42,6 +42,10 @@ public class TimeSlice {
     
     public long getTo() {
         return iTo;
+    }
+    
+    public long length() {
+        return getTo() - getFrom();
     }
     
 }

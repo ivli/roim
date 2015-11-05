@@ -43,11 +43,7 @@ public class Range implements java.io.Serializable {
     public double getRange() {
         return iMax - iMin;
     }
-    
-    public double getWidth() {
-        return getRange();
-    }
-    
+            
     public double getPercent(double aVal) {
         return aVal / getRange();
     }

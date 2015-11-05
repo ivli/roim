@@ -8,7 +8,7 @@ package com.ivli.roim.controls;
 
 import com.ivli.roim.Overlay;
 import com.ivli.roim.ROI;
-import com.ivli.roim.ImageView;
+import com.ivli.roim.ImagePanel;
 
 import java.util.Iterator;
 import javax.swing.table.DefaultTableModel;
@@ -33,10 +33,10 @@ import java.awt.Window;
 public class ROIListPanel extends javax.swing.JPanel {
     private static final String KCommandInvokeColourPicker = "COMMAND_INVOKE_COLOUR_PICKER_DIALOG"; // NOI18N
     
-    private final ImageView iView;              
+    private final ImagePanel iView;              
     private final DefaultTableModel iModel;
     
-    public ROIListPanel(com.ivli.roim.ImageView aView) {
+    public ROIListPanel(com.ivli.roim.ImagePanel aView) {
         
         iView = aView;
         

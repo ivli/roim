@@ -31,7 +31,7 @@ import com.ivli.roim.events.*;
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
      
-    private ImageView  iPanel;
+    private ImagePanel  iPanel;
     private ChartView iChart;
     
     
@@ -58,6 +58,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -110,6 +111,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
         jLabel4.setText(bundle.getString("NewJFrame.jLabel4.text")); // NOI18N
 
+        jLabel5.setText(bundle.getString("NewJFrame.jLabel5.text")); // NOI18N
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -121,9 +124,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(48, 48, 48)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
+                .addGap(52, 52, 52)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(506, Short.MAX_VALUE))
+                .addGap(192, 192, 192))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -133,7 +138,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5))
                 .addContainerGap())
         );
 
@@ -326,7 +332,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1.removeAll();
         iPanel = null;
         
-        iPanel = new ImageView();
+        iPanel = new ImagePanel();
         
         try{
            
@@ -474,15 +480,15 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        iPanel.setFit(ImageComponent.FIT_HEIGHT);        
+        iPanel.setFit(ImageView.FIT_HEIGHT);        
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
     private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
-        iPanel.setFit(ImageComponent.FIT_VISIBLE);
+        iPanel.setFit(ImageView.FIT_VISIBLE);
     }//GEN-LAST:event_jMenuItem15ActionPerformed
 
     private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem13ActionPerformed
-        iPanel.setFit(ImageComponent.FIT_WIDTH);
+        iPanel.setFit(ImageView.FIT_WIDTH);
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
     /**
@@ -532,6 +538,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     public void frameChanged(FrameChangeEvent aE) {
         jLabel4.setText(String.format("%d:%d", aE.getFrame() + 1, aE.getTotal())); // NOI18N
         jLabel3.setText(String.format("%3.0f/%3.0f", aE.getRange().getMin(), aE.getRange().getMax())); // NOI18N
+        jLabel5.setText(String.format("from %d to %d msec", aE.getTimeSlice().getFrom(), aE.getTimeSlice().getTo()));
     }
   
     public void ROIChanged(ROIChangeEvent anEvt) {
@@ -546,6 +553,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;

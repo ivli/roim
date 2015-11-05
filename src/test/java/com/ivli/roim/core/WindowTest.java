@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ivli.roim;
+package com.ivli.roim.core;
 
-import com.ivli.roim.core.Window;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

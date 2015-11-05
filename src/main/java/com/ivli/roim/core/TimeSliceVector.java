@@ -40,8 +40,7 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         
         logger.debug(iSlices);
     }
-    
-       
+           
     public TimeSliceVector(ArrayList<PhaseInformation> aP) {                
         iPhases =  new ArrayList();
         
@@ -84,6 +83,12 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
     
     public ArrayList<Long> getSlices() {
         return iSlices;
+    }
+    
+    public TimeSlice getSlice(int aFrameNumber) {
+        final long from = frameStarts(aFrameNumber);
+        final long to = frameStarts(aFrameNumber + 1);
+        return new TimeSlice (from, to);
     }
     
     private void fillSlicesArray() {

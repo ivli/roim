@@ -20,26 +20,25 @@ import org.apache.logging.log4j.Logger;
 
 public class VOILut implements com.ivli.roim.core.Transformation {
     private boolean iInverted;            
-    private boolean iLog;   
+    private boolean iLinear;   
     
     private final PValueTransform iPVt;
     private Window iWin;
     private Range iRange; 
     
     private final Buffer iBuffer;
-    private LookupOp iLok; 
-    
-    
+    private LookupOp iLook; 
+        
     public VOILut(ImageFrame aI) {
+        iInverted = false;
+        iLinear = true;
         iPVt = new PValueTransform();
-        iBuffer = new Buffer(aI.getRaster().getSampleModel().getDataType());
-                
+        iBuffer = new Buffer(aI.getRaster().getSampleModel().getDataType());  
+        iLook = null;
         reset(new Range(aI.getMin(), aI.getMax()));
     }  
           
-    public Window getWindow() {
-        return iWin;
-    }
+    
     
     public Range getRange() {
         return iRange;
@@ -48,30 +47,21 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     public void setRange(Range aR) {
         reset(aR);
     }
-     
-    private void reset(Range aR) {            
-       if(Settings.KEEP_WINDOW_AMONG_FRAMES && null != iWin && null != iRange) {        
-            final double percentTop    = iWin.getTop() / iRange.getWidth();
-            final double percentBottom = iWin.getBottom() / iRange.getWidth();
-            iRange = aR;
-            
-            final double newTop    = percentTop * iRange.getWidth();
-            final double newBottom = percentBottom * iRange.getWidth();
-            final double newRange  = newTop - newBottom; 
-            
-            iWin = new Window(newBottom + newRange / 2.0, newRange);
-            
-        } else {
-            iRange = aR;
-            iWin = new Window(aR);
-        }
-        
-        makeLUT();            
-    }
-      
+
     public void setWindow(Window aW) {           
         if (iRange.contains(aW)) {//tmp.getBottom()>=iMax.getBottom() && tmp.getTop()<=iMax.getTop()) {
             iWin.setWindow(aW);
+            makeLUT();
+        }
+    }
+    
+    public Window getWindow() {
+        return iWin;
+    }
+    
+    public void setInverted(boolean aI) {
+        if (isInverted() != aI) {
+            iInverted = aI;    
             makeLUT();
         }
     }
@@ -80,27 +70,35 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         return iInverted;
     }
 
-    public boolean setInverted(boolean aI) {
-        if (aI != isInverted()) {
-            iInverted = aI;    
-            makeLUT();
-            return true;
-        }
-        return false;
+    public void setLinear(boolean aL) {
+        if (isLinear() != aL) { 
+            iLinear = aL;
+            makeLUT();   
+        }       
     }
 
     public boolean isLinear() {
-        return true!=iLog;
+        return iLinear;
+    }
+        
+     @Override
+    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {
+        if (null == iLook)
+            makeLUT();
+        return iLook.filter(aSrc, aDst);//null == aDst ? iLok.createCompatibleDestImage(aSrc, iCMdl):aDst);	
     }
     
-    public boolean setLinear(boolean aL) {
-        if (iLog == aL) { // LOG == 1 but we set LINEAR == 1
-            iLog = !aL;
-            makeLUT();   
-            return true;
-        }
-        return false;
-    }
+    public XYSeries makeXYSeries(XYSeries ret) {
+        final int minval = (int)(getWindow().getBottom());
+        final int maxval = (int)(getWindow().getTop());
+                
+        for (int i = minval; i < maxval; ++i)
+            ret.add(i, (short)(iBuffer.bytes[i] & 0xFF));
+        
+        return ret;
+    }   
+    
+    /* EOI */
     
     private static final double LUT_MIN   = .0;
     private static final double LUT_MAX   = 255.;
@@ -141,7 +139,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         }        	
     }
 
-    private void makeLUT(functor f) {  
+    private void doMakeLUT(functor f) {  
         
         final byte maxval; 
         final byte minval;    
@@ -178,18 +176,18 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         logger.info((isLinear() ? "linear, ":"logarithmic, ") + (isInverted() ? "inverted, ":"direct, ") + "level=" + iWin.getLevel() + ", width=" + iWin.getWidth()); //NOI18N
         
         if (isLinear())
-            makeLUT(new functor() { 
+            doMakeLUT(new functor() { 
                 public byte function(double PV) {
                     return (byte)(((PV - iWin.getLevel())/iWin.getWidth() + .5) * LUT_RANGE + LUT_MIN);
                 }});               
         else 
-            makeLUT(new functor() { 
+            doMakeLUT(new functor() { 
                 public byte function(double PV) {
                     return (byte)(LUT_RANGE/(1 + Math.exp(-4*(PV - iWin.getLevel()) / iWin.getWidth()) + LUT_MIN));
                 }});
               
         
-        iLok = new LookupOp(new ByteLookupTable(0, iBuffer.bytes), null);
+        iLook = new LookupOp(new ByteLookupTable(0, iBuffer.bytes), null);
         /**/
         
         String fname = String.format("%s_%.0f-%.0f_%.0f-%.0f.csv", isLinear() ? "Lin" : "Log", 
@@ -231,22 +229,27 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         */
     }
   
-    @Override
-    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {
-        if (null == iLok)
-            makeLUT();
-        return iLok.filter(aSrc, aDst);//null == aDst ? iLok.createCompatibleDestImage(aSrc, iCMdl):aDst);	
+    private void reset(Range aR) {            
+       if(Settings.KEEP_WINDOW_AMONG_FRAMES && null != iWin && null != iRange) {        
+            final double percentTop    = iWin.getTop() / iRange.getRange();
+            final double percentBottom = iWin.getBottom() / iRange.getRange();
+            iRange = aR;
+            
+            final double newTop    = percentTop * iRange.getRange();
+            final double newBottom = percentBottom * iRange.getRange();
+            final double newRange  = newTop - newBottom; 
+            
+            iWin = new Window(newBottom + newRange / 2.0, newRange);
+            
+        } else {
+            iRange = aR;
+            iWin = new Window(aR);
+        }
+        
+        makeLUT();            
     }
     
-    public XYSeries makeXYSeries(XYSeries ret) {
-        final int minval = (int)(getWindow().getBottom());
-        final int maxval = (int)(getWindow().getTop());
-                
-        for (int i=minval; i<maxval; ++i)
-            ret.add(i, (short)(iBuffer.bytes[i] & 0xFF));
-        
-        return ret;
-    }   
+   
     
     private static final Logger logger = LogManager.getLogger(VOILut.class);
 } 
