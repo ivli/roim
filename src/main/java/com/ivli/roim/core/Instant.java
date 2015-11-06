@@ -45,9 +45,9 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
     }
     
        
-    private static final long MINUTES_IN_HOUR   = 60;
-    private static final long SECONDS_IN_MINUTE = 60;
-    private static final long MILLIS_IN_SECOND  = 1000;        
+    private static final long MINUTES_IN_HOUR   = 60L;
+    private static final long SECONDS_IN_MINUTE = 60L;
+    private static final long MILLIS_IN_SECOND  = 1000L;        
     private static final long MILLIS_IN_MINUTE  = MILLIS_IN_SECOND * SECONDS_IN_MINUTE;
     private static final long MILLIS_IN_HOUR    = MILLIS_IN_MINUTE * MINUTES_IN_HOUR;
     
@@ -76,9 +76,9 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
                 
             } else if (0L != seconds) {
              
-                 if (0L == hours && 0L == minutes)
+                if (0L == hours && 0L == minutes)
                     return String.format("%2d " + SUFFIX_SECONDS, seconds);
-                 else if (0L == hours)
+                else if (0L == hours)
                     return String.format("%2d:%2d " + SUFFIX_SECONDS, minutes, seconds);
                 else
                     return String.format("%2d:%2d:%2d " + SUFFIX_SECONDS, hours, minutes, seconds);
