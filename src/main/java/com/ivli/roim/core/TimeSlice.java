@@ -23,13 +23,13 @@ import java.time.Duration;
  * @author likhachev
  */
 public class TimeSlice implements java.io.Serializable {
-    public static final long TIME_END = -1L;
+    
     private final long iFrom;
     private final long iTo;
     
     public TimeSlice() {
-        iFrom = 0L;
-        iTo   = TIME_END;  
+        iFrom = Instant.ZERO.toLong();
+        iTo   = Instant.INFINITE.toLong();  
     }
     
     public TimeSlice(long aFrom, long aTo) {
