@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.controls.*;
+import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.events.*;
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
@@ -124,11 +125,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(80, 80, 80)
+                .addGap(34, 34, 34)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(192, 192, 192))
+                .addGap(197, 197, 197)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(99, 99, 99))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -538,7 +539,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     public void frameChanged(FrameChangeEvent aE) {
         jLabel4.setText(String.format("%d:%d", aE.getFrame() + 1, aE.getTotal())); // NOI18N
         jLabel3.setText(String.format("%3.0f/%3.0f", aE.getRange().getMin(), aE.getRange().getMax())); // NOI18N
-        jLabel5.setText(String.format("from %d to %d msec", aE.getTimeSlice().getFrom(), aE.getTimeSlice().getTo()));
+        jLabel5.setText(String.format("%s - %s", aE.getTimeSlice().getFrom().format(), 
+                                                        aE.getTimeSlice().getTo().format()));
     }
   
     public void ROIChanged(ROIChangeEvent anEvt) {

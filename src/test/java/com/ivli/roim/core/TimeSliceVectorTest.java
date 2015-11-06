@@ -248,7 +248,7 @@ public class TimeSliceVectorTest {
             expResult     += NO_OF_FRAMES[i];
             uSecFromStart += PHASE_DURATION[i];          
             
-            int result = instance.frameNumber(uSecFromStart - 1);
+            int result = instance.frameNumber(new Instant(uSecFromStart - 1));
             
             assertEquals(expResult - 1, result);    
         }

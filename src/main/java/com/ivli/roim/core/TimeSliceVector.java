@@ -57,7 +57,8 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         
         ArrayList<PhaseInformation> phases =  new ArrayList();
         
-        final int frameTo = (-1 == aS.getTo()) ? getNumFrames() - 1 : frameNumber(aS.getTo()) - 1;
+        final int frameTo = (Instant.INFINITE == aS.getTo()) ? getNumFrames() - 1 : frameNumber(aS.getTo()) - 1;
+
         final int frameFrom = frameNumber(aS.getFrom());   
         
         final int phaseFrom = phaseFrame(frameFrom);
@@ -177,7 +178,7 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
     }
        
     private void testTimeArgument(long uSec) {
-        if (uSec < 0L || uSec > duration())
+        if (uSec < 0L || uSec > duration() && uSec != -1L)
             throw new IllegalArgumentException("bad uSecFromStart");
     }
       //get phase number by time in uSec -returns 0, 1, 2 etc
@@ -198,7 +199,9 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
     }
     
      //get frame ordinal by time in uSec
-    public int frameNumber(long uSecFromStart) {                
+    public int frameNumber(Instant aI) {   
+        final long uSecFromStart = aI.toLong();
+        
         testTimeArgument(uSecFromStart);
                 
         int  phase = phaseNumber(uSecFromStart);

@@ -22,6 +22,7 @@ import com.ivli.roim.core.TimeSliceVector;
 import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.Instant;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -105,8 +106,7 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
 
         try {
             f = iFrames.get(anIndex); 
-            
-           
+                       
         } catch (IndexOutOfBoundsException ex) {
              //try { 
                 f = new ImageFrame(iLoader.readRaster(anIndex));
@@ -137,10 +137,10 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
     }
     
     public IImageProvider collapse(TimeSlice aS) throws IOException {   
-        int frameTo = (-1 == aS.getTo()) ? getNumFrames() : iTimeSlices.frameNumber(aS.getTo());
+        int frameTo = (Instant.INFINITE == aS.getTo()) ? getNumFrames() : iTimeSlices.frameNumber(aS.getTo());
         int frameFrom = iTimeSlices.frameNumber(aS.getFrom());        
        
-        assert (aS.getFrom() >= 0 && aS.getFrom() < getNumFrames() || aS.getTo() > aS.getFrom() || aS.getFrom() < getNumFrames());  
+       // assert (aS.getFrom() >= 0 && aS.getFrom() < getNumFrames() || aS.getTo() > aS.getFrom() || aS.getFrom() < getNumFrames());  
         
         VirtualImageProvider ret = new VirtualImageProvider(this);
         

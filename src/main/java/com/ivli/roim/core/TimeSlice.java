@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.core;
 
+import java.time.Duration;
 /**
  *
  * @author likhachev
@@ -36,16 +37,20 @@ public class TimeSlice implements java.io.Serializable {
         iTo = aTo;
     }
     
-    public long getFrom() {
-        return iFrom;
+    public Instant getFrom() {
+        return new Instant(iFrom);
     }
     
-    public long getTo() {
-        return iTo;
+    public Instant getTo() {
+        return new Instant(iTo);
     }
     
     public long length() {
-        return getTo() - getFrom();
+        return iTo - iFrom;
     }
     
+    public Duration duration() {    
+        return Duration.ofMillis(length());
+    }
+   
 }
