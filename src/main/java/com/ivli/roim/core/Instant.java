@@ -24,8 +24,8 @@ package com.ivli.roim.core;
 public class Instant implements java.io.Serializable, Comparable<Instant> {
     protected long iInstant;    
     
-    public static Instant INFINITE = new Instant(-1L);
-    public static Instant ZERO     = new Instant(0L);
+    public static final Instant INFINITE = new Instant(-1L);
+    public static final Instant ZERO     = new Instant(0L);
     
     public Instant(long aI) {
         iInstant = aI;
