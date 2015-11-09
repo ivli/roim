@@ -74,7 +74,7 @@ public class Profile extends ROIBase {
     private void makeHistogram() {
         final java.awt.Rectangle bounds = iShape.getBounds();
 
-        getManager().getImage().image().extract((Raster aR) -> {
+        getManager().getView().getImage().getAt(getManager().getView().getCurrent()).extract((Raster aR) -> {
             iHist = new double[bounds.width];
             
             double temp[] = new double [aR.getNumBands()];

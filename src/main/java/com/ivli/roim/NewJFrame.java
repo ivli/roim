@@ -458,7 +458,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        VOILUTPanel panel = new VOILUTPanel(iPanel.iLut, iPanel.iView.getImage().image());
+        VOILUTPanel panel = new VOILUTPanel(iPanel.iLut, iPanel.iView.getImage().getAt(iPanel.iView.getCurrent()));
         JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
 
         dialog.setContentPane(panel);

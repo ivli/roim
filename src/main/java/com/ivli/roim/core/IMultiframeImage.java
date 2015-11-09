@@ -35,21 +35,7 @@ public interface IMultiframeImage extends Iterable<ImageFrame>, java.io.Serializ
      //returns a frame at aFrameNumber leaving cursor unaltered 
     ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException; 
     
-    /*TODO rework to let collection be a collection and iterator be an iterator*/
-     //moves cursor to aFrameNumber
-    ImageFrame advance(int aFrameNumber) throws java.util.NoSuchElementException; 
-    
-     //returns frame at cursor position
-    ImageFrame image();    
-      //returns cursor position
-    int getCurrent();
         
-    
-    //void extract(Extractor aEx);
-    
-    // IMultiframeImage makeCompositeFrame(int aFrom, int aTo) ; 
-   
-    
     @Override
     default public java.util.Iterator<ImageFrame> iterator() {    
         return new java.util.Iterator<ImageFrame>() {

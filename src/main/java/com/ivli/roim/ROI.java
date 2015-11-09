@@ -57,7 +57,7 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     }
     
     public double getDensity() {
-        return getSeries(Measurement.DENSITY).get(getManager().getImage().getCurrent());
+        return getSeries(Measurement.DENSITY).get(getManager().getView().getCurrent());
     }
     
     public Series getSeries(int anId) {       

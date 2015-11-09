@@ -23,7 +23,6 @@ import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.TimeSlice;
-import com.ivli.roim.core.Extractor;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.TimeSliceVector;
 
@@ -33,11 +32,10 @@ import org.apache.logging.log4j.Logger;
 
 public class MultiframeImage implements IMultiframeImage {
     private final IImageProvider iProvider;
-    private int iCurrent;
+   
     
     public MultiframeImage(IImageProvider aProvider) {
-        iProvider = aProvider;
-        iCurrent  = 0;
+        iProvider = aProvider;        
     }
    
     @Override
@@ -47,26 +45,15 @@ public class MultiframeImage implements IMultiframeImage {
     
     @Override
     public boolean hasAt(int aFrameNumber) {
+       
         try {
-            iProvider.frame(aFrameNumber);
-        } catch (IOException | IndexOutOfBoundsException e) {
-            return false;
-        }
-        return true;
-    }
-    
-    @Override
-    public ImageFrame advance(int aFrameNumber) throws java.util.NoSuchElementException {           
-        ImageFrame ret = null;
-        try {
-            ret = iProvider.frame(aFrameNumber); //prevent iCurrent from change in the case of exception
-            iCurrent = aFrameNumber;
+            return (aFrameNumber >=0 && aFrameNumber < iProvider.getNumFrames()) ;  
         } catch (IOException ex) {
-            throw( new java.util.NoSuchElementException());
-        }
-        return ret;
-    } 
-    
+            logger.error("FATAL!", ex);
+            return false;
+        }       
+    }
+       
     @Override
     public ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException {           
         ImageFrame ret = null;
@@ -78,14 +65,8 @@ public class MultiframeImage implements IMultiframeImage {
         return ret;
     } 
     
-    public int getCurrent() {
-        return iCurrent;
-    }
-    
-    public ImageFrame image() { 
-        return getAt(iCurrent);
-    }
-    
+       
+    @Override
     public int getNumFrames() {
         int ret = 0;
         try {
@@ -96,14 +77,17 @@ public class MultiframeImage implements IMultiframeImage {
         return ret;
     }
     
+    @Override
     public int getWidth() {
         return iProvider.getWidth();
     }
     
+    @Override
     public int getHeight() {
         return iProvider.getHeight();
     }  
     
+    @Override
     public PixelSpacing getPixelSpacing() {
         return iProvider.getPixelSpacing();
     }
@@ -118,10 +102,7 @@ public class MultiframeImage implements IMultiframeImage {
         return ret;
     }    
     
-    public void extract(Extractor aEx) {  
-       aEx.apply(image().getRaster());   
-    }
-    
+       
     private static final Logger logger = LogManager.getLogger(MultiframeImage.class);    
 }
 

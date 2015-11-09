@@ -59,7 +59,10 @@ public class ROIManager implements java.io.Serializable {
     public IMultiframeImage getImage() {
         return iView.getImage();
     }
-        
+    
+    public ImageView getView() {
+        return iView;
+    } 
     public void clear() {
         iOverlays.clear();
         notifyROIChanged(null, EStateChanged.Emptied);
