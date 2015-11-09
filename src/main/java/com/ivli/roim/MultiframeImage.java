@@ -44,8 +44,7 @@ public class MultiframeImage implements IMultiframeImage {
     }
     
     @Override
-    public boolean hasAt(int aFrameNumber) {
-       
+    public boolean hasAt(int aFrameNumber) {       
         try {
             return (aFrameNumber >=0 && aFrameNumber < iProvider.getNumFrames()) ;  
         } catch (IOException ex) {
@@ -56,13 +55,13 @@ public class MultiframeImage implements IMultiframeImage {
        
     @Override
     public ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException {           
-        ImageFrame ret = null;
+        //ImageFrame ret = null;
         try {
-            ret = iProvider.frame(aFrameNumber); //prevent iCurrent from change in the case of exception           
+            return iProvider.frame(aFrameNumber); 
         } catch (IOException ex) {
             throw (new java.util.NoSuchElementException());
         }
-        return ret;
+        //return ret;
     } 
     
        

@@ -21,8 +21,7 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public interface IMultiframeImage extends Iterable<ImageFrame>, java.io.Serializable {   
-   
+public interface IMultiframeImage extends Iterable<ImageFrame>, java.io.Serializable {      
     int getWidth();  
     int getHeight();
     PixelSpacing getPixelSpacing();   
