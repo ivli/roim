@@ -54,12 +54,12 @@ public class ImageFrame implements java.io.Serializable {
         WritableRaster wr = iRaster.createCompatibleWritableRaster();
         wr.setRect(iRaster);
         
-        return new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY)                                                               
-                                                        , new int[] {8}
-                                                        , false		// has alpha
-                                                        , false		// alpha premultipled
-                                                        , Transparency.OPAQUE
-                                                        , wr.getDataBuffer().getDataType())                                                                                                                                  
+        return new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
+                                                         new int[] {8},
+                                                         false,		// has alpha
+                                                         false,		// alpha premultipled
+                                                         Transparency.OPAQUE,
+                                                         wr.getDataBuffer().getDataType())                                                                                                                                  
                                                     , wr, true, null);
     }     
     
