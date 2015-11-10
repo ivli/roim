@@ -37,7 +37,7 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
     private static final boolean LOAD_ON_DEMAND = true;
     private static final int     FIRST_FRAME_TO_LOAD = 0;
     
-    private final ImageLoader iLoader;// = new ImageLoader(); 
+    private final ImageLoader iLoader;
     private final ArrayList<ImageFrame> iFrames;    
     private TimeSliceVector iTimeSlices;     
     
