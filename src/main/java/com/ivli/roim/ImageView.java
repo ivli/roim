@@ -228,15 +228,12 @@ public class ImageView extends JComponent {
         return iCurrent;
     }  
     
-    public void loadFrame(int aN) throws IndexOutOfBoundsException {                                
-        if (!iModel.hasAt(aN)) {
-            logger.info("requested wrong frame number");
-        } else {
-        
-            //ImageFrame i = iModel.getAt(aN);   
+    public boolean loadFrame(int aN) {                                
+        if (!iModel.hasAt(aN)) {            
+            return false;
+        } else {        
             iCurrent = aN;
-            //iFrame = i;
-
+         
             iLUTMgr.setRange(new Range(iModel.getAt(iCurrent).getMin(), iModel.getAt(iCurrent).getMax()));// frameChanged();
 
             iROIMgr.update();   
@@ -246,6 +243,8 @@ public class ImageView extends JComponent {
 
             invalidateBuffer();
         }
+        
+        return true;
     }
     
     public void zoom(double aFactor) {

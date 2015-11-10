@@ -110,9 +110,10 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
             case MOUSE_ACTION_LIST: return new BaseActionItem(aX, aY) {
                     public void DoAction(int aX, int aY) {
                         try {                            
-                            iControlled.loadFrame(iX + aX);
-                            iX += aX; //if the index correct and exception haven't been raised
-                            iControlled.repaint();
+                            if (iControlled.loadFrame(iX + aX)) {
+                                iX += aX; 
+                                iControlled.repaint();
+                            }
                         }catch (IndexOutOfBoundsException ex) {
                             logger.info(ex);
                         }

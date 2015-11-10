@@ -1,9 +1,7 @@
 package com.ivli.roim.core;
 
 import java.util.ArrayList;
-import org.dcm4che3.data.Attributes;
-import org.dcm4che3.data.Sequence;
-import org.dcm4che3.data.Tag;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +16,12 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
     private ArrayList<PhaseInformation> iPhases; 
       //frame start time in millisecons from series begin
     private ArrayList<Long>             iSlices; 
-        
+    
+    /*public TimeSliceVector(ArrayList<PhaseInformation> aPi) {
+        iPhases = aPi;
+         fillSlicesArray();
+    }
+    
     public TimeSliceVector(Attributes aAttr) {        
         iPhases = new ArrayList();
         iSlices = new ArrayList();        
@@ -40,7 +43,8 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         
         logger.debug(iSlices);
     }
-           
+    */   
+    
     public TimeSliceVector(ArrayList<PhaseInformation> aP) {                
         iPhases =  new ArrayList();
         

@@ -40,6 +40,7 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
     private final ImageLoader iLoader;// = new ImageLoader(); 
     private final ArrayList<ImageFrame> iFrames;    
     private TimeSliceVector iTimeSlices;     
+    
     private int iWidth;
     private int iHeight;
     
@@ -97,45 +98,39 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
     }
       
     
-    private ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, IOException {
-        
+    private ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, IOException {        
         if (anIndex > getNumFrames() || anIndex < 0)
             throw new IndexOutOfBoundsException();
-        
-        ImageFrame f = null;
-
+          
         try {
-            f = iFrames.get(anIndex); 
-                       
-        } catch (IndexOutOfBoundsException ex) {
-             //try { 
-                f = new ImageFrame(iLoader.readRaster(anIndex));
-                
-                iFrames.add(anIndex, f);
-                 //record only cache misses
-                logger.info("Frame -" + anIndex +                                  
-                            ", MIN"   + f.getMin() +  // NOI18N
-                            ", MAX"   + f.getMax() +  // NOI18N
-                            ", DEN"   + f.getIden()); // NOI18N     
-      
-            //} catch (IOException ioex) {
-            //    logger.error(ioex); 
-            //} 
+            return iFrames.get(anIndex);                        
+        } catch (IndexOutOfBoundsException ex) {            
+            ImageFrame f = new ImageFrame(iLoader.readRaster(anIndex));
+
+            iFrames.add(anIndex, f);
+             //record only cache misses
+            logger.info("Frame -" + anIndex +                                  
+                        ", MIN"   + f.getMin() +  // NOI18N
+                        ", MAX"   + f.getMax() +  // NOI18N
+                        ", DEN"   + f.getIden()); // NOI18N     
+            return f;           
         }
-        return f;
     }
     
   
+    @Override
     public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException, IOException {
         return loadFrame(anIndex);
     }
     
+    @Override
     public IImageProvider slice(TimeSlice aS) {
         VirtualImageProvider ret = new VirtualImageProvider(this);
         
         return ret;
     }
     
+    @Override
     public IImageProvider collapse(TimeSlice aS) throws IOException {   
         int frameTo = (Instant.INFINITE == aS.getTo()) ? getNumFrames() : iTimeSlices.frameNumber(aS.getTo());
         int frameFrom = iTimeSlices.frameNumber(aS.getFrom());        

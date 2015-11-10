@@ -30,9 +30,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class MultiframeImage implements IMultiframeImage {
-    private final IImageProvider iProvider;
-   
+public class MultiframeImage extends IMultiframeImage {
+    private final IImageProvider iProvider;   
     
     public MultiframeImage(IImageProvider aProvider) {
         iProvider = aProvider;        
@@ -48,7 +47,7 @@ public class MultiframeImage implements IMultiframeImage {
         try {
             return (aFrameNumber >=0 && aFrameNumber < iProvider.getNumFrames()) ;  
         } catch (IOException ex) {
-            logger.error("FATAL!", ex);
+            logger.info("FATAL!", ex);
             return false;
         }       
     }

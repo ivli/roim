@@ -21,24 +21,25 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public interface IMultiframeImage extends Iterable<ImageFrame>, java.io.Serializable {      
-    int getWidth();  
-    int getHeight();
-    PixelSpacing getPixelSpacing();   
-    TimeSliceVector getTimeSliceVector();
-    int getNumFrames();  
+public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.Serializable {      
+    
+    public abstract int getWidth();  
+    public abstract int getHeight();
+    public abstract PixelSpacing getPixelSpacing();   
+    public abstract TimeSliceVector getTimeSliceVector();
+    public abstract int getNumFrames();  
     
      //
-    boolean hasAt(int aFrameNumber);
+    public abstract boolean hasAt(int aFrameNumber);
     
      //returns a frame at aFrameNumber leaving cursor unaltered 
-    ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException; 
+    public abstract ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException; 
     
         
     @Override
-    default public java.util.Iterator<ImageFrame> iterator() {    
+    public java.util.Iterator<ImageFrame> iterator() {    
         return new java.util.Iterator<ImageFrame>() {
-            int _next = 0;
+            private int _next = 0;
             @Override
             public boolean hasNext() {    
                 return hasAt(_next);

@@ -17,11 +17,13 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.core.PhaseInformation;
 import com.ivli.roim.core.TimeSliceVector;
 import com.ivli.roim.core.PixelSpacing;
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.Raster;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -39,6 +41,10 @@ import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReaderSpi;
 import org.dcm4che3.io.DicomInputStream;
 import org.dcm4che3.data.Attributes;
+
+import org.dcm4che3.data.Sequence;
+import org.dcm4che3.data.Tag;
+
 
 /* ENDIF */
 
@@ -85,16 +91,35 @@ public class ImageLoader {
         ImageInputStream iis = ImageIO.createImageInputStream(new File(aFile));
         iReader.setInput(iis);  
     }
-    
+        
     TimeSliceVector getTimeSliceVector() throws IOException {        
         //DicomInputStream dis = new DicomInputStream(new File(iFile));  
         //Attributes fmi;
         //Attributes ds = iDIS.readDataset(-1, -1);
         //fmi = dis.readFileMetaInformation();
+        
+             
+        ArrayList<PhaseInformation> phases = new ArrayList();
+           
+        
+        Sequence pid = (Sequence)iDataSet.getValue(Tag.PhaseInformationSequence);
+        
+        if (null != pid) {        
+            for (Attributes a : pid) {
+                int fd = a.getInt(Tag.ActualFrameDuration, 1);     
+                int nf = a.getInt(Tag.NumberOfFramesInPhase, 1);  
+                phases.add(new PhaseInformation(nf, fd));
+            }  
+        } else {  
+             // single frame image
+            phases.add(new PhaseInformation(1, iDataSet.getInt(Tag.ActualFrameDuration, 1)));   
+        }
+        
+  
+        
          
-        return new TimeSliceVector(iDataSet);
-    }
-    
+        return new TimeSliceVector(phases);
+    }   
     
     PixelSpacing getPixelSpacing() throws IOException {        
         double[] ps = iDataSet.getDoubles(Tag.PixelSpacing); 
