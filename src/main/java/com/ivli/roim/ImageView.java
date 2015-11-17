@@ -17,35 +17,40 @@
  */
 package com.ivli.roim;
 
-import com.ivli.roim.core.IMultiframeImage;
-import com.ivli.roim.core.IWLManager;
-import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.Range;
-import com.ivli.roim.core.Window;
+
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
-import java.awt.image.WritableRaster;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.AffineTransformOp;
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.ConvolveOp;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.WritableRaster;
+import java.awt.image.BufferedImage;
+
+
 import java.awt.image.Kernel;
 import java.awt.image.Raster;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+
 import javax.swing.event.EventListenerList;
 import javax.swing.JComponent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.jfree.data.xy.XYSeries;
 
+import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.IWLManager;
+import com.ivli.roim.core.Range;
+import com.ivli.roim.core.Window;
 import com.ivli.roim.events.*;
-import java.awt.geom.NoninvertibleTransformException;
+
+
 
 public class ImageView extends JComponent {     
     private static final double  DEFAULT_SCALE_X = 1.;
@@ -56,26 +61,25 @@ public class ImageView extends JComponent {
     public static final int FIT_WIDTH   = 2;
     public static final int FIT_HEIGHT  = 3; 
     
-    private int   iFit = Settings.DEFAULT_FIT;  //     
-    private final IMultiframeImage iModel;                     
-    private final Controller iController;    
-    private final AffineTransform iZoom;
-    private final Point iOrigin;    
-    private       Object iInterpolation;// = Settings.INTERPOLATION_METHOD;
+    private int iFit = Settings.DEFAULT_FIT;     
+    protected final IMultiframeImage iModel;                     
+    protected final Controller iController;    
+    protected final AffineTransform iZoom;
+    protected final Point iOrigin;    
+    protected       Object iInterpolation;// = Settings.INTERPOLATION_METHOD;
     
-    private final IWLManager iLUTMgr;        
-    private final ROIManager iROIMgr;
-    private final EventListenerList iList;
+    protected final IWLManager iLUTMgr;        
+    protected final ROIManager iROIMgr;
+    protected final EventListenerList iList;
     
-    private BufferedImage iBuf; 
+    protected BufferedImage iBuf; 
     
-    private int iCurrent;
+    protected int iCurrent;
    // private ImageFrame iFrame;
     
     ImageView(IMultiframeImage aImage) {  
         iModel = aImage;
-        iCurrent = 0;
-        //iFrame = iModel.getAt(iCurrent);
+        iCurrent = 0;       
         
         iController = new Controller(this);          
         
@@ -126,7 +130,11 @@ public class ImageView extends JComponent {
         invalidateBuffer();       
     }
     
-    private void updateScale() {
+    public Object getInterpolationMethod() {
+        return iInterpolation;
+    }
+    
+    protected void updateScale() {
         double scale;
         
         switch (iFit) {
@@ -155,7 +163,7 @@ public class ImageView extends JComponent {
         //iWinListeners.remove(aL);
     }
             
-    private void notifyWindowChanged() {
+    protected void notifyWindowChanged() {
         final WindowChangeEvent evt = new WindowChangeEvent(this, iLUTMgr.getWindow()/*, iImage.image().getMin(), iImage.image().getMax(), aRC*/);
                 
         for (WindowChangeListener l : iList.getListeners(WindowChangeListener.class))
@@ -173,7 +181,7 @@ public class ImageView extends JComponent {
         iList.remove(FrameChangeListener.class, aL);
     } 
     
-    private void notifyFrameChanged() {
+    protected void notifyFrameChanged() {
         final FrameChangeEvent evt = new FrameChangeEvent(this, getCurrent(), iModel.getNumFrames(),
                                                             new Range(iModel.getAt(iCurrent).getMin(), iModel.getAt(iCurrent).getMax()),
                                                                 iModel.getTimeSliceVector().getSlice(getCurrent()));                
@@ -191,7 +199,7 @@ public class ImageView extends JComponent {
         iList.remove(ZoomChangeListener.class,aL);
     }
      
-    private void notifyZoomChanged() {
+    protected void notifyZoomChanged() {
         final ZoomChangeEvent evt = new ZoomChangeEvent(this, iZoom.getScaleX(), iZoom.getScaleY());        
                 
         for (ZoomChangeListener l : iList.getListeners(ZoomChangeListener.class))
@@ -216,14 +224,14 @@ public class ImageView extends JComponent {
         return ret;
     }
    
-    private void invalidateBuffer() {
+    protected void invalidateBuffer() {
         iBuf = null;
     }
     
     public int getCurrent() {
         return iCurrent;
     }  
-    
+           
     public boolean loadFrame(int aN) {                                
         if (!iModel.hasAt(aN)) {            
             return false;
@@ -277,12 +285,12 @@ public class ImageView extends JComponent {
         return op.filter(aR, null);
     }
       
-    private void updateBufferedImage() {                  
+    protected void updateBufferedImage() {                  
         updateScale();
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
-        AffineTransformOp z = new AffineTransformOp(iZoom, hts);
-        BufferedImage src  = iLUTMgr.transform(iModel.getAt(iCurrent).getBufferedImage(), null);
+        AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
+        BufferedImage src  = getLUTMgr().transform(getImage().getAt(iCurrent).getBufferedImage(), null);
                 
         iBuf = z.filter(src, null);                  
     }

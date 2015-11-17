@@ -5,9 +5,8 @@ import com.ivli.roim.controls.LUTControl;
 import java.util.Iterator;
 import java.io.IOException;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import javax.swing.JPanel;
-import javax.swing.JComponent;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +19,7 @@ public class ImagePanel extends JPanel {
     
            
     void open(String aName) throws IOException {                                         
-        iView = new ImageView(new MultiframeImage(DICOMImageProvider.New(aName)));        
+        iView = new GridImageView(new MultiframeImage(DICOMImageProvider.New(aName)), 2, 3);        
         
          /*TODO: registration instead of instantiation */
         iLut  = new LUTControl(iView.getLUTMgr());                                     

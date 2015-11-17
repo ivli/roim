@@ -109,7 +109,7 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
 
             iFrames.add(anIndex, f);
              //record only cache misses
-            logger.info("Frame -" + anIndex +                                  
+            logger.info("Frame " + anIndex +                                  
                         ", MIN"   + f.getMin() +  // NOI18N
                         ", MAX"   + f.getMax() +  // NOI18N
                         ", DEN"   + f.getIden()); // NOI18N     
