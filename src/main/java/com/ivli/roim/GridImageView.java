@@ -73,33 +73,35 @@ public class GridImageView extends ImageView {
     private final int GAPX = 2;
     private final int GAPY = 4;
     
+    
+    protected int getVisualWidth() {
+        return iColumns*(getImage().getWidth() + GAPX) + GAPX;
+    }
+    
+    protected int getVisualHeight() {
+        return iRows*(getImage().getHeight() + GAPY) + GAPY;
+    }
+    
     protected void updateBufferedImage() {                  
-        //updateScale();
+        updateScale();
         
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, getInterpolationMethod());
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
-        
-        //BufferedImage src  = getLUTMgr().transform(getImage().getAt(getCurrent()).getBufferedImage(), null);
-        
-        
-        
-        
+                
         final int width  = getImage().getWidth();
         final int height = getImage().getHeight();   
-        
-        
-        
-        BufferedImage tmp = new BufferedImage(iColumns*(width + GAPX) + GAPX, 
-                                                 iRows*(height + GAPY) + GAPY, 
+                       
+        BufferedImage tmp = new BufferedImage(getVisualWidth(), 
+                                                 getVisualHeight(), 
                                                     BufferedImage.TYPE_INT_RGB);//getImage().getAt(getCurrent()).getBufferedImage().getType());
         Graphics2D gc = tmp.createGraphics(); 
        
-        
-       // for (int j = 0; j < iRows; ++j) {
+       
         int j = 0;
         int posy = GAPY;
         do {   
             int posx = GAPX; 
+            
             for (int i = 0; i < iColumns; ++i) {
                 final int ndx = getCurrent() + j*iColumns + i;
                 BufferedImage src = getLUTMgr().transform(getImage().getAt(ndx).getBufferedImage(), null);
@@ -111,8 +113,8 @@ public class GridImageView extends ImageView {
             }
             
             posy += GAPY + height;     
-        } 
-        while (++j < iRows);
+        } while (++j < iRows);
+        
         
         
                     
