@@ -105,11 +105,7 @@ public class ImageView extends JComponent {
     public IMultiframeImage getImage() {
         return iModel;
     }
-    /*
-    public ImageFrame getFrame() {
-        return iFrame;
-    }
-    */
+    
     public ROIManager getROIMgr() {
         return iROIMgr;
     }    
