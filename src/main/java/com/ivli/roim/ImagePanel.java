@@ -57,12 +57,10 @@ public class ImagePanel extends JPanel {
             repaint();
         }
     }
-    
-    
+        
     public Iterator<Overlay> getOverlaysList() {        
         return iView.getROIMgr().getOverlaysList();
     }
-    
-    
+        
     private static final Logger logger = LogManager.getLogger(ImagePanel.class);   
 }
