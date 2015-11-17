@@ -114,9 +114,7 @@ public class GridImageView extends ImageView {
             
             posy += GAPY + height;     
         } while (++j < iRows);
-        
-        
-        
+       
                     
         iBuf = z.filter(tmp, null);                  
     }

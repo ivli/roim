@@ -19,7 +19,7 @@ public class ImagePanel extends JPanel {
     
            
     void open(String aName) throws IOException {                                         
-        iView = new GridImageView(new MultiframeImage(DICOMImageProvider.New(aName)), 2, 3);        
+        iView = new GridImageView(new MultiframeImage(DICOMImageProvider.New(aName)), 1, 1);        
         
          /*TODO: registration instead of instantiation */
         iLut  = new LUTControl(iView.getLUTMgr());                                     
