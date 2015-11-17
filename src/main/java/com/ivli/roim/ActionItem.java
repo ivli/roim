@@ -1,8 +1,6 @@
 
 package com.ivli.roim;
 
-
-import java.awt.Color;
 import java.awt.Graphics2D;
 
 /**
@@ -31,7 +29,7 @@ public abstract class ActionItem {
     }     
 
     public final void paint(Graphics2D gc) {
-        Color oc = gc.getColor();
+        java.awt.Color oc = gc.getColor();
         gc.setColor(Settings.ACTIVE_ROI_COLOR);
         DoPaint(gc);
         gc.setColor(oc);
