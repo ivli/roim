@@ -10,12 +10,13 @@ import java.io.IOException;
 public interface IImageProvider {   
     int getWidth();  
     int getHeight();
-    int getNumFrames() throws IOException;
+    int getNumFrames();
+    
     PixelSpacing getPixelSpacing();
     TimeSliceVector getTimeSliceVector();
     
     IImageProvider slice(TimeSlice aS) throws IOException;
-    IImageProvider collapse(TimeSlice aS) throws IOException;
+    IImageProvider collapse(TimeSlice aS) /*throws IOException*/;
     
-    ImageFrame frame(int anIndex) throws IndexOutOfBoundsException, IOException;
+    ImageFrame frame(int anIndex) throws IndexOutOfBoundsException/*, IOException*/;
 }

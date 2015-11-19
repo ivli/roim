@@ -44,6 +44,7 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
         return ((Long)iInstant).compareTo(o.iInstant);
     }
     
+    public boolean isInfinite() {return INFINITE.iInstant == this.iInstant; }
        
     private static final long MINUTES_IN_HOUR   = 60L;
     private static final long SECONDS_IN_MINUTE = 60L;

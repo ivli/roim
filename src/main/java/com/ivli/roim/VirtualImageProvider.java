@@ -2,65 +2,24 @@
 package com.ivli.roim;
 
 import com.ivli.roim.core.IImageProvider;
-import java.util.ArrayList;
-import com.ivli.roim.core.TimeSliceVector;
-import com.ivli.roim.core.TimeSlice;
-import com.ivli.roim.core.PixelSpacing;
 
-import com.ivli.roim.core.ImageFrame;
 /**
  *
  * @author likhachev
  */
-public class VirtualImageProvider implements IImageProvider {
+public class VirtualImageProvider extends ImageProvider {
     IImageProvider iParent;
-    final ArrayList<ImageFrame> iFrames;    
-    TimeSliceVector iTimeSlices;     
+    //final ArrayList<ImageFrame> iFrames;    
+    //TimeSliceVector iTimeSlices;     
          
-    public VirtualImageProvider(IImageProvider aP) {
+    public VirtualImageProvider(IImageProvider aP) {    
         iParent = aP;
-        iFrames = new java.util.ArrayList<>(); 
-        iTimeSlices = aP.getTimeSliceVector();
+        iWidth = aP.getWidth();
+        iHeight = aP.getHeight();
+        iNoOfFrames = aP.getNumFrames();
+        iPixelSpacing = aP.getPixelSpacing();
+        //protected TimeSliceVector iTimeSlices; 
+        //protected ArrayList<ImageFrame> iFrames;
     }
 
-    /*
-    public VirtualImageProvider(IImageProvider aP, ImageFrame aF) {
-        iParent = aP;
-        iFrames = new java.util.ArrayList<>(); 
-        iFrames.add(aF);
-    }
-    */
-    
-    public int getWidth() {
-        return iParent.getWidth();
-    } 
-    
-    public int getHeight() {
-        return iParent.getHeight();
-    }
-    
-    public int getNumFrames() throws java.io.IOException {
-        return iFrames.size();
-    }
-    
-    public PixelSpacing getPixelSpacing() {
-        return iParent.getPixelSpacing();
-    }
-    
-    public TimeSliceVector getTimeSliceVector() {
-        return iParent.getTimeSliceVector();
-    }
-    
-    public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException/*, java.io.IOException */{
-        return iFrames.get(anIndex);
-    }
-       
-    public IImageProvider slice(TimeSlice aS) {
-        throw new UnsupportedOperationException(); //TODO:
-        
-    }
-    
-    public IImageProvider collapse(TimeSlice aS) {
-        throw new UnsupportedOperationException(); //TODO:
-    }
 }

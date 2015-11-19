@@ -43,36 +43,19 @@ public class MultiframeImage extends IMultiframeImage {
     }
     
     @Override
-    public boolean hasAt(int aFrameNumber) {       
-        try {
-            return (aFrameNumber >=0 && aFrameNumber < iProvider.getNumFrames()) ;  
-        } catch (IOException ex) {
-            logger.info("FATAL!", ex);
-            return false;
-        }       
+    public boolean hasAt(int aFrameNumber) {               
+        return (aFrameNumber >=0 && aFrameNumber < iProvider.getNumFrames()) ;  
+        
     }
        
     @Override
-    public ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException {           
-        //ImageFrame ret = null;
-        try {
-            return iProvider.frame(aFrameNumber); 
-        } catch (IOException ex) {
-            throw (new java.util.NoSuchElementException());
-        }
-        //return ret;
-    } 
-    
+    public ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException {                  
+        return iProvider.frame(aFrameNumber);         
+    }     
        
     @Override
-    public int getNumFrames() {
-        int ret = 0;
-        try {
-            ret = iProvider.getNumFrames();
-        } catch (IOException ex) {
-            logger.error("FATAL!", ex);
-        }
-        return ret;
+    public int getNumFrames() {        
+        return iProvider.getNumFrames();       
     }
     
     @Override
@@ -89,17 +72,7 @@ public class MultiframeImage extends IMultiframeImage {
     public PixelSpacing getPixelSpacing() {
         return iProvider.getPixelSpacing();
     }
-              
-    public IMultiframeImage makeCompositeFrame(int aFrom, int aTo)  {        
-        MultiframeImage ret = null;        
-        try {     
-            ret = new MultiframeImage(iProvider.collapse(new TimeSlice (aFrom, aTo))); 
-        } catch (IOException ex) {
-            logger.error("FATAL!", ex);
-        }
-        return ret;
-    }    
-    
+                     
        
     private static final Logger logger = LogManager.getLogger(MultiframeImage.class);    
 }

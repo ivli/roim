@@ -329,7 +329,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenuItem1ActionPerformed
      
     /*com.ivli.roim.core.*/
-    IMultiframeImage iImage;
+    ImageProvider iProvider;
     
     private void openImage(String aF) /*throws IOException*/ {   
         String dicomFileName;
@@ -348,8 +348,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 return;
         }
          
-        try{           
-            iImage = new MultiframeImage(ImageProvider.New(dicomFileName));
+        try{                           
+            iProvider = new DCMImageProvider(dicomFileName);
             logger.info("opened file: " + dicomFileName);
             
         } catch (IOException ex) {            
@@ -370,7 +370,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             iPanel = new ImagePanel();        
         } 
         
-        iPanel.open(iImage);            
+        iPanel.open(new MultiframeImage(iProvider));//.collapse(com.ivli.roim.core.TimeSlice.INFINITE)));            
        
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -404,7 +404,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         if (null == iGrid)
             iGrid = new ImagePanel();
         
-        iGrid.openGrid(iImage, 2, 2);
+        iGrid.openGrid(new MultiframeImage(iProvider), 2, 2);
         iGrid.setPreferredSize(jPanel1.getSize());
         iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         jPanel4.setLayout(new BorderLayout());

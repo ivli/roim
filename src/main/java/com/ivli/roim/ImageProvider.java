@@ -23,10 +23,9 @@ import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.Instant;
-import com.ivli.roim.core.IImageLoader;
-
 import java.io.IOException;
 import java.util.ArrayList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,47 +33,39 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class ImageProvider implements IImageProvider/* implements IImage*/ {
-    private static final boolean LOAD_ON_DEMAND = true;
-    private static final int     FIRST_FRAME_TO_LOAD = 0;
+public abstract class ImageProvider implements IImageProvider {               
+    protected int iWidth;
+    protected int iHeight;
+    protected int iNoOfFrames;         
+    protected PixelSpacing iPixelSpacing;
+    protected TimeSliceVector iTimeSlices; 
+    protected ArrayList<ImageFrame> iFrames;
     
-    private final IImageLoader iLoader;
-    private final ArrayList<ImageFrame> iFrames;    
-    private TimeSliceVector iTimeSlices;     
     
-    private int iWidth;
-    private int iHeight;
-    
-    private ImageProvider() {
-        iLoader = new DCMImageLoader(); 
+    protected ImageProvider() {
+        //iLoader = new DCMImageLoader(); 
         iFrames = new ArrayList();        
     }
-    
-    static ImageProvider New(final String aFile) throws IOException {
-        ImageProvider self = new ImageProvider();
-        self.open(aFile);
-        return self;
-    }    
-      
+           
+    @Override
     public int getWidth() {
         return iWidth;
     }
     
+    @Override
     public int getHeight() {
         return iHeight;
     }  
     
-    public int getNumFrames() throws IOException {       
-        return iLoader.getNumImages();    
+    @Override
+    public int getNumFrames() {       
+        return iNoOfFrames;    
     }
     
+    @Override
     public PixelSpacing getPixelSpacing() {
-        try{
-            return iLoader.getPixelSpacing();
-        } catch (IOException ex) {
-            logger.debug(ex);
-            return new PixelSpacing(1.0, 1.0);
-        }
+        return iPixelSpacing;
+        
     }
     
     @Override
@@ -82,48 +73,10 @@ public class ImageProvider implements IImageProvider/* implements IImage*/ {
         return iTimeSlices;
     }
     
-    public void open(String aFile) throws IOException {           
-        iLoader.open(aFile);
-        iTimeSlices = iLoader.getTimeSliceVector();        
-       
-        iFrames.clear();
-        iFrames.ensureCapacity(getNumFrames());
-        
-        if (!LOAD_ON_DEMAND) 
-            for (int i = 0; i < getNumFrames(); ++i)
-                loadFrame(i);
-        
-        /**/
-        ImageFrame f = loadFrame(FIRST_FRAME_TO_LOAD);
-        
-        iWidth = f.getWidth();
-        iHeight = f.getHeight();        
-    }
-      
-    
-    private ImageFrame loadFrame(int anIndex) throws IndexOutOfBoundsException, IOException {        
-        if (anIndex > getNumFrames() || anIndex < 0)
-            throw new IndexOutOfBoundsException();
-          
-        try {
-            return iFrames.get(anIndex);                        
-        } catch (IndexOutOfBoundsException ex) {            
-            ImageFrame f = new ImageFrame(iLoader.readRaster(anIndex));
-           
-            iFrames.add(anIndex, f);
-             //record only cache misses
-            logger.info("Frame " + anIndex +                                  
-                        ", MIN"   + f.getMin() +  // NOI18N
-                        ", MAX"   + f.getMax() +  // NOI18N
-                        ", DEN"   + f.getIden()); // NOI18N     
-            return f;           
-        }
-    }    
-  
     @Override
-    public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException, IOException {
-        return loadFrame(anIndex);
-    }
+   public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException/*, IOException */{
+       return iFrames.get(anIndex);
+   }
     
     @Override
     public IImageProvider slice(TimeSlice aS) {
@@ -133,25 +86,27 @@ public class ImageProvider implements IImageProvider/* implements IImage*/ {
     }
     
     @Override
-    public IImageProvider collapse(TimeSlice aS) throws IOException {   
-        int frameTo = (Instant.INFINITE == aS.getTo()) ? getNumFrames() : iTimeSlices.frameNumber(aS.getTo());
+    public IImageProvider collapse(TimeSlice aS) /*throws IOException */{   
+        int frameTo = aS.getTo().isInfinite() ? getNumFrames() : iTimeSlices.frameNumber(aS.getTo());
         int frameFrom = iTimeSlices.frameNumber(aS.getFrom());        
        
-       // assert (aS.getFrom() >= 0 && aS.getFrom() < getNumFrames() || aS.getTo() > aS.getFrom() || aS.getFrom() < getNumFrames());  
-        
-        VirtualImageProvider ret = new VirtualImageProvider(this);
-        
-        ret.iTimeSlices = iTimeSlices.slice(aS);
         
         java.awt.image.WritableRaster comp = iFrames.get(0).getRaster().createCompatibleWritableRaster();
                 
         for (int n = frameFrom; n < frameTo; ++n) {
-            final java.awt.image.Raster r = iFrames.get(n).getRaster();
+            final java.awt.image.Raster r = frame(n).getRaster();
             for (int i = 0; i < getWidth(); ++i)
                for (int j = 0; j < getHeight(); ++j) 
                    comp.setSample(i, j, 0, comp.getSample(i, j, 0) + r.getSample(i, j, 0));           
+        
         }
-                
+        
+        VirtualImageProvider ret = new VirtualImageProvider(this);
+        
+        ret.iTimeSlices = iTimeSlices.slice(aS);
+        ret.iFrames.add(new ImageFrame(comp));
+        ret.iNoOfFrames = 1;
+        
         return ret; 
     }
     

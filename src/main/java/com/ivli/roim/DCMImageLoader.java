@@ -41,7 +41,6 @@ import org.dcm4che3.io.DicomInputStream;
 import org.dcm4che3.data.Attributes;
 
 import org.dcm4che3.data.Sequence;
-import org.dcm4che3.data.Tag;
 
 import com.ivli.roim.core.PhaseInformation;
 import com.ivli.roim.core.TimeSliceVector;

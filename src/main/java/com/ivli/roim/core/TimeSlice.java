@@ -22,15 +22,17 @@ import java.time.Duration;
  *
  * @author likhachev
  */
-public class TimeSlice implements java.io.Serializable {
-    
+public class TimeSlice implements java.io.Serializable {    
     private final long iFrom;
     private final long iTo;
     
+    public static final TimeSlice INFINITE = new TimeSlice(Instant.ZERO.toLong(), Instant.INFINITE.toLong());
+    /*
     public TimeSlice() {
         iFrom = Instant.ZERO.toLong();
         iTo   = Instant.INFINITE.toLong();  
     }
+    */
     
     public TimeSlice(long aFrom, long aTo) {
         iFrom = aFrom;
