@@ -99,7 +99,7 @@ public class GridImageView extends ImageView {
        
         if (getLUTMgr().isInverted()) { 
             final Color old = gc.getColor();
-            gc.setColor(Color.white);
+            gc.setColor(Color.WHITE);
             gc.fillRect(0, 0, getVisualWidth(), getVisualHeight());
             gc.setColor(old);
         }
@@ -111,10 +111,23 @@ public class GridImageView extends ImageView {
             
             for (int i = 0; i < iColumns; ++i) {
                 final int ndx = getCurrent() + j*iColumns + i;
-                BufferedImage src = getLUTMgr().transform(getImage().getAt(ndx).getBufferedImage(), null);
-                gc.drawImage(src, posx, posy, width, height, null);
-                gc.setColor(Color.red);
-                gc.drawString(String.format("%d", ndx), posx + 2, posy + 12);
+                              
+                if (getImage().hasAt(ndx)) {                    
+                    BufferedImage img = getImage().getAt(ndx).getBufferedImage();
+                    BufferedImage src = getLUTMgr().transform(img, null);
+
+                    gc.drawImage(src, posx, posy, width, height, null);
+                    gc.setColor(Color.RED);
+                    gc.drawString(String.format("%d", ndx), posx + 2, posy + 12);
+                
+                } else {
+                    if (getLUTMgr().isInverted())                          
+                        gc.setColor(Color.WHITE);
+                    else
+                        gc.setColor(Color.BLACK);
+                    gc.fillRect(posx, posy, width, height);                    
+                }      
+                
                 
                 posx += GAPX + width;
             }

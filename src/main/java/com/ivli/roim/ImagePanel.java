@@ -19,12 +19,7 @@ public class ImagePanel extends JPanel {
         FRAME,
         GRID
     }
-    /*    
-    void open(String aName) throws IOException {
-        open (new MultiframeImage(DICOMImageProvider.New(aName)));
-    }
-    */
-    
+       
     void open(IMultiframeImage anImage) /*throws IOException */{                                         
         //iView = new GridImageView(new MultiframeImage(DICOMImageProvider.New(aName)), 6, 6);  
         doOpen(new ImageView(anImage));
@@ -36,6 +31,8 @@ public class ImagePanel extends JPanel {
     }
     
     protected void doOpen(ImageView aView) /*throws IOException */{           
+        removeAll();
+        
         iView = aView;//new ImageView(anImage);  
         
          /*TODO: registration instead of instantiation */

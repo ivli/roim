@@ -27,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.controls.*;
 import com.ivli.roim.events.*;
-import com.ivli.roim.core.IMultiframeImage;
 
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
@@ -366,11 +365,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel3.removeAll();
         jPanel4.removeAll();
         
-        if (null == iPanel) {
-            iPanel = new ImagePanel();        
-        } 
         
-        iPanel.open(new MultiframeImage(iProvider));//.collapse(com.ivli.roim.core.TimeSlice.INFINITE)));            
+        
+        if (null == iPanel)        
+            iPanel = new ImagePanel();        
+        
+        
+        iPanel.open(new MultiframeImage(iProvider.collapse(com.ivli.roim.core.TimeSlice.INFINITE))); // ));//            
        
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -409,10 +410,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         jPanel4.setLayout(new BorderLayout());
         jPanel4.add(iGrid, BorderLayout.CENTER);
+        
+        jPanel1.validate();
+        jPanel3.validate();
+        jPanel4.validate();
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-
         openImage(null);//"d:\\images\\H2_res.dcm"); // NOI18N                   
     }//GEN-LAST:event_jMenuItem2ActionPerformed
     
