@@ -23,10 +23,10 @@ import java.time.Duration;
  * @author likhachev
  */
 public class TimeSlice implements java.io.Serializable {    
-    private final long iFrom;
-    private final long iTo;
+    private final Instant iFrom;
+    private final Instant iTo;
     
-    public static final TimeSlice INFINITE = new TimeSlice(Instant.ZERO.toLong(), Instant.INFINITE.toLong());
+    public static final TimeSlice FOREWER = new TimeSlice(Instant.ZERO.toLong(), Instant.INFINITE.toLong());
     /*
     public TimeSlice() {
         iFrom = Instant.ZERO.toLong();
@@ -35,20 +35,25 @@ public class TimeSlice implements java.io.Serializable {
     */
     
     public TimeSlice(long aFrom, long aTo) {
+        iFrom = new Instant(aFrom);
+        iTo = new Instant(aTo);
+    }
+    
+    public TimeSlice(Instant aFrom, Instant aTo) {
         iFrom = aFrom;
         iTo = aTo;
     }
     
     public Instant getFrom() {
-        return new Instant(iFrom);
+        return iFrom;
     }
     
     public Instant getTo() {
-        return new Instant(iTo);
+        return iTo;
     }
     
     public long length() {
-        return iTo - iFrom;
+        return iTo.toLong() - iFrom.toLong();
     }
     
     public Duration duration() {    

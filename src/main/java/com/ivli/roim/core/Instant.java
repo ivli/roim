@@ -22,11 +22,21 @@ package com.ivli.roim.core;
  * @author likhachev
  */
 public class Instant implements java.io.Serializable, Comparable<Instant> {
-    protected long iInstant;    
+      
+    private static final long MINUTES_IN_HOUR   = 60L;
+    private static final long SECONDS_IN_MINUTE = 60L;
+    private static final long MILLIS_IN_SECOND  = 1000L;        
+    private static final long MILLIS_IN_MINUTE  = MILLIS_IN_SECOND * SECONDS_IN_MINUTE;
+    private static final long MILLIS_IN_HOUR    = MILLIS_IN_MINUTE * MINUTES_IN_HOUR;    
     
-    public static final Instant INFINITE = new Instant(-1L);
     public static final Instant ZERO     = new Instant(0L);
+    public static final Instant SECOND   = new Instant(MILLIS_IN_SECOND);
+    public static final Instant MINUTE   = new Instant(MILLIS_IN_MINUTE);    
+    public static final Instant HOUR     = new Instant(MILLIS_IN_HOUR);
+    public static final Instant INFINITE = new Instant(-1L);
     
+    protected long iInstant; 
+     
     public Instant(long aI) {
         iInstant = aI;
     }
@@ -46,11 +56,7 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
     
     public boolean isInfinite() {return INFINITE.iInstant == this.iInstant; }
        
-    private static final long MINUTES_IN_HOUR   = 60L;
-    private static final long SECONDS_IN_MINUTE = 60L;
-    private static final long MILLIS_IN_SECOND  = 1000L;        
-    private static final long MILLIS_IN_MINUTE  = MILLIS_IN_SECOND * SECONDS_IN_MINUTE;
-    private static final long MILLIS_IN_HOUR    = MILLIS_IN_MINUTE * MINUTES_IN_HOUR;
+    
     
     private static final String SUFFIX_MILLIS  = "mS";
     private static final String SUFFIX_SECONDS = "S";
