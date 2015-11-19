@@ -17,9 +17,7 @@
  */
 package com.ivli.roim;
 
-import com.ivli.roim.core.PhaseInformation;
-import com.ivli.roim.core.TimeSliceVector;
-import com.ivli.roim.core.PixelSpacing;
+
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.Raster;
@@ -45,6 +43,10 @@ import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Sequence;
 import org.dcm4che3.data.Tag;
 
+import com.ivli.roim.core.PhaseInformation;
+import com.ivli.roim.core.TimeSliceVector;
+import com.ivli.roim.core.PixelSpacing;
+import com.ivli.roim.core.IImageLoader;
 
 /* ENDIF */
 
@@ -53,7 +55,7 @@ import org.apache.logging.log4j.Logger;
 import org.dcm4che3.data.Tag;
 
 
-public class ImageLoader {
+public class DCMImageLoader implements IImageLoader {
     
     static {   
         ImageIO.scanForPlugins(); 
@@ -78,7 +80,8 @@ public class ImageLoader {
     private ImageReader iReader = _installImageReader();   
     private Attributes  iDataSet;
         
-    void open(String aFile) throws IOException {
+    @Override
+    public void open(String aFile) throws IOException {
          
         try (DicomInputStream dis = new DicomInputStream(new File(iFile = aFile))) {  
             
@@ -92,7 +95,8 @@ public class ImageLoader {
         iReader.setInput(iis);  
     }
         
-    TimeSliceVector getTimeSliceVector() throws IOException {        
+    @Override
+    public TimeSliceVector getTimeSliceVector() throws IOException {        
         //DicomInputStream dis = new DicomInputStream(new File(iFile));  
         //Attributes fmi;
         //Attributes ds = iDIS.readDataset(-1, -1);
@@ -114,14 +118,12 @@ public class ImageLoader {
              // single frame image
             phases.add(new PhaseInformation(1, iDataSet.getInt(Tag.ActualFrameDuration, 1)));   
         }
-        
-  
-        
          
         return new TimeSliceVector(phases);
     }   
     
-    PixelSpacing getPixelSpacing() throws IOException {        
+    @Override
+    public PixelSpacing getPixelSpacing() throws IOException {        
         double[] ps = iDataSet.getDoubles(Tag.PixelSpacing); 
         if (null != ps && ps.length >=2 )
             return new PixelSpacing (ps[0], ps[1]);
@@ -129,15 +131,16 @@ public class ImageLoader {
             return new PixelSpacing();
     }
     
-    int getNumImages() throws IOException {
+    @Override
+    public int getNumImages() throws IOException {
         return iReader.getNumImages(false);
     }    
 
-    Raster readRaster(int aIndex) throws IOException {
+    @Override
+    public Raster readRaster(int aIndex) throws IOException {
         return iReader.readRaster(aIndex, readParam());
     }
 
-    
     private ImageReadParam readParam() {
         DicomImageReadParam param =
                 (DicomImageReadParam) iReader.getDefaultReadParam();
@@ -154,5 +157,5 @@ public class ImageLoader {
     }
     
     
-    private static final Logger logger = LogManager.getLogger(ImageLoader.class);
+    private static final Logger logger = LogManager.getLogger(DCMImageLoader.class);
 }

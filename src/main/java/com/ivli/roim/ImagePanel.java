@@ -1,25 +1,42 @@
 
 package com.ivli.roim;
 
-import com.ivli.roim.controls.LUTControl;
+
 import java.util.Iterator;
-import java.io.IOException;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
-
+import com.ivli.roim.controls.LUTControl;
+import com.ivli.roim.core.IMultiframeImage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ImagePanel extends JPanel {
-    private static final boolean SHOW_COMPOSITE = false;
-   
+public class ImagePanel extends JPanel {      
     protected ImageView iView;    
     protected LUTControl iLut;
     
-           
-    void open(String aName) throws IOException {                                         
-        iView = new GridImageView(new MultiframeImage(DICOMImageProvider.New(aName)), 1, 1);        
+    public enum VIEWMODE {
+        FRAME,
+        GRID
+    }
+    /*    
+    void open(String aName) throws IOException {
+        open (new MultiframeImage(DICOMImageProvider.New(aName)));
+    }
+    */
+    
+    void open(IMultiframeImage anImage) /*throws IOException */{                                         
+        //iView = new GridImageView(new MultiframeImage(DICOMImageProvider.New(aName)), 6, 6);  
+        doOpen(new ImageView(anImage));
+    }
+    
+    void openGrid(IMultiframeImage anImage, int aRows, int aCols) /*throws IOException */{                                         
+        //iView = new GridImageView(new MultiframeImage(DICOMImageProvider.New(aName)), 6, 6);  
+        doOpen(new GridImageView(anImage, Math.max(aRows, 1), Math.max(aCols, 1)));
+    }
+    
+    protected void doOpen(ImageView aView) /*throws IOException */{           
+        iView = aView;//new ImageView(anImage);  
         
          /*TODO: registration instead of instantiation */
         iLut  = new LUTControl(iView.getLUTMgr());                                     
@@ -30,7 +47,7 @@ public class ImagePanel extends JPanel {
         setLayout(new BorderLayout());                         
         add(iView);           
         add(iLut, BorderLayout.LINE_END);  
-    }
+    }    
     
     void setLUT(String aName) {
         iView.getLUTMgr().setLUT(aName);        

@@ -19,6 +19,7 @@ package com.ivli.roim;
 
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Range;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.AffineTransformOp;
@@ -96,6 +97,12 @@ public class GridImageView extends ImageView {
                                                     BufferedImage.TYPE_INT_RGB);//getImage().getAt(getCurrent()).getBufferedImage().getType());
         Graphics2D gc = tmp.createGraphics(); 
        
+        if (getLUTMgr().isInverted()) { 
+            final Color old = gc.getColor();
+            gc.setColor(Color.white);
+            gc.fillRect(0, 0, getVisualWidth(), getVisualHeight());
+            gc.setColor(old);
+        }
        
         int j = 0;
         int posy = GAPY;
@@ -106,7 +113,7 @@ public class GridImageView extends ImageView {
                 final int ndx = getCurrent() + j*iColumns + i;
                 BufferedImage src = getLUTMgr().transform(getImage().getAt(ndx).getBufferedImage(), null);
                 gc.drawImage(src, posx, posy, width, height, null);
-                
+                gc.setColor(Color.red);
                 gc.drawString(String.format("%d", ndx), posx + 2, posy + 12);
                 
                 posx += GAPX + width;
@@ -116,7 +123,8 @@ public class GridImageView extends ImageView {
         } while (++j < iRows);
        
                     
-        iBuf = z.filter(tmp, null);                  
+        iBuf = z.filter(tmp, null);      
+        gc.dispose();
     }
     
 }

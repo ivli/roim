@@ -176,8 +176,9 @@ public class ImageView extends JComponent {
     public void addFrameChangeListener(FrameChangeListener aL) {
         iList.add(FrameChangeListener.class, aL);
         aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),
-                                                            new Range(iModel.getAt(iCurrent).getMin(), iModel.getAt(iCurrent).getMax()),
-                                                                iModel.getTimeSliceVector().getSlice(getCurrent())));                           
+                                                            //new Range(iModel.getAt(iCurrent).getMin(), iModel.getAt(iCurrent).getMax()),
+                                                    getLUTMgr().getRange(),                                                
+                                                    iModel.getTimeSliceVector().getSlice(getCurrent())));                           
     }
     
     public void removeFrameChangeListener(FrameChangeListener aL) {
@@ -186,8 +187,9 @@ public class ImageView extends JComponent {
     
     protected void notifyFrameChanged() {
         final FrameChangeEvent evt = new FrameChangeEvent(this, getCurrent(), iModel.getNumFrames(),
-                                                            new Range(iModel.getAt(iCurrent).getMin(), iModel.getAt(iCurrent).getMax()),
-                                                                iModel.getTimeSliceVector().getSlice(getCurrent()));                
+                                                            //new Range(iModel.getAt(iCurrent).getMin(), iModel.getAt(iCurrent).getMax()),
+                                                            getLUTMgr().getRange(),
+                                                            iModel.getTimeSliceVector().getSlice(getCurrent()));                
       
         for (FrameChangeListener l : iList.getListeners(FrameChangeListener.class))
             l.frameChanged(evt);       

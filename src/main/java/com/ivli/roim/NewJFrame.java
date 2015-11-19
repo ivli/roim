@@ -20,20 +20,21 @@ package com.ivli.roim;
 
 import java.awt.*;
 import java.io.IOException;
-import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.controls.*;
-import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.events.*;
+import com.ivli.roim.core.IMultiframeImage;
+
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
      
     private ImagePanel  iPanel;
-    private ChartView iChart;
+    private ImagePanel  iGrid;
+    private ChartView   iChart;
     
     
     public NewJFrame() {         
@@ -54,6 +55,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
+        jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -101,6 +103,19 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel3.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jSplitPane1.TabConstraints.tabTitle"), jSplitPane1); // NOI18N
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 863, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 600, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -313,8 +328,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         dispose();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
      
-    private void openImage(String aF) throws IOException {   
-        final String dicomFileName;
+    /*com.ivli.roim.core.*/
+    IMultiframeImage iImage;
+    
+    private void openImage(String aF) /*throws IOException*/ {   
+        String dicomFileName;
         
         if (null != aF) {
             dicomFileName = aF;
@@ -329,43 +347,52 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             else
                 return;
         }
- 
-        jPanel1.removeAll();
-        iPanel = null;
-        
-        iPanel = new ImagePanel();
-        
-        try{
-           
-            iPanel.open(dicomFileName);
+         
+        try{           
+            iImage = new MultiframeImage(ImageProvider.New(dicomFileName));
+            logger.info("opened file: " + dicomFileName);
+            
         } catch (IOException ex) {            
             logger.info("Unable to open file: " + dicomFileName); //NOI18N            
             javax.swing.JOptionPane.showMessageDialog(this, "Unable to open file " + dicomFileName);
             return;
         } 
         
-        logger.info("-->open file: " + dicomFileName);
+        makePanels();
+    }
+    
+    private void makePanels() {         
+        jPanel1.removeAll();
+        jPanel3.removeAll();
+        jPanel4.removeAll();
         
+        if (null == iPanel) {
+            iPanel = new ImagePanel();        
+        } 
+        
+        iPanel.open(iImage);            
+       
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         
-        iPanel.iView.getROIMgr().removeROIChangeListener(iChart);
+        if (null != iChart)            
+            iPanel.iView.getROIMgr().removeROIChangeListener(iChart);
+        else {
+            iChart = new ChartView();        
+            iChart.initChart();
+            iPanel.iView.getROIMgr().addROIChangeListener(iChart);
+        }
         
-        iChart = null;
-        iChart = new ChartView();
-        iChart.initChart();
-        iPanel.iView.getROIMgr().addROIChangeListener(iChart);
-        
-        /*  */         
+        /* IF !CHART_ON_THE_SAME_PAGE */    
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iPanel, BorderLayout.CENTER);
         iChart.setPreferredSize(jPanel3.getPreferredSize());
         jPanel3.add(iChart);
-        /* 
+        /* ELSE 
         jSplitPane1.setDividerLocation(.5);
         jSplitPane1.setLeftComponent(iPanel);
         jSplitPane1.setRightComponent(iChart);
-        /**/ 
+        /* ENDIF */ 
         
         jPanel1.validate(); 
                 
@@ -373,15 +400,20 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iPanel.iView.addWindowChangeListener(this);
         iPanel.iView.addZoomChangeListener(this);
         iPanel.iView.getROIMgr().addROIChangeListener(this);  
+        
+        if (null == iGrid)
+            iGrid = new ImagePanel();
+        
+        iGrid.openGrid(iImage, 2, 2);
+        iGrid.setPreferredSize(jPanel1.getSize());
+        iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        jPanel4.setLayout(new BorderLayout());
+        jPanel4.add(iGrid, BorderLayout.CENTER);
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        // TODO add your handling code here:
-        try {
-            openImage(null);//"d:\\images\\H2_res.dcm"); // NOI18N           
-        } catch (Exception e) {                   
-            logger.error("FATAL! ", e);
-        }
+
+        openImage(null);//"d:\\images\\H2_res.dcm"); // NOI18N                   
     }//GEN-LAST:event_jMenuItem2ActionPerformed
     
     private void jTabbedPane1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jTabbedPane1ComponentShown
@@ -579,6 +611,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;

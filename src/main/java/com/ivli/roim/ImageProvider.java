@@ -23,6 +23,7 @@ import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.Instant;
+import com.ivli.roim.core.IImageLoader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,24 +34,24 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class DICOMImageProvider implements IImageProvider/* implements IImage*/ {
+public class ImageProvider implements IImageProvider/* implements IImage*/ {
     private static final boolean LOAD_ON_DEMAND = true;
     private static final int     FIRST_FRAME_TO_LOAD = 0;
     
-    private final ImageLoader iLoader;
+    private final IImageLoader iLoader;
     private final ArrayList<ImageFrame> iFrames;    
     private TimeSliceVector iTimeSlices;     
     
     private int iWidth;
     private int iHeight;
     
-    private DICOMImageProvider() {
-        iLoader = new ImageLoader(); 
-        iFrames = new ArrayList();
+    private ImageProvider() {
+        iLoader = new DCMImageLoader(); 
+        iFrames = new ArrayList();        
     }
     
-    static DICOMImageProvider New(final String aFile) throws IOException {
-        DICOMImageProvider self = new DICOMImageProvider();
+    static ImageProvider New(final String aFile) throws IOException {
+        ImageProvider self = new ImageProvider();
         self.open(aFile);
         return self;
     }    
@@ -76,6 +77,7 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
         }
     }
     
+    @Override
     public TimeSliceVector getTimeSliceVector() {
         return iTimeSlices;
     }
@@ -91,10 +93,11 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
             for (int i = 0; i < getNumFrames(); ++i)
                 loadFrame(i);
         
+        /**/
         ImageFrame f = loadFrame(FIRST_FRAME_TO_LOAD);
         
         iWidth = f.getWidth();
-        iHeight = f.getHeight();
+        iHeight = f.getHeight();        
     }
       
     
@@ -106,7 +109,7 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
             return iFrames.get(anIndex);                        
         } catch (IndexOutOfBoundsException ex) {            
             ImageFrame f = new ImageFrame(iLoader.readRaster(anIndex));
-
+           
             iFrames.add(anIndex, f);
              //record only cache misses
             logger.info("Frame " + anIndex +                                  
@@ -115,8 +118,7 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
                         ", DEN"   + f.getIden()); // NOI18N     
             return f;           
         }
-    }
-    
+    }    
   
     @Override
     public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException, IOException {
@@ -149,13 +151,11 @@ public class DICOMImageProvider implements IImageProvider/* implements IImage*/ 
                for (int j = 0; j < getHeight(); ++j) 
                    comp.setSample(i, j, 0, comp.getSample(i, j, 0) + r.getSample(i, j, 0));           
         }
-        
-        
+                
         return ret; 
     }
     
-    private static final Logger logger = LogManager.getLogger(DICOMImageProvider.class);    
- 
+    private static final Logger logger = LogManager.getLogger(ImageProvider.class);     
 }
 
 
