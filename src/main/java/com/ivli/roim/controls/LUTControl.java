@@ -297,7 +297,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         final int size = (width * height - 1);
         DataBuffer data = new DataBufferUShort(width * height);
         
-        final double ratio = iRange.getRange() / height;
+        final double ratio = iRange.range() / height;
         
         for (int i = 0; i < height; ++i) {                                   
             final int lineNdx =  size - (i * width);
@@ -379,11 +379,11 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     }
   
     private double imageToScreen(double aY) {              
-        return aY * ((this.getHeight() - (TOP_GAP + BOTTOM_GAP)) / iRange.getRange());       
+        return aY * ((this.getHeight() - (TOP_GAP + BOTTOM_GAP)) / iRange.range());       
     }
     
     private double screenToImage(double aY) {             
-        return aY * (iRange.getRange() /(this.getHeight() - (TOP_GAP + BOTTOM_GAP)));  
+        return aY * (iRange.range() /(this.getHeight() - (TOP_GAP + BOTTOM_GAP)));  
     }       
     
     @Override
@@ -452,7 +452,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             }
                 
             if (MARKERS_DISPLAY_WL_VALUES) {
-                final double val = MARKERS_DISPLAY_PERCENT ? screenToImage(iPos) * 100.0 / iRange.getRange() : screenToImage(iPos);
+                final double val = MARKERS_DISPLAY_PERCENT ? screenToImage(iPos) * 100.0 / iRange.range() : screenToImage(iPos);
                 final String out = String.format("%.0f", Math.abs(val)); //NOI18N
                 final Rectangle2D sb = aGC.getFontMetrics().getStringBounds(out, aGC);    
                 final int height = (null != iKnob) ? iKnob.getHeight(null) : 4;

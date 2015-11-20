@@ -232,28 +232,20 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     }
   
     private void reset(Range aR) {            
-       if(Settings.KEEP_WINDOW_AMONG_FRAMES && null != iWin && null != iRange) {        
-            final double percentTop    = iWin.getTop() / iRange.getRange();
-            final double percentBottom = iWin.getBottom() / iRange.getRange();
-            iRange = aR;
-            
-            final double newTop    = percentTop * iRange.getRange();
-            final double newBottom = percentBottom * iRange.getRange();
-            final double newRange  = newTop - newBottom; 
-            
-            iWin = new Window(newBottom + newRange / 2.0, newRange);
-            
+        if(Settings.KEEP_WINDOW_AMONG_FRAMES && null != iWin && null != iRange) {                    
+            final double scale = aR.range() / iRange.range();           
+            final double bottom = iWin.getBottom() * scale;
+            final double range  = (iWin.getTop() - iWin.getBottom()) * scale; 
+            iRange = aR;            
+            iWin = new Window(bottom + range / 2.0, range);                        
         } else {
             iRange = aR;
             iWin = new Window(aR);
         }
         
-       updateLUT();
-        ///makeLUT();            
+        updateLUT();                  
     }
-    
-   
-    
+ 
     private static final Logger logger = LogManager.getLogger(VOILut.class);
 } 
 

@@ -25,8 +25,8 @@ public class Window implements java.io.Serializable {
     }
     
     public Window(Range aR) {
-        iLevel = aR.getRange() / 2.0; 
-        iWidth = aR.getRange();
+        iLevel = aR.range() / 2.0; 
+        iWidth = aR.range();
     }
     
     public Window(double aL, double aW) {

@@ -34,7 +34,7 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.
      //returns a frame at aFrameNumber leaving cursor unaltered 
     public abstract ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException; 
     
-        
+    
     @Override
     public java.util.Iterator<ImageFrame> iterator() {    
         return new java.util.Iterator<ImageFrame>() {
