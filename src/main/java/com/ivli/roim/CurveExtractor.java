@@ -1,35 +1,41 @@
 
 package com.ivli.roim;
 
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Measure;
 import com.ivli.roim.core.Series;
 import com.ivli.roim.core.ImageFrame;
-
+import com.ivli.roim.core.FrameOffsetVector;
+import com.ivli.roim.core.FrameOffset;
 /**
  *
  * @author likhachev
  */
 public class CurveExtractor {
-    //final IMultiframeImage iImages;
-
-    //public CurveExtractor (IMultiframeImage aI) {
-    //    iImages = aI;
-    //}
     
-    /* */
-    public static SeriesCollection extract(ROI aRoi) {
+    public static SeriesCollection extract(IMultiframeImage anImage, ROI aRoi, FrameOffsetVector anOff) {
         SeriesCollection c = new SeriesCollection();
        
         Series density = new Series(new Measurement(Measurement.DENSITY), "IntDen");
         Series mins    = new Series(new Measurement(Measurement.MINIMUM), "Mins");
         Series maxs    = new Series(new Measurement(Measurement.MAXIMUM), "Maxs");
         
-        IMultiframeImage img = aRoi.getManager().getView().getModel();
-        
-        for (ImageFrame f : img) {                           
-            Measure m = measure(f.getRaster(), aRoi.getShape()); 
+        for (int n = 0; n < anImage.getNumFrames(); ++n) {  
+            Shape roi = aRoi.getShape();
+            
+             
+            if (null != anOff) {
+                FrameOffset off = anOff.get(n);
+                if (off != FrameOffset.ZERO)
+                   roi = AffineTransform.getTranslateInstance(off.getX(), off.getY()).createTransformedShape(roi);
+               
+            }
+            
+            ImageFrame f = anImage.get(n);
+            Measure m = measure(f.getRaster(), roi); 
             density.add(m.getIden());   
             mins.add(m.getMin());
             maxs.add(m.getMax());

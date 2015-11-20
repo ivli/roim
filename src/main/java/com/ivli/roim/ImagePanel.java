@@ -19,17 +19,22 @@ public class ImagePanel extends JPanel {
         FRAME,
         GRID
     }
-       
-    void open(IMultiframeImage anImage) /*throws IOException */{                                         
+      /*
+    void open(IMultiframeImage anImage) {                                         
         //iView = new GridImageView(new MultiframeImage(DICOMImageProvider.New(aName)), 6, 6);  
         doOpen(new ImageView(anImage));
     }
     
-    void openGrid(IMultiframeImage anImage, int aRows, int aCols) /*throws IOException */{                                         
+    void openGrid(IMultiframeImage anImage, int aRows, int aCols) {                                         
         //iView = new GridImageView(new MultiframeImage(DICOMImageProvider.New(aName)), 6, 6);  
         doOpen(new GridImageView(anImage, Math.max(aRows, 1), Math.max(aCols, 1)));
     }
+    */
     
+    public void open(ImageView aView) {
+        doOpen(aView);
+    }
+            
     protected void doOpen(ImageView aView) /*throws IOException */{           
         removeAll();
         

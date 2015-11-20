@@ -54,11 +54,13 @@ public class FrameOffsetVector implements Iterable<FrameOffset>, java.io.Seriali
     public void put(int anIndex, FrameOffset anOffset) {
         if (!isValidIndex(anIndex) )
             throw new java.util.NoSuchElementException();
+        
+        
         iMap.put(anIndex, anOffset);
     }
     
     public FrameOffset get(int anIndex) throws NoSuchElementException {
-        if (!isValidIndex(anIndex) )
+        if (!isValidIndex(anIndex))
             throw new java.util.NoSuchElementException();
             
         if (iMap.containsKey(anIndex))
@@ -68,7 +70,7 @@ public class FrameOffsetVector implements Iterable<FrameOffset>, java.io.Seriali
     }
     
     private boolean isValidIndex(int anIndex) {
-        return anIndex >=0 && anIndex < iSize;
+        return anIndex >= 0 && anIndex < iSize;
     }    
     
      @Override

@@ -77,8 +77,8 @@ public class ImageView extends JComponent {
     protected int iCurrent;
    // private ImageFrame iFrame;
     
-    ImageView(IMultiframeImage aImage) {  
-        iModel = aImage;
+    ImageView(IMultiframeImage anImage) {  
+        iModel = anImage;
         iCurrent = 0;       
         
         iController = new Controller(this);          

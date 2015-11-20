@@ -29,7 +29,7 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);
           
         iAreaInPixels = calculateAreaInPixels();
-        iSeries = CurveExtractor.extract(this);
+        iSeries = CurveExtractor.extract(getManager().getImage(), this, getManager().getOffsetVector());
     }
     
     ROI(ROI aR) {
@@ -95,13 +95,13 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
             logger.info("!!movement out of range");
         } else {
        
-        iShape  = temp;    
-        iSeries = CurveExtractor.extract(this);    
-        
-        if (null != iAnnos) {
-            iAnnos.stream().forEach((o) -> {
-                o.move(adX, adY);
-            });
+            iShape  = temp;    
+            
+
+            if (null != iAnnos) {
+                iAnnos.stream().forEach((o) -> {
+                    o.move(adX, adY);
+                });
         }
         
         update();
@@ -120,8 +120,10 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
         return AreaInPixels;
     }                 
         
-    @Override
+     @Override
     void update() {        
+        
+        iSeries = CurveExtractor.extract(this.getManager().getImage(), this, getManager().getOffsetVector());    
         
         if (null != iAnnos) {
             iAnnos.stream().forEach((o) -> {

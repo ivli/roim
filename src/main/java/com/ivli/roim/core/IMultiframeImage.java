@@ -20,7 +20,11 @@ package com.ivli.roim.core;
 /**
  *
  * @author likhachev
+ * 
+ * note: this is just an iterator/accessor actual frames are keept in IImageProvider  
+ * 
  */
+
 public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.Serializable {          
     public abstract int getWidth();  
     public abstract int getHeight();

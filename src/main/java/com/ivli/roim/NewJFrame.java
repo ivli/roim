@@ -35,7 +35,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private ImagePanel  iPanel;
     private ImagePanel  iGrid;
     private ChartView   iChart;
-    
+    private ChartView   iChart2;
     
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
@@ -358,10 +358,12 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             return;
         } 
         
-        makePanels();
+        initPanels();
     }
     
-    private void makePanels() {         
+    ImagePanel iOff;
+    
+    private void initPanels() {         
         jPanel1.removeAll();
         jPanel3.removeAll();
         jPanel4.removeAll();
@@ -369,7 +371,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         if (null == iPanel)        
             iPanel = new ImagePanel();        
                 
-        iPanel.open(new MultiframeImage(iProvider));//.collapse(TimeSlice.FOREWER))); // ));//            
+        iPanel.open(new ImageView(new MultiframeImage(iProvider))); //.collapse(TimeSlice.FOREWER))); // ));//            
        
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -387,10 +389,25 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1.add(iPanel, BorderLayout.CENTER);
         iChart.setPreferredSize(jPanel3.getPreferredSize());
         jPanel3.add(iChart);
-        /* ELSE 
+        
+        /* ELSE */
+                
+        if (null == iOff)
+            iOff = new ImagePanel();
+        iOff.open(new OffsetImageView(new MultiframeImage(iProvider)));
+        
+        if (null != iChart2) {           
+           // iPanel.iView.getROIMgr().removeROIChangeListener(iChart);
+        } else {
+            iChart2 = new ChartView();        
+            iChart2.initChart();
+            iOff.iView.getROIMgr().addROIChangeListener(iChart2);
+        }
+        jSplitPane1.setPreferredSize(jPanel1.getSize());
+        jSplitPane1.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         jSplitPane1.setDividerLocation(.5);
-        jSplitPane1.setLeftComponent(iPanel);
-        jSplitPane1.setRightComponent(iChart);
+        jSplitPane1.setLeftComponent(iOff);
+        jSplitPane1.setRightComponent(iChart2);
         /* ENDIF */ 
         
         jPanel1.validate(); 
@@ -403,7 +420,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         if (null == iGrid)
             iGrid = new ImagePanel();
         
-        iGrid.openGrid(new MultiframeImage(iProvider), 2, 2);
+        iGrid.open(new GridImageView(new MultiframeImage(iProvider), 2, 2));
+        
         iGrid.setPreferredSize(jPanel1.getSize());
         iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         jPanel4.setLayout(new BorderLayout());
