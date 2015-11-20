@@ -37,21 +37,19 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         iLook = null;
         reset(new Range(aI.getMin(), aI.getMax()));
     }  
-          
     
+    public void setRange(Range aR) {
+        reset(aR);
+    }
     
     public Range getRange() {
         return iRange;
     }
-        
-    public void setRange(Range aR) {
-        reset(aR);
-    }
-
+            
     public void setWindow(Window aW) {           
         if (iRange.contains(aW)) {//tmp.getBottom()>=iMax.getBottom() && tmp.getTop()<=iMax.getTop()) {
             iWin.setWindow(aW);
-            makeLUT();
+            updateLUT();
         }
     }
     
@@ -62,7 +60,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     public void setInverted(boolean aI) {
         if (isInverted() != aI) {
             iInverted = aI;    
-            makeLUT();
+            updateLUT();
         }
     }
     
@@ -73,7 +71,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     public void setLinear(boolean aL) {
         if (isLinear() != aL) { 
             iLinear = aL;
-            makeLUT();   
+            updateLUT();   
         }       
     }
 
@@ -81,6 +79,10 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         return iLinear;
     }
         
+    private void updateLUT() {
+        iLook = null;
+    }
+    
      @Override
     public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {
         if (null == iLook)
@@ -246,7 +248,8 @@ public class VOILut implements com.ivli.roim.core.Transformation {
             iWin = new Window(aR);
         }
         
-        makeLUT();            
+       updateLUT();
+        ///makeLUT();            
     }
     
    

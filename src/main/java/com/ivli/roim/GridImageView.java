@@ -44,6 +44,7 @@ public class GridImageView extends ImageView {
         iColumns = aColunmns;
     }
     
+    @Override
     public boolean loadFrame(int aN) {                                
         if (!iModel.hasAt(aN)) {            
             return false;

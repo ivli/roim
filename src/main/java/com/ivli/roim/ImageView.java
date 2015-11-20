@@ -319,17 +319,15 @@ public class ImageView extends JComponent {
             iVLUT = new VOILut(iModel.getAt(iCurrent));
             iPLUT = new PresentationLut(null);
         }
-
-        public void setRange(Range aR) {
-            iVLUT.setRange(aR);                    
-        }
-        
+                
+        @Override
         public void setLUT(String aL) {
             iPLUT.open(aL);
             invalidateBuffer();  
             repaint();
         }
 
+        @Override
         public void setWindow(Window aW) {
             if (!iVLUT.getWindow().equals(aW) && iVLUT.getRange().contains(aW)) {            
                 iVLUT.setWindow(aW);               
@@ -339,14 +337,22 @@ public class ImageView extends JComponent {
             }       
         }
 
+        @Override
         public Window getWindow() {
             return iVLUT.getWindow();
         }
-
+        
+        @Override
+        public void setRange(Range aR) {
+            iVLUT.setRange(aR);                    
+        }
+        
+        @Override
         public Range getRange() {
             return new Range(iVLUT.getRange());
         }
 
+        @Override
         public void setInverted(boolean aI) {
             if (aI != isInverted()) {    
                 iVLUT.setInverted(aI);

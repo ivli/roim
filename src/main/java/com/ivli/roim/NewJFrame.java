@@ -369,7 +369,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         if (null == iPanel)        
             iPanel = new ImagePanel();        
                 
-        iPanel.open(new MultiframeImage(iProvider.collapse(TimeSlice.FOREWER))); // ));//            
+        iPanel.open(new MultiframeImage(iProvider));//.collapse(TimeSlice.FOREWER))); // ));//            
        
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
