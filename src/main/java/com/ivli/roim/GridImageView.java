@@ -55,8 +55,8 @@ public class GridImageView extends ImageView {
             Double max = Double.MIN_VALUE;
             
             for (int n = 0; n < iRows * iColumns; ++n) {             
-                min = Math.min(min, iModel.getAt(iCurrent + n).getMin()); 
-                max = Math.max(max, iModel.getAt(iCurrent + n).getMax());
+                min = Math.min(min, iModel.get(iCurrent + n).getMin()); 
+                max = Math.max(max, iModel.get(iCurrent + n).getMax());
             } 
             
             iLUTMgr.setRange(new Range(min, max)); // frameChanged();
@@ -77,11 +77,11 @@ public class GridImageView extends ImageView {
     
     
     protected int getVisualWidth() {
-        return iColumns*(getImage().getWidth() + GAPX) + GAPX;
+        return iColumns*(iModel.getWidth() + GAPX) + GAPX;
     }
     
     protected int getVisualHeight() {
-        return iRows*(getImage().getHeight() + GAPY) + GAPY;
+        return iRows*(iModel.getHeight() + GAPY) + GAPY;
     }
     
     protected void updateBufferedImage() {                  
@@ -90,12 +90,12 @@ public class GridImageView extends ImageView {
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, getInterpolationMethod());
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
                 
-        final int width  = getImage().getWidth();
-        final int height = getImage().getHeight();   
+        final int width  = iModel.getWidth();
+        final int height = iModel.getHeight();   
                        
         BufferedImage tmp = new BufferedImage(getVisualWidth(), 
                                                  getVisualHeight(), 
-                                                    BufferedImage.TYPE_INT_RGB);//getImage().getAt(getCurrent()).getBufferedImage().getType());
+                                                    BufferedImage.TYPE_INT_RGB);//getImage().get(getCurrent()).getBufferedImage().getType());
         Graphics2D gc = tmp.createGraphics(); 
        
         if (getLUTMgr().isInverted()) { 
@@ -113,8 +113,8 @@ public class GridImageView extends ImageView {
             for (int i = 0; i < iColumns; ++i) {
                 final int ndx = getCurrent() + j*iColumns + i;
                               
-                if (getImage().hasAt(ndx)) {                    
-                    BufferedImage img = getImage().getAt(ndx).getBufferedImage();
+                if (iModel.hasAt(ndx)) {                    
+                    BufferedImage img = iModel.get(ndx).getBufferedImage();
                     BufferedImage src = getLUTMgr().transform(img, null);
 
                     gc.drawImage(src, posx, posy, width, height, null);

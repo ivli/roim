@@ -49,7 +49,7 @@ import com.ivli.roim.core.IWLManager;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.events.*;
-
+import com.ivli.roim.core.ImageFrame;
 
 
 public class ImageView extends JComponent {     
@@ -104,10 +104,14 @@ public class ImageView extends JComponent {
            
     public AffineTransform getZoom() {
         return iZoom;
+    }    
+    
+    public IMultiframeImage getModel() {
+        return iModel;
     }
     
-    public IMultiframeImage getImage() {
-        return iModel;
+    public ImageFrame getImage() {
+        return iModel.get(getCurrent());
     }
     
     public ROIManager getROIMgr() {
@@ -176,7 +180,7 @@ public class ImageView extends JComponent {
     public void addFrameChangeListener(FrameChangeListener aL) {
         iList.add(FrameChangeListener.class, aL);
         aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),
-                                                            //new Range(iModel.getAt(iCurrent).getMin(), iModel.getAt(iCurrent).getMax()),
+                                                            //new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()),
                                                     getLUTMgr().getRange(),                                                
                                                     iModel.getTimeSliceVector().getSlice(getCurrent())));                           
     }
@@ -187,7 +191,7 @@ public class ImageView extends JComponent {
     
     protected void notifyFrameChanged() {
         final FrameChangeEvent evt = new FrameChangeEvent(this, getCurrent(), iModel.getNumFrames(),
-                                                            //new Range(iModel.getAt(iCurrent).getMin(), iModel.getAt(iCurrent).getMax()),
+                                                            //new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()),
                                                             getLUTMgr().getRange(),
                                                             iModel.getTimeSliceVector().getSlice(getCurrent()));                
       
@@ -243,7 +247,7 @@ public class ImageView extends JComponent {
         } else {        
             iCurrent = aN;
          
-            iLUTMgr.setRange(new Range(iModel.getAt(iCurrent).getMin(), iModel.getAt(iCurrent).getMax()));// frameChanged();
+            iLUTMgr.setRange(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));// frameChanged();
 
             iROIMgr.update();   
 
@@ -295,7 +299,7 @@ public class ImageView extends JComponent {
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
-        BufferedImage src  = getLUTMgr().transform(getImage().getAt(iCurrent).getBufferedImage(), null);
+        BufferedImage src  = getLUTMgr().transform(iModel.get(iCurrent).getBufferedImage(), null);
                 
         iBuf = z.filter(src, null);                  
     }
@@ -316,7 +320,7 @@ public class ImageView extends JComponent {
 
         //private 
         WLManager() {       
-            iVLUT = new VOILut(iModel.getAt(iCurrent));
+            iVLUT = new VOILut(iModel.get(iCurrent));
             iPLUT = new PresentationLut(null);
         }
                 

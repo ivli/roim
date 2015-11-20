@@ -26,7 +26,7 @@ public class CurveExtractor {
         Series mins    = new Series(new Measurement(Measurement.MINIMUM), "Mins");
         Series maxs    = new Series(new Measurement(Measurement.MAXIMUM), "Maxs");
         
-        IMultiframeImage img = aRoi.getManager().getImage();
+        IMultiframeImage img = aRoi.getManager().getView().getModel();
         
         for (ImageFrame f : img) {                           
             Measure m = measure(f.getRaster(), aRoi.getShape()); 

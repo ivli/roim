@@ -17,7 +17,6 @@
  */
 package com.ivli.roim;
 
-import java.io.IOException;
 
 import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.core.IMultiframeImage;
@@ -49,7 +48,7 @@ public class MultiframeImage extends IMultiframeImage {
     }
        
     @Override
-    public ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException {                  
+    public ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException {                  
         return iProvider.frame(aFrameNumber);         
     }     
        

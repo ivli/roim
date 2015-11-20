@@ -62,7 +62,7 @@ public class Profile extends ROIBase {
                                  new Rectangle2D.Double(r.getX(), r.getY(), r.getWidth(), Math.max(1.0, r.getHeight() + adX))
                               );  
         
-        Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
+        Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());
         
         if (bounds.contains(temp.getBounds())) {
             iShape = temp;
@@ -74,7 +74,7 @@ public class Profile extends ROIBase {
     private void makeHistogram() {
         final java.awt.Rectangle bounds = iShape.getBounds();
 
-        getManager().getView().getImage().getAt(getManager().getView().getCurrent()).extract((Raster aR) -> {
+        getManager().getView().getImage()/*.get(getManager().getView().getCurrent())*/.extract((Raster aR) -> {
             iHist = new double[bounds.width];
             
             double temp[] = new double [aR.getNumBands()];
@@ -97,7 +97,7 @@ public class Profile extends ROIBase {
         
         final double range = max - min;
         
-        Rectangle bounds = new Rectangle(0, 0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
+        Rectangle bounds = new Rectangle(0, 0, getManager().getWidth(), getManager().getHeight());
                        
         final double scale = Math.min(iShape.getBounds().getY() / (range), 
                                       bounds.getHeight() / (4*range) );

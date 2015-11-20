@@ -44,7 +44,7 @@ public class ROIManager implements java.io.Serializable {
     
     private static final boolean ROI_HAS_ANNOTATIONS = !true;
     
-    transient private final ImageView  iView; 
+    transient private final ImageView iView; 
     
     private HashSet<Overlay> iOverlays;      
     
@@ -55,14 +55,20 @@ public class ROIManager implements java.io.Serializable {
         iOverlays = new HashSet(); 
         iList = new EventListenerList();
     }
-        
-    public IMultiframeImage getImage() {
-        return iView.getImage();
-    }
     
+    /*    */
+    public IMultiframeImage getImage() {
+        return iView.getModel();
+    }
+   
+    
+    public int getWidth() {return iView.getModel().getWidth();}
+    public int getHeight() {return iView.getModel().getHeight();}
+        
     public ImageView getView() {
         return iView;
     } 
+    
     public void clear() {
         iOverlays.clear();
         notifyROIChanged(null, EStateChanged.Emptied);
@@ -84,7 +90,7 @@ public class ROIManager implements java.io.Serializable {
         Rectangle r = iView.screenToVirtual().createTransformedShape(aS).getBounds();
         
         r.x = 0;
-        r.width = getImage().getWidth();
+        r.width = getWidth();
         
         Profile newRoi = new Profile(r, this);     
         iOverlays.add(newRoi);                

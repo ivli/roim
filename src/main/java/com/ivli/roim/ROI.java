@@ -89,7 +89,7 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     protected void move(double adX, double adY) {
         //AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
         Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);        
-        Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
+        Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());
         
         if (!bounds.contains(temp.getBounds())) {
             logger.info("!!movement out of range");

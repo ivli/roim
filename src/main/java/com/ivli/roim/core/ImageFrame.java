@@ -14,6 +14,8 @@ import java.awt.image.WritableRaster;
  * @author likhachev
  */
 public class ImageFrame implements java.io.Serializable {
+    private static final long serialVersionUID = 042L;
+    
     private final Raster iRaster;  
     
     private double iMin;

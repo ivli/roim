@@ -21,8 +21,7 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.Serializable {      
-    
+public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.Serializable {          
     public abstract int getWidth();  
     public abstract int getHeight();
     public abstract PixelSpacing getPixelSpacing();   
@@ -32,7 +31,7 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.
     public abstract boolean hasAt(int aFrameNumber);
     
      //returns a frame at aFrameNumber leaving cursor unaltered 
-    public abstract ImageFrame getAt(int aFrameNumber) throws java.util.NoSuchElementException; 
+    public abstract ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException; 
     
     
     @Override
@@ -46,7 +45,7 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.
 
             @Override
             public ImageFrame next() {
-                return getAt(_next++);
+                return get(_next++);
             }  
         };
     }
