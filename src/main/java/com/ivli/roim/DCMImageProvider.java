@@ -49,6 +49,7 @@ public class DCMImageProvider extends ImageProvider {
 
                 iPixelSpacing = new PixelSpacing(1.0, 1.0);
             }
+            
             iNoOfFrames = iLoader.getNumImages();
             iFrames.clear();
             iFrames.ensureCapacity(iNoOfFrames);

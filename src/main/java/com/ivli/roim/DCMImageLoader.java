@@ -96,15 +96,9 @@ public class DCMImageLoader implements IImageLoader {
         
     @Override
     public TimeSliceVector getTimeSliceVector() throws IOException {        
-        //DicomInputStream dis = new DicomInputStream(new File(iFile));  
-        //Attributes fmi;
-        //Attributes ds = iDIS.readDataset(-1, -1);
-        //fmi = dis.readFileMetaInformation();
-        
-             
+       
         ArrayList<PhaseInformation> phases = new ArrayList();
-           
-        
+                   
         Sequence pid = (Sequence)iDataSet.getValue(Tag.PhaseInformationSequence);
         
         if (null != pid) {        
@@ -114,8 +108,10 @@ public class DCMImageLoader implements IImageLoader {
                 phases.add(new PhaseInformation(nf, fd));
             }  
         } else {  
-             // single frame image
-            phases.add(new PhaseInformation(1, iDataSet.getInt(Tag.ActualFrameDuration, 1)));   
+             // either image is single frame or phase information is not present
+            if (getNumImages() != 1)
+                logger.info("file is suspicious");
+            phases.add(new PhaseInformation(Math.max(1, getNumImages()), iDataSet.getInt(Tag.ActualFrameDuration, 1000)));   
         }
          
         return new TimeSliceVector(phases);
