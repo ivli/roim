@@ -462,14 +462,12 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             }
            
         }         
-    }
-        
-    
-   // private class Actioner implements ActionListener {
+    }        
+       
     private static final String KCommandTriggerLinear = "COMMAND_LUTCONTROL_TRIGGER_LINEAR"; // NOI18N
     private static final String KCommandTriggerDirect = "COMMAND_LUTCONTROL_TRIGGER_DIRECT"; // NOI18N
-    private static final String KCommandShowDialog    = "COMMAND_LUTCONTROL_SHOW_DIALOG"; // NOI18N
-    private static final String KCommandChangeLUT     = "COMMAND_LUTCONTROL_CHANGE_LUT"; // NOI18N    
+    private static final String KCommandShowDialog    = "COMMAND_LUTCONTROL_SHOW_DIALOG";    // NOI18N
+    private static final String KCommandChangeLUT     = "COMMAND_LUTCONTROL_CHANGE_LUT";     // NOI18N    
     
     public void actionPerformed(ActionEvent e) {
         assert (null != iWLM);
@@ -501,7 +499,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 dialog.setVisible(true);                 
                 break;
             case KCommandChangeLUT:
-                FileDialog fd = new FileDialog((Frame)null , java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_LUT_FILE"), FileDialog.LOAD);
+                FileDialog fd = new FileDialog((Frame)null , java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.CHOOSE_LUT_FILE"), FileDialog.LOAD);
                 fd.setDirectory(Settings.DEFAULT_FOLDER_LUT);
                 fd.setFile(Settings.FILE_SUFFIX_LUT);
                 fd.setVisible(true);
@@ -523,26 +521,26 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     }
     
     void showPopupMenu(int aX, int aY) {
-        final JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("WL_CONTEXT_MENU_TITLE"));        
-        JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.TRIGGER_LOGARITHMIC"));
+        final JPopupMenu mnu = new JPopupMenu("WL_CONTEXT_MENU_TITLE");     //NOI18N    
+        JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.TRIGGER_LOGARITHMIC"));
         mi11.addActionListener(this);
         mi11.setState(!iWLM.isLinear());
         mi11.setActionCommand(KCommandTriggerLinear);
         
         mnu.add(mi11);
 
-        JCheckBoxMenuItem mi12 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.TRIGGER_DIRECT_INVERSE"));
+        JCheckBoxMenuItem mi12 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.TRIGGER_DIRECT_INVERSE"));
         mi12.addActionListener(this);
         mi12.setActionCommand(KCommandTriggerDirect); 
         mi12.setState(iWLM.isInverted());
         mnu.add(mi12);
 
-        JMenuItem mi13 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.SHOW_DIALOG"));
+        JMenuItem mi13 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.SHOW_DIALOG"));
         mi13.addActionListener(this);
         mi13.setActionCommand(KCommandShowDialog); 
         mnu.add(mi13);
         
-        JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.OPEN_BUILTIN_LUT"));
+        JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.OPEN_BUILTIN_LUT"));
                
         for (String s : LutLoader.getInstalledLUT()) {
             JMenuItem mit = new JMenuItem(s);
@@ -553,7 +551,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         
         mnu.add(m1);
         
-        JMenuItem mi14 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.CHOOSE_LUT_FILE"));
+        JMenuItem mi14 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.CHOOSE_LUT_FILE"));
         mi14.addActionListener(this);
         mi14.setActionCommand(KCommandChangeLUT); 
         mnu.add(mi14);

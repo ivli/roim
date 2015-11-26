@@ -307,7 +307,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 868, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -482,8 +482,19 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        if (null != iPanel) {
-            ROIListPanel panel = new ROIListPanel(iPanel);
+        
+        ImagePanel pane = null;
+               
+        switch(jTabbedPane1.getSelectedIndex()) {
+            case 0:
+                pane = iPanel; break;
+            case 2:
+                pane = iOff; break;
+            default: break;    
+        }
+                
+        if (null != pane) {
+            ROIListPanel panel = new ROIListPanel(pane);
             JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
             dialog.setContentPane(panel);
             dialog.validate();
