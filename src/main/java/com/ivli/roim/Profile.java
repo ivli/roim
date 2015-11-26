@@ -2,9 +2,11 @@
 package com.ivli.roim;
 
 import java.awt.Color;
+import java.awt.Shape;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Path2D;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 
@@ -34,7 +36,7 @@ public class Profile extends ROIBase {
     @Override
     public void paint(Graphics2D aGC, AffineTransform aTrans) {
         final Rectangle bn = aTrans.createTransformedShape(iShape).getBounds();          
-        final java.awt.Color tmp = aGC.getColor();
+        final Color tmp = aGC.getColor();
         
         aGC.setColor(Settings.BLUEVIOLET);
         aGC.drawLine(bn.x, bn.y, bn.x+bn.width, bn.y);                           
@@ -58,7 +60,7 @@ public class Profile extends ROIBase {
     public void move(double adX, double adY) {             
         final Rectangle2D r = iShape.getBounds2D();
         
-        java.awt.Shape temp = AffineTransform.getTranslateInstance(.0, adY).createTransformedShape(
+        Shape temp = AffineTransform.getTranslateInstance(.0, adY).createTransformedShape(
                                  new Rectangle2D.Double(r.getX(), r.getY(), r.getWidth(), Math.max(1.0, r.getHeight() + adX))
                               );  
         
@@ -72,9 +74,9 @@ public class Profile extends ROIBase {
  
     
     private void makeHistogram() {
-        final java.awt.Rectangle bounds = iShape.getBounds();
+        final Rectangle bounds = iShape.getBounds();
 
-        getManager().getView().getImage()/*.get(getManager().getView().getCurrent())*/.extract((Raster aR) -> {
+        getManager().getView().getImage().extract((Raster aR) -> {
             iHist = new double[bounds.width];
             
             double temp[] = new double [aR.getNumBands()];
@@ -102,7 +104,7 @@ public class Profile extends ROIBase {
         final double scale = Math.min(iShape.getBounds().getY() / (range), 
                                       bounds.getHeight() / (4*range) );
         
-        java.awt.geom.Path2D.Double s = new java.awt.geom.Path2D.Double();
+        Path2D.Double s = new Path2D.Double();
         
         int n = 0;
         s.moveTo(0, iShape.getBounds().getY() - iHist[n] * scale);

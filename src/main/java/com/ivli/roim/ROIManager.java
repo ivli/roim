@@ -18,16 +18,21 @@
 package com.ivli.roim;
 
 
-
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import javax.swing.event.EventListenerList;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,10 +52,7 @@ public class ROIManager implements java.io.Serializable {
     private static final long serialVersionUID = 42L;
     
     private static final boolean ROI_HAS_ANNOTATIONS = !true;
-    
-    private boolean iLock = false;
-    private int iCapacity = -1;
-    
+          
     transient private final ImageView iView; 
     
     private HashSet<Overlay> iOverlays;      
@@ -84,21 +86,10 @@ public class ROIManager implements java.io.Serializable {
             return ((OffsetImageView)iView).iOff;
         return null;
     }
-    
-    public void lock(boolean aLock) {
-        iLock = aLock;
-    }
-    
-    public void setCapacity(int aCapacity) {
-        iCapacity = aCapacity;
-    }
-    
-    
+            
     public void clear() {
-        if(!iLock) {
-            iOverlays.clear();
-            notifyROIChanged(null, EStateChanged.Emptied);
-        }
+        iOverlays.clear();
+        notifyROIChanged(null, EStateChanged.Emptied);      
     }
     
     public void update() {
@@ -113,10 +104,7 @@ public class ROIManager implements java.io.Serializable {
         });
     }            
 
-    public void createProfile(Shape aS) {
-        if(iLock)
-            return;
-        
+    public void createProfile(Shape aS) {               
         Rectangle r = iView.screenToVirtual().createTransformedShape(aS).getBounds();
         
         r.x = 0;
@@ -126,10 +114,7 @@ public class ROIManager implements java.io.Serializable {
         iOverlays.add(newRoi);                
     }
             
-    public void createRoiFromShape(Shape aS) { 
-        if(iLock)
-            return;
-        
+    public void createRoiFromShape(Shape aS) {         
         final Shape r = iView.screenToVirtual().createTransformedShape(aS);
         
         final ROI newRoi = new ROI(r, this, null);       
@@ -144,19 +129,17 @@ public class ROIManager implements java.io.Serializable {
     }
     
     public void cloneRoi(ROI aR) {
-        if(iLock)
-            return;
-        
-        final ROI newRoi = new ROI(aR);
+        ROI newRoi = new ROI(aR);
         newRoi.iName = aR.iName + "(2)"; // NOI18N
         iOverlays.add(newRoi); 
-        iOverlays.add(new Annotation(newRoi));
+        
+        if (ROI_HAS_ANNOTATIONS)
+            iOverlays.add(new Annotation(newRoi));
+        
         notifyROIChanged(newRoi, EStateChanged.Created);
     }
     
-    public void moveRoi(Overlay aO, double adX, double adY) {
-        if(iLock)
-            return;
+    public void moveRoi(Overlay aO, double adX, double adY) {        
         //AffineTransform trans = iView.virtualToScreen();
         //trans.concatenate(AffineTransform.getTranslateInstance(adX, adY));    
                
@@ -179,10 +162,7 @@ public class ROIManager implements java.io.Serializable {
         return null;
     }
         
-    boolean deleteRoi(ROI aR) {      
-        if (iLock)
-            return false;
-        
+    boolean deleteRoi(ROI aR) {              
         final Iterator<Overlay> it = iOverlays.iterator();
 
         while (it.hasNext()) {  //clean annotations out - silly but workin'
@@ -196,20 +176,14 @@ public class ROIManager implements java.io.Serializable {
         return iOverlays.remove(aR);   
     }  
     
-    public boolean deleteOverlay(Overlay aO) {
-        if(iLock)
-            return false;
-        
+    public boolean deleteOverlay(Overlay aO) {      
         if (aO instanceof ROI)
             return deleteRoi((ROI)aO);
         else
             return iOverlays.remove(aO);   
     }
     
-    void deleteAllOverlays() {  
-        if(iLock)
-            return;
-        
+    void deleteAllOverlays() {          
         iOverlays.clear();
     }  
     
@@ -240,8 +214,8 @@ public class ROIManager implements java.io.Serializable {
     }
     
     void externalize(String aFileName) {        
-        try(java.io.FileOutputStream fos = new java.io.FileOutputStream(aFileName)) {
-            java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(fos);
+        try(FileOutputStream fos = new FileOutputStream(aFileName)) {
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
             writeObject(oos);
             oos.close();
             fos.close();
@@ -251,16 +225,14 @@ public class ROIManager implements java.io.Serializable {
     }
              
     void internalize(String aFileName) {
-        try(java.io.FileInputStream fis = new java.io.FileInputStream(aFileName)) {
-            java.io.ObjectInputStream ois = new java.io.ObjectInputStream(fis);
+        try(FileInputStream fis = new FileInputStream(aFileName)) {
+            ObjectInputStream ois = new ObjectInputStream(fis);
             readObject(ois);           
             ois.close();
-            fis.close();
-            
+            fis.close();            
         } catch (IOException|ClassNotFoundException ex) {
             logger.error("Unable to deserialize" + ex);
-        } 
-        
+        }         
     }
     
     public void addROIChangeListener(ROIChangeListener aL) {
@@ -281,8 +253,7 @@ public class ROIManager implements java.io.Serializable {
        for (ROIChangeListener l : arr)
            l. ROIChanged(evt);
     }
-    
-    
+        
     private static final Logger logger = LogManager.getLogger(ROIManager.class);
 }
 
