@@ -40,7 +40,7 @@ public class VOILUTPanel extends javax.swing.JPanel {
             jCheckBox3.setEnabled(false);
                 
                 
-        XYSeries s = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.VOI_LUT"));
+        XYSeries s = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"));
         XYSeriesCollection xyc = new XYSeriesCollection(aP.makeXYSeries(s));
         
         
@@ -54,10 +54,10 @@ public class VOILUTPanel extends javax.swing.JPanel {
         final XYPlot plot = new XYPlot();
         plot.setDataset(xyc);
         plot.setRenderer(new StandardXYItemRenderer());
-        plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.IMAGE_VALUES")));
-        plot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.DISPLAY_VALUES")));
+        plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.IMAGE_VALUES")));
+        plot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.DISPLAY_VALUES")));
         if(iShowHistogram)
-            plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
+            plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
         plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
         plot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
         ///NumberAxis rangeAxis = ;
@@ -109,8 +109,13 @@ public class VOILUTPanel extends javax.swing.JPanel {
             .addGap(0, 303, Short.MAX_VALUE)
         );
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle"); // NOI18N
         jCheckBox1.setText(bundle.getString("LUT_MODE.INVERTED")); // NOI18N
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
 
         buttonGroup1.add(jRadioButton1);
         jRadioButton1.setText(bundle.getString("LUT_MODE.LINEAR")); // NOI18N
@@ -124,6 +129,11 @@ public class VOILUTPanel extends javax.swing.JPanel {
         jRadioButton2.setText(bundle.getString("LUT_MODE.LOGARITHMIC")); // NOI18N
 
         jButton1.setText(bundle.getString("LUT_PANEL.BUTTON_LUT")); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(240, 240, 240)));
 
@@ -138,7 +148,7 @@ public class VOILUTPanel extends javax.swing.JPanel {
             .addGap(0, 255, Short.MAX_VALUE)
         );
 
-        jCheckBox3.setText(bundle.getString("SHOWHISTOGRAM")); // NOI18N
+        jCheckBox3.setText(bundle.getString("LUT_PANEL.SHOWHISTOGRAM")); // NOI18N
         jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox3ActionPerformed(evt);
@@ -203,13 +213,21 @@ public class VOILUTPanel extends javax.swing.JPanel {
             hx.iHist.remove(0); ///correction for background        
             ((XYSeriesCollection)iChart.getChart().getXYPlot().getDataset()).addSeries(hx.iHist);
                         
-            iChart.getChart().getXYPlot().setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
+            iChart.getChart().getXYPlot().setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
         } else {
             ((XYSeriesCollection)iChart.getChart().getXYPlot().getDataset()).removeSeries(1);
             iChart.getChart().getXYPlot().setRangeAxis(1, null);
         }
             
     }//GEN-LAST:event_jCheckBox3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

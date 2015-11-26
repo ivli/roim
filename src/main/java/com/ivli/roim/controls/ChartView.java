@@ -51,8 +51,8 @@ public class ChartView extends javax.swing.JPanel
             iPlot = new XYPlot();
             //plot.setDataset(xyc);
             iPlot.setRenderer(new StandardXYItemRenderer());
-            iPlot.setDomainAxis(new NumberAxis("ROI_CHART.TIME_SERIES_VALUES"));
-            iPlot.setRangeAxis(0, new NumberAxis("ROI_CHART.ROI_INTDEN_VALUES"));
+            iPlot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_CHART.TIME_SERIES_VALUES")));
+            iPlot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_CHART.ROI_INTDEN_VALUES")));
            // if(iShowHistogram)
            //     plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
             iPlot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);

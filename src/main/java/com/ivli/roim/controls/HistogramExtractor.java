@@ -14,7 +14,7 @@ import org.jfree.data.xy.XYSeries;
  */
 public class HistogramExtractor implements Extractor {
     Shape iRoi;
-    public final XYSeries iHist = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("HISTOGRAMEXTRACTOR.IHISTOGRAM"));
+    public final XYSeries iHist = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("HISTOGRAMEXTRACTOR.IHISTOGRAM"));
     
     public HistogramExtractor(Shape aRoi){iRoi = aRoi;}
     
