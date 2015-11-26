@@ -6,4 +6,5 @@
 *.cmd
 *.csv
 ROILIST.*
+roilist
 /target/
