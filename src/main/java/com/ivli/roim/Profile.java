@@ -7,7 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
-import com.ivli.roim.core.ImageFrame;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +22,7 @@ public class Profile extends ROIBase {
     private double  iHist[];
     
     public Profile(Rectangle2D aS, ROIManager aMgr) {
-        super(aS, aMgr, "PROFILE"); 
+        super(aS, aMgr, "PROFILE"); //NOI18N 
         makeHistogram();
     }
     

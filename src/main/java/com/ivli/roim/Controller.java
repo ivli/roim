@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */        
-class Controller implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, ActionListener {
+class Controller implements ActionListener {
     public static final int MOUSE_ACTION_NONE   =  00;
     public static final int MOUSE_ACTION_SELECT =  01;
     public static final int MOUSE_ACTION_ZOOM   =  02;
@@ -128,57 +128,25 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
     
     private final ImageView iControlled;
     private ActionItem iAction;   
-    private Overlay iSelected;
-    private ActionItem iWheel = NewAction(iWheelAction, 0, 0); 
-    
-    protected ImageView getObject() {return iControlled;}
+    private Overlay  iSelected;
+    private final ActionItem iWheel = NewAction(iWheelAction, 0, 0); 
+    private final MouseHandler iMouse = new MouseHandler();
+    private final KeyHandler   iKeys  = new KeyHandler();
+    //protected ImageView getObject() {return iControlled;}
     
     public Controller(ImageView aC) {
         iControlled = aC;
-        register();
+        iControlled.addMouseListener(iMouse);
+        iControlled.addMouseMotionListener(iMouse);
+        iControlled.addMouseWheelListener(iMouse);
+        iControlled.addKeyListener(iKeys);
     }
 
-    private final void register() {
-        iControlled.addMouseListener(this);
-        iControlled.addMouseMotionListener(this);
-        iControlled.addMouseWheelListener(this);
-        iControlled.addKeyListener(this);
-    }
-
-    public void mouseEntered(MouseEvent e) {
-        iControlled.requestFocusInWindow(); //gain focus
-    }
-
-    public void mouseExited(MouseEvent e) {
-    }
-
-    public void mouseWheelMoved(MouseWheelEvent e) {    
-        if (null != iAction)
-            iAction.wheel(e.getWheelRotation());
-        else
-            iWheel.DoAction(e.getWheelRotation(), 0);
-            //iControlled.zoom(e.getWheelRotation()/Settings.ZOOM_SENSITIVITY_FACTOR, 0,0);
-    }
-
-    public void mouseClicked(MouseEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
-            if (null != (iSelected = iControlled.getROIMgr().findOverlay(e.getPoint()))) {
-                if (iSelected.hasMenu()) {
-                    final JPopupMenu mnu = buildObjectSpecificPopupMenu(iSelected);
-                    
-                    
-                     mnu.show(iControlled, e.getX(), e.getY());
-                }
-            } else 
-                showPopupMenu_Context(e.getX(), e.getY());
-        }
-    }
-    
-    public void mouseDragged(MouseEvent e) {
+    public void paint(Graphics2D gc) {
         if (null != iAction) 
-            iAction.action(e.getX(), e.getY());
+            iAction.paint(gc);
     }
-
+     
     private Overlay findActionTarget(Point aP) {
        Overlay ret = iControlled.getROIMgr().findOverlay(aP);
        if (null != ret && true == ret.isSelectable())
@@ -186,92 +154,134 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
        return null;
     }
     
-    public void mousePressed(MouseEvent e) {
-        if (null != iAction) {
-            iAction.action(e.getX(), e.getY());
-         //   return;
+    class MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener {           
+        public void mouseEntered(MouseEvent e) {
+            iControlled.requestFocusInWindow(); //gain focus
         }
-        else 
-            if (null != (iSelected = findActionTarget(e.getPoint()) )) {  // move ROI
-                //iControlled.deleteRoi(iSelected);
-                iAction = new BaseActionItem(e.getX(), e.getY()) {
-                    protected void DoAction(int aX, int aY) {
-                                               
-                        iControlled.getROIMgr().moveRoi(iSelected, aX-iX, aY-iY);
-                        iControlled.repaint();//old.createIntersection(iSelected.iShape.getBounds2D())); 
-                    }    
-                    protected boolean DoRelease(int aX, int aY) {
-                       // iControlled.addRoi(iSelected);
-                        iSelected = null;
-                        iControlled.repaint();
-                        return false;
-                      }  
-                };
-        } 
-        else if (SwingUtilities.isLeftMouseButton(e)) {
-            iAction = NewAction(iLeftAction, e.getX(), e.getY());
+
+        public void mouseExited(MouseEvent e) {
         }
-        else if (SwingUtilities.isMiddleMouseButton(e)) {
-            iAction = NewAction(iMiddleAction, e.getX(), e.getY());
+
+        public void mouseWheelMoved(MouseWheelEvent e) {    
+            if (null != iAction)
+                iAction.wheel(e.getWheelRotation());
+            else
+                iWheel.DoAction(e.getWheelRotation(), 0);
+                //iControlled.zoom(e.getWheelRotation()/Settings.ZOOM_SENSITIVITY_FACTOR, 0,0);
         }
-        else if (SwingUtilities.isRightMouseButton(e)) {
-            //iRight.Activate(e.getX(), e.getY());
-            iAction = NewAction(iRightAction, e.getX(), e.getY());
+
+        public void mouseClicked(MouseEvent e) {
+            if (SwingUtilities.isRightMouseButton(e)) {
+                if (null != (iSelected = iControlled.getROIMgr().findOverlay(e.getPoint()))) {
+                    if (iSelected.hasMenu()) {
+                        final JPopupMenu mnu = buildObjectSpecificPopupMenu(iSelected);
+
+
+                         mnu.show(iControlled, e.getX(), e.getY());
+                    }
+                } else 
+                    showPopupMenu_Context(e.getX(), e.getY());
+            }
+        }
+
+        public void mouseDragged(MouseEvent e) {
+            if (null != iAction) 
+                iAction.action(e.getX(), e.getY());
+        }
+
+
+        public void mousePressed(MouseEvent e) {
+            if (null != iAction) {
+                iAction.action(e.getX(), e.getY());
+             //   return;
+            }
+            else 
+                if (null != (iSelected = findActionTarget(e.getPoint()) )) {  // move ROI
+                    //iControlled.deleteRoi(iSelected);
+                    iAction = new BaseActionItem(e.getX(), e.getY()) {
+                        protected void DoAction(int aX, int aY) {
+
+                            iControlled.getROIMgr().moveRoi(iSelected, aX-iX, aY-iY);
+                            iControlled.repaint();//old.createIntersection(iSelected.iShape.getBounds2D())); 
+                        }    
+                        protected boolean DoRelease(int aX, int aY) {
+                           // iControlled.addRoi(iSelected);
+                            iSelected = null;
+                            iControlled.repaint();
+                            return false;
+                          }  
+                    };
+            } 
+            else if (SwingUtilities.isLeftMouseButton(e)) {
+                iAction = NewAction(iLeftAction, e.getX(), e.getY());
+            }
+            else if (SwingUtilities.isMiddleMouseButton(e)) {
+                iAction = NewAction(iMiddleAction, e.getX(), e.getY());
+            }
+            else if (SwingUtilities.isRightMouseButton(e)) {
+                //iRight.Activate(e.getX(), e.getY());
+                iAction = NewAction(iRightAction, e.getX(), e.getY());
+            }
+        }
+
+        public void mouseReleased(MouseEvent e) {
+            if (null != iAction && !iAction.release(e.getX(), e.getY())) iAction = null;               
+        }
+
+        public void mouseMoved(MouseEvent e) {   
+
+            Overlay r = findActionTarget(e.getPoint());
+
+            if (null != r ) { // TODO: cleave in two
+                //if (r instanceof ROI)
+               //     iSelected = r;//(ROI)r;
+                if (r.isMovable())            
+                    iControlled.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+                // iSelected = tmp;
+            } else {
+               // iSelected = null;
+                iControlled.setCursor(Cursor.getDefaultCursor());
+            }        
+            ///logger.info ("-->mouse position" + e.getPoint());
         }
     }
+    
+    class KeyHandler implements KeyListener {
+        @Override
+        public void keyPressed(KeyEvent e) {
+        //  System.out.print("\n\t keyPressed");
+            if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
 
-    public void mouseReleased(MouseEvent e) {
-        if (null != iAction && !iAction.release(e.getX(), e.getY())) iAction = null;               
-    }
+            }
+            else if (e.getKeyCode() == KeyEvent.VK_ALT) {
 
-    public void mouseMoved(MouseEvent e) {   
-        
-        Overlay r = findActionTarget(e.getPoint());
-                        
-        if (null != r ) { // TODO: cleave in two
-            //if (r instanceof ROI)
-           //     iSelected = r;//(ROI)r;
-            if (r.isMovable())            
-                iControlled.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-            // iSelected = tmp;
-        } else {
-           // iSelected = null;
-            iControlled.setCursor(Cursor.getDefaultCursor());
-        }        
-        ///logger.info ("-->mouse position" + e.getPoint());
-    }
-
-    public void keyPressed(KeyEvent e) {
-    //  System.out.print("\n\t keyPressed");
-        if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-
+            }
         }
-        else if (e.getKeyCode() == KeyEvent.VK_ALT) {
 
+        @Override
+        public void keyReleased(KeyEvent e) {
+           // System.out.print("\n\t keyReleased");
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_SHIFT: break; 
+                case KeyEvent.VK_ALT: break;
+                case KeyEvent.VK_R: break;
+                case KeyEvent.VK_1: break;
+                case KeyEvent.VK_2: break;
+                case KeyEvent.VK_3: break;
+                case KeyEvent.VK_4: break;
+                case KeyEvent.VK_5: break;
+                case KeyEvent.VK_6: break;
+                case KeyEvent.VK_7: break;
+                default: break;
+            }
         }
-    }
 
-    public void keyReleased(KeyEvent e) {
-       // System.out.print("\n\t keyReleased");
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_SHIFT: break; 
-            case KeyEvent.VK_ALT: break;
-            case KeyEvent.VK_R: break;
-            case KeyEvent.VK_1: break;
-            case KeyEvent.VK_2: break;
-            case KeyEvent.VK_3: break;
-            case KeyEvent.VK_4: break;
-            case KeyEvent.VK_5: break;
-            case KeyEvent.VK_6: break;
-            case KeyEvent.VK_7: break;
-            default: break;
+        @Override
+        public void keyTyped(KeyEvent e) {
+         // System.out.print("\n\t keyTyped");    
         }
     }
-
-    public void keyTyped(KeyEvent e) {
-     // System.out.print("\n\t keyTyped");    
-    }
-
+    
     private static final String KCommandRoiCreateRect = "COMMAND_ROI_CREATE_RECT"; // NOI18N
     private static final String KCommandRoiCreateOval = "COMMAND_ROI_CREATE_OVAL"; // NOI18N
     private static final String KCommandRoiCreateFree = "COMMAND_ROI_CREATE_FREE"; // NOI18N
@@ -451,20 +461,15 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
     
     JPopupMenu buildObjectSpecificPopupMenu(Overlay aO) {
        JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS")); 
-
-
         buildPopupMenu_Roi(mnu);
         
         if(iSelected instanceof Profile)
             buildPopupMenu_Profile(mnu);
-        
-                
+                        
         return mnu;    
     }
     
     void buildPopupMenu_Roi(JPopupMenu mnu) {
-        
-        
         if (!iSelected.isPermanent()) {
             JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.DELETE"));
             mi11.addActionListener(this);
@@ -514,13 +519,11 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
             mi.setActionCommand(KCommandRoiConvertToIso);
             mnu.add(mi);           
         } 
-       
-       
     }
 
     void buildPopupMenu_Profile(JPopupMenu mnu) {
         {
-            JMenuItem mi11 = new JMenuItem("MNU_ROI_OPERATIONS.PROFILE_SHOW");
+            JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PROFILE_SHOW"));
             mi11.addActionListener(this);
             mi11.setActionCommand(KCommandProfileShow);
             mnu.add(mi11);
@@ -528,11 +531,7 @@ class Controller implements KeyListener, MouseListener, MouseMotionListener, Mou
  
     }
         
-    public void paint(Graphics2D gc) {
-        if (null != iAction) 
-            iAction.paint(gc);
-       
-    }
+   
 
     private static final Logger logger = LogManager.getLogger(Controller.class);
 } 

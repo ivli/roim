@@ -20,11 +20,15 @@
 package com.ivli.roim;
 
 
-import java.awt.*;
+import java.awt.image.IndexColorModel;
 
-import java.io.*;
-import java.awt.image.*;
-import java.net.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.DataInputStream;
+import java.awt.Color;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -222,9 +226,9 @@ public final class LutLoader {
             int size = 0;
             try {
                     if (length>768)
-                            size = openBinaryLut(fi, false, false, reds, greens, blues); // attempt to read NIH Image LUT
+                            size = openBinaryLut(fi, false, reds, greens, blues); // attempt to read NIH Image LUT
                     if (size==0 && (length==0||length==768||length==970))
-                            size = openBinaryLut(fi, false, true, reds, greens, blues); // otherwise read raw LUT
+                            size = openBinaryLut(fi, true, reds, greens, blues); // otherwise read raw LUT
                     if (size==0 && length>768)
                             size = openTextLut(fi, reds, greens, blues);
                     if (size==0)
@@ -240,13 +244,11 @@ public final class LutLoader {
     }
 
     /** Opens an NIH Image LUT or a 768 byte binary LUT. */
-    private static final int openBinaryLut(String fi, boolean isURL, boolean raw, byte[] reds, byte[] greens, byte[] blues) throws IOException {
-            InputStream is;
-            if (isURL)
-                    is = new URL(fi).openStream();
-            else
-                    is = new FileInputStream(fi);
-            DataInputStream f = new DataInputStream(is);
+    private static final int openBinaryLut(String fi, boolean raw, byte[] reds, byte[] greens, byte[] blues) throws IOException {
+           
+            //InputStream is = ;
+           
+            DataInputStream f = new DataInputStream(new FileInputStream(fi));
             int nColors = 256;
             if (!raw) {
                     // attempt to read 32 byte NIH Image LUT header
@@ -297,8 +299,6 @@ public final class LutLoader {
        */
         return 0;
     }
-
-
 
     /** Opens the specified ImageJ LUT and returns
             it as an IndexColorModel. Since 1.43t. */
