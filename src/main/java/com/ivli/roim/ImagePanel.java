@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import com.ivli.roim.controls.LUTControl;
-import com.ivli.roim.core.IMultiframeImage;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,27 +15,12 @@ public class ImagePanel extends JPanel {
     protected ImageView iView;    
     protected LUTControl iLut;
     
-    public enum VIEWMODE {
-        FRAME,
-        GRID
-    }
-      /*
-    void open(IMultiframeImage anImage) {                                         
-        //iView = new GridImageView(new MultiframeImage(DICOMImageProvider.New(aName)), 6, 6);  
-        doOpen(new ImageView(anImage));
-    }
-    
-    void openGrid(IMultiframeImage anImage, int aRows, int aCols) {                                         
-        //iView = new GridImageView(new MultiframeImage(DICOMImageProvider.New(aName)), 6, 6);  
-        doOpen(new GridImageView(anImage, Math.max(aRows, 1), Math.max(aCols, 1)));
-    }
-    */
-    
+      
     public void open(ImageView aView) {
         doOpen(aView);
     }
             
-    protected void doOpen(ImageView aView) /*throws IOException */{           
+    protected void doOpen(ImageView aView) {           
         removeAll();
         
         iView = aView;//new ImageView(anImage);  

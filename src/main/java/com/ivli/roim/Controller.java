@@ -10,7 +10,16 @@ import java.awt.geom.RectangularShape;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
+
 import javax.swing.SwingUtilities;
 import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
@@ -300,10 +309,13 @@ class Controller implements ActionListener {
     private static final String KCommandRoiConvertToIso = "COMMAND_ROI_OPERATIONS_CONVERT_TO_ISO"; // NOI18N
     private static final String KCommandProfileShow     = "COMMAND_ROI_OPERATIONS_PROFILE_SHOW_ON-OFF"; // NOI18N
 
-    public void actionPerformed(ActionEvent e) {
-        logger.info(e.getActionCommand() +  e.paramString()); // NOI18N
-        
-        switch (e.getActionCommand()) {
+    @Override
+    public void actionPerformed(ActionEvent e) {  
+        onAction(e.getActionCommand());
+    }
+    
+    protected void onAction(final String aCommand) {
+        switch (aCommand) {
             case KCommandRoiCreateFree: ///amazingly but it does work
                 iAction = new BaseActionItem(-1, -1) {                           
                     Path2D iPath = new Path2D.Double();
