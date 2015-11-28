@@ -97,12 +97,12 @@ public class Profile extends ROIBase {
             max = Math.max(max, d);
         }
         
-        final double range = max - min;
+        final double range =  getManager().getView().getModel().getMax() - getManager().getView().getModel().getMin();//  max - min;
         
         Rectangle bounds = new Rectangle(0, 0, getManager().getWidth(), getManager().getHeight());
                        
-        final double scale = Math.min(iShape.getBounds().getY() / (range), 
-                                      bounds.getHeight() / (4*range) );
+        final double scale = Math.min(iShape.getBounds().getY()/(4*range), bounds.getHeight()/(4*range));
+                                      
         
         Path2D.Double s = new Path2D.Double();
         

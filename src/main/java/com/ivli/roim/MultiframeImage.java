@@ -72,9 +72,14 @@ public class MultiframeImage extends IMultiframeImage {
     }
     
      @Override             
-    public double getMin() { return iProvider.getMin();}  
+    public double getMin() { 
+        return iProvider.getMin();
+    }  
+    
      @Override
-    public double getMax() { return iProvider.getMax();}
+    public double getMax() { 
+        return iProvider.getMax();
+    }
     
     private static final Logger logger = LogManager.getLogger(MultiframeImage.class);    
 }

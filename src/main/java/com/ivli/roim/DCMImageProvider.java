@@ -99,8 +99,7 @@ public class DCMImageProvider extends ImageProvider {
         }
         return f;
     } 
-    
-            
+                
     public double getMin() {
         if (!iMin.isNaN())
             return iMin;
