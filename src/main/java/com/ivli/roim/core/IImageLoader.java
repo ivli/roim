@@ -28,6 +28,8 @@ public interface IImageLoader {
     void open(String aFile) throws IOException;
     TimeSliceVector getTimeSliceVector() throws IOException;
     PixelSpacing getPixelSpacing() throws IOException;
+    double getMin() throws IOException;  
+    double getMax() throws IOException;
     int getNumImages() throws IOException;
     Raster readRaster(int aIndex) throws IOException;    
 }

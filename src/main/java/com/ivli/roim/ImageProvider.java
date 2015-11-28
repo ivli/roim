@@ -36,7 +36,10 @@ import org.apache.logging.log4j.Logger;
 public abstract class ImageProvider implements IImageProvider {               
     protected int iWidth;
     protected int iHeight;
-    protected int iNoOfFrames;         
+    protected int iNoOfFrames;   
+    protected Double iMin = Double.NaN;
+    protected Double iMax = Double.NaN;
+    
     protected PixelSpacing iPixelSpacing;
     protected TimeSliceVector iTimeSlices; 
     protected ArrayList<ImageFrame> iFrames;
@@ -62,6 +65,41 @@ public abstract class ImageProvider implements IImageProvider {
         return iNoOfFrames;    
     }
     
+   protected void calcGlobals() {
+        Double min = Double.MAX_VALUE;
+        Double max = Double.MIN_VALUE;
+        
+        for (int i = 0; i < getNumFrames(); ++i) {
+            final ImageFrame f = frame(i);
+            if (f.getMin() < min)
+                min = f.getMin();
+            else if (f.getMax() > max)
+                max = f.getMax();
+        }
+        
+        iMin = min;
+        iMax = max;
+    }
+    
+    public double getMin() {
+        if (!iMin.isNaN())
+            return iMin;
+        else {
+           calcGlobals();
+           return iMin;
+        }
+    }
+    
+    public double getMax() {
+        if (!iMax.isNaN())
+            return iMax;
+        else {       
+            calcGlobals(); 
+            return iMax; 
+        }
+        
+    }
+    
     @Override
     public PixelSpacing getPixelSpacing() {
         return iPixelSpacing;
@@ -74,9 +112,9 @@ public abstract class ImageProvider implements IImageProvider {
     }
     
     @Override
-   public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException/*, IOException */{
+    public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException/*, IOException */{
        return iFrames.get(anIndex);
-   }
+    }
     
     @Override
     public IImageProvider slice(TimeSlice aS) {

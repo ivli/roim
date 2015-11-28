@@ -23,6 +23,7 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     private final int iAreaInPixels;        
     private SeriesCollection iSeries;        
     private HashSet<Overlay> iAnnos; 
+    private final static boolean DRAW_PROFILES = false;
     
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU;}
@@ -85,7 +86,7 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     
    
     
-    void paintProfiles(Graphics2D aGC, AffineTransform aTrans) {
+    void drawProfiles(Graphics2D aGC, AffineTransform aTrans) {
         
         final Rectangle bounds = iShape.getBounds();
         
@@ -165,7 +166,8 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         aGC.setColor(iColor);
         aGC.draw(aTrans.createTransformedShape(getShape()));       
-        paintProfiles(aGC, aTrans);
+        if (DRAW_PROFILES)
+            drawProfiles(aGC, aTrans);
     }
             
     @Override

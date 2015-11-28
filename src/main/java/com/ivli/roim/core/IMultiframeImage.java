@@ -32,6 +32,9 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.
     public abstract TimeSliceVector getTimeSliceVector();
     public abstract int getNumFrames();  
     
+    public abstract double getMin();  
+    public abstract double getMax();
+    
     public abstract boolean hasAt(int aFrameNumber);
     
      //returns a frame at aFrameNumber leaving cursor unaltered 

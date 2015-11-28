@@ -315,25 +315,36 @@ public class ImageView extends JComponent {
     }
            
     public class WLManager implements IWLManager {    
-        VOILut          iVLUT;
-        PresentationLut iPLUT;
-
+        private VOILut          iVLUT;
+        private PresentationLut iPLUT;
+        
+        private boolean iLockRange  = false;
+        private boolean iLockWindow = false;
+        
         //private 
         WLManager() {       
             iVLUT = new VOILut(iModel.get(iCurrent));
             iPLUT = new PresentationLut(null);
         }
-                
+            
+        public void lockRange(boolean aLock) {
+            iLockRange = aLock;
+        }
+        
+        public void lockWindow(boolean aLock) {
+            iLockWindow = aLock;
+        }
+        
         @Override
-        public void setLUT(String aL) {
+        public void openLUT(String aL) {
             iPLUT.open(aL);
             invalidateBuffer();  
             repaint();
         }
-
+        
         @Override
         public void setWindow(Window aW) {
-            if (!iVLUT.getWindow().equals(aW) && iVLUT.getRange().contains(aW)) {            
+            if (!iLockWindow && !iVLUT.getWindow().equals(aW) && iVLUT.getRange().contains(aW)) {            
                 iVLUT.setWindow(aW);               
                 invalidateBuffer();
                 notifyWindowChanged();
@@ -343,12 +354,13 @@ public class ImageView extends JComponent {
 
         @Override
         public Window getWindow() {
-            return iVLUT.getWindow();
+            return new Window(iVLUT.getWindow());
         }
         
         @Override
         public void setRange(Range aR) {
-            iVLUT.setRange(aR);                    
+            if (!iLockRange)
+                iVLUT.setRange(aR);                    
         }
         
         @Override

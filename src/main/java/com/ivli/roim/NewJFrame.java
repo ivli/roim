@@ -512,7 +512,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         fd.setVisible(true);
         String cm ;
         if (null != fd.getFile()) {
-            iPanel.setLUT(fd.getDirectory() + fd.getFile());
+            iPanel.openLUT(fd.getDirectory() + fd.getFile());
             jPanel1.repaint();
             //iLut.setLUT(cm);
             //iLut.repaint();

@@ -12,6 +12,9 @@ public interface IImageProvider {
     int getHeight();
     int getNumFrames();
     
+    double getMin();  
+    double getMax();
+    
     PixelSpacing getPixelSpacing();
     TimeSliceVector getTimeSliceVector();
     

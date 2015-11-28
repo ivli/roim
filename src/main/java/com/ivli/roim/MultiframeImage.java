@@ -36,43 +36,46 @@ public class MultiframeImage extends IMultiframeImage {
         iProvider = aProvider;        
     }
    
-    @Override
+     @Override
     public TimeSliceVector getTimeSliceVector() {
         return iProvider.getTimeSliceVector();
     }
     
-    @Override
+     @Override
     public boolean hasAt(int aFrameNumber) {               
-        return (aFrameNumber >=0 && aFrameNumber < iProvider.getNumFrames()) ;  
-        
+        return (aFrameNumber >=0 && aFrameNumber < iProvider.getNumFrames()) ;          
     }
        
-    @Override
+     @Override
     public ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException {                  
         return iProvider.frame(aFrameNumber);         
     }     
        
-    @Override
+     @Override
     public int getNumFrames() {        
         return iProvider.getNumFrames();       
     }
     
-    @Override
+     @Override
     public int getWidth() {
         return iProvider.getWidth();
     }
     
-    @Override
+     @Override
     public int getHeight() {
         return iProvider.getHeight();
     }  
     
-    @Override
+     @Override
     public PixelSpacing getPixelSpacing() {
         return iProvider.getPixelSpacing();
     }
-                     
-       
+    
+     @Override             
+    public double getMin() { return iProvider.getMin();}  
+     @Override
+    public double getMax() { return iProvider.getMax();}
+    
     private static final Logger logger = LogManager.getLogger(MultiframeImage.class);    
 }
 

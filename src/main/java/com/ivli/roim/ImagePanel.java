@@ -36,8 +36,8 @@ public class ImagePanel extends JPanel {
         add(iLut, BorderLayout.LINE_END);  
     }    
     
-    void setLUT(String aName) {
-        iView.getLUTMgr().setLUT(aName);        
+    void openLUT(String aName) {
+        iView.getLUTMgr().openLUT(aName);        
     }
     
     void resetView() {

@@ -505,14 +505,14 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 fd.setVisible(true);
                   
                 if (null != fd.getFile()) {
-                    iWLM.setLUT(fd.getDirectory() + fd.getFile());
+                    iWLM.openLUT(fd.getDirectory() + fd.getFile());
                     invalidateBuffer();                  
                     repaint();
                 } 
                 break;          
             default: 
                 //setLUT(e.getActionCommand());
-                iWLM.setLUT(e.getActionCommand());
+                iWLM.openLUT(e.getActionCommand());
                 invalidateBuffer();
                // iView.repaint();
                 repaint();
