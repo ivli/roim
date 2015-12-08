@@ -74,18 +74,15 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     
     public void setColor(Color aC) {
         iColor = aC;
-        getManager().notifyROIChanged(this, EStateChanged.ChangedColor);
+        notifyROIChanged(EStateChanged.ChangedColor);
     }
     
     @Override
     public void setName(String aName) {
        super.setName(aName);
-       getManager().notifyROIChanged(this, EStateChanged.ChangedName);         
+       notifyROIChanged(EStateChanged.ChangedName);         
     }
-    
-    
    
-    
     void drawProfiles(Graphics2D aGC, AffineTransform aTrans) {
         
         final Rectangle bounds = iShape.getBounds();
@@ -103,7 +100,7 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
                     if (iShape.contains(new Point(i + bounds.x, j))) 
                         profileX[i] += aR.getPixel(i + bounds.x, j, temp)[0];
             
-            for (int i = 0 ; i < bounds.height; ++i)
+            for (int i = 0; i < bounds.height; ++i)
                 for (int j = bounds.y; j < bounds.y + bounds.width; ++j)
                     if (iShape.contains(new Point(i + bounds.x, j ))) 
                         profileY[i] += aR.getPixel(i + bounds.x, j, temp)[0];
@@ -187,9 +184,12 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
                 iAnnos.stream().forEach((o) -> {
                     o.move(adX, adY);
                 });
-        }
-        
-        update();
+           
+            }
+            
+            update();
+            
+            notifyROIChanged(EStateChanged.Changed);        
         }
     }  
             

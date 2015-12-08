@@ -27,4 +27,8 @@ public abstract class ROIBase extends Overlay {
         
         return bounds.contains(AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(getShape()).getBounds());
     }
+    
+    protected void notifyROIChanged(EStateChanged aS) {
+        iMgr.notifyROIChanged((ROI)this, aS);
+    }
 }

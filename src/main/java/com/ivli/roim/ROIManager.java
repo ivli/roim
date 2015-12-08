@@ -146,8 +146,8 @@ public class ROIManager implements java.io.Serializable {
         //if (iView.getBounds().contains(trans.createTransformedShape(aO.getShape().getBounds()).getBounds())) {           
             aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));  
             
-            if (aO instanceof ROI)
-                notifyROIChanged((ROI)aO, EStateChanged.Changed);
+            //if (aO instanceof ROI)
+            //    notifyROIChanged((ROI)aO, EStateChanged.Changed);
        // }       
     }
     
