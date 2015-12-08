@@ -15,37 +15,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.events;
+package com.ivli.roim.calc;
 
-import com.ivli.roim.ROI;
 /**
  *
  * @author likhachev
  */
-public final class ROIChangeEvent extends java.util.EventObject { 
-    private final ROI iROI;
-    private final CHG iChange;
-     //TODO: rename logicaly
-    public enum CHG {    
-        Created,  
-        Cleared, 
-        Changed, 
-        ChangedColor,
-        ChangedName,
-        Emptied   
+public class Operation extends Operand {
+  
+    Operation(Operand anOper) {
+        super(anOper);
     }
-    
-    public ROIChangeEvent(Object aO, CHG aC, ROI aR) {
-        super (aO);
-        iROI = aR;
-        iChange = aC;
-    }
-        
-    public CHG getChange() {
-        return iChange;
-    }
-    
-    public ROI getROI() {
-        return iROI;
-    }    
 }

@@ -3,7 +3,8 @@ package com.ivli.roim;
 
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
-import com.ivli.roim.events.EStateChanged;
+import com.ivli.roim.events.ROIChangeEvent;
+//import com.ivli.roim.events.EStateChanged;
 import java.util.HashSet;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -74,13 +75,13 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     
     public void setColor(Color aC) {
         iColor = aC;
-        notifyROIChanged(EStateChanged.ChangedColor);
+        notifyROIChanged(ROIChangeEvent.CHG.ChangedColor);
     }
     
     @Override
     public void setName(String aName) {
        super.setName(aName);
-       notifyROIChanged(EStateChanged.ChangedName);         
+       notifyROIChanged(ROIChangeEvent.CHG.ChangedName);         
     }
    
     void drawProfiles(Graphics2D aGC, AffineTransform aTrans) {
@@ -189,7 +190,7 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
             
             update();
             
-            notifyROIChanged(EStateChanged.Changed);        
+            notifyROIChanged(ROIChangeEvent.CHG.Changed);        
         }
     }  
             
@@ -229,8 +230,7 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
         } else {
             tx = AffineTransform.getScaleInstance(-1, 1);
             tx.translate(-getShape().getBounds().getWidth(), 0);       
-        }
-        
+        }        
         
         iShape = tx.createTransformedShape(iShape);
         

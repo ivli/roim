@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.core;
+package com.ivli.roim.calc;
 
 import com.ivli.roim.ROI;
 import com.ivli.roim.events.ROIChangeEvent;
@@ -24,16 +24,20 @@ import com.ivli.roim.events.ROIChangeListener;
  *
  * @author likhachev
  */
-public class Operator implements ROIChangeListener {
+public class Operand implements ROIChangeListener, AutoCloseable {
     ROI iRoi;
     
-    public Operator(ROI aRoi){
-        iRoi = aRoi;        
+    public Operand(ROI aRoi){
+        iRoi = aRoi;    
+        iRoi.addROIChangeListener(this);
     }
     
-    public Operator(Operator anOp){
+    /*
+    public Operand(Operand anOp){
         iRoi = anOp.iRoi;
+        iRoi.addROIChangeListener(this);
     }
+    */
     
     protected void calculate() {
         
@@ -42,4 +46,9 @@ public class Operator implements ROIChangeListener {
     public void ROIChanged(ROIChangeEvent anEvt) {
         calculate();
     } 
+    
+     @Override
+    public void close() {
+        iRoi.removeROIChangeListener(this);
+    }
 }
