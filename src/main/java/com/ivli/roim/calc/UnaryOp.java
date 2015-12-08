@@ -21,6 +21,16 @@ package com.ivli.roim.calc;
  *
  * @author likhachev
  */
-public abstract class Operation /*extends Operand */ {   
-    public abstract Operand value();   
+public class UnaryOp extends Operation {    
+    Operand iRhs;
+    MathOp  iOp;
+    
+    UnaryOp(Operand anOperand, MathOp anOperation) {
+        iRhs = anOperand;
+        iOp = anOperation;
+    }
+    
+    public Operand value() {
+        return iOp.product(new Operand(.0), iRhs);
+    }
 }

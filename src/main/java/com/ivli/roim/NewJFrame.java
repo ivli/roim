@@ -73,6 +73,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
+        jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
@@ -226,6 +227,14 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             }
         });
         jMenu2.add(jMenuItem9);
+
+        jMenuItem8.setText(bundle.getString("NewJFrame.jMenuItem8.text")); // NOI18N
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem8ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem8);
 
         jMenuItem4.setText(bundle.getString("NewJFrame.jMenuItem4.text")); // NOI18N
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
@@ -555,6 +564,29 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iPanel.setFit(ImageView.FIT_WIDTH);
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+        ImagePanel pane = null;
+               
+        switch(jTabbedPane1.getSelectedIndex()) {
+            case 0:
+                pane = iPanel; break;
+            case 2:
+                pane = iOff; break;
+            default: break;    
+        }
+                
+        if (null != pane) {
+            CalcPanel panel = new CalcPanel(pane);
+            JDialog dialog = new JDialog(this, Dialog.ModalityType.MODELESS);
+            dialog.setContentPane(panel);
+            dialog.validate();
+            dialog.pack();
+            dialog.setResizable(true);
+            dialog.setVisible(true);
+            repaint();
+        }
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -638,6 +670,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

@@ -22,5 +22,17 @@ package com.ivli.roim.calc;
  * @author likhachev
  */
 public class BinaryOp {
+    Operand iLhs;
+    Operand iRhs;
+    MathOp  iOp;
     
+    BinaryOp(Operand aLhs, Operand aRhs, MathOp anOperation) {
+        iLhs = aRhs;
+        iRhs = aRhs;
+        iOp = anOperation;
+    }
+    
+    public Operand value() {
+        return iOp.product(iLhs, iRhs);
+    }
 }

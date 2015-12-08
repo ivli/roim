@@ -34,12 +34,14 @@ public class ROIListPanel extends javax.swing.JPanel {
     private static final String KCommandInvokeColourPicker = "COMMAND_INVOKE_COLOUR_PICKER_DIALOG"; // NOI18N
     
     private final ImagePanel iView;              
-    private final DefaultTableModel iModel;
+   // private final DefaultTableModel iModel;
+    ROITable iRt;
     
     public ROIListPanel(com.ivli.roim.ImagePanel aView) {
         
         iView = aView;
-        
+        iRt = new ROITable();
+        /*
         iModel = new DefaultTableModel (new Object [][] {},
                                             new String [] {"OBJ", // NOI18N - holds an object reference  
                                                            java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.NAME"), 
@@ -64,10 +66,12 @@ public class ROIListPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         };
+        */
         
         initComponents();
      
-        
+        iRt.fillTable(jTable1, aView.getOverlaysList());
+        /*
         /// jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(0).setMinWidth(0);
@@ -118,7 +122,7 @@ public class ROIListPanel extends javax.swing.JPanel {
                 getParent().invalidate();
             }
         });
-             
+       */      
     }
 
     
@@ -136,7 +140,7 @@ public class ROIListPanel extends javax.swing.JPanel {
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
 
-        jTable1.setModel(iModel);
+        jTable1.setModel(iRt.getModel());
         jScrollPane1.setViewportView(jTable1);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle"); // NOI18N
@@ -185,7 +189,7 @@ public class ROIListPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
-
+/*
 final class ColorEditor extends javax.swing.AbstractCellEditor
                              implements javax.swing.table.TableCellEditor,
                                         java.awt.event.ActionListener {
@@ -259,6 +263,7 @@ final class ColorEditor extends javax.swing.AbstractCellEditor
             return button;
         }   
     }
+*/
 }
 
 

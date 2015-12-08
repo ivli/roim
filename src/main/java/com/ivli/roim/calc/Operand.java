@@ -17,38 +17,20 @@
  */
 package com.ivli.roim.calc;
 
-import com.ivli.roim.ROI;
-import com.ivli.roim.events.ROIChangeEvent;
-import com.ivli.roim.events.ROIChangeListener;
 /**
  *
  * @author likhachev
  */
-public class Operand implements ROIChangeListener, AutoCloseable {
-    ROI iRoi;
+public class Operand {
+    protected Double iValue;// = Double.NaN;
     
-    public Operand(ROI aRoi){
-        iRoi = aRoi;    
-        iRoi.addROIChangeListener(this);
-    }
-    
-    /*
-    public Operand(Operand anOp){
-        iRoi = anOp.iRoi;
-        iRoi.addROIChangeListener(this);
-    }
-    */
-    
-    protected void calculate() {
-        
-    }
-    
-    public void ROIChanged(ROIChangeEvent anEvt) {
-        calculate();
+    public Operand(Double aVal) {
+        iValue = aVal;
     } 
     
-     @Override
-    public void close() {
-        iRoi.removeROIChangeListener(this);
-    }
+    public Operand(Operand aVal) {
+        iValue = aVal.iValue;
+    } 
+    
+    Double value() {return iValue;}
 }
