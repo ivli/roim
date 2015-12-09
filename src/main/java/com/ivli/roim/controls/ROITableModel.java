@@ -212,9 +212,8 @@ public class ROITableModel extends DefaultTableModel {
                                                        boolean hasFocus, int row, int column) {
             JButton button = new JButton();
             button.setActionCommand(KCommandInvokeColourPicker);      
-            button.setBorderPainted(false);
-            Color clr = (Color )value;
-            button.setBackground(clr);
+            button.setBorderPainted(false);            
+            button.setBackground((Color)value);
             return button;
         }   
     }

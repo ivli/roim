@@ -89,7 +89,7 @@ public class ROIManager implements java.io.Serializable {
             
     public void clear() {
         iOverlays.clear();
-        notifyROIChanged(null, ROIChangeEvent.CHG.Emptied);      
+        notifyROIChanged(null, ROIChangeEvent.CHG.Emptied, null);      
     }
     
     public void update() {
@@ -125,7 +125,7 @@ public class ROIManager implements java.io.Serializable {
             iOverlays.add(new Annotation(newRoi));      
        
         newRoi.update();
-        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created);
+        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, null);
     }
     
     public void cloneRoi(ROI aR) {
@@ -136,7 +136,7 @@ public class ROIManager implements java.io.Serializable {
         if (ROI_HAS_ANNOTATIONS)
             iOverlays.add(new Annotation(newRoi));
         
-        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created);
+        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, aR);
     }
     
     public void moveRoi(Overlay aO, double adX, double adY) {        
@@ -171,7 +171,7 @@ public class ROIManager implements java.io.Serializable {
                 it.remove();
         } 
         
-        notifyROIChanged(aR, ROIChangeEvent.CHG.Cleared);
+        notifyROIChanged(aR, ROIChangeEvent.CHG.Cleared, null);
         
         return iOverlays.remove(aR);   
     }  
@@ -198,12 +198,12 @@ public class ROIManager implements java.io.Serializable {
     private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {
         
             iOverlays = (HashSet<Overlay>)(ois.readObject());  
-            notifyROIChanged(null, ROIChangeEvent.CHG.Emptied);
+            notifyROIChanged(null, ROIChangeEvent.CHG.Emptied, null);
             
             for (Overlay r : iOverlays) {
                 if (r instanceof ROIBase) {
                     ((ROIBase)r).iMgr = this;
-                    notifyROIChanged(((ROI)r), ROIChangeEvent.CHG.Created);
+                    notifyROIChanged(((ROI)r), ROIChangeEvent.CHG.Created, null);
                     /*
                     if (null != ((ROI)r).iAnnos)
                         for (Overlay o : ((ROI)r).iAnnos)   
@@ -245,8 +245,8 @@ public class ROIManager implements java.io.Serializable {
         iList.remove(ROIChangeListener.class, aL);
     }
     
-    void notifyROIChanged(ROI aR, ROIChangeEvent.CHG aS) {
-       ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR);
+    void notifyROIChanged(ROI aR, ROIChangeEvent.CHG aS, Object aEx) {
+       ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR, aEx);
        
        ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);
        

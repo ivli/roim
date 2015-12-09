@@ -25,6 +25,8 @@ import com.ivli.roim.ROI;
 public final class ROIChangeEvent extends java.util.EventObject { 
     private final ROI iROI;
     private final CHG iChange;
+    private final Object iExtra; //depending on change it carries old name, old colour or ... 
+    
      //TODO: rename logicaly
     public enum CHG {    
         Created,  
@@ -35,10 +37,11 @@ public final class ROIChangeEvent extends java.util.EventObject {
         Emptied   
     }
     
-    public ROIChangeEvent(Object aO, CHG aC, ROI aR) {
+    public ROIChangeEvent(Object aO, CHG aC, ROI aR, Object aExtra) {
         super (aO);
         iROI = aR;
         iChange = aC;
+        iExtra = aExtra;
     }
         
     public CHG getChange() {
@@ -47,5 +50,9 @@ public final class ROIChangeEvent extends java.util.EventObject {
     
     public ROI getROI() {
         return iROI;
+    }   
+    
+    public Object getExtra() {
+        return iExtra;
     }    
 }

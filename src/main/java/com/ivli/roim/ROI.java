@@ -74,14 +74,16 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     }
     
     public void setColor(Color aC) {
+        Color old = iColor;
         iColor = aC;
-        notifyROIChanged(ROIChangeEvent.CHG.ChangedColor);
+        notifyROIChanged(ROIChangeEvent.CHG.ChangedColor, old);
     }
     
     @Override
     public void setName(String aName) {
+       String old = getName();
        super.setName(aName);
-       notifyROIChanged(ROIChangeEvent.CHG.ChangedName);         
+       notifyROIChanged(ROIChangeEvent.CHG.ChangedName, old);         
     }
    
     void drawProfiles(Graphics2D aGC, AffineTransform aTrans) {
@@ -190,7 +192,7 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
             
             update();
             
-            notifyROIChanged(ROIChangeEvent.CHG.Changed);        
+            notifyROIChanged(ROIChangeEvent.CHG.Changed, null);        
         }
     }  
             

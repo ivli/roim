@@ -40,7 +40,7 @@ public abstract class ROIBase extends Overlay {
         iMgr.removeROIChangeListener(aL);
     }
     
-    protected void notifyROIChanged(ROIChangeEvent.CHG aS) {
-        iMgr.notifyROIChanged((ROI)this, aS);
+    protected void notifyROIChanged(ROIChangeEvent.CHG aS, Object aEx) {
+        iMgr.notifyROIChanged((ROI)this, aS, aEx);
     }
 }
