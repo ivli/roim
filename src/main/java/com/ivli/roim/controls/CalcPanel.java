@@ -28,17 +28,20 @@ import org.apache.logging.log4j.Logger;
  */
 public class CalcPanel extends javax.swing.JPanel {
 
-    ROITable iRt = new ROITable();
-    ROITable iRt1 = new ROITable();
+    private final ROITableModel iLeftModel;
+    private final ROITableModel iRightModel;
     /**
      * Creates new form CalcPanel
      */
     public CalcPanel(com.ivli.roim.ImagePanel aView) {
         
+        iLeftModel = new ROITableModel(aView.getOverlaysList(), false);
+        iRightModel = new ROITableModel(aView.getOverlaysList(), false);
+        
         initComponents();
         
-        iRt.fillTable(jTable1, aView.getOverlaysList());
-        iRt1.fillTable(jTable2, aView.getOverlaysList());
+        iLeftModel.attach(jTable1);
+        iRightModel.attach(jTable2);
     }
 
     /**
@@ -57,10 +60,10 @@ public class CalcPanel extends javax.swing.JPanel {
         jComboBox1 = new javax.swing.JComboBox<>();
         jTextField2 = new javax.swing.JTextField();
 
-        jTable1.setModel(iRt1.getModel());
+        jTable1.setModel(iRightModel);
         jScrollPane2.setViewportView(jTable1);
 
-        jTable2.setModel(iRt.getModel());
+        jTable2.setModel(iLeftModel);
         jScrollPane3.setViewportView(jTable2);
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(MathOp.getOpListString()));

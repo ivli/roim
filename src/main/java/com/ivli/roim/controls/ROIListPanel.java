@@ -6,22 +6,8 @@
 package com.ivli.roim.controls;
 
 
-import com.ivli.roim.Overlay;
-import com.ivli.roim.ROI;
-import com.ivli.roim.ImagePanel;
 
-import java.util.Iterator;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.event.*;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JDialog;
-import javax.swing.JTable;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
+import com.ivli.roim.ImagePanel;
 import javax.swing.SwingUtilities;
 import java.awt.Window;
 
@@ -31,101 +17,21 @@ import java.awt.Window;
  * @author likhachev
  */
 public class ROIListPanel extends javax.swing.JPanel {
-    private static final String KCommandInvokeColourPicker = "COMMAND_INVOKE_COLOUR_PICKER_DIALOG"; // NOI18N
+    
     
     private final ImagePanel iView;              
-   // private final DefaultTableModel iModel;
-    ROITable iRt;
+   
+    ROITableModel iModel;
     
-    public ROIListPanel(com.ivli.roim.ImagePanel aView) {
-        
+    public ROIListPanel(com.ivli.roim.ImagePanel aView) {        
         iView = aView;
-        iRt = new ROITable();
-        /*
-        iModel = new DefaultTableModel (new Object [][] {},
-                                            new String [] {"OBJ", // NOI18N - holds an object reference  
-                                                           java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.NAME"), 
-                                                           java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.PIXELS"), 
-                                                           java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.DENSITY"), 
-                                                           "NULL" // NOI18N
-                                            }
-                                        )
-            {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.awt.Color.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, false, false, true
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        };
-        */
+        iModel = new ROITableModel(aView.getOverlaysList(), true);       
         
         initComponents();
      
-        iRt.fillTable(jTable1, aView.getOverlaysList());
-        /*
-        /// jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setMinWidth(0);
-            jTable1.getColumnModel().getColumn(0).setPreferredWidth(0);
-            jTable1.getColumnModel().getColumn(0).setMaxWidth(0);
-            jTable1.getColumnModel().getColumn(0).setHeaderValue("OBJ"); //NOI18N
-            
-            jTable1.getColumnModel().getColumn(1).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.NAME"));
-            jTable1.getColumnModel().getColumn(2).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.PIXELS"));
-            jTable1.getColumnModel().getColumn(3).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.DENSITY"));
-            jTable1.getColumnModel().getColumn(4).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.COLOR"));
-        }
-        
-        Iterator<Overlay> it = iView.getOverlaysList();
-        while (null!=it && it.hasNext()) {
-            Overlay o = it.next();
-            if (o instanceof ROI) {       
-                ROI r = (ROI)o;
-                //ROIStats s = r.getStats();
-                DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-                //jTable1.setModel(new TableModel());
-                model.addRow(new Object[]{r, r.getName(), r.getAreaInPixels(), r.getDensity(), r.getColor()});                
-            }
-        }
-        
-        
-        jTable1.setDefaultEditor(Color.class, new ColorEditor());
-        jTable1.setDefaultRenderer(Color.class, new MyRenderer());
-        
-        jTable1.getModel().addTableModelListener((TableModelEvent e) -> {
-            final int row = e.getFirstRow();
-            final int col = e.getColumn();
-            
-            if (col == 1 || col == 4) {
-                final TableModel model = (TableModel)e.getSource();
-                
-                assert(model.getValueAt(row, 0) instanceof ROI);
-                
-                final ROI r = (ROI)model.getValueAt(row, 0);
-                
-                if (col == 1) {
-                    r.setName((String)model.getValueAt(row, 1));
-                    
-                }else if (col == 4) {
-                    r.setColor((Color)model.getValueAt(row, 4));        
-                }
-                
-                getParent().invalidate();
-            }
-        });
-       */      
+        iModel.attach(jTable1);        
     }
 
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -140,7 +46,7 @@ public class ROIListPanel extends javax.swing.JPanel {
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
 
-        jTable1.setModel(iRt.getModel());
+        jTable1.setModel(iModel);
         jScrollPane1.setViewportView(jTable1);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle"); // NOI18N
@@ -179,7 +85,6 @@ public class ROIListPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
        Window w = SwingUtilities.getWindowAncestor(this);
        w.setVisible(false);
-
     }//GEN-LAST:event_jButton1ActionPerformed
     
   
@@ -189,81 +94,7 @@ public class ROIListPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
-/*
-final class ColorEditor extends javax.swing.AbstractCellEditor
-                             implements javax.swing.table.TableCellEditor,
-                                        java.awt.event.ActionListener {
-        private Color currentColor;
-        private final JButton button;
-        private final JColorChooser colorChooser;
-        private final JDialog dialog;
 
-        public ColorEditor() {
-            button = new JButton();
-            button.setActionCommand(KCommandInvokeColourPicker);
-            button.addActionListener(this);
-            button.setBorderPainted(false);
-
-            //Set up the dialog that the button brings up.
-            //JColorChooser.setDefaultLocale(new Locale("fr", "FR"));
-            
-                       
-            colorChooser = new JColorChooser();
-            
-            dialog = JColorChooser.createDialog(button,
-                        java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("COLOR_CHOOSER_DIALOG.PICK_A_COLOR"),
-                        true,  //modal
-                        colorChooser,
-                        this,  //OK button handler
-                        null); //no CANCEL button handler
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (KCommandInvokeColourPicker.equals(e.getActionCommand())) {
-                //The user has clicked the cell, so
-                //bring up the dialog.
-                button.setBackground(currentColor);
-                colorChooser.setColor(currentColor);
-                dialog.setVisible(true);
-
-                fireEditingStopped(); //Make the renderer reappear.
-
-            } else { //User pressed dialog's "OK" button.
-                currentColor = colorChooser.getColor();
-            }
-        }
-
-        //Implement the one CellEditor method that AbstractCellEditor doesn't.
-        @Override
-        public Object getCellEditorValue() {
-            return currentColor;
-        }
-
-        //Implement the one method defined by TableCellEditor.
-        @Override
-        public Component getTableCellEditorComponent(JTable table,
-                                                     Object value,
-                                                     boolean isSelected,
-                                                     int row,
-                                                     int column) {
-            currentColor = (Color)value;
-            return button;
-        }
-    }
-
-    final class MyRenderer implements TableCellRenderer {    
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                                                       boolean hasFocus, int row, int column) {
-            JButton button = new JButton();
-            button.setActionCommand(KCommandInvokeColourPicker);      
-            button.setBorderPainted(false);
-            Color clr = (Color )value;
-            button.setBackground(clr);
-            return button;
-        }   
-    }
-*/
 }
 
 

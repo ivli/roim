@@ -17,7 +17,6 @@
  */
 package com.ivli.roim.controls;
 
-//import com.ivli.roim.ImagePanel;
 import com.ivli.roim.Overlay;
 import com.ivli.roim.ROI;
 import java.awt.Color;
@@ -39,73 +38,53 @@ import javax.swing.table.TableModel;
  *
  * @author likhachev
  */
-public class ROITable extends DefaultTableModel {
-    private static final String KCommandInvokeColourPicker = "COMMAND_INVOKE_COLOUR_PICKER_DIALOG"; // NOI18N
+public class ROITableModel extends DefaultTableModel {
+    private static final String KCommandInvokeColourPicker = "COMMAND_INVOKE_COLOUR_PICKER_DIALOG"; // NOI18N    
     
-          
-    private final DefaultTableModel iModel;
+    protected final Class[] iTypes = new Class [] {java.lang.Object.class,  // a reference to ROI object - hidden
+                                                  java.lang.String.class,  // name - can be editable
+                                                  java.lang.Integer.class, // area in pixels
+                                                  java.lang.Integer.class, // density
+                                                  java.awt.Color.class     // colour - can be editable
+                                                 };
+                                                   
+    protected final String[] iColumns = new String[]{"OBJ", // NOI18N - holds an object reference  
+                                                     java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.NAME"), 
+                                                     java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.PIXELS"), 
+                                                     java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.DENSITY"), 
+                                                     "NULL" // NOI18N
+                                                    };
     
-    public DefaultTableModel getModel() {return iModel;} 
-    public ROITable() {
-      
-        iModel = new DefaultTableModel (new Object [][] {},
-                                            new String [] {"OBJ", // NOI18N - holds an object reference  
-                                                           java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.NAME"), 
-                                                           java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.PIXELS"), 
-                                                           java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.DENSITY"), 
-                                                           "NULL" // NOI18N
-                                            }
-                                        )
-            {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.awt.Color.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, false, false, true
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        };
-       
-    }
     
-    public void fillTable(javax.swing.JTable aTable, Iterator<Overlay> aList) {
-        /// jScrollPane1.setViewportView(aTable);
-        if (aTable.getColumnModel().getColumnCount() > 0) {
-            aTable.getColumnModel().getColumn(0).setMinWidth(0);
-            aTable.getColumnModel().getColumn(0).setPreferredWidth(0);
-            aTable.getColumnModel().getColumn(0).setMaxWidth(0);
-            aTable.getColumnModel().getColumn(0).setHeaderValue("OBJ"); //NOI18N
+    
+    protected final boolean[] iEditable;/* = new boolean [] {false, 
+                                                    true, 
+                                                    false, 
+                                                    false, 
+                                                    true
+                                                   };
+                                         */           
             
-            aTable.getColumnModel().getColumn(1).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.NAME"));
-            aTable.getColumnModel().getColumn(2).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.PIXELS"));
-            aTable.getColumnModel().getColumn(3).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.DENSITY"));
-            aTable.getColumnModel().getColumn(4).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.COLOR"));
-        }
+    public ROITableModel(Iterator<Overlay> aList, boolean aCanEdit) {     
+
+        setDataVector (new Object [][] {}, iColumns);    
         
-        //Iterator<Overlay> it = aView.getOverlaysList();
-        while (null!=aList && aList.hasNext()) {
+        iEditable = new boolean [] {false, 
+                                    aCanEdit, 
+                                    false, 
+                                    false, 
+                                    aCanEdit
+                                    };
+        
+        while (aList.hasNext()) {
             Overlay o = aList.next();
             if (o instanceof ROI) {       
-                ROI r = (ROI)o;
-                //ROIStats s = r.getStats();
-                DefaultTableModel model = (DefaultTableModel) aTable.getModel();
-                //aTable.setModel(new TableModel());
-                model.addRow(new Object[]{r, r.getName(), r.getAreaInPixels(), r.getDensity(), r.getColor()});                
+                final ROI r = (ROI)o;                
+                addRow(new Object[]{r, r.getName(), r.getAreaInPixels(), r.getDensity(), r.getColor()});                
             }
         }
-        
-        
-        aTable.setDefaultEditor(Color.class, new ColorEditor());
-        aTable.setDefaultRenderer(Color.class, new MyRenderer());
-        
-        aTable.getModel().addTableModelListener((TableModelEvent e) -> {
+         
+        addTableModelListener((TableModelEvent e) -> {
             final int row = e.getFirstRow();
             final int col = e.getColumn();
             
@@ -121,11 +100,48 @@ public class ROITable extends DefaultTableModel {
                     
                 }else if (col == 4) {
                     r.setColor((Color)model.getValueAt(row, 4));        
-                }
-                
-                
+                }                                
             }
         });
+    }
+    
+    @Override
+    public Class getColumnClass(int columnIndex) {
+        return iTypes [columnIndex];
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return iEditable [columnIndex];
+    }
+        
+    /**
+     * this methods formats table columns and fills the table data
+     * @param aTable - table to attach to SIC: you must set an instance of this class as a model to a given table  
+     * @param aList - a list of ROI 
+     */
+    public void attach(javax.swing.JTable aTable) {
+        
+        if (aTable.getColumnModel().getColumnCount() > 0) {
+            aTable.getColumnModel().getColumn(0).setMinWidth(0);
+            aTable.getColumnModel().getColumn(0).setPreferredWidth(0);
+            aTable.getColumnModel().getColumn(0).setMaxWidth(0);
+            aTable.getColumnModel().getColumn(0).setHeaderValue("OBJ"); //NOI18N
+        } /*    
+            aTable.getColumnModel().getColumn(1).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.NAME"));
+            aTable.getColumnModel().getColumn(2).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.PIXELS"));
+            aTable.getColumnModel().getColumn(3).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.DENSITY"));
+            aTable.getColumnModel().getColumn(4).setHeaderValue(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.COLOR"));
+        }
+        */
+        //Iterator<Overlay> it = aView.getOverlaysList();
+       
+        
+        
+        aTable.setDefaultEditor(Color.class, new ColorEditor());
+        aTable.setDefaultRenderer(Color.class, new MyRenderer());
+        
+        
              
     }
 
