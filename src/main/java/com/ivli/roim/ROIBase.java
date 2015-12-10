@@ -6,6 +6,7 @@ import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
+import javax.swing.event.EventListenerList;
 /**
  *
  * 
@@ -13,9 +14,12 @@ import java.awt.geom.AffineTransform;
 public abstract class ROIBase extends Overlay {
     transient ROIManager iMgr; 
      
+    private EventListenerList iList;
+    
     ROIBase(java.awt.Shape aS, ROIManager aM, String aN) {
         super(aS, aN);
         iMgr = aM;
+        iList = new EventListenerList();
     }
     
     @Override
@@ -33,14 +37,22 @@ public abstract class ROIBase extends Overlay {
     
      ///todo: following it might make sense to keep the list of observers here
     public void addROIChangeListener(ROIChangeListener aL) {
-        iMgr.addROIChangeListener(aL);
+        //iMgr.addROIChangeListener(aL);
+        iList.add(ROIChangeListener.class, aL);
     }
     
     public void removeROIChangeListener(ROIChangeListener aL) {
-        iMgr.removeROIChangeListener(aL);
+        //iMgr.removeROIChangeListener(aL);
+        iList.remove(ROIChangeListener.class, aL);
     }
     
     protected void notifyROIChanged(ROIChangeEvent.CHG aS, Object aEx) {
-        iMgr.notifyROIChanged((ROI)this, aS, aEx);
+        //iMgr.notifyROIChanged((ROI)this, aS, aEx);
+        ROIChangeEvent evt = new ROIChangeEvent(this, aS, (ROI)this, aEx);
+
+        ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);
+
+        for (ROIChangeListener l : arr)
+            l. ROIChanged(evt);
     }
 }

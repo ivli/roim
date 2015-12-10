@@ -46,7 +46,7 @@ import com.ivli.roim.core.FrameOffsetVector;
  *
  * @author likhachev
  */
-public class ROIManager implements java.io.Serializable {  
+public class ROIManager implements ROIChangeListener, java.io.Serializable {  
     private static final long serialVersionUID = 42L;    
     private static final boolean ROI_HAS_ANNOTATIONS  = false;
     private static final boolean CLONE_INHERIT_COLOUR = false;
@@ -123,8 +123,7 @@ public class ROIManager implements java.io.Serializable {
         iOverlays.add(newRoi);                
     }
             
-    public void createRoiFromShape(Shape aS) {         
-        
+    public void createRoiFromShape(Shape aS) {                 
         final Shape r = iView.screenToVirtual().createTransformedShape(aS);
         
         ROI newRoi = new ROI(iUid.getNext(), r, this, null);       
@@ -134,11 +133,13 @@ public class ROIManager implements java.io.Serializable {
         if (ROI_HAS_ANNOTATIONS)
             iOverlays.add(new Annotation(newRoi));      
        
+        newRoi.addROIChangeListener(this);
+        
         newRoi.update();
         notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, null);
     }
     
-    public void cloneRoi(ROI aR) {
+    public void cloneRoi(ROI aR) {       
         ROI newRoi = new ROI(iUid.getNext(), aR.getShape(), this, CLONE_INHERIT_COLOUR?aR.getColor():null);
                
         iOverlays.add(newRoi); 
@@ -146,7 +147,10 @@ public class ROIManager implements java.io.Serializable {
         if (ROI_HAS_ANNOTATIONS)
             iOverlays.add(new Annotation(newRoi));
         
-        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, aR);
+        newRoi.addROIChangeListener(this);
+        
+        newRoi.update();
+        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, aR);        
     }
     
     public void moveRoi(Overlay aO, double adX, double adY) {                         
@@ -248,14 +252,19 @@ public class ROIManager implements java.io.Serializable {
     }
     
     void notifyROIChanged(ROI aR, ROIChangeEvent.CHG aS, Object aEx) {
-       ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR, aEx);
-       
-       ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);
-       
-       for (ROIChangeListener l : arr)
-           l. ROIChanged(evt);
+        ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR, aEx);
+
+        ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);
+
+        for (ROIChangeListener l : arr)
+            l. ROIChanged(evt);
     }
         
+    @Override
+    public void ROIChanged(ROIChangeEvent anEvt) {        
+       notifyROIChanged(anEvt.getROI(), anEvt.getChange(), anEvt.getExtra());
+    }
+    
     private static final Logger logger = LogManager.getLogger(ROIManager.class);
 }
 
