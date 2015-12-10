@@ -102,8 +102,7 @@ public class DCMImageProvider extends ImageProvider {
                 
     public double getMin() {
         if (!iMin.isNaN())
-            return iMin;
-        
+            return iMin;        
         try {
             return iLoader.getMin();
         } catch (IOException ex) {

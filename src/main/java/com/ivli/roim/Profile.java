@@ -17,14 +17,14 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class Profile extends ROIBase {      
+public class Profile extends Overlay {      
     private boolean iShow = true;
     
     private boolean iNormalize = false;
     private double  iHist[];
     
     public Profile(Rectangle2D aS, ROIManager aMgr) {
-        super(aS, aMgr, "PROFILE"); //NOI18N 
+        super("PROFILE", aS, aMgr); //NOI18N 
         makeHistogram();
     }
     
@@ -54,8 +54,7 @@ public class Profile extends ROIBase {
     public void update() {
         makeHistogram();        
     }    
-    
-    
+        
     @Override
     public void move(double adX, double adY) {             
         final Rectangle2D r = iShape.getBounds2D();
@@ -97,13 +96,14 @@ public class Profile extends ROIBase {
             max = Math.max(max, d);
         }
         
-        final double range =  getManager().getView().getModel().getMax() - getManager().getView().getModel().getMin();//  max - min;
+        double maxV = getManager().getView().getImage().getMax();//  getModel().getMax();
+        double minV = getManager().getView().getImage().getMin();
+        final double range =  maxV - minV;//  max - min;
         
         Rectangle bounds = new Rectangle(0, 0, getManager().getWidth(), getManager().getHeight());
                        
         final double scale = Math.min(iShape.getBounds().getY()/(4*range), bounds.getHeight()/(4*range));
-                                      
-        
+                                              
         Path2D.Double s = new Path2D.Double();
         
         int n = 0;

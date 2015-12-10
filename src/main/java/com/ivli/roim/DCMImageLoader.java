@@ -128,13 +128,13 @@ public class DCMImageLoader implements IImageLoader {
     
     @Override
     public double getMin() {
-       double ret = iDataSet.getDouble(Tag.MinDensity, Double.NaN);
+       double ret = iDataSet.getDouble(Tag.SmallestImagePixelValue, Double.NaN);
        return ret;
     }
     
     @Override
     public double getMax() {
-        double ret = iDataSet.getDouble(Tag.MaxDensity, Double.NaN);
+        double ret = iDataSet.getDouble(Tag.LargestImagePixelValue, Double.NaN);
         return ret;   
     }
     

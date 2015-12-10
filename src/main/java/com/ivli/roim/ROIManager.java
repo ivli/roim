@@ -120,7 +120,8 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         r.width = getWidth();
         
         Profile newRoi = new Profile(r, this);     
-        iOverlays.add(newRoi);                
+        iOverlays.add(newRoi);   
+        newRoi.addROIChangeListener(this);
     }
             
     public void createRoiFromShape(Shape aS) {                 
@@ -206,15 +207,15 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
             notifyROIChanged(null, ROIChangeEvent.CHG.Emptied, null);
             
             for (Overlay r : iOverlays) {
-                if (r instanceof ROIBase) {
-                    ((ROIBase)r).iMgr = this;
+                //if (r instanceof ROIBase) {
+                   // ((ROIBase)r).iMgr = this;
                     notifyROIChanged(((ROI)r), ROIChangeEvent.CHG.Created, null);
                     /*
                     if (null != ((ROI)r).iAnnos)
                         for (Overlay o : ((ROI)r).iAnnos)   
                             iOverlays.add(o);
                             */
-                }
+               // }
             }
     }
     

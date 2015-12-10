@@ -23,8 +23,7 @@ public class OverlayPicture extends Overlay {
     //Point iOrigin=new Point(0,0);
     
     OverlayPicture(java.awt.Image aP, String aN) { 
-        super(new Rectangle(aP.getWidth(null), aP.getHeight(null)), 
-              null != aN? aN:java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("PICTURE"));
+        super(aN, new Rectangle(aP.getWidth(null), aP.getHeight(null)), null);
        
         iPicture = aP;
     }

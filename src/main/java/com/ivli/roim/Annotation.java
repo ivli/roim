@@ -1,6 +1,8 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.events.ROIChangeEvent;
+import com.ivli.roim.events.ROIChangeListener;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
@@ -9,7 +11,7 @@ import java.awt.geom.AffineTransform;
  *
  * @author likhachev
  */
-public class Annotation extends Overlay {
+public class Annotation extends Overlay implements ROIChangeListener {
     
     protected static final int ANNOTATION_DISPLAY_AREA_PIXELS = 0x1;
     protected static final int ANNOTATION_DISPLAY_AREA_UNITS  = 0x2;
@@ -29,7 +31,7 @@ public class Annotation extends Overlay {
     int getCaps(){return MOVEABLE | SELECTABLE;}
    
     Annotation(ROI aRoi) {
-        super(new Rectangle2D.Double(), null);
+        super("", new Rectangle2D.Double(), null);
         iRoi = aRoi;        
         
         ((Rectangle2D.Double)iShape).setRect(aRoi.getShape().getBounds2D());
@@ -72,8 +74,12 @@ public class Annotation extends Overlay {
         aGC.drawString(out, (int)temp.getX(), (int)temp.getY());       
     }
     
+    public void update() {
+    
+    }
+    
     @Override
-    void update() {
-        
-    }    
+    public void ROIChanged(ROIChangeEvent anEvt) {        
+        update();
+    }
 }

@@ -19,7 +19,7 @@ import java.awt.image.Raster;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {          
+public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {          
     private Color iColor;          
     private int iAreaInPixels;        
     private SeriesCollection iSeries;        
@@ -30,7 +30,7 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU;}
     
     ROI(String aName, Shape aS, ROIManager aMgr, Color aC) {
-        super(aS, aMgr, aName); 
+        super(aName, aS, aMgr); 
         
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);
           

@@ -12,10 +12,10 @@ import java.awt.image.AffineTransformOp;
  *
  * @author likhachev
  */
-public class Ruler extends ROIBase {
+public class Ruler extends Overlay {
     
     Ruler(Rectangle aS, ROIManager aM) { 
-        super(aS, aM, "RULER");              
+        super("RULER", aS, aM);              
     }
            
     @Override
@@ -35,6 +35,11 @@ public class Ruler extends ROIBase {
         //aGC.drawImage(iBuf, trans, null);        
     } 
      
+    @Override
+    int getCaps() {
+        return MOVEABLE|SELECTABLE;
+    }
+    
     @Override
     void update() {
         
