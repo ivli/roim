@@ -201,8 +201,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
          out.writeObject(iOverlays);
     }
     
-    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        
+    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {        
             iOverlays = (HashSet<Overlay>)(ois.readObject());  
             notifyROIChanged(null, ROIChangeEvent.CHG.Emptied, null);
             
