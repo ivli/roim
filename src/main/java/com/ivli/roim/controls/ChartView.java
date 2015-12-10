@@ -112,7 +112,9 @@ public class ChartView extends javax.swing.JPanel
             } break;
             case ChangedColor: {
                 assert (aE.getExtra() instanceof java.awt.Color);
-                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getROI().getName()), aE.getROI().getColor());                                 
+                final int ndx = col.indexOf(aE.getROI().getName());
+                if (ndx >=0)
+                    iPlot.getRenderer().setSeriesPaint(ndx, aE.getROI().getColor());                                 
             } break;
             case Emptied: {
                 ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); 

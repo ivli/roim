@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {          
     private Color iColor;          
-    private final int iAreaInPixels;        
+    private int iAreaInPixels;        
     private SeriesCollection iSeries;        
     private HashSet<Overlay> iAnnos; 
     private final static boolean DRAW_PROFILES = false;
@@ -29,21 +29,24 @@ public class ROI extends ROIBase implements Overlay.IFlip, Overlay.IRotate {
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU;}
     
-    ROI(Shape aS, ROIManager aMgr, Color aC) {
-        super(aS, aMgr, new String()); 
+    ROI(String aName, Shape aS, ROIManager aMgr, Color aC) {
+        super(aS, aMgr, aName); 
+        
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);
           
         iAreaInPixels = calculateAreaInPixels();
         iSeries = CurveExtractor.extract(getManager().getImage(), this, getManager().getOffsetVector());
     }
     
+    /*
     ROI(ROI aR) {
         super(aR.iShape, aR.getManager(), aR.getName());          
         iColor = aR.getColor();         
         iAreaInPixels = aR.iAreaInPixels;
         iSeries = aR.iSeries;
     }
-                  
+    */
+    
     void register(Overlay aO) {
         if (null == iAnnos)
             iAnnos = new HashSet();

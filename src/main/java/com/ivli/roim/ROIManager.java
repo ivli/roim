@@ -37,27 +37,36 @@ import javax.swing.event.EventListenerList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-//import com.ivli.roim.events.EStateChanged;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.FrameOffsetVector;
-
 
 /**
  *
  * @author likhachev
  */
 public class ROIManager implements java.io.Serializable {  
-    private static final long serialVersionUID = 42L;
-    
-    private static final boolean ROI_HAS_ANNOTATIONS = !true;
-          
-    transient private final ImageView iView; 
-    
-    private HashSet<Overlay> iOverlays;      
-    
+    private static final long serialVersionUID = 42L;    
+    private static final boolean ROI_HAS_ANNOTATIONS  = false;
+    private static final boolean CLONE_INHERIT_COLOUR = false;
+
+    transient private final ImageView iView;     
+    private HashSet<Overlay> iOverlays;          
     private final EventListenerList iList;
+    
+    final class TUid {
+        int iUid;
+        public static final int UID_INVALID = -1;
+        public TUid(int aStart) {iUid = aStart;}
+        public String getNext() {            
+            return String.format("ROI" + 
+                                 "%03d", // NOI18N
+                                 iUid++);
+        }
+    }
+    
+    private final TUid iUid = new TUid(0);
     
     ROIManager(ImageView aV) { 
         iView = aV;
@@ -115,9 +124,10 @@ public class ROIManager implements java.io.Serializable {
     }
             
     public void createRoiFromShape(Shape aS) {         
+        
         final Shape r = iView.screenToVirtual().createTransformedShape(aS);
         
-        final ROI newRoi = new ROI(r, this, null);       
+        ROI newRoi = new ROI(iUid.getNext(), r, this, null);       
   
         iOverlays.add(newRoi);
         
@@ -129,8 +139,8 @@ public class ROIManager implements java.io.Serializable {
     }
     
     public void cloneRoi(ROI aR) {
-        ROI newRoi = new ROI(aR);
-        newRoi.iName = aR.iName + "(2)"; // NOI18N
+        ROI newRoi = new ROI(iUid.getNext(), aR.getShape(), this, CLONE_INHERIT_COLOUR?aR.getColor():null);
+               
         iOverlays.add(newRoi); 
         
         if (ROI_HAS_ANNOTATIONS)
@@ -139,16 +149,8 @@ public class ROIManager implements java.io.Serializable {
         notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, aR);
     }
     
-    public void moveRoi(Overlay aO, double adX, double adY) {        
-        //AffineTransform trans = iView.virtualToScreen();
-        //trans.concatenate(AffineTransform.getTranslateInstance(adX, adY));    
-               
-        //if (iView.getBounds().contains(trans.createTransformedShape(aO.getShape().getBounds()).getBounds())) {           
-            aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));  
-            
-            //if (aO instanceof ROI)
-            //    notifyROIChanged((ROI)aO, EStateChanged.Changed);
-       // }       
+    public void moveRoi(Overlay aO, double adX, double adY) {                         
+        aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));            
     }
     
     public Overlay findOverlay(Point aP) {      
