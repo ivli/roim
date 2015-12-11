@@ -69,7 +69,7 @@ public abstract class Overlay implements java.io.Serializable {
         iName = aName;
     }
     
-    public void pin(boolean aPin) {
+    public void setPinned(boolean aPin) {
         iPinned = aPin;
     }
     

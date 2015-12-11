@@ -19,6 +19,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import javax.swing.JCheckBoxMenuItem;
 
 import javax.swing.SwingUtilities;
 import javax.swing.JPopupMenu;
@@ -379,7 +380,10 @@ class Controller implements ActionListener {
                 iSelected = null;
                 break;
             case KCommandRoiMove: break;
-                
+            
+            case KCommandRoiPin: 
+                iSelected.setPinned(!iSelected.isPinned());
+                break;
             case KCommandRoiDelete: 
                 iControlled.getROIMgr().deleteOverlay(iSelected); 
                 iSelected = null; 
@@ -490,15 +494,18 @@ class Controller implements ActionListener {
             mnu.add(mi11);
         }
         
+        /*
         if (iSelected.isMovable()) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.MOVE"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiMove); 
             mnu.add(mi);
         }
-        
+        */
         if (iSelected.isPinnable()) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PIN"));
+            JCheckBoxMenuItem mi = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PIN"));
+            //boolean b = iSelected.isPinned();
+            mi.setState(iSelected.isPinned());
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiPin); 
             mnu.add(mi);
