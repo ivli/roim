@@ -124,12 +124,7 @@ public class Annotation extends Overlay implements ROIChangeListener {
         aRoi.addROIChangeListener(this);
     }
     
-    @Override
-    void move(double adX, double adY) {
-       ((Rectangle2D.Double)iShape).x += adX;
-       ((Rectangle2D.Double)iShape).y += adY;           
-    }
-    
+        
     @Override
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();
@@ -190,11 +185,11 @@ public class Annotation extends Overlay implements ROIChangeListener {
                 final double[] deltas = (double[])anEvt.getExtra();
                 ///logger.info(String.format("%f, %f",deltas[0], deltas[1]));
                 move(deltas[0], deltas[1]);
-                update(anEvt.getROI());
+                update((ROI)anEvt.getROI());
             } break;
             case Changed:   
             default: //fall-through
-                update(anEvt.getROI()); break;
+                update((ROI)anEvt.getROI()); break;
         }        
     }
     

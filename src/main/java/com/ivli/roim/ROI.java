@@ -173,7 +173,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         if (DRAW_PROFILES)
             drawProfiles(aGC, aTrans);
     }
-            
+         
     @Override
     void move(double adX, double adY) {
         //AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
@@ -191,7 +191,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
             notifyROIChanged(ROIChangeEvent.CHG.Moved, new double[]{adX, adY});        
         }
     }  
-            
+       
     private int calculateAreaInPixels() {
         final java.awt.Rectangle bnds = getShape().getBounds();
         int AreaInPixels = 0;

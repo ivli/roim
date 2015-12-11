@@ -48,15 +48,5 @@ public class OverlayPicture extends Overlay {
      
     void update(){
     }
-     
-    void move(double adX, double adY) {
          
-        AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
-        iShape = trans.createTransformedShape(iShape);
-        
-       // AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
-       // iShape = trans.createTransformedShape(iShape);
-        //iOrigin.x += adX;
-        //iOrigin.y += adY;
-    }
 }

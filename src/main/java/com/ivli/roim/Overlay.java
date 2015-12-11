@@ -100,9 +100,20 @@ public abstract class Overlay implements java.io.Serializable {
     abstract void paint(Graphics2D aGC, AffineTransform aTrans); 
    
     abstract void update();    
-    
-    
-    abstract void move(double adX, double adY);     
+       
+    void move(double adX, double adY) {
+        if (!isPinned()) {          
+            Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);        
+            Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());
+
+            if (!bounds.contains(temp.getBounds())) {
+                //logger.info("!!movement out of range");
+            } else {       
+                Shape old = iShape;
+                iShape = temp;                
+            }
+        }
+    }  
     
     interface IFlip {
         public void flip(boolean aVertical);
@@ -115,9 +126,8 @@ public abstract class Overlay implements java.io.Serializable {
     interface IIsoLevel {
         public void isolevel(int aTolerance);
     }
-    
-    
-     ///todo: following it might make sense to keep the list of observers here
+        
+    ///todo: following it might make sense to keep the list of observers here
     public void addROIChangeListener(ROIChangeListener aL) {
         //iMgr.addROIChangeListener(aL);
         iList.add(ROIChangeListener.class, aL);

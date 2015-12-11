@@ -180,6 +180,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         } 
         */
         
+        //aR.notifyROIChanged(ROIChangeEvent.CHG.Cleared, aR); // abit hacky but...
         notifyROIChanged(aR, ROIChangeEvent.CHG.Cleared, null);
         
         return iOverlays.remove(aR);   

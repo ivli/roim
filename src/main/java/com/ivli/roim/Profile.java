@@ -55,6 +55,7 @@ public class Profile extends Overlay {
         makeHistogram();        
     }    
         
+    
     @Override
     public void move(double adX, double adY) {             
         final Rectangle2D r = iShape.getBounds2D();
