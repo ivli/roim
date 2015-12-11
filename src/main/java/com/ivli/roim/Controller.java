@@ -300,6 +300,7 @@ class Controller implements ActionListener {
     private static final String KCommandRoiCreate = "COMMAND_ROI_OPERATIONS_CREATE"; // NOI18N
     private static final String KCommandRoiDelete = "COMMAND_ROI_OPERATIONS_DELETE"; // NOI18N
     private static final String KCommandRoiMove   = "COMMAND_ROI_OPERATIONS_MOVE"; // NOI18N
+    private static final String KCommandRoiPin  = "COMMAND_ROI_OPERATIONS_PIN"; // NOI18N
     private static final String KCommandRoiClone  = "COMMAND_ROI_OPERATIONS_CLONE"; // NOI18N
     private static final String KCommandRoiDeleteAll = "COMMAND_ROI_OPERATIONS_DELETE_ALL"; // NOI18N
     private static final String KCommandRoiFlipVert  = "COMMAND_ROI_OPERATIONS_FLIP_V"; // NOI18N
@@ -493,6 +494,13 @@ class Controller implements ActionListener {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.MOVE"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiMove); 
+            mnu.add(mi);
+        }
+        
+        if (iSelected.isPinnable()) {
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PIN"));
+            mi.addActionListener(this);
+            mi.setActionCommand(KCommandRoiPin); 
             mnu.add(mi);
         }
         

@@ -85,6 +85,7 @@ public class ChartView extends javax.swing.JPanel
                 int ndx = col.indexOf(aE.getROI().getName());
                 col.removeSeries(ndx);                
             } break;    
+            case Moved: //fall-through
             case Changed: {
                 int ndx = col.indexOf(aE.getROI().getName());               
                 Series c = aE.getROI().getSeries(Measurement.DENSITY);

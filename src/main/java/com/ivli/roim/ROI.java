@@ -1,11 +1,7 @@
 
 package com.ivli.roim;
 
-import com.ivli.roim.core.Measurement;
-import com.ivli.roim.core.Series;
-import com.ivli.roim.events.ROIChangeEvent;
-//import com.ivli.roim.events.EStateChanged;
-import java.util.HashSet;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -16,6 +12,10 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.Raster;
 
+import com.ivli.roim.core.Measurement;
+import com.ivli.roim.core.Series;
+import com.ivli.roim.events.ROIChangeEvent;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,7 +23,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     private Color iColor;          
     private int iAreaInPixels;        
     private SeriesCollection iSeries;        
-    private HashSet<Overlay> iAnnos; 
+    //private HashSet<Overlay> iAnnos; 
     private final static boolean DRAW_PROFILES = false;
     
     @Override
@@ -45,7 +45,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iAreaInPixels = aR.iAreaInPixels;
         iSeries = aR.iSeries;
     }
-    */
+    
     
     void register(Overlay aO) {
         if (null == iAnnos)
@@ -59,7 +59,8 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         }
         return false;
     }   
-           
+    */
+    
     public int getAreaInPixels() {
         return iAreaInPixels;
     }
@@ -174,28 +175,20 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }
             
     @Override
-    protected void move(double adX, double adY) {
+    void move(double adX, double adY) {
         //AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
         Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);        
         Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());
         
         if (!bounds.contains(temp.getBounds())) {
             logger.info("!!movement out of range");
-        } else {
-       
-            iShape  = temp;    
-            
-
-            if (null != iAnnos) {
-                iAnnos.stream().forEach((o) -> {
-                    o.move(adX, adY);
-                });
+        } else {       
+            Shape old = iShape;
+            iShape = temp;    
            
-            }
-            
             update();
             
-            notifyROIChanged(ROIChangeEvent.CHG.Changed, null);        
+            notifyROIChanged(ROIChangeEvent.CHG.Moved, new double[]{adX, adY});        
         }
     }  
             
@@ -211,16 +204,10 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         return AreaInPixels;
     }                 
         
-     @Override
-    void update() {        
-        
-        iSeries = CurveExtractor.extract(this.getManager().getImage(), this, getManager().getOffsetVector());    
-        
-        if (null != iAnnos) {
-            iAnnos.stream().forEach((o) -> {
-                o.update();
-            });
-        }         
+    @Override
+    void update() {    
+        iAreaInPixels = calculateAreaInPixels();
+        iSeries = CurveExtractor.extract(this.getManager().getImage(), this, getManager().getOffsetVector());           
     }
     
     @Override

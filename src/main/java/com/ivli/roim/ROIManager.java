@@ -48,7 +48,7 @@ import com.ivli.roim.core.FrameOffsetVector;
  */
 public class ROIManager implements ROIChangeListener, java.io.Serializable {  
     private static final long serialVersionUID = 42L;    
-    private static final boolean ROI_HAS_ANNOTATIONS  = false;
+    private static final boolean ROI_HAS_ANNOTATIONS  = true;
     private static final boolean CLONE_INHERIT_COLOUR = false;
 
     transient private final ImageView iView;     
@@ -169,7 +169,8 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         return null;
     }
         
-    boolean deleteRoi(ROI aR) {              
+    boolean deleteRoi(ROI aR) {  
+        /*
         final Iterator<Overlay> it = iOverlays.iterator();
 
         while (it.hasNext()) {  //clean annotations out - silly but workin'
@@ -177,6 +178,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
             if (o instanceof Annotation && aR.remove(o))               
                 it.remove();
         } 
+        */
         
         notifyROIChanged(aR, ROIChangeEvent.CHG.Cleared, null);
         

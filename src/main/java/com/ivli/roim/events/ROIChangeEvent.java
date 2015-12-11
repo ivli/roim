@@ -32,6 +32,7 @@ public final class ROIChangeEvent extends java.util.EventObject {
         Created,  
         Cleared, 
         Changed, 
+        Moved,
         ChangedColor,
         ChangedName,
         Emptied   

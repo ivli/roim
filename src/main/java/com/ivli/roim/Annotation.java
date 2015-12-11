@@ -1,63 +1,164 @@
 
 package com.ivli.roim;
 
-import com.ivli.roim.events.ROIChangeEvent;
-import com.ivli.roim.events.ROIChangeListener;
+
 import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
+import com.ivli.roim.events.ROIChangeEvent;
+import com.ivli.roim.events.ROIChangeListener;
 
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  *
  * @author likhachev
  */
-public class Annotation extends Overlay implements ROIChangeListener {
-    
-    protected static final int ANNOTATION_DISPLAY_AREA_PIXELS = 0x1;
-    protected static final int ANNOTATION_DISPLAY_AREA_UNITS  = 0x2;
-    protected static final int ANNOTATION_DISPLAY_CNTS_MIN    = 0x4;
-    protected static final int ANNOTATION_DISPLAY_CNTS_MAX    = 0x8;
-    protected static final int ANNOTATION_DISPLAY_CNTS_IDEN   = 0x10;
-    protected static final int ANNOTATION_DISPLAY_POS_PIXELS  = 0x20;
-    protected static final int ANNOTATION_DISPLAY_POS_LIN     = 0x40;
-    protected static final int ANNOTATION_DISPLAY_USER_TEXT   = 0x80;
+public class Annotation extends Overlay implements ROIChangeListener {   
+    static final int ANNOTATION_ROI_NAME = 0x1;
+    static final int ANNOTATION_AREA_IN_PIXELS = ANNOTATION_ROI_NAME << 1;
+    static final int ANNOTATION_DENSITY = ANNOTATION_AREA_IN_PIXELS << 1;
+    static final int ANNOTATION_AREA_MILLIS = ANNOTATION_DENSITY << 1;
+    static final int ANNOTATION_MIN_PIXEL = ANNOTATION_AREA_MILLIS << 1;    
+    static final int ANNOTATION_MAX_PIXEL = ANNOTATION_MIN_PIXEL << 1;   
+    static final int ANNOTATION_AVERAGE_PIXEL_VALUE = ANNOTATION_MAX_PIXEL << 1;
+    static final int ANNOTATION_DISPLAY_USER_TEXT = ANNOTATION_AVERAGE_PIXEL_VALUE << 1;
       
-    private static final int iFields = ANNOTATION_DISPLAY_AREA_PIXELS|ANNOTATION_DISPLAY_CNTS_IDEN;
+    static final int FIELDS_TO_DISPLAY = ANNOTATION_AREA_IN_PIXELS|ANNOTATION_DENSITY;
     
-    private final ROI iRoi; //eah, where're my favorite c++'s constant referencies
-    private String iText; 
+    //private final ROI iRoi; //eah, where're my favorite c++'s constant referencies
+    //private String iText; 
+    private Color iColor;
     
+    
+    class Field<T> {
+        final String iName;
+        final String iUnits;
+        T iValue;
+        
+        Field(String aN, T aV, String aU) {
+            iName  = aN; 
+            iValue = aV; 
+            iUnits = aU;            
+        }
+        
+        String format() {
+            return String.format("%s%s", iValue, iUnits);
+        }
+    };
+           
+    final static int FIELD_ROI_NAME            = 0;
+    final static int FIELD_AREA_IN_PIXELS      = FIELD_ROI_NAME + 1;
+    final static int FIELD_DENSITY             = FIELD_AREA_IN_PIXELS + 1;
+    final static int FIELD_AREA_IN_MILLIS      = FIELD_DENSITY + 1;
+    final static int FIELD_MIN_PIXEL_VALUE     = FIELD_AREA_IN_MILLIS + 1;
+    final static int FIELD_MAX_PIXEL_VALUE     = FIELD_MIN_PIXEL_VALUE + 1;
+    final static int FIELD_AVERAGE_PIXEL_VALUE = FIELD_MAX_PIXEL_VALUE + 1;
+    final static int FIELD_USER_TEXT           = FIELD_AVERAGE_PIXEL_VALUE + 1;
+    
+    Field[] iFields = new Field[] {
+        new Field<>("FIELD.ROI_NAME", 
+                    new String() , 
+                    "UNITS.ROI_NAME"
+                   ),  
+
+        new Field<>("FIELD.AREA_IN_PIXELS", 
+                    1, 
+                    "UNITS.PIXELS"
+                   ),  
+
+        new Field<>("FIELD.DENSITY", 
+                    1, 
+                    "UNITS.COUNTS"
+                   ),  
+
+        new Field<>("FIELD.AREA_IN_MILLIS", 
+                    new Integer[]{0, 0} , 
+                    "UNITS.MILLIMETERS"
+                   ),  
+                
+        new Field<>("FIELD.MIN_PIXEL_VALUE", 
+                    0, 
+                    "UNITS.COUNTS"
+                   ), 
+        
+        new Field<>("FIELD.MAX_PIXEL_VALUE", 
+                    0, 
+                    "UNITS.COUNTS"
+                   ),  
+        
+        new Field<>("FIELD.AVERAGE_PIXEL_VALUE", 
+                    0, 
+                    "UNITS.COUNTS"
+                   ), 
+        
+        new Field<>("FIELD.USER_TEXT", 
+                    new String(), 
+                    "UNITS.USER_TEXT"
+                   )      
+    };     
+    
+    boolean iRecalcRect = true;
+            
     @Override
-    int getCaps(){return MOVEABLE | SELECTABLE;}
+    int getCaps(){return HASMENU|MOVEABLE|SELECTABLE|PINNABLE;}
    
     Annotation(ROI aRoi) {
-        super("", new Rectangle2D.Double(), null);
-        iRoi = aRoi;        
+        super("", null, aRoi.getManager());
+                
+        iColor = aRoi.getColor();
         
-        ((Rectangle2D.Double)iShape).setRect(aRoi.getShape().getBounds2D());
+        update(aRoi);
+
+        Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());
         
-        aRoi.register(this);
+        
+        iShape = new Rectangle2D.Double(aRoi.getShape().getBounds2D().getX(), 
+                                        aRoi.getShape().getBounds2D().getY() - bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX(), 
+                                        bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
+                                        bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());
+                
+        aRoi.addROIChangeListener(this);
     }
     
     @Override
     void move(double adX, double adY) {
        ((Rectangle2D.Double)iShape).x += adX;
-       ((Rectangle2D.Double)iShape).y += adY;   
+       ((Rectangle2D.Double)iShape).y += adY;           
     }
     
     @Override
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();
+     
+        aGC.setColor(iColor);
+    
+        /*
+        final Rectangle2D textRect = aGC.getFontMetrics().getStringBounds(iAnnotation, aGC);
         
-        //ROIStats s = iRoi.getStats();
-        String out = new String();
+        Rectangle2D newRect = new Rectangle2D.Double(Math.max(temp.getX() , 0), 
+                                                     Math.max(temp.getY() + textRect.getHeight(), 0), 
+                                                     textRect.getWidth(), textRect.getHeight());
+        */
         
-        aGC.setColor(iRoi.getColor());
-        
-        if(0 != (iFields & ANNOTATION_DISPLAY_AREA_PIXELS))
-            out += String.format("pix=%d", iRoi.getAreaInPixels());
-        //if(0 != (iFields & ANNOTATION_DISPLAY_AREA_PIXELS))
-        //    out += String.format("pixels=%.1f", s.iBounds);
+        aGC.drawString(iAnnotation, (int)temp.getX(), (int)(temp.getY() + temp.getHeight() - 4));       
+        aGC.draw(temp);
+       
+       // Rectangle2D rec = (getManager().getView().screenToVirtual().createTransformedShape(newRect)).getBounds2D();              
+    }
+    
+    
+    String iAnnotation = new String();
+    
+    public void update() {
+        iAnnotation = "";
+        if(0 != (FIELDS_TO_DISPLAY & ANNOTATION_DENSITY))
+            iAnnotation += iFields[FIELD_DENSITY].format();
+        if(0 != (FIELDS_TO_DISPLAY & ANNOTATION_AREA_IN_PIXELS))
+            iAnnotation += iFields[FIELD_AREA_IN_PIXELS].format();
         /*
         if(0 != (iFields & ANNOTATION_DISPLAY_AREA_UNITS))
             out += String.format(", area=%.1f", s.getArea());
@@ -70,16 +171,33 @@ public class Annotation extends Overlay implements ROIChangeListener {
         out += "."; 
         
         */
-        
-        aGC.drawString(out, (int)temp.getX(), (int)temp.getY());       
     }
     
-    public void update() {
-    
+    private void update(ROI aR) {
+        iFields[FIELD_ROI_NAME].iValue = aR.getName();
+        iFields[FIELD_DENSITY].iValue  = aR.getDensity();
+        iFields[FIELD_AREA_IN_PIXELS].iValue = aR.getAreaInPixels();    
+        update();
     }
     
     @Override
-    public void ROIChanged(ROIChangeEvent anEvt) {        
-        update();
+    public void ROIChanged(ROIChangeEvent anEvt) {       
+        switch (anEvt.getChange()) {
+            case Cleared: //commit suicide 
+                getManager().deleteOverlay(this);
+                break;
+            case Moved: {//if not pinned move the same dX and dY
+                final double[] deltas = (double[])anEvt.getExtra();
+                ///logger.info(String.format("%f, %f",deltas[0], deltas[1]));
+                move(deltas[0], deltas[1]);
+                update(anEvt.getROI());
+            } break;
+            case Changed:   
+            default: //fall-through
+                update(anEvt.getROI()); break;
+        }        
     }
+    
+    
+     private static final Logger logger = LogManager.getLogger(Annotation.class);
 }

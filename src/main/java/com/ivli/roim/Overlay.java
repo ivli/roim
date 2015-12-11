@@ -20,40 +20,38 @@ import javax.swing.event.EventListenerList;
 public abstract class Overlay implements java.io.Serializable {  
     private static final long serialVersionUID = 42L;
     
-    protected static final int SELECTABLE = 0x1;
-    protected static final int MOVEABLE   = 0x2;
-    protected static final int PERMANENT  = 0x4;
-    protected static final int CLONEABLE  = 0x8;
-    protected static final int CANFLIP    = 0x10;
-    protected static final int CANROTATE  = 0x20;
-    protected static final int RESIZABLE  = 0x40;
-    protected static final int HASMENU    = 0x100;    
+    static final int SELECTABLE = 0x1;
+    static final int MOVEABLE   = SELECTABLE << 0x1;
+    static final int PERMANENT  = MOVEABLE  << 0x1;
+    static final int CLONEABLE  = PERMANENT << 0x1;
+    static final int CANFLIP    = CLONEABLE << 0x1;
+    static final int CANROTATE  = CANFLIP   << 0x1;
+    static final int RESIZABLE  = CANROTATE << 0x1;
+    static final int PINNABLE   = RESIZABLE << 0x1;
+    static final int HASMENU    = PINNABLE  << 0x1;   
     
     
     transient protected final ROIManager iMgr; 
     
     protected Shape  iShape;
     protected String iName;
+    protected boolean iPinned = false;
     
-    private   EventListenerList iList;    
+    private EventListenerList iList;    
     
     protected Overlay(String aName, Shape aShape, ROIManager aMgr) {
-        iMgr = aMgr;
+        iMgr   = aMgr;
         iShape = aShape; 
         
         if(null != aName) 
             iName = aName; 
         else
             iName = new String();
-        
-        patchName();
-        
-        iList = new EventListenerList();
-         
-       // iId = staticId++;
+              
+        iList = new EventListenerList();   
     }
     
-    public ROIManager getManager() {
+    public final ROIManager getManager() {
         return iMgr;
     }    
     
@@ -71,10 +69,19 @@ public abstract class Overlay implements java.io.Serializable {
         iName = aName;
     }
     
+    public void pin(boolean aPin) {
+        iPinned = aPin;
+    }
+    
+    public boolean isPinned() {
+        return iPinned;
+    }
+    
     boolean isSelectable() {return 0 != (getCaps() & SELECTABLE);}
     boolean isMovable() {return 0 != (getCaps() & MOVEABLE);}
     boolean isPermanent() {return 0 != (getCaps() & PERMANENT);}
     boolean isCloneable() {return 0 != (getCaps() & CLONEABLE);}
+    boolean isPinnable() {return 0 != (getCaps() & PINNABLE);}
     boolean hasMenu() {return 0 != (getCaps() & HASMENU);}
     boolean canFlip() {return 0 != (getCaps() & CANFLIP);} 
     boolean canRotate() {return 0 != (getCaps() & CANROTATE);} 
@@ -82,22 +89,20 @@ public abstract class Overlay implements java.io.Serializable {
     Shape getShape() {
         return iShape;
     }   
-    
-    private void patchName() { 
-        if(iName.isEmpty()) {
-            ///StringBuilder sb = new StringBuilder();
-            iName = String.format("%d, %d", iShape.getBounds().x, iShape.getBounds().y); //NOI18N
-        }
+  /*
+    public final void move(double adX, double adY) {
+        if (!isPinned())
+            doMove(adX, adY);
     }
-    
+  */  
     abstract int  getCaps(); 
     
     abstract void paint(Graphics2D aGC, AffineTransform aTrans); 
    
     abstract void update();    
-    abstract void move(double adX, double adY); 
-       
-   
+    
+    
+    abstract void move(double adX, double adY);     
     
     interface IFlip {
         public void flip(boolean aVertical);
