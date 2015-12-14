@@ -29,11 +29,12 @@ public class Annotation extends Overlay implements ROIChangeListener {
       
     static final int FIELDS_TO_DISPLAY = ANNOTATION_AREA_IN_PIXELS|ANNOTATION_DENSITY;
     
-    //private final ROI iRoi; //eah, where're my favorite c++'s constant referencies
+    final ROI iRoi; //eah, where're my favorite c++'s constant referencies
     //private String iText; 
-    private Color iColor;
-    
-    
+    //private Color iColor;
+  
+    private String iAnnotation;// = new String();
+           
     class Field<T> {
         final String iName;
         final String iUnits;
@@ -109,7 +110,7 @@ public class Annotation extends Overlay implements ROIChangeListener {
     Annotation(ROI aRoi) {
         super("", null, aRoi.getManager());
                 
-        iColor = aRoi.getColor();
+        iRoi = aRoi;
         
         update(aRoi);
 
@@ -127,29 +128,15 @@ public class Annotation extends Overlay implements ROIChangeListener {
         
     @Override
     void paint(Graphics2D aGC, AffineTransform aTrans) {
-        Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();
-     
-        aGC.setColor(iColor);
-    
-        /*
-        final Rectangle2D textRect = aGC.getFontMetrics().getStringBounds(iAnnotation, aGC);
-        
-        Rectangle2D newRect = new Rectangle2D.Double(Math.max(temp.getX() , 0), 
-                                                     Math.max(temp.getY() + textRect.getHeight(), 0), 
-                                                     textRect.getWidth(), textRect.getHeight());
-        */
-        
+        final Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();     
+        aGC.setColor(iRoi.getColor());
+            
         aGC.drawString(iAnnotation, (int)temp.getX(), (int)(temp.getY() + temp.getHeight() - 4));       
-        aGC.draw(temp);
-       
-       // Rectangle2D rec = (getManager().getView().screenToVirtual().createTransformedShape(newRect)).getBounds2D();              
+        aGC.draw(temp);                 
     }
-    
-    
-    String iAnnotation = new String();
-    
+           
     public void update() {
-        iAnnotation = "";
+        iAnnotation = new String();
         if(0 != (FIELDS_TO_DISPLAY & ANNOTATION_DENSITY))
             iAnnotation += iFields[FIELD_DENSITY].format();
         if(0 != (FIELDS_TO_DISPLAY & ANNOTATION_AREA_IN_PIXELS))
@@ -177,8 +164,11 @@ public class Annotation extends Overlay implements ROIChangeListener {
     
     @Override
     public void ROIChanged(ROIChangeEvent anEvt) {       
+        //if (anEvt.getROI() != iRoi) 
+        //    return; //we don't care of other ROIs
         switch (anEvt.getChange()) {
-            case Cleared: //commit suicide 
+            case Cleared: 
+                //commit suicide 
                 getManager().deleteOverlay(this);
                 break;
             case Moved: {//if not pinned move the same dX and dY

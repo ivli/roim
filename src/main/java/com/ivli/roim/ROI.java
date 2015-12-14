@@ -20,11 +20,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {          
+    private final static boolean DRAW_PROFILES = false;
+    
     private Color iColor;          
     private int iAreaInPixels;        
-    private SeriesCollection iSeries;        
-    //private HashSet<Overlay> iAnnos; 
-    private final static boolean DRAW_PROFILES = false;
+    private SeriesCollection iSeries;           
+    
     
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU;}
@@ -37,30 +38,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iAreaInPixels = calculateAreaInPixels();
         iSeries = CurveExtractor.extract(getManager().getImage(), this, getManager().getOffsetVector());
     }
-    
-    /*
-    ROI(ROI aR) {
-        super(aR.iShape, aR.getManager(), aR.getName());          
-        iColor = aR.getColor();         
-        iAreaInPixels = aR.iAreaInPixels;
-        iSeries = aR.iSeries;
-    }
-    
-    
-    void register(Overlay aO) {
-        if (null == iAnnos)
-            iAnnos = new HashSet();
-        iAnnos.add(aO);
-    }
-    
-    boolean remove(Overlay aO) {
-        if (null != iAnnos) {
-            return iAnnos.remove(aO);
-        }
-        return false;
-    }   
-    */
-    
+        
     public int getAreaInPixels() {
         return iAreaInPixels;
     }
@@ -97,8 +75,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         final int profileX[] = new int[bounds.width];;
         final int profileY[] =new int[bounds.height];;
         
-        getManager().getView().getImage().extract((Raster aR) -> {
-            
+        getManager().getView().getImage().extract((Raster aR) -> {            
 
             double temp[] = new double [aR.getNumBands()];
             

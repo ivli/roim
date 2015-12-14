@@ -33,7 +33,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import javax.swing.event.EventListenerList;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -131,7 +130,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
   
         iOverlays.add(newRoi);
         
-        if (ROI_HAS_ANNOTATIONS)
+        if (ROI_HAS_ANNOTATIONS) 
             iOverlays.add(new Annotation(newRoi));      
        
         newRoi.addROIChangeListener(this);
@@ -145,8 +144,11 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
                
         iOverlays.add(newRoi); 
         
-        if (ROI_HAS_ANNOTATIONS)
-            iOverlays.add(new Annotation(newRoi));
+        if (ROI_HAS_ANNOTATIONS) {
+            Annotation anno = new Annotation(newRoi);
+            iOverlays.add(anno);
+            //addROIChangeListener(anno);
+        }
         
         newRoi.addROIChangeListener(this);
         
@@ -170,17 +172,15 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
         
     boolean deleteRoi(ROI aR) {  
-        /*
+       
         final Iterator<Overlay> it = iOverlays.iterator();
 
         while (it.hasNext()) {  //clean annotations out - silly but workin'
             final Overlay o = it.next();
-            if (o instanceof Annotation && aR.remove(o))               
+            if (o instanceof Annotation && ((Annotation)o).iRoi == aR)               
                 it.remove();
         } 
-        */
-        
-        //aR.notifyROIChanged(ROIChangeEvent.CHG.Cleared, aR); // abit hacky but...
+                
         notifyROIChanged(aR, ROIChangeEvent.CHG.Cleared, null);
         
         return iOverlays.remove(aR);   
