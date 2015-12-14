@@ -71,7 +71,7 @@ class Controller implements ActionListener {
         boolean first = true;
         
         RectangularRoiCreator(RectangularShape aShape) {
-            super(-1,-1); 
+            super(-1, -1); 
             iShape = aShape;
         }
 
@@ -199,27 +199,29 @@ class Controller implements ActionListener {
                 iAction.action(e.getX(), e.getY());
         }
 
-
         public void mousePressed(MouseEvent e) {
             if (null != iAction) {
                 iAction.action(e.getX(), e.getY());
              //   return;
             }
-            else 
-                if (null != (iSelected = findActionTarget(e.getPoint()) )) {  // move ROI
-                    //iControlled.deleteRoi(iSelected);
+            else if (null != (iSelected = findActionTarget(e.getPoint()) )) { // Object specific handling                    
                     iAction = new BaseActionItem(e.getX(), e.getY()) {
                         protected void DoAction(int aX, int aY) {
-
                             iControlled.getROIMgr().moveRoi(iSelected, aX-iX, aY-iY);
                             iControlled.repaint();//old.createIntersection(iSelected.iShape.getBounds2D())); 
                         }    
-                        protected boolean DoRelease(int aX, int aY) {
-                           // iControlled.addRoi(iSelected);
+                        protected boolean DoRelease(int aX, int aY) {                           
                             iSelected = null;
                             iControlled.repaint();
                             return false;
-                          }  
+                        }  
+                        protected boolean DoWheel(int aX) {
+                            if (iSelected instanceof Overlay.IRotate) {
+                                ((Overlay.IRotate)iSelected).rotate(aX);
+                                iControlled.repaint();
+                            }
+                            return true;
+                        }
                     };
             } 
             else if (SwingUtilities.isLeftMouseButton(e)) {
@@ -228,8 +230,7 @@ class Controller implements ActionListener {
             else if (SwingUtilities.isMiddleMouseButton(e)) {
                 iAction = NewAction(iMiddleAction, e.getX(), e.getY());
             }
-            else if (SwingUtilities.isRightMouseButton(e)) {
-                //iRight.Activate(e.getX(), e.getY());
+            else if (SwingUtilities.isRightMouseButton(e)) {                
                 iAction = NewAction(iRightAction, e.getX(), e.getY());
             }
         }
@@ -239,32 +240,24 @@ class Controller implements ActionListener {
         }
 
         public void mouseMoved(MouseEvent e) {   
+            final Overlay r = findActionTarget(e.getPoint());
 
-            Overlay r = findActionTarget(e.getPoint());
-
-            if (null != r ) { // TODO: cleave in two
-                //if (r instanceof ROI)
-               //     iSelected = r;//(ROI)r;
+            if (null != r ) { 
                 if (r.isMovable())            
-                    iControlled.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-                // iSelected = tmp;
-            } else {
-               // iSelected = null;
+                    iControlled.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));                
+            } else {               
                 iControlled.setCursor(Cursor.getDefaultCursor());
-            }        
-            ///logger.info ("-->mouse position" + e.getPoint());
+            }                
         }
     }
     
     class KeyHandler implements KeyListener {
         @Override
-        public void keyPressed(KeyEvent e) {
-        //  System.out.print("\n\t keyPressed");
-            if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-
-            }
-            else if (e.getKeyCode() == KeyEvent.VK_ALT) {
-
+        public void keyPressed(KeyEvent e) {        
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_SHIFT:
+                case KeyEvent.VK_ALT:
+                default: break;
             }
         }
 
@@ -349,11 +342,11 @@ class Controller implements ActionListener {
                 
             case KCommandRoiCreateOval:
                 iAction = new RectangularRoiCreator(new Ellipse2D.Double());
-            break;
+                break;
                 
             case KCommandRoiCreateRect: 
                 iAction = new RectangularRoiCreator(new Rectangle2D.Double());
-            break;
+                break;
                 
             case KCommandRoiCreateProfile: //
                 iAction = new RectangularRoiCreator(new Rectangle2D.Double()) {
@@ -363,17 +356,28 @@ class Controller implements ActionListener {
                         iControlled.repaint();
                         return false;
                     }
-                    public void DoPaint(Graphics2D gc) {
-                        if (null != iShape) {                         
-                           final java.awt.Rectangle cr = gc.getClipBounds();
+                    public void DoPaint(Graphics2D gc) {                       
                            final java.awt.Rectangle bn = iShape.getBounds();                           
-                           gc.drawLine(cr.x, bn.y, cr.x+cr.width, bn.y);                           
-                           gc.drawLine(cr.x, bn.y+bn.height, cr.x+cr.width, bn.y+bn.height);
-                        }
+                           gc.drawLine(0, bn.y, iControlled.getWidth(), bn.y);                           
+                           gc.drawLine(0, bn.y+bn.height, iControlled.getWidth(), bn.y + bn.height);                       
+                    }
+                }; break;
+            
+                
+            case KCommandRoiCreateRuler:
+                iAction = new RectangularRoiCreator(new Rectangle2D.Double()) {
+                    
+                    public boolean DoRelease(int aX, int aY) {
+                        iControlled.getROIMgr().createRuler(iShape);
+                        iControlled.repaint();
+                        return false;
+                    }
+                    public void DoPaint(Graphics2D gc) {                       
+                        final java.awt.Rectangle bn = iShape.getBounds();                           
+                        gc.drawLine(bn.x, bn.y, bn.x + bn.width, bn.y + bn.height);                                                                           
                     }
                 };
-            break;
-                
+                break;
             case KCommandRoiClone:   
                 iControlled.getROIMgr().cloneRoi((ROI)iSelected);
                 iControlled.repaint();

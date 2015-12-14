@@ -207,16 +207,12 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }
     
     @Override
-    public void rotate(int aV) {
+    public void rotate(double aV) {        
         final Rectangle rect = getShape().getBounds();
-        AffineTransform tx = new AffineTransform();
-        
-        tx.rotate(Math.toRadians(aV), rect.getX() + rect.width/2, rect.getY() + rect.height/2);
-              
+        AffineTransform tx = new AffineTransform();        
+        tx.rotate(Math.toRadians(aV), rect.getX() + rect.width/2, rect.getY() + rect.height/2);              
         iShape = tx.createTransformedShape(iShape);
-     }
-  
-    
+    }      
     
     byte [] treshold(int aValue, int [] aData, int aW, int aH) {
         

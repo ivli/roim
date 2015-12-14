@@ -53,8 +53,7 @@ public class Profile extends Overlay {
     @Override
     public void update() {
         makeHistogram();        
-    }    
-        
+    }            
     
     @Override
     public void move(double adX, double adY) {             
@@ -70,8 +69,7 @@ public class Profile extends Overlay {
             iShape = temp;
             update();
         }
-    } 
- 
+    }  
     
     private void makeHistogram() {
         final Rectangle bounds = iShape.getBounds();
@@ -97,9 +95,9 @@ public class Profile extends Overlay {
             max = Math.max(max, d);
         }
         
-        double maxV = getManager().getView().getImage().getMax();//  getModel().getMax();
+        double maxV = getManager().getView().getImage().getMax();
         double minV = getManager().getView().getImage().getMin();
-        final double range =  maxV - minV;//  max - min;
+        final double range =  maxV - minV; 
         
         Rectangle bounds = new Rectangle(0, 0, getManager().getWidth(), getManager().getHeight());
                        
@@ -117,7 +115,7 @@ public class Profile extends Overlay {
         aGC.setXORMode(Color.WHITE);     
         
         aGC.draw(aTrans.createTransformedShape(s));
-        
+                
         aGC.setPaintMode(); //turn XOR mode off
     }
     

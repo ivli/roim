@@ -123,6 +123,14 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         newRoi.addROIChangeListener(this);
     }
             
+    public void createRuler(Shape aS) {
+        Rectangle r = iView.screenToVirtual().createTransformedShape(aS).getBounds();
+               
+        Ruler newRoi = new Ruler(r, this);     
+        iOverlays.add(newRoi);   
+        newRoi.addROIChangeListener(this);
+    }
+    
     public void createRoiFromShape(Shape aS) {                 
         final Shape r = iView.screenToVirtual().createTransformedShape(aS);
         
@@ -163,10 +171,9 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     public Overlay findOverlay(Point aP) {      
         final Rectangle temp = iView.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();
                 
-        for (Overlay r : iOverlays) {
-           // logger.info("--! evaluate overlay " + r.getShape().toString());
-            if (r.isSelectable() && r.getShape().intersects(temp)) 
-                return r;                                   
+        for (Overlay o : iOverlays) {           
+            if (o.isSelectable() && o.intersects(temp)) 
+                return o;                                   
         }
         return null;
     }
