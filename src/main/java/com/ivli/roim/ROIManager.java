@@ -29,7 +29,9 @@ import java.io.FileOutputStream;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
+import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import javax.swing.event.EventListenerList;
 
@@ -40,6 +42,7 @@ import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.FrameOffsetVector;
+import java.awt.Dimension;
 
 /**
  *
@@ -123,10 +126,17 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         newRoi.addROIChangeListener(this);
     }
             
-    public void createRuler(Shape aS) {
-        Rectangle r = iView.screenToVirtual().createTransformedShape(aS).getBounds();
-               
-        Ruler newRoi = new Ruler(r, this);     
+    public void createRuler(Point aS, Point aF) {
+        Rectangle2D s = new Rectangle2D.Double(aS.x, aS.y, aF.x-aS.x, aF.y-aS.y);
+        
+        Rectangle2D r = iView.screenToVirtual().createTransformedShape(s).getBounds();
+     
+        ///Point2D ep1 =    ;
+        
+        
+        Ruler newRoi = new Ruler(new Point2D.Double(r.getX(), r.getY()), new Point2D.Double(r.getWidth() - r.getX(), r.getHeight() - r.getY()), this);     
+        
+        
         iOverlays.add(newRoi);   
         newRoi.addROIChangeListener(this);
     }

@@ -5,6 +5,8 @@ import com.ivli.roim.core.Window;
 import java.awt.Graphics2D;
 import java.awt.Cursor;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Dimension;
 
 import java.awt.geom.RectangularShape;
 import java.awt.geom.Rectangle2D;
@@ -364,20 +366,34 @@ class Controller implements ActionListener {
                 }; break;
             
                 
-            case KCommandRoiCreateRuler:
-                iAction = new RectangularRoiCreator(new Rectangle2D.Double()) {
+            case KCommandRoiCreateRuler: {
+                iAction = new BaseActionItem(-1, -1) {
+                    //boolean first = true;
+                    Point start =  null;
+                    Point finish = null;
+                    
+                    public void DoAction(int aX, int aY) {
+                        if (start == null && finish == null) {
+                            start = new Point(aX, aY);
+                        } else //if (start != null && finish ==null)
+                            finish = new Point(aX, aY);
+                         
+                        iControlled.repaint();//iPath.getBounds()); 
+                    }
                     
                     public boolean DoRelease(int aX, int aY) {
-                        iControlled.getROIMgr().createRuler(iShape);
+                        iControlled.getROIMgr().createRuler(start, finish);
                         iControlled.repaint();
                         return false;
                     }
-                    public void DoPaint(Graphics2D gc) {                       
-                        final java.awt.Rectangle bn = iShape.getBounds();                           
-                        gc.drawLine(bn.x, bn.y, bn.x + bn.width, bn.y + bn.height);                                                                           
+        
+                    public void DoPaint(Graphics2D gc) {                                              
+                        if (start != null && finish != null)
+                            gc.drawLine(start.x, start.y, finish.x, finish.y);
                     }
+                       
                 };
-                break;
+                } break;
             case KCommandRoiClone:   
                 iControlled.getROIMgr().cloneRoi((ROI)iSelected);
                 iControlled.repaint();
