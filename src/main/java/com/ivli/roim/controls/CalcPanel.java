@@ -175,8 +175,8 @@ public class CalcPanel extends javax.swing.JPanel {
             com.ivli.roim.calc.BinaryOp op = new com.ivli.roim.calc.BinaryOp(new ConcreteOperand(iLhs), new ConcreteOperand(iRhs), (String)jComboBox1.getSelectedItem());
             jTextField2.setText(op.getString() + "=" + op.value().getString());   
             
-            iPanel.getView().getROIMgr().createAnnotation(op);
-            jButton1.enable(true);
+            ///iPanel.getView().getROIMgr().createAnnotation(op);
+            jButton1.setEnabled(true);
         }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
