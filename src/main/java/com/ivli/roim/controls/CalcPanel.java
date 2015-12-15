@@ -26,6 +26,8 @@ import org.apache.logging.log4j.Logger;
 import com.ivli.roim.ImagePanel;
 import com.ivli.roim.ROI;
 import com.ivli.roim.calc.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
@@ -36,7 +38,8 @@ public class CalcPanel extends javax.swing.JPanel {
     private final ROITableModel iLeftModel;
     private final ROITableModel iRightModel;
     
-    com.ivli.roim.ImagePanel iPanel;
+    private final ImagePanel iPanel;    
+    private BinaryOp iOp;
     /**
      * Creates new form CalcPanel
      */
@@ -54,8 +57,36 @@ public class CalcPanel extends javax.swing.JPanel {
                 
         jTable2.removeColumn(jTable2.getColumnModel().getColumn(3));
         jTable2.removeColumn(jTable2.getColumnModel().getColumn(2));
+                
+        jTable1.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            ///iPanel.getView().getROIMgr().createAnnotation(op);
+            jButton1.setEnabled(rebuildOp());    
+   
+        }); 
+        
+        jTable2.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            jButton1.setEnabled(rebuildOp());
+        }); 
+        
     }
 
+    private boolean rebuildOp() {
+        if (jTable1.getSelectedRow() < 0 || jTable2.getSelectedRow() < 0) {
+            jTextField2.setText("CALC.SELECT_TWO_ROIS");
+            return false;
+        } else {
+            final ROI iLhs = (ROI)iLeftModel.getValueAt(jTable1.getSelectedRow(), 0);
+            final ROI iRhs = (ROI)iRightModel.getValueAt(jTable2.getSelectedRow(), 0);                
+
+            iOp = new com.ivli.roim.calc.BinaryOp(new ConcreteOperand(iLhs), new ConcreteOperand(iRhs), (String)jComboBox1.getSelectedItem());
+            jTextField2.setText(iOp.getCompleteString());   
+            
+            ///iPanel.getView().getROIMgr().createAnnotation(op);
+            //jButton1.setEnabled(true);
+            return true;
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -165,19 +196,7 @@ public class CalcPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-               
-        if (jTable1.getSelectedRow() < 0 || jTable2.getSelectedRow() < 0) {
-            jTextField2.setText("CALC.SELECT_TWO_ROIS");
-        } else {
-            final ROI iLhs = (ROI)iLeftModel.getValueAt(jTable1.getSelectedRow(), 0);
-            final ROI iRhs = (ROI)iRightModel.getValueAt(jTable2.getSelectedRow(), 0);                
-
-            com.ivli.roim.calc.BinaryOp op = new com.ivli.roim.calc.BinaryOp(new ConcreteOperand(iLhs), new ConcreteOperand(iRhs), (String)jComboBox1.getSelectedItem());
-            jTextField2.setText(op.getString() + "=" + op.value().getString());   
-            
-            ///iPanel.getView().getROIMgr().createAnnotation(op);
-            jButton1.setEnabled(true);
-        }
+        jButton1.setEnabled(rebuildOp());       
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -185,13 +204,13 @@ public class CalcPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        final ROI iLhs = (ROI)iLeftModel.getValueAt(jTable1.getSelectedRow(), 0);
-        final ROI iRhs = (ROI)iRightModel.getValueAt(jTable2.getSelectedRow(), 0);                
+        //final ROI iLhs = (ROI)iLeftModel.getValueAt(jTable1.getSelectedRow(), 0);
+        //final ROI iRhs = (ROI)iRightModel.getValueAt(jTable2.getSelectedRow(), 0);                
 
-        com.ivli.roim.calc.BinaryOp op = new com.ivli.roim.calc.BinaryOp(new ConcreteOperand(iLhs), new ConcreteOperand(iRhs), (String)jComboBox1.getSelectedItem());
-        jTextField2.setText(op.getString() + "=" + op.value().getString());   
+        //BinaryOp op = new BinaryOp(new ConcreteOperand(iLhs), new ConcreteOperand(iRhs), (String)jComboBox1.getSelectedItem());
+        ///jTextField2.setText(op.getString() + "=" + op.value().getString());   
 
-        iPanel.getView().getROIMgr().createAnnotation(op);
+        iPanel.getView().getROIMgr().createAnnotation(iOp);
     }//GEN-LAST:event_jButton1ActionPerformed
     
     
