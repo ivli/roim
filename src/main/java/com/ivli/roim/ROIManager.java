@@ -42,7 +42,7 @@ import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.FrameOffsetVector;
-import java.awt.Dimension;
+import com.ivli.roim.calc.BinaryOp;
 
 /**
  *
@@ -141,6 +141,14 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         newRoi.addROIChangeListener(this);
     }
     
+    public void createAnnotation(BinaryOp anOp) {    
+        iOverlays.add(new ActiveAnnotation(this, anOp));      
+    }
+    
+    public void createAnnotation(ROI aROI) {    
+        iOverlays.add(new Annotation(aROI));      
+    }
+    
     public void createRoiFromShape(Shape aS) {                 
         final Shape r = iView.screenToVirtual().createTransformedShape(aS);
         
@@ -149,7 +157,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         iOverlays.add(newRoi);
         
         if (ROI_HAS_ANNOTATIONS) 
-            iOverlays.add(new Annotation(newRoi));      
+            createAnnotation(newRoi);      
        
         newRoi.addROIChangeListener(this);
         
@@ -158,15 +166,12 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     public void cloneRoi(ROI aR) {       
-        ROI newRoi = new ROI(iUid.getNext(), aR.getShape(), this, CLONE_INHERIT_COLOUR?aR.getColor():null);
+        ROI newRoi = new ROI(iUid.getNext(), aR.getShape(), this, CLONE_INHERIT_COLOUR ? aR.getColor() : null);
                
         iOverlays.add(newRoi); 
         
-        if (ROI_HAS_ANNOTATIONS) {
-            Annotation anno = new Annotation(newRoi);
-            iOverlays.add(anno);
-            //addROIChangeListener(anno);
-        }
+        if (ROI_HAS_ANNOTATIONS) 
+            createAnnotation(newRoi);       
         
         newRoi.addROIChangeListener(this);
         

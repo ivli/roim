@@ -33,16 +33,9 @@ public class ConcreteOperand extends Operand implements  ROIChangeListener, Auto
         
         iRoi.addROIChangeListener(this);
     }
-    
-    /*
-    public Operand(Operand anOp){
-        iRoi = anOp.iRoi;
-        iRoi.addROIChangeListener(this);
-    }
-    */
-    
+       
     protected void calculate() {
-        
+        iValue = iRoi.getDensity();
     }
     
     public void ROIChanged(ROIChangeEvent anEvt) {

@@ -3,8 +3,6 @@ package com.ivli.roim;
 
 
 import java.awt.Graphics2D;
-import java.awt.Color;
-import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import com.ivli.roim.events.ROIChangeEvent;
@@ -29,11 +27,8 @@ public class Annotation extends Overlay implements ROIChangeListener {
       
     static final int FIELDS_TO_DISPLAY = ANNOTATION_AREA_IN_PIXELS|ANNOTATION_DENSITY;
     
-    final ROI iRoi; //eah, where're my favorite c++'s constant referencies
-    //private String iText; 
-    //private Color iColor;
-  
-    private String iAnnotation;// = new String();
+    final   ROI iRoi; 
+    private String iAnnotation;
            
     class Field<T> {
         final String iName;

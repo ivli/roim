@@ -17,10 +17,7 @@
  */
 package com.ivli.roim.controls;
 
-import com.ivli.roim.core.Measurement;
-import com.ivli.roim.core.Series;
-import com.ivli.roim.events.ROIChangeEvent;
-import com.ivli.roim.events.ROIChangeListener;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import org.jfree.chart.ChartPanel;
@@ -32,6 +29,10 @@ import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import com.ivli.roim.core.Measurement;
+import com.ivli.roim.core.Series;
+import com.ivli.roim.events.ROIChangeEvent;
+import com.ivli.roim.events.ROIChangeListener;
 /**
  *
  * @author likhachev
@@ -48,31 +49,23 @@ public class ChartView extends javax.swing.JPanel
         if (null != iPlot) {
             ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries();
         } else {
-            iPlot = new XYPlot();
-            //plot.setDataset(xyc);
+            iPlot = new XYPlot();           
             iPlot.setRenderer(new StandardXYItemRenderer());
             iPlot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_CHART.TIME_SERIES_VALUES")));
-            iPlot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_CHART.ROI_INTDEN_VALUES")));
-           // if(iShowHistogram)
-           //     plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
+            iPlot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_CHART.ROI_INTDEN_VALUES")));           
             iPlot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
             iPlot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
 
-            iJfc = new JFreeChart(iPlot); 
-
-            iChart = new ChartPanel(iJfc);
-            //iChart.setMouseWheelEnabled(true);
-
-            XYSeriesCollection ds = new XYSeriesCollection();
-            iPlot.setDataset(ds);
+            iJfc   = new JFreeChart(iPlot); 
+            iChart = new ChartPanel(iJfc);           
+           
+            iPlot.setDataset(new XYSeriesCollection());
 
             iChart.setPreferredSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
             iChart.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
             setLayout(new BorderLayout()); 
             
-            this.add(iChart);
-            
-            //jPanel3.add(iChart);//, java.awt.BorderLayout.CENTER);              
+            this.add(iChart);            
         }
     }
     
@@ -96,7 +89,7 @@ public class ChartView extends javax.swing.JPanel
                     long dur = aE.getROI().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000;
                     s.add(dur, c.get(n));
                 }
-               } break;
+            } break;
                 
             case Created: {                
                 final XYSeries s = new XYSeries(aE.getROI().getName());
@@ -111,22 +104,24 @@ public class ChartView extends javax.swing.JPanel
                 ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   
                 iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getROI().getName()), aE.getROI().getColor());              
             } break;
+            
             case ChangedColor: {
                 assert (aE.getExtra() instanceof java.awt.Color);
                 final int ndx = col.indexOf(aE.getROI().getName());
                 if (ndx >=0)
                     iPlot.getRenderer().setSeriesPaint(ndx, aE.getROI().getColor());                                 
             } break;
-            case Emptied: {
-                ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); 
-            } break;                
+                        
             case ChangedName: {
                 assert (aE.getExtra() instanceof String);
                 final int ndx = col.indexOf((String)aE.getExtra());  
                 XYSeries s = col.getSeries(ndx); 
                 s.setKey(aE.getROI().getName());
             } break;    
-            default: 
+            
+            case Emptied: {
+                ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); 
+            } break;     default: 
                 throw new java.lang.IllegalArgumentException();    
         }   
     }

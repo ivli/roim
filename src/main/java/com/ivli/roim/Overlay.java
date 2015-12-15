@@ -18,9 +18,8 @@ import java.awt.Rectangle;
 public abstract class Overlay implements java.io.Serializable {  
     private static final long serialVersionUID = 42L;
     
-    static final int SELECTABLE = 0x1;
-    static final int LINESELECTABLE = SELECTABLE << 0x1;
-    static final int MOVEABLE   = LINESELECTABLE << 0x1;
+    static final int SELECTABLE = 0x1;    
+    static final int MOVEABLE   = SELECTABLE << 0x1;
     static final int PERMANENT  = MOVEABLE  << 0x1;
     static final int CLONEABLE  = PERMANENT << 0x1;
     static final int CANFLIP    = CLONEABLE << 0x1;

@@ -26,43 +26,45 @@ public abstract class MathOp {
         UNARY,
         BINARY
     }
-    
+       
     public enum OP {
-        CHANGESIGN,
-        SUMMATION,
-        SUBTRACTION,
-        MULTIPLICATION,
-        DIVISION    
+        NOP (TYPE.UNARY, ""),
+        CHSIGN(TYPE.UNARY, "+/-"),
+        ADDITION(TYPE.BINARY, "+"),
+        SUBTRACTION(TYPE.BINARY, "-"),
+        MULTIPLICATION(TYPE.BINARY, "*"),
+        DIVISION(TYPE.BINARY, "/");
+        
+        TYPE  iType;
+        String iStr;
+       
+        
+        OP(TYPE aT, String aS) {
+            iType = aT; 
+            iStr = aS;           
+        }
     }   
-    
-    private static final String[] OLS = {
-        "+/-", "+", "-", "*", "/"
-    };
-    
-    TYPE iType;
-    OP   iOp;
-    
-    protected MathOp(TYPE aT, OP aO) {
-        iType = aT;
+   
+    final OP iOp;
+       
+    protected MathOp(OP aO) {        
         iOp = aO;
     }
-    
-    public TYPE getType() {return iType;}
+       
     public OP getOperation() {return iOp;}
     
     public static final String[] getOpListString() {
-        return OLS;        
+        java.util.Set<OP> so = java.util.EnumSet.allOf(OP.class);
+        
+        String[] ret = new String[so.size()];//String();
+        int n = 0;
+        for (OP o : OP.values())
+            ret[n++] = o.iStr;
+        return ret;        
     }
     
     public String getOperationChar() {
-        switch (getOperation()) {
-            case CHANGESIGN: return "+/-"; 
-            case SUMMATION: return "+";
-            case SUBTRACTION: return "-";
-            case MULTIPLICATION: return "*";
-            case DIVISION:  return "/";             
-            default: throw new IllegalArgumentException();
-        }
+        return getOperation().iStr;           
     }
     
     /*
@@ -81,27 +83,71 @@ public abstract class MathOp {
         return new Operand(Double.NaN); ///todo: either extend chierarcy or raise an exception
     }
     */
-    public abstract Operand product(Operand aLhs, Operand aRhs);/* {
+    public abstract Operand product(Operand aLhs, Operand aRhs);
+    
+    /* {
         return new Operand(Double.NaN); ///todo: either extend chierarcy or raise an exception
     }*/
     
+    
+    static final MathOp getNop() {
+        return new MathOp(OP.NOP) {            
+            public Operand product(Operand aLhs, Operand aRhs) {
+                return new Operand(aLhs);
+            }    
+        };
+    }
+    
+    static final MathOp getChSign() {
+        return getOP(OP.CHSIGN);
+    }
+    
+    static final MathOp getAddition() {
+        return getOP(OP.ADDITION);
+    }
+     
     static final MathOp getSubtraction() {
-        return new MathOp(TYPE.BINARY, OP.SUBTRACTION) {
-            
-            public Operand product(Operand aLhs, Operand aRhs) {
-                return new Operand(aLhs.value() - aRhs.value());
-            }    
-        };
+        return getOP(OP.SUBTRACTION);
     }
     
-    static final MathOp getSummation() {
-        return new MathOp(TYPE.BINARY, OP.SUMMATION) {
-            public Operand product(Operand aLhs, Operand aRhs) {
-                return new Operand(aLhs.value() + aRhs.value());
-            }    
-        };
+    static final MathOp fromString(String aStr) {
+        for (OP o : OP.values()) {
+            if (o.iStr == aStr)
+                return getOP(o);
+        }
+        return getNop(); //wouldn't it better raise an exception
     }
-    
-    
+        
+    static final MathOp getOP(OP aOrdinal) {
+        switch (aOrdinal) {
+            case CHSIGN: 
+                return new MathOp(OP.NOP) {            
+                    public Operand product(Operand aLhs, Operand aRhs) {
+                        return new Operand((-1.0) * aLhs.value());
+                }};                                 
+            case ADDITION: 
+                return new MathOp(OP.ADDITION) {
+                    public Operand product(Operand aLhs, Operand aRhs) {
+                        return new Operand(aLhs.value() + aRhs.value());
+                }};                    
+            case SUBTRACTION: 
+                return new MathOp(OP.SUBTRACTION) {            
+                    public Operand product(Operand aLhs, Operand aRhs) {
+                        return new Operand(aLhs.value() - aRhs.value());
+                }};                    
+            case MULTIPLICATION:  
+                return new MathOp(OP.SUBTRACTION) {            
+                    public Operand product(Operand aLhs, Operand aRhs) {
+                        return new Operand(aLhs.value() * aRhs.value());
+                }};                   
+            case DIVISION:  
+                return new MathOp(OP.SUBTRACTION) {            
+                    public Operand product(Operand aLhs, Operand aRhs) {
+                        return new Operand(aLhs.value() / aRhs.value());
+                }};
+            case NOP: //fall thru
+            default: return getNop();
+        }
+    }
     
 }

@@ -32,5 +32,7 @@ public class Operand {
         iValue = aVal.iValue;
     } 
     
-    Double value() {return iValue;}
+    public Double value() {return iValue;}
+    
+    public String getString() {return String.format("%f", value());}
 }

@@ -19,7 +19,11 @@ public class ImagePanel extends JPanel {
     public void open(ImageView aView) {
         doOpen(aView);
     }
-            
+           
+    public ImageView getView() {
+        return iView;
+    }
+    
     protected void doOpen(ImageView aView) {           
         removeAll();
         

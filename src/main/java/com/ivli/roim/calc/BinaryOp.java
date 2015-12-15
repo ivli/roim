@@ -26,13 +26,22 @@ public class BinaryOp {
     Operand iRhs;
     MathOp  iOp;
     
-    BinaryOp(Operand aLhs, Operand aRhs, MathOp anOperation) {
-        iLhs = aRhs;
+    public BinaryOp(Operand aLhs, Operand aRhs, String anOperation) {
+        iLhs = aLhs;
         iRhs = aRhs;
-        iOp = anOperation;
+        iOp = MathOp.fromString(anOperation);
     }
     
     public Operand value() {
         return iOp.product(iLhs, iRhs);
     }
+    
+    public String getString() {
+        return iLhs.getString() + " " + iOp.getOperationChar() + " " + iRhs.getString();
+    }
+    
+    public String getCompleteString() {
+        return iLhs.getString() + " " + iOp.getOperationChar() + " " + iRhs.getString() + "=" + value().getString();
+    }
+    
 }
