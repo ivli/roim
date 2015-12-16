@@ -19,15 +19,16 @@ package com.ivli.roim.controls;
 
 
 
-import java.awt.Color;
-import javax.swing.table.TableModel;
+import java.awt.Window;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.ivli.roim.ImagePanel;
 import com.ivli.roim.ROI;
 import com.ivli.roim.calc.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+
 
 /**
  *
@@ -40,6 +41,7 @@ public class CalcPanel extends javax.swing.JPanel {
     
     private final ImagePanel iPanel;    
     private BinaryOp iOp;
+    private ConcreteOperand.Filter iF = ConcreteOperand.Filter.DENSITY; 
     /**
      * Creates new form CalcPanel
      */
@@ -75,14 +77,16 @@ public class CalcPanel extends javax.swing.JPanel {
             jTextField2.setText("CALC.SELECT_TWO_ROIS");
             return false;
         } else {
-            final ROI iLhs = (ROI)iLeftModel.getValueAt(jTable1.getSelectedRow(), 0);
-            final ROI iRhs = (ROI)iRightModel.getValueAt(jTable2.getSelectedRow(), 0);                
-
-            iOp = new com.ivli.roim.calc.BinaryOp(new ConcreteOperand(iLhs), new ConcreteOperand(iRhs), (String)jComboBox1.getSelectedItem());
+            logger.info(String.format("%d, %d", jTable1.getSelectedRow(), jTable2.getSelectedRow()));
+            final ROI iLhs = (ROI)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
+            final ROI iRhs = (ROI)jTable2.getValueAt(jTable2.getSelectedRow(), 0);                
+            iF = ConcreteOperand.Filter.getFilter((String)jComboBox2.getSelectedItem());
+            iOp = new com.ivli.roim.calc.BinaryOp(new ConcreteOperand(iLhs, iF), 
+                                                  new ConcreteOperand(iRhs, iF), 
+                                                  (String)jComboBox1.getSelectedItem());
+            
             jTextField2.setText(iOp.getCompleteString());   
             
-            ///iPanel.getView().getROIMgr().createAnnotation(op);
-            //jButton1.setEnabled(true);
             return true;
         }
     }
@@ -104,6 +108,7 @@ public class CalcPanel extends javax.swing.JPanel {
         jTextField2 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jComboBox2 = new javax.swing.JComboBox<>();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -149,6 +154,13 @@ public class CalcPanel extends javax.swing.JPanel {
             }
         });
 
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(ConcreteOperand.Filter.getAllFilters()));
+        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -157,7 +169,9 @@ public class CalcPanel extends javax.swing.JPanel {
                 .addGap(33, 33, 33)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(46, 46, 46))
@@ -183,7 +197,9 @@ public class CalcPanel extends javax.swing.JPanel {
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(147, 147, 147)
+                        .addGap(91, 91, 91)
+                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36)
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -200,26 +216,25 @@ public class CalcPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        Window w = SwingUtilities.getWindowAncestor(this);
+        w.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        //final ROI iLhs = (ROI)iLeftModel.getValueAt(jTable1.getSelectedRow(), 0);
-        //final ROI iRhs = (ROI)iRightModel.getValueAt(jTable2.getSelectedRow(), 0);                
-
-        //BinaryOp op = new BinaryOp(new ConcreteOperand(iLhs), new ConcreteOperand(iRhs), (String)jComboBox1.getSelectedItem());
-        ///jTextField2.setText(op.getString() + "=" + op.value().getString());   
-
+     
         iPanel.getView().getROIMgr().createAnnotation(iOp);
     }//GEN-LAST:event_jButton1ActionPerformed
-    
-    
-    private Double iDouble;
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        jButton1.setEnabled(rebuildOp());  
+    }//GEN-LAST:event_jComboBox2ActionPerformed
+        
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;

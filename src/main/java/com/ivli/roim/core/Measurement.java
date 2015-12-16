@@ -23,11 +23,11 @@ package com.ivli.roim.core;
  */
 public class Measurement implements java.io.Serializable {
     
-    public static final int PRIMARY = 0;
-    public static final int DERIVED = 1;    
-    public static final int MINIMUM = 2;
-    public static final int MAXIMUM = 4; 
-    public static final int DENSITY = 8;
+    public static final int PRIMARY  = 0;
+    public static final int DERIVED  = 1;    
+    public static final int MINPIXEL = 2;
+    public static final int MAXPIXEL = 4; 
+    public static final int DENSITY  = 8;
    
     private final int iId; 
     

@@ -20,8 +20,8 @@ public class CurveExtractor {
         SeriesCollection c = new SeriesCollection();
        
         Series density = new Series(new Measurement(Measurement.DENSITY), "IntDen");
-        Series mins    = new Series(new Measurement(Measurement.MINIMUM), "Mins");
-        Series maxs    = new Series(new Measurement(Measurement.MAXIMUM), "Maxs");
+        Series mins    = new Series(new Measurement(Measurement.MINPIXEL), "Mins");
+        Series maxs    = new Series(new Measurement(Measurement.MAXPIXEL), "Maxs");
         
         for (int n = 0; n < anImage.getNumFrames(); ++n) {  
             Shape roi = aRoi.getShape();

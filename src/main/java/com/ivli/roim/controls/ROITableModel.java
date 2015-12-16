@@ -40,9 +40,7 @@ import javax.swing.table.TableModel;
  */
 public class ROITableModel extends DefaultTableModel {
     private static final String KCommandInvokeColourPicker = "COMMAND_INVOKE_COLOUR_PICKER_DIALOG"; // NOI18N    
-    
-        
-    
+                
     protected final Class[]   iClasses;                                                   
     protected final String[]  iColumns;            
     protected final boolean[] iEditable;

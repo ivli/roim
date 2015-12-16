@@ -22,17 +22,22 @@ package com.ivli.roim.calc;
  * @author likhachev
  */
 public class Operand {
-    protected Double iValue;// = Double.NaN;
+    protected double iValue;
+    
     
     public Operand(Double aVal) {
         iValue = aVal;
     } 
-    
+        
     public Operand(Operand aVal) {
         iValue = aVal.iValue;
     } 
     
-    public Double value() {return iValue;}
+    public Operand() {
+        iValue = Double.NaN;
+    }
+    
+    public double value() {return iValue;}
     
     public String getString() {return String.format("%f", value());}
 }
