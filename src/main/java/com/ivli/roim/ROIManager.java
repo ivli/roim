@@ -199,7 +199,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
 
         while (it.hasNext()) {  //clean annotations out - silly but workin'
             final Overlay o = it.next();
-            if (o instanceof Annotation && ((Annotation)o).iRoi == aR)               
+            if (o instanceof Annotation && ((Annotation)o).getRoi() == aR)               
                 it.remove();
         } 
                 

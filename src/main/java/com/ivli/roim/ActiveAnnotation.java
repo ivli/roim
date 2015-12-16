@@ -39,19 +39,9 @@ public class ActiveAnnotation extends Overlay implements ROIChangeListener {
     BinaryOp iOp;
     
     ActiveAnnotation(ROIManager aRM, BinaryOp aOp) {
-        super("ANNOTATION.ACTIVE", null, aRM);
-        
-        iOp = aOp;
-        
-        update();
-        /*
-        Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
-        
-        iShape = new Rectangle2D.Double(0, ///TODO: create in a position related to either one or other ROI
-                                        0 + bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX(), 
-                                        bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
-                                        bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());                
-        */
+        super("ANNOTATION.ACTIVE", null, aRM);        
+        iOp = aOp;        
+        update();       
     }
 
     @Override
@@ -59,13 +49,10 @@ public class ActiveAnnotation extends Overlay implements ROIChangeListener {
         switch (anEvt.getChange()) {
             case Cleared: 
                break;
-            case Moved:               
+            case Moved:                  
             case Changed:   
             default: //fall-through
-                update();
-                
-                
-                
+                update();                                
                 break;
         }        
     }
