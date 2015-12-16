@@ -52,14 +52,28 @@ public enum Measurement {//implements java.io.Serializable {
         return iName + ": " + iFormat + " " + iUnits; // NOI18N 
     }
     
-    public final String format(int aInt) {        
+    public final String getString(int aInt) {        
+        if (iFormat == "%f") // NOI18N 
+            return String.format(iFormat, (double)aInt);
+        else
+            return String.format(iFormat, aInt);
+    }
+    
+        public final String getString(double aDouble) {
+        if (iFormat == "%d") // NOI18N 
+            return String.format(iFormat, (int)aDouble);
+        else
+            return String.format(iFormat, aDouble);
+    }
+        
+        public final String format(int aInt) {        
         if (iFormat == "%f") // NOI18N 
             return String.format(getFormatString(), (double)aInt);
         else
             return String.format(getFormatString(), aInt);
     }
     
-    public final String format(double aDouble) {
+        public final String format(double aDouble) {
         if (iFormat == "%d") // NOI18N 
             return String.format(getFormatString(), (int)aDouble);
         else

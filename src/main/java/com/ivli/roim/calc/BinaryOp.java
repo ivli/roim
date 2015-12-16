@@ -24,12 +24,12 @@ package com.ivli.roim.calc;
 public class BinaryOp {
     IOperand iLhs;
     IOperand iRhs;
-    MathOp  iOp;
+    MathOp   iOp;
     
     public BinaryOp(IOperand aLhs, IOperand aRhs, String anOperation) {
         iLhs = aLhs;
         iRhs = aRhs;
-        iOp = MathOp.fromString(anOperation);
+        iOp  = MathOp.fromString(anOperation);
     }
     
     public IOperand value() {

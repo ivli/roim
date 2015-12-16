@@ -44,13 +44,14 @@ public class ActiveAnnotation extends Overlay implements ROIChangeListener {
         iOp = aOp;
         
         update();
-        
+        /*
         Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
         
         iShape = new Rectangle2D.Double(0, ///TODO: create in a position related to either one or other ROI
                                         0 + bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX(), 
                                         bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
                                         bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());                
+        */
     }
 
     @Override
@@ -58,12 +59,14 @@ public class ActiveAnnotation extends Overlay implements ROIChangeListener {
         switch (anEvt.getChange()) {
             case Cleared: 
                break;
-            case Moved: { 
-                update();              
-            } break;
+            case Moved:               
             case Changed:   
             default: //fall-through
-                update(); break;
+                update();
+                
+                
+                
+                break;
         }        
     }
     
@@ -77,6 +80,14 @@ public class ActiveAnnotation extends Overlay implements ROIChangeListener {
            
     public void update() {        
         iAnnotation = iOp.getCompleteString();
+        
+        final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
+        /**/
+       
+        iShape = new Rectangle2D.Double((null == iShape) ? 0 : iShape.getBounds().x * getManager().getView().screenToVirtual().getScaleX(), ///TODO: create in a position related to either one or other ROI
+                                        ((null == iShape) ? 0 + bnds.getHeight() : iShape.getBounds().y) * getManager().getView().screenToVirtual().getScaleX(), 
+                                        bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
+                                        bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX()); 
     }
     
     @Override

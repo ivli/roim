@@ -28,12 +28,12 @@ public abstract class MathOp {
     }
        
     public enum OP {
-        NOP (TYPE.UNARY, ""),
-        CHSIGN(TYPE.UNARY, "+/-"),
-        ADDITION(TYPE.BINARY, "+"),
-        SUBTRACTION(TYPE.BINARY, "-"),
+        NOP (TYPE.UNARY,             ""),
+        CHSIGN(TYPE.UNARY,        "+/-"),
+        ADDITION(TYPE.BINARY,       "+"),
+        SUBTRACTION(TYPE.BINARY,    "-"),
         MULTIPLICATION(TYPE.BINARY, "*"),
-        DIVISION(TYPE.BINARY, "/");
+        DIVISION(TYPE.BINARY,       "/");
         
         TYPE  iType;
         String iStr;
@@ -56,7 +56,7 @@ public abstract class MathOp {
     public static final String[] getOpListString() {
         java.util.Set<OP> so = java.util.EnumSet.allOf(OP.class);
         
-        String[] ret = new String[so.size()];//String();
+        String[] ret = new String[so.size()]; //String();
         int n = 0;
         for (OP o : OP.values())
             ret[n++] = o.iStr;
@@ -67,35 +67,11 @@ public abstract class MathOp {
         return getOperation().iStr;           
     }
     
-    /*
-    public Operand product(Operand anOp, OP anO) {
-        switch (anO) {
-            case CHANGESIGN: break;
-            default:     ///throw an exception
-                break;
-        }
-        return     
-
-    } 
-    */        
-    /*
-    public abstract Operand product(Operand anOp) ; {
-        return new Operand(Double.NaN); ///todo: either extend chierarcy or raise an exception
-    }
-    */
+    
     public abstract IOperand product(IOperand aLhs, IOperand aRhs);
-    
-    /* {
-        return new Operand(Double.NaN); ///todo: either extend chierarcy or raise an exception
-    }*/
-    
-    
+       
     static final MathOp getNop() {
-        return new MathOp(OP.NOP) {            
-            public IOperand product(IOperand aLhs, IOperand aRhs) {
-                return new Operand(aLhs);
-            }    
-        };
+        return getOP(OP.NOP);
     }
     
     static final MathOp getChSign() {
@@ -146,7 +122,10 @@ public abstract class MathOp {
                         return new Operand(aLhs.value() / aRhs.value());
                 }};
             case NOP: //fall thru
-            default: return getNop();
+            default: return new MathOp(OP.NOP) {            
+                    public IOperand product(IOperand aLhs, IOperand aRhs) {
+                        return new Operand(aLhs.value() / aRhs.value());
+                }};
         }
     }
     

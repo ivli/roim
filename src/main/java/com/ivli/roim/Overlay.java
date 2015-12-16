@@ -94,9 +94,8 @@ public abstract class Overlay implements java.io.Serializable {
                 //logger.info("!!movement out of range");
             } else {       
                 Shape old = iShape;
-                iShape = temp;    
-                
-                update();
+                iShape = temp;                    
+                //update();
             }
         }
     } 

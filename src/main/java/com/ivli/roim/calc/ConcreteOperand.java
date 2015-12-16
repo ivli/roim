@@ -66,4 +66,12 @@ public class ConcreteOperand  implements IOperand, ROIChangeListener, AutoClosea
     public void close() {
         iRoi.removeROIChangeListener(this);
     }
+        
+    public String getString() {
+        return iF.getMeasurement().getString(value());
+    }
+    
+    public String format() {
+        return iF.getMeasurement().format(value());
+    }
 }
