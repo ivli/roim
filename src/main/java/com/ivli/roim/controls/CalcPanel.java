@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.ivli.roim.ImagePanel;
 import com.ivli.roim.ROI;
+import com.ivli.roim.core.Filter;
 import com.ivli.roim.calc.*;
 
 
@@ -41,7 +42,7 @@ public class CalcPanel extends javax.swing.JPanel {
     
     private final ImagePanel iPanel;    
     private BinaryOp iOp;
-    private ConcreteOperand.Filter iF = ConcreteOperand.Filter.DENSITY; 
+    private Filter iF = Filter.DENSITY; 
     /**
      * Creates new form CalcPanel
      */
@@ -80,7 +81,7 @@ public class CalcPanel extends javax.swing.JPanel {
             logger.info(String.format("%d, %d", jTable1.getSelectedRow(), jTable2.getSelectedRow()));
             final ROI iLhs = (ROI)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
             final ROI iRhs = (ROI)jTable2.getValueAt(jTable2.getSelectedRow(), 0);                
-            iF = ConcreteOperand.Filter.getFilter((String)jComboBox2.getSelectedItem());
+            iF = Filter.getFilter((String)jComboBox2.getSelectedItem());
             iOp = new com.ivli.roim.calc.BinaryOp(new ConcreteOperand(iLhs, iF), 
                                                   new ConcreteOperand(iRhs, iF), 
                                                   (String)jComboBox1.getSelectedItem());
@@ -154,7 +155,7 @@ public class CalcPanel extends javax.swing.JPanel {
             }
         });
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(ConcreteOperand.Filter.getAllFilters()));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(Filter.getAllFilters()));
         jComboBox2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox2ActionPerformed(evt);

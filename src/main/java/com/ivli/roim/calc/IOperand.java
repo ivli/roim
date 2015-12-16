@@ -21,27 +21,9 @@ package com.ivli.roim.calc;
  *
  * @author likhachev
  */
-public class BinaryOp {
-    IOperand iLhs;
-    IOperand iRhs;
-    MathOp  iOp;
-    
-    public BinaryOp(IOperand aLhs, IOperand aRhs, String anOperation) {
-        iLhs = aLhs;
-        iRhs = aRhs;
-        iOp = MathOp.fromString(anOperation);
+public interface IOperand {
+    double value();
+    default String getString() {
+        return String.format("%f", value());
     }
-    
-    public IOperand value() {
-        return iOp.product(iLhs, iRhs);
-    }
-    
-    public String getString() {
-        return iLhs.getString() + " " + iOp.getOperationChar() + " " + iRhs.getString();
-    }
-    
-    public String getCompleteString() {
-        return iLhs.getString() + " " + iOp.getOperationChar() + " " + iRhs.getString() + "=" + value().getString();
-    }
-    
 }

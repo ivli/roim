@@ -21,19 +21,49 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public class Measurement implements java.io.Serializable {
-    
-    public static final int PRIMARY  = 0;
-    public static final int DERIVED  = 1;    
-    public static final int MINPIXEL = 2;
-    public static final int MAXPIXEL = 4; 
-    public static final int DENSITY  = 8;
+public enum Measurement {//implements java.io.Serializable {
+        
+    DENSITY(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.DENSITY"), 
+            java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.CTS"), 
+            "%d"), // NOI18N
+    AREAINPIXELS(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.AREA_IN_PIXELS"), 
+                 java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.PIXELS"), 
+                 "%d"), // NOI18N
+    MINPIXEL(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.MINPIXEL"), 
+             java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.PIXELS"), 
+             "%d"), // NOI18N
+    MAXPIXEL(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.MAXPIXEL"), 
+             java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.PIXELS"), 
+             "%d"); // NOI18N 
    
-    private final int iId; 
     
-    public Measurement(int anId) {
-        iId = anId;
+    final String iName;
+    final String iUnits;
+    final String iFormat;
+    
+    
+    Measurement(String aName, String aUnits, String aFormat) {
+        iName   = aName;
+        iUnits  = aUnits;
+        iFormat = aFormat;
     }
     
-    public int getId() {return iId;}
+    public final String getFormatString() {
+        return iName + ": " + iFormat + " " + iUnits; // NOI18N 
+    }
+    
+    public final String format(int aInt) {        
+        if (iFormat == "%f") // NOI18N 
+            return String.format(getFormatString(), (double)aInt);
+        else
+            return String.format(getFormatString(), aInt);
+    }
+    
+    public final String format(double aDouble) {
+        if (iFormat == "%d") // NOI18N 
+            return String.format(getFormatString(), (int)aDouble);
+        else
+            return String.format(getFormatString(), aDouble);
+    }
+    
 }

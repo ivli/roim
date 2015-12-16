@@ -2,6 +2,7 @@
 package com.ivli.roim;
 
 
+import com.ivli.roim.core.Filter;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
@@ -29,7 +30,8 @@ public class Annotation extends Overlay implements ROIChangeListener {
     
     final   ROI iRoi; 
     private String iAnnotation;
-           
+    
+    /*
     class Field<T> {
         final String iName;
         final String iUnits;
@@ -97,17 +99,19 @@ public class Annotation extends Overlay implements ROIChangeListener {
                    )      
     };     
     
-    boolean iRecalcRect = true;
-            
+    */
+      
+    Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};
+    
     @Override
     int getCaps(){return HASMENU|MOVEABLE|SELECTABLE|PINNABLE;}
    
     Annotation(ROI aRoi) {
-        super("", null, aRoi.getManager());
+        super("ANNOTATION", null, aRoi.getManager());
                 
         iRoi = aRoi;
         
-        update(aRoi);
+        update();
 
         Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());
         
@@ -131,11 +135,19 @@ public class Annotation extends Overlay implements ROIChangeListener {
     }
            
     public void update() {
+       // iFields[FIELD_ROI_NAME].iValue = iRoi.getName();
+       // iFields[FIELD_DENSITY].iValue  = iRoi.getDensity();
+       // iFields[FIELD_AREA_IN_PIXELS].iValue = iRoi.getAreaInPixels();  
+       
+       
         iAnnotation = new String();
-        if(0 != (FIELDS_TO_DISPLAY & ANNOTATION_DENSITY))
-            iAnnotation += iFields[FIELD_DENSITY].format();
-        if(0 != (FIELDS_TO_DISPLAY & ANNOTATION_AREA_IN_PIXELS))
-            iAnnotation += iFields[FIELD_AREA_IN_PIXELS].format();
+        
+        for (Filter f : iFilters)
+            iAnnotation += f.getMeasurement().format(f.get(iRoi));
+        //if(0 != (FIELDS_TO_DISPLAY & ANNOTATION_DENSITY))
+        //    iAnnotation += iFields[FIELD_DENSITY].format();
+        ///if(0 != (FIELDS_TO_DISPLAY & ANNOTATION_AREA_IN_PIXELS))
+        ///    iAnnotation += iFields[FIELD_AREA_IN_PIXELS].format();
         /*
         if(0 != (iFields & ANNOTATION_DISPLAY_AREA_UNITS))
             out += String.format(", area=%.1f", s.getArea());
@@ -150,13 +162,7 @@ public class Annotation extends Overlay implements ROIChangeListener {
         */
     }
     
-    private void update(ROI aR) {
-        iFields[FIELD_ROI_NAME].iValue = aR.getName();
-        iFields[FIELD_DENSITY].iValue  = aR.getDensity();
-        iFields[FIELD_AREA_IN_PIXELS].iValue = aR.getAreaInPixels();    
-        update();
-    }
-    
+   
     @Override
     public void ROIChanged(ROIChangeEvent anEvt) {       
         //if (anEvt.getROI() != iRoi) 
@@ -170,11 +176,11 @@ public class Annotation extends Overlay implements ROIChangeListener {
                 final double[] deltas = (double[])anEvt.getExtra();
                 ///logger.info(String.format("%f, %f",deltas[0], deltas[1]));
                 move(deltas[0], deltas[1]);
-                update((ROI)anEvt.getROI());
+                update();
             } break;
             case Changed:   
             default: //fall-through
-                update((ROI)anEvt.getROI()); break;
+                update(); break;
         }        
     }
     

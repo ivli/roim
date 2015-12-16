@@ -30,7 +30,7 @@ public class UnaryOp extends Operation {
         iOp = anOperation;
     }
     
-    public Operand value() {
+    public IOperand value() {
         return iOp.product(new Operand(.0), iRhs);
     }
 }

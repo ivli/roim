@@ -2,6 +2,7 @@
 package com.ivli.roim;
 
 import com.ivli.roim.core.Series;
+import com.ivli.roim.core.Measurement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,7 +14,7 @@ public class SeriesCollection implements java.io.Serializable {
     private static final long serialVersionUID = 42L;
     
     //private TimeSliceVector iTimeSliceVector = null;
-    private final java.util.HashMap<Integer, Series> iSeries = new java.util.HashMap<>(); 
+    private final java.util.HashMap<Measurement, Series> iSeries = new java.util.HashMap<>(); 
     
     
     public SeriesCollection(/*TimeSliceVector aV*/) {
@@ -30,7 +31,7 @@ public class SeriesCollection implements java.io.Serializable {
         iSeries.put(aC.getId(), aC);               
     } 
     
-    public Series get(int anId) {
+    public Series get(Measurement anId) {
         
         return iSeries.get(anId);
     }

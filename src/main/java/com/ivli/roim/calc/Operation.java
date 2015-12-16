@@ -22,5 +22,5 @@ package com.ivli.roim.calc;
  * @author likhachev
  */
 public abstract class Operation /*extends Operand */ {   
-    public abstract Operand value();   
+    public abstract IOperand value();   
 }

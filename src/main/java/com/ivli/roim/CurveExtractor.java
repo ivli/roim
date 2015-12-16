@@ -19,13 +19,12 @@ public class CurveExtractor {
     public static SeriesCollection extract(IMultiframeImage anImage, ROI aRoi, FrameOffsetVector anOff) {
         SeriesCollection c = new SeriesCollection();
        
-        Series density = new Series(new Measurement(Measurement.DENSITY), "IntDen");
-        Series mins    = new Series(new Measurement(Measurement.MINPIXEL), "Mins");
-        Series maxs    = new Series(new Measurement(Measurement.MAXPIXEL), "Maxs");
+        Series density = new Series(Measurement.DENSITY);
+        Series mins    = new Series(Measurement.MINPIXEL);
+        Series maxs    = new Series(Measurement.MAXPIXEL);
         
         for (int n = 0; n < anImage.getNumFrames(); ++n) {  
-            Shape roi = aRoi.getShape();
-            
+            Shape roi = aRoi.getShape();            
              
             if (null != anOff) {
                 FrameOffset off = anOff.get(n);

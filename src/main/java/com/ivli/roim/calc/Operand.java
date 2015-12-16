@@ -21,16 +21,15 @@ package com.ivli.roim.calc;
  *
  * @author likhachev
  */
-public class Operand {
+public class Operand implements IOperand {
     protected double iValue;
-    
-    
+        
     public Operand(Double aVal) {
         iValue = aVal;
     } 
         
-    public Operand(Operand aVal) {
-        iValue = aVal.iValue;
+    public Operand(IOperand aVal) {
+        iValue = aVal.value();
     } 
     
     public Operand() {
@@ -39,5 +38,5 @@ public class Operand {
     
     public double value() {return iValue;}
     
-    public String getString() {return String.format("%f", value());}
+   /// public String getString() {return String.format("%f", value());}
 }

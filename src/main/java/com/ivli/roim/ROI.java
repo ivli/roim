@@ -55,7 +55,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         return getSeries(Measurement.MAXPIXEL).get(getManager().getView().getCurrent());
     }
     
-    public Series getSeries(int anId) {       
+    public Series getSeries(Measurement anId) {       
         return iSeries.get(anId);
     }
     

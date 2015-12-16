@@ -15,33 +15,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.calc;
+package com.ivli.roim.core;
+
+import com.ivli.roim.ROI;
 
 /**
  *
  * @author likhachev
  */
-public class BinaryOp {
-    IOperand iLhs;
-    IOperand iRhs;
-    MathOp  iOp;
-    
-    public BinaryOp(IOperand aLhs, IOperand aRhs, String anOperation) {
-        iLhs = aLhs;
-        iRhs = aRhs;
-        iOp = MathOp.fromString(anOperation);
-    }
-    
-    public IOperand value() {
-        return iOp.product(iLhs, iRhs);
-    }
-    
-    public String getString() {
-        return iLhs.getString() + " " + iOp.getOperationChar() + " " + iRhs.getString();
-    }
-    
-    public String getCompleteString() {
-        return iLhs.getString() + " " + iOp.getOperationChar() + " " + iRhs.getString() + "=" + value().getString();
-    }
-    
+ @FunctionalInterface
+public interface IFilter {        
+    public double get(ROI aR);
 }

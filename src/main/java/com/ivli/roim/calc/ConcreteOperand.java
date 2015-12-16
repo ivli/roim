@@ -18,85 +18,33 @@
 package com.ivli.roim.calc;
 
 import com.ivli.roim.ROI;
+import com.ivli.roim.core.Filter;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 /**
  *
  * @author likhachev
  */
-public class ConcreteOperand extends Operand implements  ROIChangeListener, AutoCloseable {
+public class ConcreteOperand  implements IOperand, ROIChangeListener, AutoCloseable {
     
     @FunctionalInterface
     interface IFilter {        
         public double get(ROI aR);
     }
     
-    public enum Filter {        
-        DENSITY(new IFilter() {
-                    public double get(ROI aR) {return aR.getDensity();}
-                },
-                "ROIFILTER.DENSITY"),
-       
-        AREAINPIXELS(new IFilter() {
-                    public double get(ROI aR) {return aR.getAreaInPixels();}
-                },
-                "ROIFILTER.AREA_IN_PIXELS"),
-        
-        MINPIXEL(new IFilter() {
-                    public double get(ROI aR) {return aR.getMinPixel();}
-                },
-                "ROIFILTER.MINPIXEL"),
-        
-        MAXPIXEL(new IFilter() {
-                    public double get(ROI aR) {return aR.getMaxPixel();}
-                },
-                "ROIFILTER.MAXPIXEL");
-        /*
-         * to be continued
-         */
-        final String  iN;       
-        final IFilter iF;
-        //final Measurement iM; //TODO: make direct connection to extract name and units from  
-        
-        Filter(IFilter aF, String aN) {
-            iN = aN;
-            iF = aF;
-        }
-        
-        public double get(ROI aRoi) {
-            return iF.get(aRoi);
-        }
-        
-        public static String[] getAllFilters() {            
-            java.util.Set<Filter> so = java.util.EnumSet.allOf(Filter.class);
-
-            String[] ret = new String[so.size()];//String();
-            int n = 0;
-            for (Filter o : Filter.values())
-                ret[n++] = o.iN;
-            return ret;        
-        }
-        
-        public static Filter getFilter(String aS) {
-            for (Filter o : Filter.values())
-                if(aS == o.iN)
-                    return o;
-            return DENSITY;     
-        }
-    }
     
     Filter iF; 
     ROI  iRoi;
    
     
     public ConcreteOperand(ROI aRoi, Filter aF) {
-        super(.0);//aRoi.getDensity());
+        //super(.0);//aRoi.getDensity());
         iRoi = aRoi;    
         if (null == aF)
             iF = Filter.DENSITY;
         else
             iF = aF;
-        iValue = iF.get(iRoi);
+        //iValue = iF.get(iRoi);
         iRoi.addROIChangeListener(this);
     }
        
@@ -104,12 +52,14 @@ public class ConcreteOperand extends Operand implements  ROIChangeListener, Auto
         this(aRoi, Filter.DENSITY);
     }
     
-    protected void calculate() {
-        iValue = iF.get(iRoi);
+    public double value() {
+        return iF.get(iRoi);
     }
     
+    @Override
     public void ROIChanged(ROIChangeEvent anEvt) {
-        calculate();
+        //calculate();
+        //TODO: dispatch to upper level container
     } 
     
      @Override

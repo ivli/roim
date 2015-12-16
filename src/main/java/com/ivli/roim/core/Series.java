@@ -16,15 +16,14 @@ import org.apache.commons.math3.fitting.leastsquares.*;
 public class Series extends java.util.ArrayList<Double>{
      
     private final Measurement   iId; 
-    private final String        iName;
+    ///private final String        iName;
     
-    public Series(Measurement anId, String aName) {
-        iName = aName;
+    public Series(Measurement anId) {        
         iId   = anId;        
     }
     
-    public int getId() {
-        return iId.getId();
+    public Measurement getId() {
+        return iId;
     }
     
     public int getNumFrames() {
@@ -45,7 +44,7 @@ public class Series extends java.util.ArrayList<Double>{
         
         PolynomialSplineFunction psf = ipo.interpolate(x, y);
 
-        Series ret = new Series(iId, iName);
+        Series ret = new Series(iId);
         
         for (int n = 0; n < size(); ++n)
             ret.add(psf.value(Math.max(.0, n - 0.5)));

@@ -83,7 +83,7 @@ public abstract class MathOp {
         return new Operand(Double.NaN); ///todo: either extend chierarcy or raise an exception
     }
     */
-    public abstract Operand product(Operand aLhs, Operand aRhs);
+    public abstract IOperand product(IOperand aLhs, IOperand aRhs);
     
     /* {
         return new Operand(Double.NaN); ///todo: either extend chierarcy or raise an exception
@@ -92,7 +92,7 @@ public abstract class MathOp {
     
     static final MathOp getNop() {
         return new MathOp(OP.NOP) {            
-            public Operand product(Operand aLhs, Operand aRhs) {
+            public IOperand product(IOperand aLhs, IOperand aRhs) {
                 return new Operand(aLhs);
             }    
         };
@@ -122,27 +122,27 @@ public abstract class MathOp {
         switch (aOrdinal) {
             case CHSIGN: 
                 return new MathOp(OP.NOP) {            
-                    public Operand product(Operand aLhs, Operand aRhs) {
+                    public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand((-1.0) * aLhs.value());
                 }};                                 
             case ADDITION: 
                 return new MathOp(OP.ADDITION) {
-                    public Operand product(Operand aLhs, Operand aRhs) {
+                    public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() + aRhs.value());
                 }};                    
             case SUBTRACTION: 
                 return new MathOp(OP.SUBTRACTION) {            
-                    public Operand product(Operand aLhs, Operand aRhs) {
+                    public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() - aRhs.value());
                 }};                    
             case MULTIPLICATION:  
                 return new MathOp(OP.SUBTRACTION) {            
-                    public Operand product(Operand aLhs, Operand aRhs) {
+                    public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() * aRhs.value());
                 }};                   
             case DIVISION:  
                 return new MathOp(OP.SUBTRACTION) {            
-                    public Operand product(Operand aLhs, Operand aRhs) {
+                    public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() / aRhs.value());
                 }};
             case NOP: //fall thru

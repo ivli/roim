@@ -34,8 +34,8 @@ import com.ivli.roim.calc.*;
  */
 public class ActiveAnnotation extends Overlay implements ROIChangeListener {
     
-    Color iColor;
-    String iAnnotation;
+    Color    iColor = Color.RED;
+    String   iAnnotation;
     BinaryOp iOp;
     
     ActiveAnnotation(ROIManager aRM, BinaryOp aOp) {
@@ -50,8 +50,7 @@ public class ActiveAnnotation extends Overlay implements ROIChangeListener {
         iShape = new Rectangle2D.Double(0, ///TODO: create in a position related to either one or other ROI
                                         0 + bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX(), 
                                         bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
-                                        bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());
-                
+                                        bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());                
     }
 
     @Override
@@ -59,7 +58,7 @@ public class ActiveAnnotation extends Overlay implements ROIChangeListener {
         switch (anEvt.getChange()) {
             case Cleared: 
                break;
-            case Moved: {//if not pinned move the same dX and dY
+            case Moved: { 
                 update();              
             } break;
             case Changed:   
@@ -68,7 +67,6 @@ public class ActiveAnnotation extends Overlay implements ROIChangeListener {
         }        
     }
     
-
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         final Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();     
         aGC.setColor(iColor);
