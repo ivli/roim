@@ -48,32 +48,46 @@ public enum Measurement {//implements java.io.Serializable {
         iFormat = aFormat;
     }
     
-    public final String getFormatString() {
+    public String getName() {return iName;}
+    public String getUnits() {return iUnits;}
+    
+    
+    public static String[] getAllMeasurements() {            
+        java.util.Set<Measurement> so = java.util.EnumSet.allOf(Measurement.class);
+
+        String[] ret = new String[so.size()];//String();
+        int n = 0;
+        for (Measurement o : Measurement.values())
+            ret[n++] = o.iName;
+        return ret;        
+    }
+    
+    public String getFormatString() {
         return iName + ": " + iFormat + " " + iUnits; // NOI18N 
     }
     
-    public final String getString(int aInt) {        
+    public String getString(int aInt) {        
         if (iFormat == "%f") // NOI18N 
             return String.format(iFormat, (double)aInt);
         else
             return String.format(iFormat, aInt);
     }
     
-        public final String getString(double aDouble) {
+    public String getString(double aDouble) {
         if (iFormat == "%d") // NOI18N 
             return String.format(iFormat, (int)aDouble);
         else
             return String.format(iFormat, aDouble);
     }
         
-        public final String format(int aInt) {        
+    public String format(int aInt) {        
         if (iFormat == "%f") // NOI18N 
             return String.format(getFormatString(), (double)aInt);
         else
             return String.format(getFormatString(), aInt);
     }
     
-        public final String format(double aDouble) {
+    public String format(double aDouble) {
         if (iFormat == "%d") // NOI18N 
             return String.format(getFormatString(), (int)aDouble);
         else

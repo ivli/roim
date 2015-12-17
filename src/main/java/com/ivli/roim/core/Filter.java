@@ -49,13 +49,13 @@ public enum Filter {
          */
         
         final Measurement iM;
-        final IFilter iF;
+        final IFilter     iF;
                 
         Filter(IFilter aF, Measurement aM) {
             iM = aM;
             iF = aF;
         }
-        
+                      
         public double get(ROI aRoi) {
             return iF.get(aRoi);
         }

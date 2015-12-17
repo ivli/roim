@@ -1,9 +1,11 @@
 
 package com.ivli.roim;
 
+import com.ivli.roim.controls.VOILUTPanel;
 import com.ivli.roim.core.Window;
 import java.awt.Graphics2D;
 import java.awt.Cursor;
+import java.awt.Dialog;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Dimension;
@@ -22,6 +24,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
 
 import javax.swing.SwingUtilities;
 import javax.swing.JPopupMenu;
@@ -305,6 +308,7 @@ class Controller implements ActionListener {
     private static final String KCommandRoiRotate90CCW  = "COMMAND_ROI_OPERATIONS_ROTATE_90_CCW"; // NOI18N
     private static final String KCommandRoiConvertToIso = "COMMAND_ROI_OPERATIONS_CONVERT_TO_ISO"; // NOI18N
     private static final String KCommandProfileShow     = "COMMAND_ROI_OPERATIONS_PROFILE_SHOW_ON-OFF"; // NOI18N
+    private static final String KCommandCustomCommand = "COMMAND_ROI_OPERATIONS_CUSTOM_COMMAND"; // NOI18N
 
     @Override
     public void actionPerformed(ActionEvent e) {  
@@ -399,8 +403,7 @@ class Controller implements ActionListener {
                 iControlled.repaint();
                 iSelected = null;
                 break;
-            case KCommandRoiMove: break;
-            
+            case KCommandRoiMove: break;            
             case KCommandRoiPin: 
                 iSelected.setPinned(!iSelected.isPinned());
                 break;
@@ -408,8 +411,7 @@ class Controller implements ActionListener {
                 iControlled.getROIMgr().deleteOverlay(iSelected); 
                 iSelected = null; 
                 iControlled.repaint(); 
-                break;
-                
+                break;                
             case KCommandRoiFlipHorz:
                 ((Overlay.IFlip)iSelected).flip(false);
                 iControlled.repaint();
@@ -439,6 +441,20 @@ class Controller implements ActionListener {
                 ((Profile)iSelected).showHistogram();
                 iControlled.repaint();
                 break;
+            case KCommandCustomCommand: {
+                //((Profile)iSelected).showHistogram();
+                ///iControlled.repaint();
+                ///iSelected.customCommand();
+                
+                com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel((Annotation)iSelected);
+                javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
+
+                dialog.setContentPane(panel);
+                dialog.validate();
+                dialog.pack();
+                dialog.setResizable(false);
+                dialog.setVisible(true);
+            } break;
             default: 
                 handleCustomCommand(iSelected);
                 break;
@@ -514,7 +530,7 @@ class Controller implements ActionListener {
             mnu.add(mi11);
         }
         
-        /*
+        /* DON'T POLLUTE MENUS
         if (iSelected.isMovable()) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.MOVE"));
             mi.addActionListener(this);
@@ -565,7 +581,14 @@ class Controller implements ActionListener {
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiConvertToIso);
             mnu.add(mi);           
-        } 
+        }
+        
+        if (0 != (iSelected.getCaps() & Overlay.HASCUSTOMMENU)) {
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CUSTOMMENU"));
+            mi.addActionListener(this);
+            mi.setActionCommand(KCommandCustomCommand); 
+            mnu.add(mi);
+        }
     }
 
     void buildPopupMenu_Profile(JPopupMenu mnu) {

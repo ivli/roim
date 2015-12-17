@@ -4,7 +4,6 @@ package com.ivli.roim;
 
 import com.ivli.roim.core.Filter;
 import java.awt.Graphics2D;
-import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import com.ivli.roim.events.ROIChangeEvent;
@@ -20,22 +19,27 @@ import org.apache.logging.log4j.Logger;
 public class Annotation extends Overlay implements ROIChangeListener {      
     private Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
     private final ROI iRoi; 
-    private Color  iColor;
+   // private final Color iColor;
     private String iAnnotation;           
     
     @Override
-    int getCaps(){return HASMENU|MOVEABLE|SELECTABLE|PINNABLE;}
+    int getCaps(){return HASMENU|MOVEABLE|SELECTABLE|PINNABLE|HASCUSTOMMENU;}
     
     public ROI getRoi() {return iRoi;}
    
     public void setFilters(Filter[] aF) {
         iFilters = aF;
-    }    
+        notifyROIChanged(ROIChangeEvent.CHG.Changed, null);
+    }  
+    
+    public Filter[] getFilters() {
+        return iFilters;
+    }
     
     public Annotation(ROI aRoi) {
         super("ANNOTATION", null, aRoi.getManager());  
         iRoi = aRoi;      
-        iColor = iRoi.getColor();
+        //iColor = iRoi.getColor();
         update();                       
         aRoi.addROIChangeListener(this);
     }
@@ -46,8 +50,7 @@ public class Annotation extends Overlay implements ROIChangeListener {
         for (Filter f : iFilters)
             iAnnotation += f.getMeasurement().format(f.get(iRoi));     
         final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
-        /*
-       
+        /*       
         iShape = new Rectangle2D.Double(iRoi.getShape().getBounds2D().getX(), 
                                         iRoi.getShape().getBounds2D().getY() - bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX(), 
                                         bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
@@ -83,12 +86,22 @@ public class Annotation extends Overlay implements ROIChangeListener {
     @Override
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         final Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();     
-        aGC.setColor(iColor);
+        aGC.setColor(iRoi.getColor());
             
         aGC.drawString(iAnnotation, (int)temp.getX(), (int)(temp.getY() + temp.getHeight() - 4));       
         aGC.draw(temp);                 
     }               
        
-           
+    
+    public String []getCustomMenu() {
+        java.util.ArrayList<String> ret = new java.util.ArrayList<>();
+        
+        for (Filter f:iFilters)
+            ret.add(f.getMeasurement().getName());
+        
+        return (String[])ret.toArray();
+    }
+          
+    
     private static final Logger logger = LogManager.getLogger(Annotation.class);
 }

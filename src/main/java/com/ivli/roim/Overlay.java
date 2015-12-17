@@ -26,7 +26,8 @@ public abstract class Overlay implements java.io.Serializable {
     static final int CANROTATE  = CANFLIP   << 0x1;
     static final int RESIZABLE  = CANROTATE << 0x1;
     static final int PINNABLE   = RESIZABLE << 0x1;
-    static final int HASMENU    = PINNABLE  << 0x1;   
+    static final int HASMENU    = PINNABLE  << 0x1;  
+    static final int HASCUSTOMMENU = HASMENU << 0x1;  
         
     transient protected final ROIManager iMgr; 
     
