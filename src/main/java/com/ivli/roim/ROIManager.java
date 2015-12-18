@@ -55,7 +55,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
 
     transient private final ImageView iView;     
     private HashSet<Overlay> iOverlays;          
-    private EventListenerList iList;
+    private EventListenerList    iList;
     
     final class TUid {
         int iUid;
@@ -222,27 +222,21 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }     
            
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+         //out.writeObject(iList);
          out.writeObject(iOverlays);
-         out.writeObject(iList);
+         
     }
     
-    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {        
-                        
-            notifyROIChanged(null, ROIChangeEvent.CHG.Emptied, null);
+    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {                                
+            ///notifyROIChanged(null, ROIChangeEvent.CHG.Emptied, null);
             
+            ///iList = (EventListenerList)ois.readObject();
             iOverlays = (HashSet<Overlay>)(ois.readObject());  
-            iList = (EventListenerList)ois.readObject();
-            
+                        
             for (Overlay r : iOverlays) {
-                //if (r instanceof ROIBase) {
-                   // ((ROIBase)r).iMgr = this;
-                    notifyROIChanged(((ROI)r), ROIChangeEvent.CHG.Created, null);
-                    /*
-                    if (null != ((ROI)r).iAnnos)
-                        for (Overlay o : ((ROI)r).iAnnos)   
-                            iOverlays.add(o);
-                            */
-               // }
+                r.iMgr = this;
+                if (r instanceof ROI)
+                    notifyROIChanged(r, ROIChangeEvent.CHG.Created, null);                   
             }
     }
     
@@ -279,7 +273,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     void notifyROIChanged(Overlay aR, ROIChangeEvent.CHG aS, Object aEx) {
-        ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR, aEx);
+        final ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR, aEx);
 
         ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);
 
@@ -289,7 +283,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         
     @Override
     public void ROIChanged(ROIChangeEvent anEvt) {        
-       notifyROIChanged(anEvt.getObject(), anEvt.getChange(), anEvt.getExtra());
+        notifyROIChanged(anEvt.getObject(), anEvt.getChange(), anEvt.getExtra());
     }
     
     private static final Logger logger = LogManager.getLogger(ROIManager.class);

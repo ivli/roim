@@ -29,13 +29,13 @@ public abstract class Overlay implements java.io.Serializable {
     static final int HASMENU    = PINNABLE  << 0x1;  
     static final int HASCUSTOMMENU = HASMENU << 0x1;  
         
-    transient protected final ROIManager iMgr; 
+    transient protected ROIManager iMgr; 
     
     protected Shape  iShape;
     protected String iName;
     protected boolean iPinned = false;
     
-    private EventListenerList iList;    
+    private final EventListenerList iList;    
     
     protected Overlay(String aName, Shape aShape, ROIManager aMgr) {
         iMgr   = aMgr;

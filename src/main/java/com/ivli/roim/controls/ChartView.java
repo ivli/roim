@@ -80,7 +80,7 @@ public class ChartView extends javax.swing.JPanel
                 col.removeSeries(ndx);                
             } break;    
             case Moved: //fall-through
-            case Changed: {
+            case Changed: {                
                 int ndx = col.indexOf(aE.getObject().getName());               
                 Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                 XYSeries s = col.getSeries(ndx); 
