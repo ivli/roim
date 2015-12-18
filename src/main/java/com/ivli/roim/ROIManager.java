@@ -147,10 +147,26 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         iOverlays.add(new Annotation(aROI));      
     }
     
-    public void createRoiFromShape(Shape aS) {                 
-        final Shape r = iView.screenToVirtual().createTransformedShape(aS);
+    
+    protected void internalCreateROI(ROI aS) {
+        ROI newRoi = new ROI(iUid.getNext(), aS.getShape(), this, aS.getColor());       
+  
+        iOverlays.add(newRoi);
         
-        ROI newRoi = new ROI(iUid.getNext(), r, this, null);       
+        if (ROI_HAS_ANNOTATIONS) 
+            createAnnotation(newRoi);      
+       
+        newRoi.addROIChangeListener(this);
+        
+        newRoi.update();
+        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, null);
+    
+    }
+    
+    public void createRoiFromShape(Shape aS) {                 
+        final Shape shape = iView.screenToVirtual().createTransformedShape(aS);
+        
+        ROI newRoi = new ROI(iUid.getNext(), shape, this, null);       
   
         iOverlays.add(newRoi);
         
@@ -228,15 +244,12 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {                                
-            ///notifyROIChanged(null, ROIChangeEvent.CHG.Emptied, null);
             
-            ///iList = (EventListenerList)ois.readObject();
-            iOverlays = (HashSet<Overlay>)(ois.readObject());  
+            HashSet<Overlay> tmp = (HashSet<Overlay>)ois.readObject();  
                         
-            for (Overlay r : iOverlays) {
-                r.iMgr = this;
+            for (Overlay r : tmp) {               
                 if (r instanceof ROI)
-                    notifyROIChanged(r, ROIChangeEvent.CHG.Created, null);                   
+                    internalCreateROI((ROI)r);
             }
     }
     

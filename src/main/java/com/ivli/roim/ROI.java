@@ -23,8 +23,9 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     private final static boolean DRAW_PROFILES = false;
     
     private Color iColor;          
-    private int iAreaInPixels;        
-    private SeriesCollection iSeries;           
+    private int iAreaInPixels;   
+    
+    private transient SeriesCollection iSeries;           
     
     
     @Override
