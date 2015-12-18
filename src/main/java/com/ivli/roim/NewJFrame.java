@@ -27,8 +27,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.controls.*;
 import com.ivli.roim.events.*;
-import com.ivli.roim.core.TimeSlice;
-import com.ivli.roim.core.Instant;
+
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
      
