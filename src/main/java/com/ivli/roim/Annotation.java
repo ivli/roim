@@ -93,9 +93,7 @@ public class Annotation extends Overlay implements ROIChangeListener {
         final Rectangle2D bnds = calcBounds();
         final double scaleX =  getManager().getView().screenToVirtual().getScaleX();       
         iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), getShape().getBounds2D().getY(),                                                                                        
-                                        bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);
-                                        
-        
+                                        bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                                                
     }
         
     @Override
