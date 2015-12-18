@@ -31,6 +31,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
+import com.ivli.roim.ROI;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 /**
@@ -81,7 +82,7 @@ public class ChartView extends javax.swing.JPanel
             case Moved: //fall-through
             case Changed: {
                 int ndx = col.indexOf(aE.getROI().getName());               
-                Series c = aE.getROI().getSeries(Measurement.DENSITY);
+                Series c = ((ROI)aE.getROI()).getSeries(Measurement.DENSITY);
                 XYSeries s = col.getSeries(ndx); 
                 s.clear();
                 
@@ -93,7 +94,7 @@ public class ChartView extends javax.swing.JPanel
                 
             case Created: {                
                 final XYSeries s = new XYSeries(aE.getROI().getName());
-                final Series c = aE.getROI().getSeries(Measurement.DENSITY);
+                final Series c = ((ROI)aE.getROI()).getSeries(Measurement.DENSITY);
                
                 assert(c.getNumFrames() == aE.getROI().getManager().getImage().getTimeSliceVector().getNumFrames());
                 
@@ -102,14 +103,14 @@ public class ChartView extends javax.swing.JPanel
                 
 
                 ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   
-                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getROI().getName()), aE.getROI().getColor());              
+                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getROI().getName()), ((ROI)aE.getROI()).getColor());              
             } break;
             
             case ChangedColor: {
                 assert (aE.getExtra() instanceof java.awt.Color);
                 final int ndx = col.indexOf(aE.getROI().getName());
                 if (ndx >=0)
-                    iPlot.getRenderer().setSeriesPaint(ndx, aE.getROI().getColor());                                 
+                    iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)aE.getROI()).getColor());                                 
             } break;
                         
             case ChangedName: {

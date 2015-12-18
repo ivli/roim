@@ -126,7 +126,7 @@ public abstract class Overlay implements java.io.Serializable {
     }
     
     protected void notifyROIChanged(ROIChangeEvent.CHG aS, Object aEx) {        
-        ROIChangeEvent evt = new ROIChangeEvent(this, aS, (ROI)this, aEx);
+        ROIChangeEvent evt = new ROIChangeEvent(this, aS, this, aEx);
 
         ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);
 

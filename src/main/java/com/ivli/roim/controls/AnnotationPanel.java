@@ -41,9 +41,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
                                 "DISPLAY"};
     
     class PropertyTableModel extends AbstractTableModel {
-
-       
-
         public int getColumnCount() {
           return columnNames.length;
         }
@@ -111,6 +108,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jCheckBox1 = new javax.swing.JCheckBox();
 
         jTable1.setModel(new PropertyTableModel());
         jScrollPane1.setViewportView(jTable1);
@@ -119,6 +117,14 @@ public class AnnotationPanel extends javax.swing.JPanel {
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        jCheckBox1.setText("MULTILINE");
+        jCheckBox1.setSelected(iAnno.isMultiline());
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
             }
         });
 
@@ -131,7 +137,9 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(23, 23, 23)
+                .addComponent(jCheckBox1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addGap(83, 83, 83))
         );
@@ -141,7 +149,9 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jCheckBox1))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -150,27 +160,32 @@ public class AnnotationPanel extends javax.swing.JPanel {
         
         java.util.ArrayList<com.ivli.roim.core.Filter> f = new java.util.ArrayList<>();
         
-        for(int n=0; n < rowData.length; ++n ) {
-          
+        int cnt = 0;
+        for(int n=0; n < jTable1.getRowCount(); ++n ) {          
             if (true == (boolean)jTable1.getModel().getValueAt(n, 1)) 
-                f.add(Filter.getFilter((String)rowData[n][0]));
+                cnt++;//f.add(Filter.getFilter((String)rowData[n][0]));
         }
         
-        com.ivli.roim.core.Filter [] fi = new com.ivli.roim.core.Filter[f.size()];
+        com.ivli.roim.core.Filter []fi = new com.ivli.roim.core.Filter[cnt];
         
-        int n = 0;
-        for (com.ivli.roim.core.Filter ff:f)
-            fi[n] = ff;
-        ///iAnno.setFilters((com.ivli.roim.core.Filter[])f.toArray());
-       
+        for(int n=0; n < jTable1.getRowCount(); ++n ) {
+            if (true == (boolean)jTable1.getModel().getValueAt(n, 1))
+                fi[n] = Filter.getFilter((String)rowData[n][0]);
+        }
+              
         iAnno.setFilters(fi);
-        
+        iAnno.setMultiline(jCheckBox1.isSelected());
         SwingUtilities.getWindowAncestor(this).setVisible(false);        
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables

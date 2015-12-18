@@ -17,14 +17,14 @@
  */
 package com.ivli.roim.events;
 
-///import com.ivli.roim.Overlay;
-import com.ivli.roim.ROI;
+import com.ivli.roim.Overlay;
+//import com.ivli.roim.ROI;
 /**
  *
  * @author likhachev
  */
 public final class ROIChangeEvent extends java.util.EventObject { 
-    private final ROI iROI;
+    private final Overlay iROI;
     private final CHG iChange;
     private final Object iExtra; //depending on change it carries old name, old colour or ... 
     
@@ -39,7 +39,7 @@ public final class ROIChangeEvent extends java.util.EventObject {
         Emptied   
     }
     
-    public ROIChangeEvent(Object aO, CHG aC, ROI aR, Object aExtra) {
+    public ROIChangeEvent(Object aO, CHG aC, Overlay aR, Object aExtra) {
         super (aO);
         iROI = aR;
         iChange = aC;
@@ -50,7 +50,7 @@ public final class ROIChangeEvent extends java.util.EventObject {
         return iChange;
     }
     
-    public ROI getROI() {
+    public Overlay getROI() {
         return iROI;
     }   
     

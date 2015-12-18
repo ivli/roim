@@ -64,7 +64,7 @@ public class TimeSliceVectorTest {
     @Before
     public void setUp() {
         
-        phi = new  java.util.ArrayList();
+        phi = new  java.util.ArrayList<>();
         
         for (int i = 0; i < TOTAL_NO_OF_PHASES; ++i)
             phi.add(new PhaseInformation(NO_OF_FRAMES[i], FRAME_DURATION[i]));

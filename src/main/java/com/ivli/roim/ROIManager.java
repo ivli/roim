@@ -276,7 +276,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         iList.remove(ROIChangeListener.class, aL);
     }
     
-    void notifyROIChanged(ROI aR, ROIChangeEvent.CHG aS, Object aEx) {
+    void notifyROIChanged(Overlay aR, ROIChangeEvent.CHG aS, Object aEx) {
         ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR, aEx);
 
         ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);

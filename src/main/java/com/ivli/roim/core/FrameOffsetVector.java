@@ -36,7 +36,7 @@ public class FrameOffsetVector implements Iterable<FrameOffset>, java.io.Seriali
     public FrameOffsetVector(int aSize) { 
         iSize = aSize;
         iBaseFrame = 0;
-        iMap = new HashMap();
+        iMap = new HashMap<>();
     }
     
     public int getBaseFrame() {
