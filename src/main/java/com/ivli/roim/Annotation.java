@@ -21,7 +21,7 @@ public class Annotation extends Overlay implements ROIChangeListener {
     private Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
     private final ROI iRoi; 
      // private final Color iColor;
-    private java.util.Collection<String> iAnnotation = new java.util.ArrayList<>();           
+    private final java.util.Collection<String> iAnnotation = new java.util.ArrayList<>();           
     
     @Override
     int getCaps(){return HASMENU|MOVEABLE|SELECTABLE|PINNABLE|HASCUSTOMMENU;}
@@ -48,20 +48,29 @@ public class Annotation extends Overlay implements ROIChangeListener {
     
     public Annotation(ROI aRoi) {
         super("ANNOTATION", null, aRoi.getManager());  
-        iRoi = aRoi;      
-        //iColor = iRoi.getColor();
-        update();                       
+        iRoi = aRoi;     
+        
+        for (Filter f : iFilters)
+            iAnnotation.add(f.getMeasurement().format(f.get(iRoi)));        
+        
+        final Rectangle2D bnds = calcBounds();
+                
+        iShape = new Rectangle2D.Double(iRoi.getShape().getBounds2D().getX(),  
+                                        iRoi.getShape().getBounds2D().getY() - bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX() , 
+                                        bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
+                                        bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());
+        
         aRoi.addROIChangeListener(this);
     }
     
-    Rectangle2D calcBounds() {
+    private Rectangle2D calcBounds() {
         
         double width  = 0;
         double height = 0;
         
         final java.awt.FontMetrics fm = getManager().getView().getFontMetrics(getManager().getView().getFont());
         
-        for (String s:iAnnotation) {
+        for (String s : iAnnotation) {
             Rectangle2D b = fm.getStringBounds(s, getManager().getView().getGraphics());        
           
             if (iMultiline) {
@@ -80,19 +89,13 @@ public class Annotation extends Overlay implements ROIChangeListener {
 
         for (Filter f : iFilters)
             iAnnotation.add(f.getMeasurement().format(f.get(iRoi)));     
-        final Rectangle2D bnds = calcBounds();//getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
-        /*       
-        iShape = new Rectangle2D.Double(iRoi.getShape().getBounds2D().getX(), 
-                                        iRoi.getShape().getBounds2D().getY() - bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX(), 
-                                        bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
-                                        bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());
-        */      
         
-       iShape = new Rectangle2D.Double(null == iShape ? iRoi.getShape().getBounds2D().getX() : getShape().getBounds2D().getX(), 
-                                       null == iShape ? iRoi.getShape().getBounds2D().getY() - bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX() :
-                                               getShape().getBounds2D().getY(), 
-                                        bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
-                                        bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());
+        final Rectangle2D bnds = calcBounds();
+        final double scaleX =  getManager().getView().screenToVirtual().getScaleX();       
+        iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), getShape().getBounds2D().getY(),                                                                                        
+                                        bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);
+                                        
+        
     }
         
     @Override

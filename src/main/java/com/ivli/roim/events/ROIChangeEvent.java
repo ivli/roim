@@ -18,15 +18,15 @@
 package com.ivli.roim.events;
 
 import com.ivli.roim.Overlay;
-//import com.ivli.roim.ROI;
+
 /**
  *
  * @author likhachev
  */
 public final class ROIChangeEvent extends java.util.EventObject { 
-    private final Overlay iROI;
-    private final CHG iChange;
-    private final Object iExtra; //depending on change it carries old name, old colour or ... 
+    private final Overlay iObj;
+    private final CHG     iChange;
+    private final Object  iExtra; //depending on change it carries old name, old colour or ... 
     
      //TODO: rename logicaly
     public enum CHG {    
@@ -41,7 +41,7 @@ public final class ROIChangeEvent extends java.util.EventObject {
     
     public ROIChangeEvent(Object aO, CHG aC, Overlay aR, Object aExtra) {
         super (aO);
-        iROI = aR;
+        iObj = aR;
         iChange = aC;
         iExtra = aExtra;
     }
@@ -50,8 +50,8 @@ public final class ROIChangeEvent extends java.util.EventObject {
         return iChange;
     }
     
-    public Overlay getROI() {
-        return iROI;
+    public Overlay getObject() {
+        return iObj;
     }   
     
     public Object getExtra() {

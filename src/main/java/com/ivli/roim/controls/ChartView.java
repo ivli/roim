@@ -76,48 +76,48 @@ public class ChartView extends javax.swing.JPanel
         
         switch (aE.getChange()) {
             case Cleared: {                
-                int ndx = col.indexOf(aE.getROI().getName());
+                int ndx = col.indexOf(aE.getObject().getName());
                 col.removeSeries(ndx);                
             } break;    
             case Moved: //fall-through
             case Changed: {
-                int ndx = col.indexOf(aE.getROI().getName());               
-                Series c = ((ROI)aE.getROI()).getSeries(Measurement.DENSITY);
+                int ndx = col.indexOf(aE.getObject().getName());               
+                Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                 XYSeries s = col.getSeries(ndx); 
                 s.clear();
                 
                 for (int n = 0; n < c.getNumFrames(); ++n) {
-                    long dur = aE.getROI().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000;
+                    long dur = aE.getObject().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000;
                     s.add(dur, c.get(n));
                 }
             } break;
                 
             case Created: {                
-                final XYSeries s = new XYSeries(aE.getROI().getName());
-                final Series c = ((ROI)aE.getROI()).getSeries(Measurement.DENSITY);
+                final XYSeries s = new XYSeries(aE.getObject().getName());
+                final Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                
-                assert(c.getNumFrames() == aE.getROI().getManager().getImage().getTimeSliceVector().getNumFrames());
+                assert(c.getNumFrames() == aE.getObject().getManager().getImage().getTimeSliceVector().getNumFrames());
                 
                 for (int n = 0; n < c.getNumFrames(); ++n)                     
-                    s.add(aE.getROI().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000, c.get(n));
+                    s.add(aE.getObject().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000, c.get(n));
                 
 
                 ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   
-                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getROI().getName()), ((ROI)aE.getROI()).getColor());              
+                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getObject().getName()), ((ROI)aE.getObject()).getColor());              
             } break;
             
             case ChangedColor: {
                 assert (aE.getExtra() instanceof java.awt.Color);
-                final int ndx = col.indexOf(aE.getROI().getName());
+                final int ndx = col.indexOf(aE.getObject().getName());
                 if (ndx >=0)
-                    iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)aE.getROI()).getColor());                                 
+                    iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)aE.getObject()).getColor());                                 
             } break;
                         
             case ChangedName: {
                 assert (aE.getExtra() instanceof String);
                 final int ndx = col.indexOf((String)aE.getExtra());  
                 XYSeries s = col.getSeries(ndx); 
-                s.setKey(aE.getROI().getName());
+                s.setKey(aE.getObject().getName());
             } break;    
             
             case Emptied: {

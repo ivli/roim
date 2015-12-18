@@ -40,8 +40,13 @@ public class ActiveAnnotation extends Overlay implements ROIChangeListener {
     
     ActiveAnnotation(ROIManager aRM, BinaryOp aOp) {
         super("ANNOTATION.ACTIVE", null, aRM);        
-        iOp = aOp;        
-        update();       
+        iOp = aOp;     
+        iAnnotation = iOp.getCompleteString();
+        final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
+        /**/
+       
+        iShape = new Rectangle2D.Double(0, 0, bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
+                                        bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());   
     }
 
     @Override
@@ -70,11 +75,9 @@ public class ActiveAnnotation extends Overlay implements ROIChangeListener {
         
         final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
         /**/
-       
-        iShape = new Rectangle2D.Double((null == iShape) ? 0 : iShape.getBounds().x * getManager().getView().screenToVirtual().getScaleX(), ///TODO: create in a position related to either one or other ROI
-                                        ((null == iShape) ? 0 + bnds.getHeight() : iShape.getBounds().y) * getManager().getView().screenToVirtual().getScaleX(), 
-                                        bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
-                                        bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX()); 
+        final double scaleX =  getManager().getView().screenToVirtual().getScaleX();       
+        iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), getShape().getBounds2D().getY(),                                                                                        
+                                        bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);
     }
     
     @Override

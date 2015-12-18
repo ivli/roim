@@ -91,12 +91,10 @@ public abstract class Overlay implements java.io.Serializable {
             Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);        
             Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());
 
-            if (!bounds.contains(temp.getBounds())) {
-                //logger.info("!!movement out of range");
-            } else {       
-                Shape old = iShape;
+            if (bounds.contains(temp.getBounds())) {            
                 iShape = temp;                    
-                //update();
+                update();
+                notifyROIChanged(ROIChangeEvent.CHG.Moved, new double[]{adX, adY});
             }
         }
     } 

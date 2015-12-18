@@ -28,7 +28,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     
     
     @Override
-    int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU;}
+    int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU|PINNABLE;}
     
     ROI(String aName, Shape aS, ROIManager aMgr, Color aC) {
         super(aName, aS, aMgr); 
@@ -158,25 +158,23 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         if (DRAW_PROFILES)
             drawProfiles(aGC, aTrans);
     }
-         
+    
+    /*
     @Override
     void move(double adX, double adY) {
-        //AffineTransform trans = AffineTransform.getTranslateInstance(adX, adY);    
+           
         Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);        
         Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());
         
-        if (!bounds.contains(temp.getBounds())) {
-            logger.info("!!movement out of range");
-        } else {       
+        if (bounds.contains(temp.getBounds())) {                   
             Shape old = iShape;
-            iShape = temp;    
-           
-            update();
-            
+            iShape = temp;               
+            update();            
             notifyROIChanged(ROIChangeEvent.CHG.Moved, new double[]{adX, adY});        
         }
     }  
-       
+     */
+    
     private int calculateAreaInPixels() {
         final java.awt.Rectangle bnds = getShape().getBounds();
         int AreaInPixels = 0;

@@ -55,7 +55,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
 
     transient private final ImageView iView;     
     private HashSet<Overlay> iOverlays;          
-    private final EventListenerList iList;
+    private EventListenerList iList;
     
     final class TUid {
         int iUid;
@@ -131,8 +131,6 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         
         Rectangle2D r = iView.screenToVirtual().createTransformedShape(s).getBounds();
      
-        ///Point2D ep1 =    ;
-        
         
         Ruler newRoi = new Ruler(new Point2D.Double(r.getX(), r.getY()), new Point2D.Double(r.getWidth() - r.getX(), r.getHeight() - r.getY()), this);     
         
@@ -225,11 +223,15 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
            
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
          out.writeObject(iOverlays);
+         out.writeObject(iList);
     }
     
     private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {        
-            iOverlays = (HashSet<Overlay>)(ois.readObject());  
+                        
             notifyROIChanged(null, ROIChangeEvent.CHG.Emptied, null);
+            
+            iOverlays = (HashSet<Overlay>)(ois.readObject());  
+            iList = (EventListenerList)ois.readObject();
             
             for (Overlay r : iOverlays) {
                 //if (r instanceof ROIBase) {
@@ -287,7 +289,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         
     @Override
     public void ROIChanged(ROIChangeEvent anEvt) {        
-       notifyROIChanged(anEvt.getROI(), anEvt.getChange(), anEvt.getExtra());
+       notifyROIChanged(anEvt.getObject(), anEvt.getChange(), anEvt.getExtra());
     }
     
     private static final Logger logger = LogManager.getLogger(ROIManager.class);
