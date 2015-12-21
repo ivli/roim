@@ -51,8 +51,7 @@ public class ImageFrame implements java.io.Serializable {
         computeStatistics();       
     }
     
-    public BufferedImage getBufferedImage() {
-        
+    public BufferedImage getBufferedImage() {        
         WritableRaster wr = iRaster.createCompatibleWritableRaster();
         wr.setRect(iRaster);
         
@@ -61,8 +60,8 @@ public class ImageFrame implements java.io.Serializable {
                                                          false,		// has alpha
                                                          false,		// alpha premultipled
                                                          Transparency.OPAQUE,
-                                                         wr.getDataBuffer().getDataType())                                                                                                                                  
-                                                    , wr, true, null);
+                                                         wr.getDataBuffer().getDataType()),                                                                                                                                                                                         
+                                 wr, true, null);
     }     
     
    

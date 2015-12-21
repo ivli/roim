@@ -38,7 +38,9 @@ public class DCMImageProvider extends ImageProvider {
     
     public DCMImageProvider(String aFile) throws IOException {
                 
-        iLoader = new DCMImageLoader(); 
+        //java.io.File f = new java.io.File(aFile);
+        
+        iLoader = new JPGImageLoader();//DCMImageLoader(); 
         
         try {           
             iLoader.open(aFile);
