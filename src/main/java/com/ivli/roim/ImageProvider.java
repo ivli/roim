@@ -102,8 +102,7 @@ public abstract class ImageProvider implements IImageProvider {
     
     @Override
     public PixelSpacing getPixelSpacing() {
-        return iPixelSpacing;
-        
+        return iPixelSpacing;        
     }
     
     @Override

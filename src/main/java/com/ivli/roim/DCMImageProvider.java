@@ -37,6 +37,7 @@ public class DCMImageProvider extends ImageProvider {
     protected final IImageLoader iLoader;
     
     public DCMImageProvider(String aFile) throws IOException {
+                
         iLoader = new DCMImageLoader(); 
         
         try {           
