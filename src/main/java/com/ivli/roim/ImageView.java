@@ -63,7 +63,7 @@ public class ImageView extends JComponent {
     
     private int iFit = Settings.DEFAULT_FIT;     
     protected final IMultiframeImage iModel;                     
-    protected final Controller iController;    
+    protected       Controller iController;    
     protected final AffineTransform iZoom;
     protected final Point iOrigin;    
     protected       Object iInterpolation;// = Settings.INTERPOLATION_METHOD;
@@ -81,7 +81,7 @@ public class ImageView extends JComponent {
         iModel = anImage;
         iCurrent = 0;       
         
-        iController = new Controller(this);          
+        iController = new Controller(this);
         
         iZoom   = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
         iOrigin = new Point(0, 0); 
@@ -101,7 +101,7 @@ public class ImageView extends JComponent {
             public void componentShown(ComponentEvent e) {}                    
         });        
     }
-           
+                 
     public AffineTransform getZoom() {
         return iZoom;
     }    
@@ -276,7 +276,7 @@ public class ImageView extends JComponent {
        // repaint();
     }
              
-    public void resetView() {
+    public void reset() {
         iROIMgr.clear();
         iOrigin.x = iOrigin.y = 0;
         iZoom.setToScale(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  

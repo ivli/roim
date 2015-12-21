@@ -122,7 +122,8 @@ public class ChartView extends javax.swing.JPanel
             
             case Emptied: {
                 ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); 
-            } break;     default: 
+            } break;     
+            default: 
                 throw new java.lang.IllegalArgumentException();    
         }   
     }

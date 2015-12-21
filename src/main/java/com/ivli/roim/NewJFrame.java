@@ -29,15 +29,17 @@ import com.ivli.roim.controls.*;
 import com.ivli.roim.events.*;
 
 
-public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {
-     
+public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {     
     private ImagePanel  iPanel;
-    private ImagePanel  iGrid;
+    private ImagePanel  iGrid;    
+    private ImagePanel  iOff;
     private ChartView   iChart;
     private ChartView   iChart2;
+    private ImageProvider iProvider;
     
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
+        //iPanel = new ImagePanel();
         initComponents();    
     }
     	
@@ -336,9 +338,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         dispose();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
      
-    /*com.ivli.roim.core.*/
-    ImageProvider iProvider;
-    
     private void openImage(String aF) /*throws IOException*/ {   
         String dicomFileName;
         
@@ -356,10 +355,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 return;
         }
          
-        try{                           
+        try {                           
             iProvider = new DCMImageProvider(dicomFileName);
-            logger.info("opened file: " + dicomFileName);
-            
+            logger.info("opened file: " + dicomFileName);            
         } catch (IOException ex) {            
             logger.info("Unable to open file: " + dicomFileName); //NOI18N            
             javax.swing.JOptionPane.showMessageDialog(this, "Unable to open file " + dicomFileName);
@@ -368,30 +366,24 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         
         initPanels();
     }
-    
-    ImagePanel iOff;
-    
+        
     private void initPanels() {         
         jPanel1.removeAll();
         jPanel3.removeAll();
         jPanel4.removeAll();
                         
-        if (null == iPanel)        
-            iPanel = new ImagePanel();        
+        ///if (null == iPanel)        
+        ///iPanel = new ImagePanel();        
                 
-        iPanel.open(new ImageView(new MultiframeImage(iProvider))); //.collapse(TimeSlice.FOREWER))); // ));//            
+        iPanel = new ImagePanel(new ImageView(new MultiframeImage(iProvider))); //.collapse(TimeSlice.FOREWER))); // ));//            
        
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-        
-        if (null != iChart) {           
-           // iPanel.iView.getROIMgr().removeROIChangeListener(iChart);
-        } else {
-            iChart = new ChartView();        
-            iChart.initChart();
-            iPanel.iView.getROIMgr().addROIChangeListener(iChart);
-        }
-        
+       
+        iChart = new ChartView();        
+        iChart.initChart();
+        iPanel.addROIChangeListener(iChart);
+     
         /* IF !CHART_ON_THE_SAME_PAGE */    
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iPanel, BorderLayout.CENTER);
@@ -400,17 +392,18 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         
         /* ELSE */
                 
-        if (null == iOff)
-            iOff = new ImagePanel();
-        iOff.open(new OffsetImageView(new MultiframeImage(iProvider)));
+       // if (null == iOff)
+        //    iOff = new ImagePanel();
+        iOff= new ImagePanel(new OffsetImageView(new MultiframeImage(iProvider)));
         
-        if (null != iChart2) {           
+       // if (null != iChart2) {           
            // iPanel.iView.getROIMgr().removeROIChangeListener(iChart);
-        } else {
+       // } else {
             iChart2 = new ChartView();        
             iChart2.initChart();
-            iOff.iView.getROIMgr().addROIChangeListener(iChart2);
-        }
+            iOff.addROIChangeListener(iChart2);
+        //}
+        
         jSplitPane1.setPreferredSize(jPanel1.getSize());
         jSplitPane1.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         jSplitPane1.setDividerLocation(.5);
@@ -420,15 +413,15 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         
         jPanel1.validate(); 
                 
-        iPanel.iView.addFrameChangeListener(this);        
-        iPanel.iView.addWindowChangeListener(this);
-        iPanel.iView.addZoomChangeListener(this);
-        iPanel.iView.getROIMgr().addROIChangeListener(this);  
+        iPanel.addFrameChangeListener(this);        
+        iPanel.addWindowChangeListener(this);
+        iPanel.addZoomChangeListener(this);
+        iPanel.addROIChangeListener(this);  
         
-        if (null == iGrid)
-            iGrid = new ImagePanel();
+        //if (null == iGrid)
+            ///iGrid = new ImagePanel();
         
-        iGrid.open(new GridImageView(new MultiframeImage(iProvider), 2, 2));
+        iGrid = new ImagePanel(new GridImageView(new MultiframeImage(iProvider), 2, 2));
         
         iGrid.setPreferredSize(jPanel1.getSize());
         iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -461,9 +454,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenu2ComponentShown
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        if(null != iPanel)
-        iPanel.resetView();
-        jPanel1.repaint();
+        if(null != iPanel) {
+            iPanel.reset();        
+        }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
@@ -472,9 +465,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         fd.setFile(Settings.FILE_SUFFIX_ROILIST);
         fd.setVisible(true);
         String ff ;
-        if (null != fd.getFile()) {
+        if (null != fd.getFile()) { /*
             iPanel.iView.getROIMgr().internalize(fd.getDirectory() + fd.getFile());
             iPanel.repaint();
+            */
         }
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
@@ -484,9 +478,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         fd.setFile(Settings.FILE_SUFFIX_ROILIST);
         fd.setVisible(true);
         
-        if (null != fd.getFile())
+       /* if (null != fd.getFile()) 
             iPanel.iView.getROIMgr().externalize(fd.getDirectory() + fd.getFile());
-
+        */
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
@@ -520,7 +514,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         fd.setVisible(true);
         String cm ;
         if (null != fd.getFile()) {
-            iPanel.openLUT(fd.getDirectory() + fd.getFile());
+            iPanel.setLUT(fd.getDirectory() + fd.getFile());
             jPanel1.repaint();
             //iLut.setLUT(cm);
             //iLut.repaint();
@@ -529,14 +523,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        VOILUTPanel panel = new VOILUTPanel(iPanel.iLut, iPanel.iView.getImage()/*.get(iPanel.iView.getCurrent())*/);
-        JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
-
-        dialog.setContentPane(panel);
-        dialog.validate();
-        dialog.pack();
-        dialog.setResizable(false);
-        dialog.setVisible(true);
+        switch(jTabbedPane1.getSelectedIndex()) {
+            case 0:
+                iPanel.showLUTDialog(); break;
+            case 2:
+                iOff.showLUTDialog(); break;
+            default: break;    
+        };
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed

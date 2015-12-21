@@ -87,7 +87,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     public ImageView getView() {
         return iView;
     } 
-    
+            
     public IMultiframeImage getImage() {
         return iView.getModel();
     }

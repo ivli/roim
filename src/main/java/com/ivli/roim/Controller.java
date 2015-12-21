@@ -169,6 +169,10 @@ class Controller implements ActionListener {
        return null;
     }
     
+    boolean blockObjectSpecificPopupMenu() {
+        return false;
+    }
+    
     class MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener {           
         public void mouseEntered(MouseEvent e) {
             iControlled.requestFocusInWindow(); //gain focus
@@ -185,17 +189,19 @@ class Controller implements ActionListener {
                 //iControlled.zoom(e.getWheelRotation()/Settings.ZOOM_SENSITIVITY_FACTOR, 0,0);
         }
 
+        
         public void mouseClicked(MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e)) {
                 if (null != (iSelected = iControlled.getROIMgr().findOverlay(e.getPoint()))) {
-                    if (iSelected.hasMenu()) {
-                        final JPopupMenu mnu = buildObjectSpecificPopupMenu(iSelected);
-
-
-                         mnu.show(iControlled, e.getX(), e.getY());
+                    ///JPopupMenu mnu''
+                    
+                    if (iSelected.hasMenu() && !blockObjectSpecificPopupMenu()) {
+                        buildObjectSpecificPopupMenu(iSelected).show(iControlled, e.getX(), e.getY());
+                       // mnu.;
                     }
                 } else 
-                    showPopupMenu_Context(e.getX(), e.getY());
+                    buildContextPopupMenu().show(iControlled, e.getX(), e.getY());
+                
             }
         }
 
@@ -311,12 +317,12 @@ class Controller implements ActionListener {
     private static final String KCommandCustomCommand = "COMMAND_ROI_OPERATIONS_CUSTOM_COMMAND"; // NOI18N
 
     @Override
-    public void actionPerformed(ActionEvent e) {  
-        onAction(e.getActionCommand());
-    }
+    public void actionPerformed(ActionEvent aCommand) {  
+       // onAction(e.getActionCommand());
+   // }
     
-    protected void onAction(final String aCommand) {
-        switch (aCommand) {
+   // protected void onAction(final String aCommand) {
+        switch (aCommand.getActionCommand()) {
             case KCommandRoiCreateFree: ///amazingly but it does work
                 iAction = new BaseActionItem(-1, -1) {                           
                     Path2D iPath = new Path2D.Double();
@@ -456,16 +462,18 @@ class Controller implements ActionListener {
                 dialog.setVisible(true);
             } break;
             default: 
-                handleCustomCommand(iSelected);
+                if(!handleCustomCommand(aCommand)) {
+                 //TODO: raise an exception ???
+                }
                 break;
         }
     }
 
-    private void handleCustomCommand(Overlay aO) {
-    
+    protected boolean handleCustomCommand(ActionEvent aCommand) {
+        return false;
     }
-    
-    void showPopupMenu_Context(int aX, int aY) {
+        
+    JPopupMenu buildContextPopupMenu() {
         JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_OVERLAY_CREATE")); 
         {
             JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CREATE_OVERLAY"));
@@ -509,12 +517,13 @@ class Controller implements ActionListener {
         mnu.add(mi);
         }
         
-        mnu.show(iControlled, aX, aY);
+        return mnu;//mnu.show(iControlled, aX, aY);
     }
     
     JPopupMenu buildObjectSpecificPopupMenu(Overlay aO) {
        JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS")); 
-        buildPopupMenu_Roi(mnu);
+        
+       buildPopupMenu_Roi(mnu);
         
         if(iSelected instanceof Profile)
             buildPopupMenu_Profile(mnu);

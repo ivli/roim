@@ -22,8 +22,13 @@ import com.ivli.roim.core.Range;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 /**
  *
  * @author likhachev
@@ -32,11 +37,59 @@ public class GridImageView extends ImageView {
     
     private int iRows;
     private int iColumns;
+    private boolean iDisplayFrameNumbers = true;
+    
+    private static final String KCommandShowFrameNumbers = "MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS";
+    private static final String KCommandOptimalLayout = "MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL";
     
     GridImageView(IMultiframeImage anImage, int aRows, int aColunmns) {
         super(anImage);
-        iRows = aRows;
+       // iModel = ;
+        iRows  = aRows;
         iColumns = aColunmns;
+        iController = new Controller(this) {
+            
+            
+            JPopupMenu buildContextPopupMenu() {
+            
+                JPopupMenu mnu = new JPopupMenu("MNU_CONTEXT_GRIDVIEW"); 
+                {                   
+                    {
+                    JMenuItem mi = new JMenuItem("MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL");
+                    mi.addActionListener(this);
+                    mi.setActionCommand(KCommandOptimalLayout); // NOI18N
+                    mnu.add(mi);
+                    } 
+                    {
+                    JCheckBoxMenuItem mi = new JCheckBoxMenuItem("MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS");
+                    mi.addActionListener(this);
+                    mi.setActionCommand(KCommandShowFrameNumbers); // NOI18N
+                    mi.setState(iDisplayFrameNumbers);
+                    mnu.add(mi);
+                    }                     
+                    
+                }
+
+                return mnu;
+            }
+            
+            JPopupMenu buildObjectSpecificPopupMenu() {
+                return buildContextPopupMenu();
+            }
+            
+            protected boolean handleCustomCommand(ActionEvent aCommand) {
+                switch(aCommand.getActionCommand()) {
+                    case KCommandOptimalLayout:
+                        return true;
+                    case KCommandShowFrameNumbers: {
+                        iDisplayFrameNumbers = !iDisplayFrameNumbers;
+                        invalidateBuffer();
+                        repaint();
+                    } break;
+                }
+                return false;
+            }
+        };
     }
         
     public void setGrid(int aRows, int aColunmns) {
@@ -118,8 +171,10 @@ public class GridImageView extends ImageView {
                     BufferedImage src = getLUTMgr().transform(img, null);
 
                     gc.drawImage(src, posx, posy, width, height, null);
-                    gc.setColor(Color.RED);
-                    gc.drawString(String.format("%d", ndx), posx + 2, posy + 12);
+                    if (iDisplayFrameNumbers) {
+                        gc.setColor(Color.RED);
+                        gc.drawString(String.format("%d", ndx), posx + 2, posy + 12);
+                    }
                 
                 } else {
                     if (getLUTMgr().isInverted())                          
