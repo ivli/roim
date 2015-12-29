@@ -31,8 +31,6 @@ import org.apache.logging.log4j.Logger;
  * @author likhachev
  */
 public class DCMImageProvider extends ImageProvider {
-    private static final boolean LOAD_ON_DEMAND = true;
-    private static final int     FIRST_FRAME_TO_LOAD = 0;
     
     protected final IImageLoader iLoader;
     
@@ -40,7 +38,7 @@ public class DCMImageProvider extends ImageProvider {
                 
         //java.io.File f = new java.io.File(aFile);
         
-        iLoader = new JPGImageLoader();//DCMImageLoader(); 
+        iLoader = new DCMImageLoader();//DCMImageLoader(); 
         
         try {           
             iLoader.open(aFile);
@@ -57,12 +55,8 @@ public class DCMImageProvider extends ImageProvider {
             iFrames.clear();
             iFrames.ensureCapacity(iNoOfFrames);
 
-            if (!LOAD_ON_DEMAND) 
-                for (int i = 0; i < iNoOfFrames; ++i)
-                    doLoadFrame(i);
-
-            /**/
-            ImageFrame f = doLoadFrame(FIRST_FRAME_TO_LOAD);
+           
+            ImageFrame f = doLoadFrame(0);
 
             iWidth = f.getWidth();
             iHeight = f.getHeight();        
@@ -84,20 +78,20 @@ public class DCMImageProvider extends ImageProvider {
         
         try {
             f = iFrames.get(anIndex);                        
-        } catch (IndexOutOfBoundsException ex) {   
+        } catch (IndexOutOfBoundsException e) {   
             try {
                 f = new ImageFrame(iLoader.readRaster(anIndex));
 
                 iFrames.add(anIndex, f);
                  //record only cache misses
-                logger.info("Frame " + anIndex +                                  
-                            ", MIN"   + f.getMin() +  // NOI18N
-                            ", MAX"   + f.getMax() +  // NOI18N
-                            ", DEN"   + f.getIden()); // NOI18N     
+                logger.info("Frame: "   + anIndex + // NOI18N                              
+                            ", MIN: "   + f.getMin() +  // NOI18N
+                            ", MAX: "   + f.getMax() +  // NOI18N
+                            ", DEN: "   + f.getIden() + "."); // NOI18N     
                 
                   
-            } catch (IOException sex) {
-                logger.error("FATAL!!!", sex);
+            } catch (IOException ee) {
+                logger.error("FATAL!!!", ee);
             }
         }
         return f;

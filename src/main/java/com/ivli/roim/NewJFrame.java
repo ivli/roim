@@ -20,10 +20,14 @@ package com.ivli.roim;
 
 import java.awt.*;
 import java.io.IOException;
+import java.io.File;
+import java.io.FilenameFilter;
 import javax.swing.JDialog;
-
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import javax.swing.UIManager;
 
 import com.ivli.roim.controls.*;
 import com.ivli.roim.events.*;
@@ -37,6 +41,36 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private ChartView   iChart2;
     private ImageProvider iProvider;
     
+    static {
+        
+        UIManager.put("FileChooser.cancelButtonText", "Отмена");
+        UIManager.put("FileChooser.cancelButtonToolTipText", "Отмена");
+        UIManager.put("FileChooser.openButtonText", "Открыть");
+        UIManager.put("FileChooser.openButtonToolTipText", "Открыть");
+        UIManager.put("FileChooser.filesOfTypeLabelText", "Тип");
+        UIManager.put("FileChooser.fileNameLabelText", "Файл");
+        UIManager.put("FileChooser.detailsViewButtonToolTipText", "Подробно");
+        UIManager.put("FileChooser.detailsViewButtonAccessibleName", "Подробно");
+        UIManager.put("FileChooser.upFolderToolTipText", "На один уровень вверх"); 
+        UIManager.put("FileChooser.upFolderAccessibleName", "На один уровень вверх"); 
+        UIManager.put("FileChooser.homeFolderToolTipText", "Домой"); 
+        UIManager.put("FileChooser.homeFolderAccessibleName", "Домой"); 
+        UIManager.put("FileChooser.fileNameHeaderText", "Имя"); 
+        UIManager.put("FileChooser.fileSizeHeaderText", "Размер");
+        UIManager.put("FileChooser.fileTypeHeaderText", "Тип"); 
+        UIManager.put("FileChooser.fileDateHeaderText", "дата"); 
+        UIManager.put("FileChooser.fileAttrHeaderText", "Аттрибуты");
+         UIManager.put("FileChooser.listViewButtonToolTipText", "Список"); 
+        UIManager.put("FileChooser.listViewButtonAccessibleName", "Список"); 
+        /*UIManager.put("FileChooser.acceptAllFileFilterText", "Directorios");
+        UIManager.put("FileChooser.lookInLabelText", "Localização");
+       
+         */
+        UIManager.put("FileChooser.openDialogTitleText","Выберите файл");
+        UIManager.put("FileChooser.readOnly", Boolean.TRUE);
+        
+    }
+
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
         //iPanel = new ImagePanel();
@@ -341,12 +375,22 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private void openImage(String aF) /*throws IOException*/ {   
         String dicomFileName;
         
+        /* NOT_USE_SWING_DIALOG */
         if (null != aF) {
             dicomFileName = aF;
         } else {
-            FileDialog fd = new FileDialog(this,java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_DICOM_FILE"), FileDialog.LOAD);
-            fd.setDirectory("D:\\images\\"); // NOI18N
+            FileDialog fd = new FileDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_DICOM_FILE"), FileDialog.LOAD);
+            
             fd.setFile("*.dcm"); // NOI18N
+            /* it doesn't work on win f*** 
+            fd.setFilenameFilter(new FilenameFilter(){
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".dcm") || name.endsWith(".dicom");
+                }
+            });
+            */
+            fd.setDirectory("D:\\images\\"); // NOI18N
             fd.setVisible(true);
 
             if (null != fd.getFile()) 
@@ -354,7 +398,44 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             else
                 return;
         }
-         
+        /*
+      
+        
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setFileFilter(new FileFilter(){ 
+            public  boolean accept(File f) {                                 
+                if (f.isDirectory()) 
+                    return true;
+                else {
+                    String ext = "";
+                    String s = f.getName();
+                    int i = s.lastIndexOf('.');
+
+                    if (i > 0 &&  i < s.length() - 1) {
+                        ext = s.substring(i+1).toLowerCase();
+                    }    
+
+                    if (ext.equalsIgnoreCase("dcm"))
+                        return true;
+  
+                }
+                
+                return false;
+            }
+            
+            public String getDescription() {return "DICOM";}                           
+        });
+        
+        
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            System.out.println("Selected file: " + (dicomFileName = selectedFile.getAbsolutePath()));
+             
+        } else {return;}
+        /* ENDIF */
+        
         try {                           
             iProvider = new DCMImageProvider(dicomFileName);
             logger.info("opened file: " + dicomFileName);            
