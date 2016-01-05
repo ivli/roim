@@ -39,8 +39,8 @@ public class GridImageView extends ImageView {
     private int iColumns;
     private boolean iDisplayFrameNumbers = true;
     
-    private static final String KCommandShowFrameNumbers = "MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS";
-    private static final String KCommandOptimalLayout = "MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL";
+    private static final String KCommandShowFrameNumbers = "MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS"; // NOI18N
+    private static final String KCommandOptimalLayout = "MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL"; // NOI18N
     
     GridImageView(IMultiframeImage anImage, int aRows, int aColunmns) {
         super(anImage);
@@ -55,19 +55,18 @@ public class GridImageView extends ImageView {
                 JPopupMenu mnu = new JPopupMenu("MNU_CONTEXT_GRIDVIEW"); 
                 {                   
                     {
-                    JMenuItem mi = new JMenuItem("MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL");
+                    JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL"));
                     mi.addActionListener(this);
-                    mi.setActionCommand(KCommandOptimalLayout); // NOI18N
+                    mi.setActionCommand(KCommandOptimalLayout); 
                     mnu.add(mi);
                     } 
                     {
-                    JCheckBoxMenuItem mi = new JCheckBoxMenuItem("MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS");
+                    JCheckBoxMenuItem mi = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS"));
                     mi.addActionListener(this);
-                    mi.setActionCommand(KCommandShowFrameNumbers); // NOI18N
+                    mi.setActionCommand(KCommandShowFrameNumbers); 
                     mi.setState(iDisplayFrameNumbers);
                     mnu.add(mi);
-                    }                     
-                    
+                    }                                         
                 }
 
                 return mnu;
@@ -160,6 +159,7 @@ public class GridImageView extends ImageView {
        
         int j = 0;
         int posy = GAPY;
+        
         do {   
             int posx = GAPX; 
             
@@ -171,11 +171,11 @@ public class GridImageView extends ImageView {
                     BufferedImage src = getLUTMgr().transform(img, null);
 
                     gc.drawImage(src, posx, posy, width, height, null);
+                    
                     if (iDisplayFrameNumbers) {
                         gc.setColor(Color.RED);
-                        gc.drawString(String.format("%d", ndx), posx + 2, posy + 12);
-                    }
-                
+                        gc.drawString(String.format("%d", ndx), posx + 2, posy + 12); // NOI18N
+                    }                
                 } else {
                     if (getLUTMgr().isInverted())                          
                         gc.setColor(Color.WHITE);
@@ -183,17 +183,14 @@ public class GridImageView extends ImageView {
                         gc.setColor(Color.BLACK);
                     gc.fillRect(posx, posy, width, height);                    
                 }      
-                
-                
+                                
                 posx += GAPX + width;
             }
             
             posy += GAPY + height;     
         } while (++j < iRows);
-       
-                    
+                           
         iBuf = z.filter(tmp, null);      
         gc.dispose();
-    }
-    
+    }    
 }
