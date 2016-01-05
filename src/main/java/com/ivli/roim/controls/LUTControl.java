@@ -67,7 +67,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private BufferedImage  iBuf;
     
     
-    private final Bobcat iCtrl = new Bobcat();
+    private final MouseHandler iCtrl = new MouseHandler();
      /* 
       * passive mode constructor, only to display W/L not to control 
       */
@@ -155,7 +155,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         repaint();              
     }   
     
-    private class Bobcat implements MouseMotionListener, MouseListener, MouseWheelListener {
+    private class MouseHandler implements MouseMotionListener, MouseListener, MouseWheelListener {
    
         @Override
         public void mouseDragged(MouseEvent e) {
@@ -404,7 +404,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     final class Marker {
         int     iPos;        
         boolean iTop;
-        Image iKnob;
+        Image  iKnob;
 
         Marker(boolean aTop) {           
             iPos = 0;                       
@@ -412,21 +412,19 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             
             try {               
                 if (iTop) 
-                    iKnob = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/knob_top.png")); //NOI18N
+                    iKnob = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/knob_bot.png")); //NOI18N
                 else
                     iKnob = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/knob_bot.png")); //NOI18N                                   
                 
              } catch (IOException ex) {              
-                 logger.info("Some shit happened ", ex); //NOI18N               
-             } 
-        
+                 logger.error("FATAL!!!", ex); //NOI18N               
+             }         
         }
         
         int getMarkerHeight() {
             return iKnob.getHeight(null);
         }
-    
-        
+            
         void setPosition(int aPos) {           
             iPos = aPos;
         } 
@@ -441,26 +439,21 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             return aVal < ypos + height && aVal > ypos  /*- half_height*/;
         }
             
-        void draw(Graphics aGC)/*, int aWidth, int aHeight)*/ {  
-            aGC.setColor(Color.BLACK);       
-           
-            
-                if (null != iKnob) {
-                    int ypos = getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);
-                    aGC.drawImage(iKnob, 1, ypos, null);
-                
-            }
+        void draw(Graphics aGC) {                                                   
+            final int ypos = getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);
+            aGC.drawImage(iKnob, 0, ypos, null);                
                 
             if (MARKERS_DISPLAY_WL_VALUES) {
                 final double val = MARKERS_DISPLAY_PERCENT ? screenToImage(iPos) * 100.0 / iRange.range() : screenToImage(iPos);
                 final String out = String.format("%.0f", Math.abs(val)); //NOI18N
                 final Rectangle2D sb = aGC.getFontMetrics().getStringBounds(out, aGC);    
                 final int height = (null != iKnob) ? iKnob.getHeight(null) : 4;
-                aGC.drawString(out, (int)(getWidth()/2 - sb.getWidth()/2) 
-                              , (int)(getHeight() - iPos - height / 2 + sb.getHeight() / 2 )
+                
+                aGC.setColor(Color.BLACK);    
+                aGC.drawString(out, (int)(getWidth()/2 - sb.getWidth()/2), 
+                              (int)(getHeight() - iPos - height / 2 + sb.getHeight() / 2 )
                               );
-            }
-           
+            }           
         }         
     }        
        
@@ -558,9 +551,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         
         mnu.show(this, aX, aY);
     }   
-    
-   // }
-    
+
     private static final Logger logger = LogManager.getLogger(LUTControl.class);
 }
 
