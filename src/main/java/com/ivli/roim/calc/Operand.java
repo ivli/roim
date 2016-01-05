@@ -22,13 +22,13 @@ package com.ivli.roim.calc;
  * @author likhachev
  */
 public class Operand implements IOperand {
-    protected double iValue;
-        
+    protected double iValue;    
+    
     public Operand(Double aVal) {
-        iValue = aVal;
+        iValue = aVal;        
     } 
         
-    public Operand(IOperand aVal) {
+    public Operand(Operand aVal) {
         iValue = aVal.value();
     } 
     
@@ -36,7 +36,11 @@ public class Operand implements IOperand {
         iValue = Double.NaN;
     }
     
-    public double value() {return iValue;}
+    public double value() {
+        return iValue;
+    }
     
-   /// public String getString() {return String.format("%f", value());}
+    public String getString() {
+        return String.format("%.2f", value());
+    }
 }

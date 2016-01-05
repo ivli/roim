@@ -25,7 +25,7 @@ import java.awt.geom.Rectangle2D;
 
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
-import com.ivli.roim.calc.*;
+import com.ivli.roim.calc.IOperation;
 
 
 /**
@@ -36,9 +36,9 @@ public class ActiveAnnotation extends Overlay implements ROIChangeListener {
     
     Color    iColor = Color.RED;
     String   iAnnotation;
-    BinaryOp iOp;
+    IOperation       iOp;
     
-    ActiveAnnotation(ROIManager aRM, BinaryOp aOp) {
+    ActiveAnnotation(ROIManager aRM, IOperation aOp) {
         super("ANNOTATION.ACTIVE", null, aRM);        
         iOp = aOp;     
         iAnnotation = iOp.getCompleteString();

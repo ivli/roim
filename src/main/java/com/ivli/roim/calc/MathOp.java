@@ -34,6 +34,8 @@ public abstract class MathOp {
         SUBTRACTION(TYPE.BINARY,    "-"),
         MULTIPLICATION(TYPE.BINARY, "*"),
         DIVISION(TYPE.BINARY,       "/");
+        //MINVAL(TYPE.UNARY,        "MIN"),
+        //MAXVAL(TYPE.UNARY,        "MAX");
         
         TYPE  iType;
         String iStr;
@@ -94,8 +96,8 @@ public abstract class MathOp {
         return getNop(); //wouldn't it better raise an exception
     }
         
-    static final MathOp getOP(OP aOrdinal) {
-        switch (aOrdinal) {
+    static final MathOp getOP(OP anO) {
+        switch (anO) {
             case CHSIGN: 
                 return new MathOp(OP.NOP) {            
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
@@ -112,21 +114,20 @@ public abstract class MathOp {
                         return new Operand(aLhs.value() - aRhs.value());
                 }};                    
             case MULTIPLICATION:  
-                return new MathOp(OP.SUBTRACTION) {            
+                return new MathOp(OP.MULTIPLICATION) {            
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() * aRhs.value());
                 }};                   
             case DIVISION:  
-                return new MathOp(OP.SUBTRACTION) {            
+                return new MathOp(OP.DIVISION) {            
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() / aRhs.value());
-                }};
+                }};            
             case NOP: //fall thru
             default: return new MathOp(OP.NOP) {            
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() / aRhs.value());
                 }};
         }
-    }
-    
+    }    
 }

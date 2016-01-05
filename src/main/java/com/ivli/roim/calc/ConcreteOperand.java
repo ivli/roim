@@ -31,12 +31,10 @@ public class ConcreteOperand  implements IOperand, ROIChangeListener, AutoClosea
     interface IFilter {        
         public double get(ROI aR);
     }
-    
-    
+        
     Filter iF; 
     ROI  iRoi;
-   
-    
+       
     public ConcreteOperand(ROI aRoi, Filter aF) {
         //super(.0);//aRoi.getDensity());
         iRoi = aRoi;    

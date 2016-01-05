@@ -23,7 +23,5 @@ package com.ivli.roim.calc;
  */
 public interface IOperand {
     double value();
-    default String getString() {
-        return String.format("%f", value());
-    }
+    String getString();
 }

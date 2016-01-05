@@ -21,16 +21,25 @@ package com.ivli.roim.calc;
  *
  * @author likhachev
  */
-public class UnaryOp extends Operation {    
-    Operand iRhs;
+public class UnaryOp implements IOperation {    
+    Operand iLhs;
     MathOp  iOp;
     
-    UnaryOp(Operand anOperand, MathOp anOperation) {
-        iRhs = anOperand;
-        iOp = anOperation;
+    UnaryOp(Operand aLhs, MathOp anOp) {
+        iLhs = aLhs;
+        iOp = anOp;
     }
     
     public IOperand value() {
-        return iOp.product(new Operand(.0), iRhs);
+        return iOp.product(new Operand(.0), iLhs);
+    }
+    
+    public String getString() {
+        return iOp.getOperationChar() + " " + iLhs.getString();                
+    }
+    
+    public String getCompleteString() {
+        return this.getString() + "=" 
+                + value().getString();
     }
 }

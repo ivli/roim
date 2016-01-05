@@ -21,6 +21,8 @@ package com.ivli.roim.calc;
  *
  * @author likhachev
  */
-public abstract class Operation /*extends Operand */ {   
-    public abstract IOperand value();   
+public interface IOperation {   
+    public IOperand value();
+    public String getString();
+    public String getCompleteString();
 }

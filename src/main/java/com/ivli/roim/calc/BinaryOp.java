@@ -21,7 +21,7 @@ package com.ivli.roim.calc;
  *
  * @author likhachev
  */
-public class BinaryOp {
+public class BinaryOp implements IOperation {
     IOperand iLhs;
     IOperand iRhs;
     MathOp   iOp;
@@ -37,11 +37,14 @@ public class BinaryOp {
     }
     
     public String getString() {
-        return iLhs.getString() + " " + iOp.getOperationChar() + " " + iRhs.getString();
+        return iLhs.getString() + " " 
+                + iOp.getOperationChar() + " " 
+                + iRhs.getString();
     }
     
     public String getCompleteString() {
-        return iLhs.getString() + " " + iOp.getOperationChar() + " " + iRhs.getString() + "=" + value().getString();
+        return this.getString() + "=" 
+                + value().getString();
     }
     
 }
