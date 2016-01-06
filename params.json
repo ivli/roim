@@ -1,13 +1,1 @@
-{"name":"ROI-master","tagline":"Image Calculator for Nuclear Medicine","body":"### Welcome to ROI-master GitHub Pages.\r\n\r\n
-Roim is an advanced image tool to extarct information out of medical images. 
-The main goal of the project is to provide nuclear medicine specialist (both technologists and doctors)
-with versatile but simple instrument to prepare and process results of studies.  
-It could be especially helpful for the case when due to some technological or physiological peculiarity 
-acquired data are far from expected, thus "standard" clinical applications cannot be used.<br>
-Currently it supports images in DICOM format with raw or uncompressed JPEG data only. <br>
-The programm does not make any difference of image modality as long as photometric interpretation is MONOCHROME or MONOCHROME2 
-and pixel data less than 16 bit.
-Static and dynamic (multiframe) images can be processed.                           
-All the processing is built around drawing ROI: elliptic, rectangular and free form ROI are implemented.  
-Then it is possible to dispaly curvers and perform simple arithmetic manipulation on them.
-The programm is written in Java (tm) it is tested to run on Windows and Linux.</p>\r\n\r\n","google":"UA-72006658-1","note":"Don't delete this file! It's used internally to help with page regeneration."}
+{"name":"ROI-master","tagline":"Image Calculator for Nuclear Medicine","body":"### Welcome to ROI-master GitHub Pages.\r\n\r\nRoim is an advanced image tool to extarct information out of medical images. The main goal of the project is to provide nuclear medicine specialist (both technologists and doctors) with versatile but simple instrument to prepare and process results of studies. It could be especially helpful for the case when due to some technological or physiological peculiarity acquired data are far from expected, thus "standard" clinical applications cannot be used.<br>Currently it supports images in DICOM format with raw or uncompressed JPEG data only. <br>The programm does not make any difference of image modality as long as photometric interpretation is MONOCHROME or MONOCHROME2 and pixel data less than 16 bit. Static and dynamic (multiframe) images can be processed. All the processing is built around drawing ROI: elliptic, rectangular and free form ROI are implemented. Then it is possible to dispaly curvers and perform simple arithmetic manipulation on them. The programm is written in Java (tm) it is tested to run on Windows and Linux.</p>\r\n\r\n","google":"UA-72006658-1","note":"Don't delete this file! It's used internally to help with page regeneration."}
