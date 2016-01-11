@@ -26,7 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
+
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 /**

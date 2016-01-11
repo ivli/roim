@@ -20,8 +20,7 @@ public class ImagePanel extends JPanel {
     private final ImageView iView;    
     private final LUTControl iLut;
                   
-    public ImagePanel(ImageView aView) {
-        removeAll();        
+    public ImagePanel(ImageView aView) {       
         iView = aView;
         iLut  = new LUTControl(iView.getLUTMgr());                                     
         
@@ -38,34 +37,27 @@ public class ImagePanel extends JPanel {
     }    
     
     public void addFrameChangeListener(FrameChangeListener aL) {
-        if (null != iView)
-            iView.addFrameChangeListener(aL);
+        iView.addFrameChangeListener(aL);
     }
     
     public void addWindowChangeListener(WindowChangeListener aL) {
-        if (null != iView)
-            iView.addWindowChangeListener(iLut);
+         iView.addWindowChangeListener(iLut);
     }
     
     public void addZoomChangeListener(ZoomChangeListener aL) {
-        if (null != iView)
-            iView.addZoomChangeListener(aL);
+        iView.addZoomChangeListener(aL);
     }
     
     public void addROIChangeListener(ROIChangeListener aL)  {
-        if (null != iView)
-            iView.getROIMgr().addROIChangeListener(aL);
+        iView.getROIMgr().addROIChangeListener(aL);
     }
     
     void setLUT(String aName) {
-        if (null != iView)
-            iView.getLUTMgr().openLUT(aName);        
+        iView.getLUTMgr().openLUT(aName);        
     }
     
-    void reset() {
-        if (null != iView)
-            iView.reset();        
-        
+    void reset() {    
+        iView.reset();                
         repaint();
     }
     
@@ -73,18 +65,14 @@ public class ImagePanel extends JPanel {
         iView.loadFrame(aN);
     }
         
-    public void setInterpolationMethod(Object aMethod) {
-        if (null != iView) {
-            iView.setInterpolationMethod(aMethod);     
-            repaint();
-        }
+    public void setInterpolationMethod(Object aMethod) {        
+        iView.setInterpolationMethod(aMethod);     
+        repaint();    
     }
     
-    public void setFit(int aFit) {
-        if (null != iView) {
-            iView.setFit(aFit);     
-            repaint();
-        }
+    public void setFit(int aFit) {   
+        iView.setFit(aFit);     
+        repaint();   
     }
         
     public void showLUTDialog() {

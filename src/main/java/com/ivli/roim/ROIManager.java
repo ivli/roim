@@ -54,8 +54,8 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     private static final boolean CLONE_INHERIT_COLOUR = false;
 
     transient private final ImageView iView;     
-    private HashSet<Overlay> iOverlays;          
-    private EventListenerList    iList;
+    private HashSet<Overlay>      iOverlays;          
+    private EventListenerList     iList;
     
     final class TUid {
         int iUid;
@@ -140,11 +140,11 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     public void createAnnotation(BinaryOp anOp) {    
-        iOverlays.add(new ActiveAnnotation(this, anOp));      
+        iOverlays.add(new Annotation.Active(anOp, this));      
     }
     
     public void createAnnotation(ROI aROI) {    
-        iOverlays.add(new Annotation(aROI));      
+        iOverlays.add(new Annotation.Static(aROI, this));      
     }
     
     
@@ -207,13 +207,12 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         return null;
     }
         
-    boolean deleteRoi(ROI aR) {  
-       
+    boolean deleteRoi(ROI aR) {         
         final Iterator<Overlay> it = iOverlays.iterator();
 
         while (it.hasNext()) {  //clean annotations out - silly but workin'
             final Overlay o = it.next();
-            if (o instanceof Annotation && ((Annotation)o).getRoi() == aR)               
+            if (o instanceof Annotation.Static && ((Annotation.Static)o).getRoi() == aR)               
                 it.remove();
         } 
                 

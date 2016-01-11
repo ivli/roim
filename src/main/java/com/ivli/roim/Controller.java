@@ -452,7 +452,7 @@ class Controller implements ActionListener {
                 ///iControlled.repaint();
                 ///iSelected.customCommand();
                 
-                com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel((Annotation)iSelected);
+                com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel((Annotation.Static)iSelected);
                 javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
 
                 dialog.setContentPane(panel);
