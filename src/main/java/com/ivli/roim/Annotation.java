@@ -32,11 +32,11 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
     
    
     public static class Static extends Annotation {
-        private boolean iMultiline = true;
-        private Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
-        private final ROI iRoi; 
+        boolean iMultiline = true;
+        Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
+        final ROI iRoi; 
          // private final Color iColor;
-        private final java.util.Collection<String> iAnnotation = new java.util.ArrayList<>();           
+        final java.util.Collection<String> iAnnotation = new java.util.ArrayList<>();           
 
 
         public Static(ROI aRoi, ROIManager aRM) {
@@ -90,7 +90,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
                     width = Math.max(width, b.getWidth());
                     height += b.getHeight();
                 } else {
-                    width += b.getWidth();;
+                    width += b.getWidth();
                     height = Math.max(height, b.getHeight());
                 }
             }
@@ -173,7 +173,6 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             iShape = new Rectangle2D.Double(0, 0, bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
                                             bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());   
         }
-
    
         public void ROIChanged(ROIChangeEvent anEvt) {              
             switch (anEvt.getChange()) {
