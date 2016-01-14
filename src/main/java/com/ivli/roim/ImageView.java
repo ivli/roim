@@ -160,7 +160,7 @@ public class ImageView extends JComponent {
     }
                      
     public void addWindowChangeListener(WindowChangeListener aL) {
-        //iWinListeners.add(aL);
+        logger.info("-> addWindowChangeListener {}", aL);
         iList.add(WindowChangeListener.class, aL);
         aL.windowChanged(new WindowChangeEvent(this, iLUTMgr.getWindow()/*, iImage.image().getMin(), iImage.image().getMax(), true*/));
     }
@@ -173,8 +173,10 @@ public class ImageView extends JComponent {
     protected void notifyWindowChanged() {
         final WindowChangeEvent evt = new WindowChangeEvent(this, iLUTMgr.getWindow()/*, iImage.image().getMin(), iImage.image().getMax(), aRC*/);
                 
-        for (WindowChangeListener l : iList.getListeners(WindowChangeListener.class))
+        for (WindowChangeListener l : iList.getListeners(WindowChangeListener.class)) {
+            logger.info("-> notified {}", l );
             l.windowChanged(evt);     
+        }
     }
     
     public void addFrameChangeListener(FrameChangeListener aL) {

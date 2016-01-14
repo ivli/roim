@@ -18,6 +18,10 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 
 import com.ivli.roim.core.*;
+import com.ivli.roim.ImageView;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
@@ -30,21 +34,24 @@ public class VOILUTPanel extends javax.swing.JPanel {
     private final LUTControl iLUT;
     private boolean iShowHistogram = true;
     private HistogramExtractor iHEx = null;
-    private final ImageFrame iImage;    
+    private final ImageView iView;    
     private final ChartPanel iChart;
     
         
-    public VOILUTPanel(LUTControl aP, ImageFrame aS) {
+    public VOILUTPanel(LUTControl aP, ImageView aV) {
         initComponents();
         
         iLUT = new LUTControl(aP);
         
-        if (null != (iImage = aS))
+        
+        if (null != (iView = aV)) {
             jCheckBox2.setSelected(iShowHistogram);
-        else             
-            jCheckBox2.setEnabled(false);
+            aV.addWindowChangeListener(iLUT);
+        } else             
+            jCheckBox2.setEnabled(iShowHistogram = false);
+       
               
-        XYSeriesCollection voiCurve = new XYSeriesCollection(aP.makeXYSeries(new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"))));
+        XYSeriesCollection voiCurve = new XYSeriesCollection(iLUT.makeXYSeries(new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"))));
   
         XYPlot plot = new XYPlot();
    
@@ -53,10 +60,10 @@ public class VOILUTPanel extends javax.swing.JPanel {
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
         plot.setRangeAxis(0, new NumberAxis("VOILUTPANEL.AXIS_LABEL_VOI_CURVE"));                
         
-        if(null != aS && iShowHistogram) {    
+        if(iShowHistogram) {    
             if (null == iHEx) {
                 iHEx = new HistogramExtractor(null);
-                aS.extract(iHEx);
+                aV.getImage().extract(iHEx);
             }
              
             XYSeriesCollection col2 = new XYSeriesCollection();
@@ -87,6 +94,19 @@ public class VOILUTPanel extends javax.swing.JPanel {
         iLUT.setSize(jPanel2.getPreferredSize());
         jPanel2.add(iLUT);
         validate();      
+        
+        addComponentListener(new ComponentListener() {    
+            public void componentResized(ComponentEvent e) { 
+                if (null != iView)
+                    iView.removeWindowChangeListener(iLUT);
+            }                                               
+            public void componentHidden(ComponentEvent e) {}
+            public void componentMoved(ComponentEvent e) {}
+            public void componentShown(ComponentEvent e) {
+               
+            }                    
+        });
+       
     }
    
     /**

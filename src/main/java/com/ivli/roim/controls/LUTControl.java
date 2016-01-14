@@ -40,8 +40,7 @@ import com.ivli.roim.core.Range;
  *
  * @author likhachev
  */
-public class LUTControl extends JComponent implements  WindowChangeListener, FrameChangeListener, ActionListener {
-    
+public class LUTControl extends JComponent implements  WindowChangeListener, FrameChangeListener, ActionListener {    
     private static final boolean MARKERS_DISPLAY_WL_VALUES = false;
     private static final boolean MARKERS_DISPLAY_PERCENT   = false;
     private static final boolean WEDGE_EXTEND_WHEN_FOCUSED = false;      
@@ -72,11 +71,17 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
       * passive mode constructor, only to display W/L not to control 
       */
     public LUTControl(LUTControl aControl) {            
-        iWLM = aControl.iWLM;    
+        /*iWLM = aControl.iWLM;    
         iRange  = new Range(iWLM.getRange());
         TOP_GAP = BOTTOM_GAP = VGAP_DEFAULT; 
         iTop = iBottom = null; //no markers needed
+        */
+        this(aControl.iWLM);
+        //aControl.a
     } 
+    
+    
+    
     
      /* 
       * complete object constructor
@@ -115,15 +120,14 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         addMouseListener(iCtrl);  
         addMouseWheelListener(iCtrl);   
     }
-    
-     
+         
     public XYSeries makeXYSeries(XYSeries ret) {
         return iWLM.makeXYSeries(ret);
     }   
     
     @Override
     public void windowChanged(WindowChangeEvent anE) {   
-        if (null != iTop && null != iBottom) { //theoretically we'd never get here in passive mode
+        if (null != iTop && null != iBottom ) { //theoretically we'd never get here in passive mode
             iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
             iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom()));                       
         }
