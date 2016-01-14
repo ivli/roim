@@ -11,60 +11,72 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.data.xy.XYDataset;
 
 import com.ivli.roim.core.*;
+import org.jfree.chart.plot.DatasetRenderingOrder;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYSplineRenderer;
 
 /**
  *
  * @author likhachev
  */
-public class VOILUTPanel extends javax.swing.JPanel {
-    
-    private final   LUTControl iLUT;
+public class VOILUTPanel extends javax.swing.JPanel {    
+    private final LUTControl iLUT;
     private boolean iShowHistogram = true;
+    private HistogramExtractor iHEx = null;
+    private final ImageFrame iImage;    
+    private final ChartPanel iChart;
     
-    ImageFrame iImage;
-    
-    ChartPanel iChart;
-    
+        
     public VOILUTPanel(LUTControl aP, ImageFrame aS) {
         initComponents();
+        
         iLUT = new LUTControl(aP);
         
         if (null != (iImage = aS))
-            jCheckBox3.setSelected(iShowHistogram);
+            jCheckBox2.setSelected(iShowHistogram);
         else             
-            jCheckBox3.setEnabled(false);
-                
-                
-        XYSeries s = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"));
-        XYSeriesCollection xyc = new XYSeriesCollection(aP.makeXYSeries(s));
+            jCheckBox2.setEnabled(false);
+              
+        XYSeriesCollection voiCurve = new XYSeriesCollection(aP.makeXYSeries(new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"))));
+  
+        XYPlot plot = new XYPlot();
+   
+        plot.setDataset(0, voiCurve);
+        plot.setRenderer(0, new XYSplineRenderer());     
+        ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
+        plot.setRangeAxis(0, new NumberAxis("VOILUTPANEL.AXIS_LABEL_VOI_CURVE"));                
         
-        
-        if(iShowHistogram && null != aS) {
-            com.ivli.roim.controls.HistogramExtractor hx = new HistogramExtractor(null);
-            aS.extract(hx);
-            hx.iHist.remove(0); ///correction for background        
-            xyc.addSeries(hx.iHist);
+        if(null != aS && iShowHistogram) {    
+            if (null == iHEx) {
+                iHEx = new HistogramExtractor(null);
+                aS.extract(iHEx);
+            }
+             
+            XYSeriesCollection col2 = new XYSeriesCollection();
+            col2.addSeries(iHEx.toSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
+            
+            plot.setDataset(1, col2);
+            plot.setRenderer(1, new XYBarRenderer());
+            plot.setRangeAxis(1, new NumberAxis("VOILUTPANEL.AXIS_LABEL_IMAGE_HISTOGRAM"));
+            plot.mapDatasetToRangeAxis(1, 1);
         }
+    
+        plot.setDomainAxis(new NumberAxis("VOILUTPANEL.AXIS_LABEL_IMAGE_SPACE"));                
+        plot.setRangeGridlinesVisible(true);
+        plot.setDomainGridlinesVisible(true);
+        // change the rendering order so the primary dataset appears "behind" the 
+        // other datasets...
+        plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
         
-        final XYPlot plot = new XYPlot();
-        plot.setDataset(xyc);
-        plot.setRenderer(new StandardXYItemRenderer());
-        plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.IMAGE_VALUES")));
-        plot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.DISPLAY_VALUES")));
-        if(iShowHistogram)
-            plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
-        plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-        plot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-        ///NumberAxis rangeAxis = ;
-        //((NumberAxis) plot.getDomainAxis()).setStandardTickUnits(NumberAxis.createIntegerTickUnits());  
-        //JFreeChart jfc = new JFreeChart("VOILUTPanel.CHART_CAPTION", JFreeChart.DEFAULT_TITLE_FONT, plot, false); 
         JFreeChart jfc = new JFreeChart(plot); 
-        //ChartPanel cp = new ChartPanel(createChart(aP.makeXYSeries(s)));
+        
         
         iChart = new ChartPanel(jfc);
         //iChart.setMouseWheelEnabled(true);
@@ -74,8 +86,7 @@ public class VOILUTPanel extends javax.swing.JPanel {
               
         iLUT.setSize(jPanel2.getPreferredSize());
         jPanel2.add(iLUT);
-        validate();
-      
+        validate();      
     }
    
     /**
@@ -89,14 +100,11 @@ public class VOILUTPanel extends javax.swing.JPanel {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel1.setVerifyInputWhenFocusTarget(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -106,52 +114,28 @@ public class VOILUTPanel extends javax.swing.JPanel {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 303, Short.MAX_VALUE)
+            .addGap(0, 264, Short.MAX_VALUE)
         );
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle"); // NOI18N
-        jCheckBox1.setText(bundle.getString("LUT_MODE.INVERTED")); // NOI18N
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
-            }
-        });
-
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setText(bundle.getString("LUT_MODE.LINEAR")); // NOI18N
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
-            }
-        });
-
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText(bundle.getString("LUT_MODE.LOGARITHMIC")); // NOI18N
-
-        jButton1.setText(bundle.getString("LUT_PANEL.BUTTON_LUT")); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(240, 240, 240)));
+        jPanel2.setPreferredSize(new java.awt.Dimension(32, 255));
+        jPanel2.setVerifyInputWhenFocusTarget(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 21, Short.MAX_VALUE)
+            .addGap(0, 30, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 255, Short.MAX_VALUE)
+            .addGap(0, 253, Short.MAX_VALUE)
         );
 
-        jCheckBox3.setText(bundle.getString("LUT_PANEL.SHOWHISTOGRAM")); // NOI18N
-        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
+        jCheckBox2.setText("<LUT_PANEL.SHOWHISTOGRAM>");
+        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox3ActionPerformed(evt);
+                jCheckBox2ActionPerformed(evt);
             }
         });
 
@@ -160,85 +144,41 @@ public class VOILUTPanel extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jCheckBox1)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jCheckBox3)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(15, 15, 15))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(jCheckBox2)))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jCheckBox1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jRadioButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jRadioButton2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton1)
-                                .addGap(79, 79, 79)
-                                .addComponent(jCheckBox3)))))
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addGap(21, 21, 21)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jCheckBox2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
-
-    private void jCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox3ActionPerformed
         iShowHistogram = !iShowHistogram;
-        
-        if(iShowHistogram) {
-            com.ivli.roim.controls.HistogramExtractor hx=new com.ivli.roim.controls.HistogramExtractor(null);
-            iImage.extract(hx);
-            hx.iHist.remove(0); ///correction for background        
-            //xyc.addSeries(hx.iHist);
-            hx.iHist.remove(0); ///correction for background        
-            ((XYSeriesCollection)iChart.getChart().getXYPlot().getDataset()).addSeries(hx.iHist);
-                        
-            iChart.getChart().getXYPlot().setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
-        } else {
-            ((XYSeriesCollection)iChart.getChart().getXYPlot().getDataset()).removeSeries(1);
-            iChart.getChart().getXYPlot().setRangeAxis(1, null);
-        }
-            
-    }//GEN-LAST:event_jCheckBox3ActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
+    }//GEN-LAST:event_jCheckBox2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
     // End of variables declaration//GEN-END:variables
 
 }

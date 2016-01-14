@@ -2,10 +2,12 @@
 package com.ivli.roim.controls;
 
 import com.ivli.roim.core.Extractor;
-import com.ivli.roim.ROIExtractor;
+
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.image.Raster;
+
+import java.util.HashMap;
 import org.jfree.data.xy.XYSeries;
 
 /**
@@ -13,15 +15,30 @@ import org.jfree.data.xy.XYSeries;
  * @author likhachev
  */
 public class HistogramExtractor implements Extractor {
-    Shape iRoi;
-    public final XYSeries iHist = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("HISTOGRAMEXTRACTOR.IHISTOGRAM"));
+    private final Shape iRoi;
+  
+    private final HashMap<Double, Integer> iHist;
     
-    public HistogramExtractor(Shape aRoi){iRoi = aRoi;}
+    public HistogramExtractor(Shape aRoi) {
+        iRoi = aRoi;
+        iHist = new HashMap<>();
+    }
     
     @Override
     public void apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
         extractOne(aRaster);
         //return null;
+    }
+    
+    XYSeries toSeries(final String aSeriesName) {
+        XYSeries ret = new XYSeries(aSeriesName);
+        
+        for (java.util.Map.Entry<Double, Integer> entry : iHist.entrySet()) {
+            Double key = entry.getKey();
+            Integer value = entry.getValue();
+            ret.add(key, value);
+        }
+        return ret;
     }
     
     void extractOne(Raster aRaster) throws ArrayIndexOutOfBoundsException {
@@ -34,17 +51,13 @@ public class HistogramExtractor implements Extractor {
                 if (shape.contains(i, j)) {                   
                     temp = aRaster.getPixel(i, j, temp);
                     /**/
-                    final int ndx = iHist.indexOf(temp[0]);
-                    if (ndx < 0) 
-                        iHist.add(temp[0], 1);
-                    else {                   
-                        final Number val = iHist.getY(ndx);
-                        iHist.update((Number)temp[0], ((Double)val)+1); 
-                    } 
+                    iHist.putIfAbsent(temp[0], 0);
+                    iHist.replace(temp[0], iHist.get(temp[0]).intValue() + 1);
+                    
                 }
     }
 
-    
+    /*
     void extractBinned256(Raster aRaster) throws ArrayIndexOutOfBoundsException {
     
         final Shape shape = (null != iRoi) ? iRoi : aRaster.getBounds();
@@ -61,7 +74,7 @@ public class HistogramExtractor implements Extractor {
             for (int j=bnds.y; j < (bnds.y + bnds.height); ++j) 
                 if (shape.contains(i, j)) {                   
                     temp = (aRaster.getPixel(i, j, temp));
-                    /**/
+                   
                     final Double binNo = Math.floor(temp[0]/step);
                     final int ndx = iHist.indexOf(binNo);
                     if (ndx < 0) 
@@ -73,4 +86,5 @@ public class HistogramExtractor implements Extractor {
                 }
         
     }
+    */
 }
