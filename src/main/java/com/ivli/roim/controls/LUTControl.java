@@ -135,11 +135,11 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         addMouseListener(iCtrl);  
         addMouseWheelListener(iCtrl);   
     }
-         
-    public XYSeries makeXYSeries(XYSeries ret) {
-        return iWLM.makeXYSeries(ret);
+    /*  */    
+    public java.util.HashMap<Integer, Integer> getCurve() {
+        return iWLM.getCurve();
     }   
-        
+       
     public void addWindowChangeListener(WindowChangeListener aL) {        
         iList.add(WindowChangeListener.class, aL);
         aL.windowChanged(new WindowChangeEvent(this, iWLM.getWindow()));

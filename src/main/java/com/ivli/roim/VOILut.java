@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ByteLookupTable;
 import java.awt.image.DataBuffer;
 import java.awt.image.LookupOp;
-import org.jfree.data.xy.XYSeries;
+//import org.jfree.data.xy.XYSeries;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,12 +90,12 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         return iLook.filter(aSrc, aDst);//null == aDst ? iLok.createCompatibleDestImage(aSrc, iCMdl):aDst);	
     }
     
-    public XYSeries makeXYSeries(XYSeries ret) {
+    public java.util.HashMap<Integer, Integer> makeXYSeries() {
         final int minval = (int)(getWindow().getBottom());
         final int maxval = (int)(getWindow().getTop());
-                
+        java.util.HashMap<Integer, Integer> ret = new java.util.HashMap<>();        
         for (int i = minval; i < maxval; ++i)
-            ret.add(i, (short)(iBuffer.bytes[i] & 0xFF));
+            ret.put(i, (Integer)(iBuffer.bytes[i] & 0xFF));
         
         return ret;
     }   

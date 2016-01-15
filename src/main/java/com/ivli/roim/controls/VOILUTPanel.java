@@ -52,10 +52,22 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private final ImageView iView;    
     private final ChartPanel iPanel;
     
+    
+    private XYSeriesCollection makeCurve() {
+        java.util.HashMap<Integer, Integer> r = iLUT.getCurve();
+        XYSeries s = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"));
         
-    public void windowChanged(WindowChangeEvent anEvt) {
-        XYSeriesCollection voiCurve = new XYSeriesCollection(iLUT.makeXYSeries(new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"))));    
-        iPanel.getChart().getXYPlot().setDataset(0, voiCurve);
+       for (java.util.Map.Entry<Integer, Integer> entry : r.entrySet()) {
+            Integer key = entry.getKey();
+            Integer value = entry.getValue();
+            s.add(key, value);
+        }
+        
+        return new XYSeriesCollection(s);
+    }
+    
+    public void windowChanged(WindowChangeEvent anEvt) {           
+        iPanel.getChart().getXYPlot().setDataset(0, makeCurve());
     }   
     
     public VOILUTPanel(LUTControl aP, ImageView aV) {
@@ -69,11 +81,11 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
             jCheckBox2.setEnabled(iShowHistogram = false);
        
               
-        XYSeriesCollection voiCurve = new XYSeriesCollection(iLUT.makeXYSeries(new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"))));
+        ///XYSeriesCollection voiCurve = new XYSeriesCollection(iLUT.makeXYSeries(new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"))));
   
         XYPlot plot = new XYPlot();
    
-        plot.setDataset(0, voiCurve);
+        plot.setDataset(0, makeCurve());
         plot.setRenderer(0, new XYSplineRenderer());     
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
         plot.setRangeAxis(0, new NumberAxis("VOILUTPANEL.AXIS_LABEL_VOI_CURVE"));                

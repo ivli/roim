@@ -28,5 +28,5 @@ public interface IWLManager extends Transformation {
     
 
      //TODO: 
-    XYSeries makeXYSeries(XYSeries ret);
+    java.util.HashMap<Integer, Integer> getCurve();
 }

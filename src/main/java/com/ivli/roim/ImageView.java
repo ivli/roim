@@ -397,8 +397,8 @@ public class ImageView extends JComponent {
             return iVLUT.isLinear();
         }
 
-        public XYSeries makeXYSeries(XYSeries ret) {
-            return iVLUT.makeXYSeries(ret);
+        public java.util.HashMap<Integer, Integer>  getCurve() {
+            return iVLUT.makeXYSeries();
         }
 
         @Override
