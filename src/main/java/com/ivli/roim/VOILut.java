@@ -91,9 +91,11 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     }
     
     public java.util.HashMap<Integer, Integer> makeXYSeries() {
-        final int minval = (int)(getWindow().getBottom());
-        final int maxval = (int)(getWindow().getTop());
+        final int minval = (int)getRange().getMin();//int)(getWindow().getBottom());
+        final int maxval = (int)getRange().getMax();//(getWindow().getTop());
+        
         java.util.HashMap<Integer, Integer> ret = new java.util.HashMap<>();        
+        
         for (int i = minval; i < maxval; ++i)
             ret.put(i, (Integer)(iBuffer.bytes[i] & 0xFF));
         
