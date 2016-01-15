@@ -36,6 +36,8 @@ import com.ivli.roim.Settings;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.IWLManager;
 import com.ivli.roim.core.Range;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.EventListenerList;
 /**
  *
@@ -66,7 +68,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private final Marker   iBottom;
     private ActionItem     iAction;
     private BufferedImage  iBuf;
-    private LUTControl     iParent = null;
+    //private LUTControl     iParent = null;
     
     private final MouseHandler iCtrl = new MouseHandler();
      /* 
@@ -79,8 +81,18 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         iTop = iBottom = null; //no markers needed
         */
         this(aParent.iWLM);
-        iParent = aParent;
+        //iParent = aParent;
         aParent.addWindowChangeListener(this);
+        super.addAncestorListener(new AncestorListener() {
+            public void ancestorAdded(AncestorEvent event) {}
+
+            public void ancestorRemoved(AncestorEvent event){        
+                logger.info("Deregistered");
+                aParent.removeWindowChangeListener(LUTControl.this);            
+            }
+
+            public void ancestorMoved(AncestorEvent event){}         
+            });
     } 
 
      /* 

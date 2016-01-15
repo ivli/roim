@@ -5,8 +5,17 @@
  */
 package com.ivli.roim.controls;
 
-import com.ivli.roim.events.WindowChangeEvent;
-import com.ivli.roim.events.WindowChangeListener;
+
+
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -18,15 +27,16 @@ import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.data.xy.XYDataset;
-
-import com.ivli.roim.core.*;
-import com.ivli.roim.ImageView;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
+
+import com.ivli.roim.core.*;
+import com.ivli.roim.ImageView;
+import com.ivli.roim.events.WindowChangeEvent;
+import com.ivli.roim.events.WindowChangeListener;
+
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +45,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class VOILUTPanel  extends javax.swing.JPanel implements WindowChangeListener {    
+public class VOILUTPanel extends JPanel implements WindowChangeListener {    
     private final LUTControl iLUT;
     private boolean iShowHistogram = true;
     private HistogramExtractor iHEx = null;
@@ -91,8 +101,7 @@ public class VOILUTPanel  extends javax.swing.JPanel implements WindowChangeList
         plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
         
         JFreeChart jfc = new JFreeChart(plot); 
-        
-        
+                
         iPanel = new ChartPanel(jfc);
         //iChart.setMouseWheelEnabled(true);
                 
@@ -105,31 +114,22 @@ public class VOILUTPanel  extends javax.swing.JPanel implements WindowChangeList
         //aP.addWindowChangeListener(iLUT);
         iLUT.addWindowChangeListener(this);
         
-        validate();      
+        super.addAncestorListener(new AncestorListener() {
+            public void ancestorAdded(AncestorEvent event) {}
+
+            public void ancestorRemoved(AncestorEvent event){        
+                iLUT.removeWindowChangeListener(VOILUTPanel.this);            
+            }
+
+            public void ancestorMoved(AncestorEvent event){}         
+            });
         
-        addComponentListener(new ComponentListener() {    
-            public void componentHidden(ComponentEvent e) { 
-                
-            }                                               
-            public void componentResized(ComponentEvent e) {}
-            public void componentMoved(ComponentEvent e) {}
-            public void componentShown(ComponentEvent e) {
-                 /*      
-                iLUT.addWindowChangeListener(new WindowChangeListener() {
-                
-                public void windowChanged(WindowChangeEvent anEvt) {
-                    logger.info("VOILUTPanel::windowChanged");
-                    XYSeriesCollection voiCurve = new XYSeriesCollection(iLUT.makeXYSeries(new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"))));    
-                    iPanel.getChart().getXYPlot().setDataset(0, voiCurve);
-                    iPanel.validate();
-                    }   
-                });
-                */
-            }                    
-        });
-       
+        
+              
+        validate();             
     }
    
+          
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
