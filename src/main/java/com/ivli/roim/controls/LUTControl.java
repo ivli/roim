@@ -36,6 +36,7 @@ import com.ivli.roim.Settings;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.IWLManager;
 import com.ivli.roim.core.Range;
+import javax.swing.event.EventListenerList;
 /**
  *
  * @author likhachev
@@ -58,37 +59,36 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private static final int MARKER_CURSOR = Cursor.HAND_CURSOR;    
     private static final int WINDOW_CURSOR = Cursor.N_RESIZE_CURSOR;                           
    
+    protected final EventListenerList iList;
     private IWLManager     iWLM;      
     private Range          iRange;
     private final Marker   iTop;
     private final Marker   iBottom;
     private ActionItem     iAction;
     private BufferedImage  iBuf;
-    
+    private LUTControl     iParent = null;
     
     private final MouseHandler iCtrl = new MouseHandler();
      /* 
       * passive mode constructor, only to display W/L not to control 
       */
-    public LUTControl(LUTControl aControl) {            
+    public LUTControl(LUTControl aParent) {            
         /*iWLM = aControl.iWLM;    
         iRange  = new Range(iWLM.getRange());
         TOP_GAP = BOTTOM_GAP = VGAP_DEFAULT; 
         iTop = iBottom = null; //no markers needed
         */
-        this(aControl.iWLM);
-        //aControl.a
+        this(aParent.iWLM);
+        iParent = aParent;
+        aParent.addWindowChangeListener(this);
     } 
-    
-    
-    
-    
+
      /* 
       * complete object constructor
-      */
-    
+      */    
     public LUTControl(IWLManager aW) {           
         iWLM    = aW;  
+        iList   = new EventListenerList();
         iRange  = new Range(iWLM.getRange());
         iTop    = new Marker(true);  
         iBottom = new Marker(false); 
@@ -105,7 +105,10 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 invalidateBuffer();
                 repaint();
             }                                               
-            public void componentHidden(ComponentEvent e) {}
+            public void componentHidden(ComponentEvent e) {
+               // if (null != iParent)
+               //     iParent.removeWindowChangeListener(e.getSource());
+            }
             public void componentMoved(ComponentEvent e) {}
             public void componentShown(ComponentEvent e) {
                 iRange = iWLM.getRange();
@@ -124,6 +127,21 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     public XYSeries makeXYSeries(XYSeries ret) {
         return iWLM.makeXYSeries(ret);
     }   
+        
+    public void addWindowChangeListener(WindowChangeListener aL) {        
+        iList.add(WindowChangeListener.class, aL);
+        aL.windowChanged(new WindowChangeEvent(this, iWLM.getWindow()));
+    }
+   
+    public void removeWindowChangeListener(WindowChangeListener aL) {
+        iList.remove(WindowChangeListener.class, aL);
+        //iWinListeners.remove(aL);
+    }
+            
+    protected void notifyWindowChanged(WindowChangeEvent anE) {
+        for (WindowChangeListener l : iList.getListeners(WindowChangeListener.class))            
+            l.windowChanged(anE);            
+    }
     
     @Override
     public void windowChanged(WindowChangeEvent anE) {   
@@ -131,6 +149,9 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
             iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom()));                       
         }
+        
+        notifyWindowChanged(anE);
+        
         invalidateBuffer();
         repaint();              
     }   

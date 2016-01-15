@@ -41,7 +41,7 @@ public class ImagePanel extends JPanel {
     }
     
     public void addWindowChangeListener(WindowChangeListener aL) {
-         iView.addWindowChangeListener(iLut);
+         iView.addWindowChangeListener(aL);
     }
     
     public void addZoomChangeListener(ZoomChangeListener aL) {

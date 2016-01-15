@@ -451,12 +451,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private void initPanels() {         
         jPanel1.removeAll();
         jPanel3.removeAll();
-        jPanel4.removeAll();
-                        
-        ///if (null == iPanel)        
-        ///iPanel = new ImagePanel();        
                 
-        iPanel = new ImagePanel(new ImageView(new MultiframeImage(iProvider))); //.collapse(TimeSlice.FOREWER))); // ));//            
+        iPanel = new ImagePanel(new ImageView(new MultiframeImage(iProvider)));          
        
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -472,46 +468,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel3.add(iChart);
         
         /* ELSE */
-                
-       // if (null == iOff)
-        //    iOff = new ImagePanel();
-        iOff= new ImagePanel(new OffsetImageView(new MultiframeImage(iProvider)));
-        
-       // if (null != iChart2) {           
-           // iPanel.iView.getROIMgr().removeROIChangeListener(iChart);
-       // } else {
-            iChart2 = new ChartView();        
-            iChart2.initChart();
-            iOff.addROIChangeListener(iChart2);
-        //}
-        
-        jSplitPane1.setPreferredSize(jPanel1.getSize());
-        jSplitPane1.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-        jSplitPane1.setDividerLocation(.5);
-        jSplitPane1.setLeftComponent(iOff);
-        jSplitPane1.setRightComponent(iChart2);
-        /* ENDIF */ 
-        
         jPanel1.validate(); 
                 
         iPanel.addFrameChangeListener(this);        
         iPanel.addWindowChangeListener(this);
         iPanel.addZoomChangeListener(this);
-        iPanel.addROIChangeListener(this);  
-        
-        //if (null == iGrid)
-            ///iGrid = new ImagePanel();
-        
-        iGrid = new ImagePanel(new GridImageView(new MultiframeImage(iProvider), 2, 2));
-        
-        iGrid.setPreferredSize(jPanel1.getSize());
-        iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-        jPanel4.setLayout(new BorderLayout());
-        jPanel4.add(iGrid, BorderLayout.CENTER);
-        
-        //jPanel1.validate();
-        //jPanel3.validate();
-        //jPanel4.validate();
+        iPanel.addROIChangeListener(this);          
+       
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed

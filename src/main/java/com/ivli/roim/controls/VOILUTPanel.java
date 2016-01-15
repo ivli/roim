@@ -5,6 +5,8 @@
  */
 package com.ivli.roim.controls;
 
+import com.ivli.roim.events.WindowChangeEvent;
+import com.ivli.roim.events.WindowChangeListener;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -26,27 +28,33 @@ import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  *
  * @author likhachev
  */
-public class VOILUTPanel extends javax.swing.JPanel {    
+public class VOILUTPanel  extends javax.swing.JPanel implements WindowChangeListener {    
     private final LUTControl iLUT;
     private boolean iShowHistogram = true;
     private HistogramExtractor iHEx = null;
     private final ImageView iView;    
-    private final ChartPanel iChart;
+    private final ChartPanel iPanel;
     
         
+    public void windowChanged(WindowChangeEvent anEvt) {
+        XYSeriesCollection voiCurve = new XYSeriesCollection(iLUT.makeXYSeries(new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"))));    
+        iPanel.getChart().getXYPlot().setDataset(0, voiCurve);
+    }   
+    
     public VOILUTPanel(LUTControl aP, ImageView aV) {
         initComponents();
         
         iLUT = new LUTControl(aP);
-        
-        
+                        
         if (null != (iView = aV)) {
-            jCheckBox2.setSelected(iShowHistogram);
-            aV.addWindowChangeListener(iLUT);
+            jCheckBox2.setSelected(iShowHistogram);       
         } else             
             jCheckBox2.setEnabled(iShowHistogram = false);
        
@@ -85,25 +93,38 @@ public class VOILUTPanel extends javax.swing.JPanel {
         JFreeChart jfc = new JFreeChart(plot); 
         
         
-        iChart = new ChartPanel(jfc);
+        iPanel = new ChartPanel(jfc);
         //iChart.setMouseWheelEnabled(true);
                 
-        iChart.setSize(jPanel1.getPreferredSize());
-        jPanel1.add(iChart);//, java.awt.BorderLayout.CENTER);
+        iPanel.setSize(jPanel1.getPreferredSize());
+        jPanel1.add(iPanel);//, java.awt.BorderLayout.CENTER);
               
         iLUT.setSize(jPanel2.getPreferredSize());
         jPanel2.add(iLUT);
+                
+        //aP.addWindowChangeListener(iLUT);
+        iLUT.addWindowChangeListener(this);
+        
         validate();      
         
         addComponentListener(new ComponentListener() {    
-            public void componentResized(ComponentEvent e) { 
-                if (null != iView)
-                    iView.removeWindowChangeListener(iLUT);
+            public void componentHidden(ComponentEvent e) { 
+                
             }                                               
-            public void componentHidden(ComponentEvent e) {}
+            public void componentResized(ComponentEvent e) {}
             public void componentMoved(ComponentEvent e) {}
             public void componentShown(ComponentEvent e) {
-               
+                 /*      
+                iLUT.addWindowChangeListener(new WindowChangeListener() {
+                
+                public void windowChanged(WindowChangeEvent anEvt) {
+                    logger.info("VOILUTPanel::windowChanged");
+                    XYSeriesCollection voiCurve = new XYSeriesCollection(iLUT.makeXYSeries(new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"))));    
+                    iPanel.getChart().getXYPlot().setDataset(0, voiCurve);
+                    iPanel.validate();
+                    }   
+                });
+                */
             }                    
         });
        
@@ -200,5 +221,5 @@ public class VOILUTPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
-
+    private final static Logger logger = LogManager.getLogger(VOILUTPanel.class);
 }
