@@ -75,11 +75,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
       * passive mode constructor, only to display W/L not to control 
       */
     public LUTControl(LUTControl aParent) {            
-        /*iWLM = aControl.iWLM;    
-        iRange  = new Range(iWLM.getRange());
-        TOP_GAP = BOTTOM_GAP = VGAP_DEFAULT; 
-        iTop = iBottom = null; //no markers needed
-        */
+       
         this(aParent.iWLM);
         //iParent = aParent;
         aParent.addWindowChangeListener(this);
@@ -136,7 +132,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         addMouseWheelListener(iCtrl);   
     }
     /*  */    
-    public java.util.HashMap<Integer, Integer> getCurve() {
+    public com.ivli.roim.core.Histogram getCurve() {
         return iWLM.getCurve();
     }   
        

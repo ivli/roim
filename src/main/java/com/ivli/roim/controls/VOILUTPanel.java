@@ -8,12 +8,7 @@ package com.ivli.roim.controls;
 
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
@@ -51,42 +46,43 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private HistogramExtractor iHEx = null;
     private final ImageView iView;    
     private final ChartPanel iPanel;
+    private final String iCurveName;
     
-    
-    private XYSeriesCollection makeCurve() {
-        java.util.HashMap<Integer, Integer> r = iLUT.getCurve();
-        XYSeries s = new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"));
+    private XYSeriesCollection makeCurve(int aStep) {
+        com.ivli.roim.core.Histogram r = iLUT.getCurve();
+        XYSeries s = new XYSeries(iCurveName);
         
-       for (java.util.Map.Entry<Integer, Integer> entry : r.entrySet()) {
-            Integer key = entry.getKey();
-            Integer value = entry.getValue();
-            s.add(key, value);
+        final int step = aStep <= 0 || aStep > r.iData.length ? 1 : r.iData.length / aStep;
+                
+        for (int i=0; i < r.iData.length; i += step ) {            
+            s.add(r.iMin + i, r.iData[i]);
         }
         
         return new XYSeriesCollection(s);
     }
     
-    public void windowChanged(WindowChangeEvent anEvt) {           
-        iPanel.getChart().getXYPlot().setDataset(0, makeCurve());
+    @Override
+    public void windowChanged(WindowChangeEvent anEvt) {            
+        iPanel.getChart().getXYPlot().setDataset(0, makeCurve(jPanel1.getWidth()));
     }   
     
     public VOILUTPanel(LUTControl aP, ImageView aV) {
+        iCurveName = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT");
+        iLUT = new LUTControl(aP);
+        
         initComponents();
         
-        iLUT = new LUTControl(aP);
                         
         if (null != (iView = aV)) {
             jCheckBox2.setSelected(iShowHistogram);       
         } else             
             jCheckBox2.setEnabled(iShowHistogram = false);
-       
-              
-        ///XYSeriesCollection voiCurve = new XYSeriesCollection(iLUT.makeXYSeries(new XYSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT"))));
-  
+    
         XYPlot plot = new XYPlot();
    
-        plot.setDataset(0, makeCurve());
-        plot.setRenderer(0, new XYSplineRenderer());     
+        plot.setDataset(0, makeCurve(jPanel1.getWidth()));
+        plot.setRenderer(0, new XYSplineRenderer());  
+        
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
         plot.setRangeAxis(0, new NumberAxis("VOILUTPANEL.AXIS_LABEL_VOI_CURVE"));                
         

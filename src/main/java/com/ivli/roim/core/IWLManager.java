@@ -2,8 +2,6 @@
 package com.ivli.roim.core;
 
 
-import org.jfree.data.xy.XYSeries;
-
 /**
  *
  * @author likhachev
@@ -28,5 +26,5 @@ public interface IWLManager extends Transformation {
     
 
      //TODO: 
-    java.util.HashMap<Integer, Integer> getCurve();
+    Histogram getCurve();
 }

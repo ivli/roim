@@ -36,9 +36,9 @@ public class ROIExtractor implements Extractor {
         public void apply(Raster aRaster) throws ArrayIndexOutOfBoundsException {
             final Rectangle bnds = iRoi.getBounds();
            // ROIStats ret =  new ROIStats();
-            double min = 65535, max = .0, sum = .0, pix = .0;
+            int min = 65535, max = 0, sum = 0, pix = 0;
 
-            double temp[] = new double [aRaster.getNumBands()];
+            int temp[] = new int [aRaster.getNumBands()];
 
             for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
                 for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) //{ 

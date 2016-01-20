@@ -397,7 +397,7 @@ public class ImageView extends JComponent {
             return iVLUT.isLinear();
         }
 
-        public java.util.HashMap<Integer, Integer>  getCurve() {
+        public com.ivli.roim.core.Histogram getCurve() {
             return iVLUT.makeXYSeries();
         }
 
