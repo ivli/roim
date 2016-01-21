@@ -17,26 +17,73 @@
  */
 package com.ivli.roim.core;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYDataItem;
 /**
  *
  * @author likhachev
  */
-public class Histogram {
-    public int iMin;
-    public int iMax;
-    public int []iData;
+public class Histogram {//extends HashMap<Integer, Integer>{
     
-    public Histogram(int aMin, int aMax, int[] aData) {
-        iMin  = aMin;
-        iMax  = aMax;
-        iData = aData;
+    HashMap<Integer, Integer> iMap = new HashMap<>();
+   
+    int iMin = Integer.MAX_VALUE;
+    int iMax = Integer.MIN_VALUE;
+    
+    public XYSeries getSeries(final String aName){                                           
+        return convert(aName, iMap);
+    }
+      
+    public Integer get(final Integer aKey) {
+        return iMap.get(aKey);
     }
     
-    public void compact() {
-        for (; iMax > iMin && iData[iMax-1] == 0; --iMax) 
-            continue;
-        for (; iMin < iMax && iData[iMin] == 0; ++iMin) 
-            continue;            
+                
+    public void increment(final Integer aKey) {
+        Integer val = iMap.get(aKey);
+        if (null != val)
+            iMap.put(aKey, ++val);
+        else
+            this.put(aKey, 1);
     }
     
+    public void put(final Integer aKey, final Integer aVal) {
+        if (aKey > iMax)
+            iMax = aKey;
+        else if (aKey < iMin)
+            iMin = aKey;
+        
+        iMap.put(aKey, aVal);
+    }
+    /*  */
+    
+    protected XYSeries convert(final String aName, HashMap<Integer, Integer> aMap){            
+        XYSeries ret = new XYSeries(aName);
+        
+        aMap.entrySet().stream().forEach((entry) -> { 
+            ret.add(entry.getKey(), entry.getValue());
+        });
+                        
+        return ret;
+    }
+        
+    public XYSeries getSeriesRebinned(final String aName, final int aNoOfBins) {
+              
+        final int binSize = Math.max(1, (iMax - iMin) / aNoOfBins);
+     
+        HashMap<Integer, Integer> reb = new HashMap<>();
+                  
+        for (HashMap.Entry<Integer, Integer> entry : iMap.entrySet()) {
+            final Integer bin = entry.getKey() / binSize;
+            Integer val = reb.get(bin);
+            if (null != val)
+                reb.put(bin, ++val);
+            else
+                reb.put(bin, 1);
+        }
+               
+        return convert(aName, reb); 
+    }
 }

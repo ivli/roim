@@ -86,8 +86,7 @@ public class ImageFrame implements java.io.Serializable {
                     iIden += temp[0];
         }
     }
-   
-        
+           
     public void extract(Extractor aEx) {
         aEx.apply(iRaster);
     }

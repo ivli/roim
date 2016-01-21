@@ -90,18 +90,18 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         return iLook.filter(aSrc, aDst);//null == aDst ? iLok.createCompatibleDestImage(aSrc, iCMdl):aDst);	
     }
     
-    public com.ivli.roim.core.Histogram makeXYSeries() {
+    public com.ivli.roim.core.Curve makeXYSeries() {
         final int minval = (int)getRange().getMin();//int)(getWindow().getBottom());
         final int maxval = (int)getRange().getMax();//(getWindow().getTop());
         
-        //java.util.HashMap<Integer, Integer> ret = new java.util.HashMap<>();        
+        com.ivli.roim.core.Curve ret = new com.ivli.roim.core.Curve();        
         
         int[] buf = new int[maxval - minval]; 
         for (int i = minval; i < maxval; ++i)
-            //ret.put(i, (Integer)(iBuffer.bytes[i] & 0xFF));
-            buf[i] = iBuffer.bytes[i] & 0xFF;
+            ret.put(i, (Integer)(iBuffer.bytes[i] & 0xFF));
+            //buf[i] = iBuffer.bytes[i] & 0xFF;
         
-        return new com.ivli.roim.core.Histogram(minval, maxval, buf);
+        return ret;
     }   
     
     /* EOI */

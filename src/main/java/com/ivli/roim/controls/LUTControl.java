@@ -23,8 +23,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import org.jfree.data.xy.XYSeries;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -68,16 +66,15 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private final Marker   iBottom;
     private ActionItem     iAction;
     private BufferedImage  iBuf;
-    //private LUTControl     iParent = null;
+    private LUTControl     iParent = null;
     
     private final MouseHandler iCtrl = new MouseHandler();
      /* 
       * passive mode constructor, only to display W/L not to control 
       */
-    public LUTControl(LUTControl aParent) {            
-       
+    public LUTControl(LUTControl aParent) {                   
         this(aParent.iWLM);
-        //iParent = aParent;
+        iParent = aParent;
         aParent.addWindowChangeListener(this);
         super.addAncestorListener(new AncestorListener() {
             public void ancestorAdded(AncestorEvent event) {}
@@ -132,21 +129,27 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         addMouseWheelListener(iCtrl);   
     }
     /*  */    
-    public com.ivli.roim.core.Histogram getCurve() {
+    public com.ivli.roim.core.Curve getCurve() {
         return iWLM.getCurve();
     }   
        
     public void addWindowChangeListener(WindowChangeListener aL) {        
         iList.add(WindowChangeListener.class, aL);
-        aL.windowChanged(new WindowChangeEvent(this, iWLM.getWindow()));
+    //    aL.windowChanged(new WindowChangeEvent(this, iWLM.getWindow()));
     }
    
     public void removeWindowChangeListener(WindowChangeListener aL) {
         iList.remove(WindowChangeListener.class, aL);
         //iWinListeners.remove(aL);
     }
+    
+    private void directNotifyWindowChange(Window aW) {        
+       // windowChanged(new WindowChangeEvent(this, aW));
+        
+        iWLM.setWindow(aW);
+    }
             
-    protected void notifyWindowChanged(WindowChangeEvent anE) {
+    protected void notifyWindowChange(WindowChangeEvent anE) {
         for (WindowChangeListener l : iList.getListeners(WindowChangeListener.class))            
             l.windowChanged(anE);            
     }
@@ -156,36 +159,22 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         if (null != iTop && null != iBottom ) { //theoretically we'd never get here in passive mode
             iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
             iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom()));                       
-        }
-        
-        notifyWindowChanged(anE);
-        
-        invalidateBuffer();
-        repaint();              
+                
+            notifyWindowChange(anE);
+            
+            invalidateBuffer();
+            repaint();     
+            logger.info("->windowChanged {}", anE);
+        }         
     }   
     
     @Override
     public void frameChanged(FrameChangeEvent anE) {   
         if (null != iTop && null != iBottom) { //theoretically we'd never get here in passive mode
             iRange = anE.getRange();
-            /*
-            Range oldRange = iRange;
-            iRange = anE.getRange();
-            
-            double oT = screenToImage(iTop.iPos);
-            double oB = screenToImage(iBottom.iPos);
-            
-            double oTP = oldRange.getPercent(oT);
-            double oBP = oldRange.getPercent(oB);
-                    
-            
-            iTop.setPosition((int) imageToScreen(iRange.getRange() * oTP));
-            iBottom.setPosition((int) imageToScreen(iRange.getRange() * oBP)); 
-            */
-        }
-        
-        invalidateBuffer();
-        repaint();              
+            invalidateBuffer();
+            repaint();      
+        }                          
     }   
     
     private class MouseHandler implements MouseMotionListener, MouseListener, MouseWheelListener {
@@ -206,9 +195,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 win.setLevel(win.getLevel() - e.getWheelRotation());                 
 
                 if (iRange.contains(win)) {
-                    iWLM.setWindow(win);
-
-                    ///iWLM.setWindow(win);     
+                    directNotifyWindowChange(win);
                 }
             }            
         } 
@@ -255,22 +242,19 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                            win.setBottom(win.getBottom() - delta);
                         }
 
-                        if (iRange.contains(win)) {
-                            iWLM.setWindow(win);
-                           // changeWindow(win);                          
-                        }
+                        if (iRange.contains(win)) 
+                            directNotifyWindowChange(win); 
+ 
                     }   
+                    
                     protected boolean DoWheel(int aX) {
-
                         final Window win = new Window(iWLM.getWindow());                     
 
                         win.setLevel(win.getLevel() - aX);                 
 
                         if (iRange.contains(win)) {
                             if (null != iWLM) 
-                                iWLM.setWindow(win);
-
-                            //changeWindow(win);     
+                                directNotifyWindowChange(win);
                         }
 
                         return false;
@@ -316,7 +300,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 showPopupMenu(e.getX(), e.getY());
             else if (SwingUtilities.isLeftMouseButton(e)) {
                     if(e.getClickCount() == 2){                        
-                        iWLM.setWindow(new Window(iRange));
+                        directNotifyWindowChange(new Window(iRange));
                     }
             }
         }

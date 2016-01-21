@@ -26,5 +26,5 @@ public interface IWLManager extends Transformation {
     
 
      //TODO: 
-    Histogram getCurve();
+    Curve getCurve();
 }

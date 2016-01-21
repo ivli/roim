@@ -48,22 +48,18 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private final ChartPanel iPanel;
     private final String iCurveName;
     
-    private XYSeriesCollection makeCurve(int aStep) {
-        com.ivli.roim.core.Histogram r = iLUT.getCurve();
-        XYSeries s = new XYSeries(iCurveName);
-        
-        final int step = aStep <= 0 || aStep > r.iData.length ? 1 : r.iData.length / aStep;
-                
-        for (int i=0; i < r.iData.length; i += step ) {            
-            s.add(r.iMin + i, r.iData[i]);
-        }
-        
-        return new XYSeriesCollection(s);
+    private XYSeriesCollection updateLUTCurve(int aWidth) {      
+        return new XYSeriesCollection(iLUT.getCurve().getSeriesRebinned(iCurveName, 256));
+    }
+    
+    private XYSeries updateHistogram(int aWidth) {      
+        XYSeries s = iHEx.iHist.getSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM"));
+        return s;
     }
     
     @Override
     public void windowChanged(WindowChangeEvent anEvt) {            
-        iPanel.getChart().getXYPlot().setDataset(0, makeCurve(jPanel1.getWidth()));
+        iPanel.getChart().getXYPlot().setDataset(0, updateLUTCurve(jPanel1.getWidth()));
     }   
     
     public VOILUTPanel(LUTControl aP, ImageView aV) {
@@ -80,7 +76,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     
         XYPlot plot = new XYPlot();
    
-        plot.setDataset(0, makeCurve(jPanel1.getWidth()));
+        plot.setDataset(0, updateLUTCurve(jPanel1.getPreferredSize().width));
         plot.setRenderer(0, new XYSplineRenderer());  
         
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
@@ -93,7 +89,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
             }
              
             XYSeriesCollection col2 = new XYSeriesCollection();
-            col2.addSeries(iHEx.toSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM")));
+            col2.addSeries(updateHistogram(jPanel1.getPreferredSize().width));
             
             plot.setDataset(1, col2);
             plot.setRenderer(1, new XYBarRenderer());
@@ -130,9 +126,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
             }
 
             public void ancestorMoved(AncestorEvent event){}         
-            });
-        
-        
+            });                
               
         validate();             
     }
