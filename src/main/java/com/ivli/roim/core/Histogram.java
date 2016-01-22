@@ -71,21 +71,16 @@ public class Histogram {//extends HashMap<Integer, Integer>{
         
     public XYSeries getSeriesRebinned(final String aName, final int aNoOfBins) {
               
-        final int binSize = Math.max(1, (iMax - iMin) / aNoOfBins);
+        final int binSize = Math.max(1, (iMax - 0) / aNoOfBins);
      
         HashMap<Integer, Integer> reb = new HashMap<>();
-                  
-        for (HashMap.Entry<Integer, Integer> entry : iMap.entrySet()) {
-            final Integer bin = entry.getKey() / binSize;
-            
-            Integer val = reb.get(bin);
-            
-            if (null != val)
-                reb.put(bin, ++val);
-            else
-                reb.put(bin, 1);
+                
+        for (int i=0; i < aNoOfBins; ++i) {
+            final Integer key = i * binSize; 
+            Integer val = get(key);
+            reb.put(key, val);           
         }
-               
+        
         return convert(aName, reb); 
     }
 }
