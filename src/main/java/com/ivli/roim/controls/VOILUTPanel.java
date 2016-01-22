@@ -31,8 +31,6 @@ import com.ivli.roim.ImageView;
 import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
 
-
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,17 +41,24 @@ import org.apache.logging.log4j.Logger;
 public class VOILUTPanel extends JPanel implements WindowChangeListener {    
     private final LUTControl iLUT;
     private boolean iShowHistogram = true;
-    private HistogramExtractor iHEx = null;
+    //private HistogramExtractor iHEx = null;
+    
     private final ImageView iView;    
     private final ChartPanel iPanel;
     private final String iCurveName;
-    
+    private Histogram iHist;
     private XYSeriesCollection updateLUTCurve(int aWidth) {      
         return new XYSeriesCollection(iLUT.getCurve().getSeriesRebinned(iCurveName, 256));
     }
     
-    private XYSeries updateHistogram(int aWidth) {      
-        XYSeries s = iHEx.iHist.getSeries(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM"));
+    private XYSeries makeHistogram(int aWidth) {  
+        if (null == iHist) {
+            HistogramExtractor iHEx = new HistogramExtractor(null);
+            iView.getImage().extract(iHEx);
+            iHist = iHEx.iHist;
+        }
+        final String name = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM");
+        XYSeries s = iHist.getSeriesRebinned(name, 256);
         return s;
     }
     
@@ -82,21 +87,16 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
         plot.setRangeAxis(0, new NumberAxis("VOILUTPANEL.AXIS_LABEL_VOI_CURVE"));                
         
-        if(iShowHistogram) {    
-            if (null == iHEx) {
-                iHEx = new HistogramExtractor(null);
-                aV.getImage().extract(iHEx);
-            }
-             
+        if (iShowHistogram) {             
             XYSeriesCollection col2 = new XYSeriesCollection();
-            col2.addSeries(updateHistogram(jPanel1.getPreferredSize().width));
+            col2.addSeries(makeHistogram(jPanel1.getPreferredSize().width));
             
             plot.setDataset(1, col2);
             plot.setRenderer(1, new XYBarRenderer());
             plot.setRangeAxis(1, new NumberAxis("VOILUTPANEL.AXIS_LABEL_IMAGE_HISTOGRAM"));
             plot.mapDatasetToRangeAxis(1, 1);
         }
-    
+        
         plot.setDomainAxis(new NumberAxis("VOILUTPANEL.AXIS_LABEL_IMAGE_SPACE"));                
         plot.setRangeGridlinesVisible(true);
         plot.setDomainGridlinesVisible(true);

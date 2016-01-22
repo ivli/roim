@@ -77,7 +77,9 @@ public class Histogram {//extends HashMap<Integer, Integer>{
                   
         for (HashMap.Entry<Integer, Integer> entry : iMap.entrySet()) {
             final Integer bin = entry.getKey() / binSize;
+            
             Integer val = reb.get(bin);
+            
             if (null != val)
                 reb.put(bin, ++val);
             else
