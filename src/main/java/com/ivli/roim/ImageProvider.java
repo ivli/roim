@@ -65,7 +65,7 @@ public abstract class ImageProvider implements IImageProvider {
         return iNoOfFrames;    
     }
     
-   protected void calcGlobals() {
+    protected void calcGlobals() {
         Double min = Double.MAX_VALUE;
         Double max = Double.MIN_VALUE;
         

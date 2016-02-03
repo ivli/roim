@@ -24,21 +24,55 @@ import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.TimeSliceVector;
+import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
 public class MultiframeImage extends IMultiframeImage {
-    private final IImageProvider iProvider;   
+    protected int iWidth;
+    protected int iHeight;
+    protected int iNoOfFrames;   
+    protected Double iMin = Double.NaN;
+    protected Double iMax = Double.NaN;
     
-    public MultiframeImage(IImageProvider aProvider) {
-        iProvider = aProvider;        
+    protected PixelSpacing iPixelSpacing;
+    protected TimeSliceVector iTimeSlices; 
+    protected ArrayList<ImageFrame> iFrames = new ArrayList();;
+    
+        
+    public MultiframeImage(IImageProvider aP) {
+        iWidth;
+        iHeight;
+        iNoOfFrames;   
+        iMin = Double.NaN;
+        iMax = Double.NaN;
+
+        PixelSpacing iPixelSpacing;
+        TimeSliceVector iTimeSlices; 
+        ArrayList<ImageFrame> iFrames = aP       
     }
    
+    
+     @Override
+    public int getWidth() {
+        return iWidth;
+    }
+    
+     @Override
+    public int getHeight() {
+        return iHeight;
+    }  
+    
+     @Override
+    public int getNumFrames() {       
+        return iNoOfFrames;    
+    }
+    
      @Override
     public TimeSliceVector getTimeSliceVector() {
-        return iProvider.getTimeSliceVector();
+        return iTimeSlices;
     }
     
      @Override
