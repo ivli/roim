@@ -43,7 +43,7 @@ public class MultiframeImage extends IMultiframeImage {
     
      @Override
     public boolean hasAt(int aFrameNumber) {               
-        return (aFrameNumber >=0 && aFrameNumber < iProvider.getNumFrames()) ;          
+        return (aFrameNumber >=0 && aFrameNumber < iProvider.getNumFrames());          
     }
        
      @Override

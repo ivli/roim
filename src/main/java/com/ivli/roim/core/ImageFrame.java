@@ -8,6 +8,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 
 /**
  *
@@ -16,11 +18,16 @@ import java.awt.image.WritableRaster;
 public class ImageFrame implements java.io.Serializable {
     private static final long serialVersionUID = 042L;
     
-    private final Raster iRaster;  
+    private Raster iRaster;  
     
     private double iMin;
     private double iMax; 
     private double iIden;
+    
+    public ImageFrame(Raster aRaster) {
+        iRaster = aRaster;        
+        computeStatistics();       
+    }
     
     public Raster getRaster() {
         return iRaster;
@@ -45,12 +52,7 @@ public class ImageFrame implements java.io.Serializable {
     public double getIden() {
         return iIden;
     }
-    
-    public ImageFrame(Raster aRaster) {
-        iRaster = aRaster;        
-        computeStatistics();       
-    }
-    
+
     public BufferedImage getBufferedImage() {        
         WritableRaster wr = iRaster.createCompatibleWritableRaster();
         wr.setRect(iRaster);
@@ -64,7 +66,12 @@ public class ImageFrame implements java.io.Serializable {
                                  wr, true, null);
     }     
     
-   
+    void rotate(double anAngle) {
+        AffineTransform r = AffineTransform.getRotateInstance(anAngle * Math.PI/180);
+        AffineTransformOp op = new AffineTransformOp(r, null);
+        iRaster = op.filter(iRaster, iRaster.createCompatibleWritableRaster());
+        computeStatistics();  
+    }
            
     private void computeStatistics() throws ArrayIndexOutOfBoundsException {
         final Rectangle bnds = iRaster.getBounds();
