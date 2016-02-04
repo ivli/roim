@@ -96,7 +96,7 @@ public class DCMImageProvider extends ImageProvider {
         }
         return f;
     } 
-                
+     /*           
     public double getMin() {
         if (!iMin.isNaN())
             return iMin;        
@@ -117,6 +117,7 @@ public class DCMImageProvider extends ImageProvider {
            return super.getMax(); 
         }
     }
+    */
     
     private static final Logger logger = LogManager.getLogger(DCMImageProvider.class);       
 }

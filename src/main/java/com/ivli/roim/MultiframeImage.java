@@ -18,7 +18,6 @@
 package com.ivli.roim;
 
 
-import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.TimeSlice;
@@ -33,27 +32,40 @@ import org.apache.logging.log4j.Logger;
 public class MultiframeImage extends IMultiframeImage {
     protected int iWidth;
     protected int iHeight;
-    protected int iNoOfFrames;   
+    protected int iNumFrames;   
     protected Double iMin = Double.NaN;
     protected Double iMax = Double.NaN;
     
     protected PixelSpacing iPixelSpacing;
     protected TimeSliceVector iTimeSlices; 
     protected ArrayList<ImageFrame> iFrames = new ArrayList();;
-    
+    protected final ImageProvider iProvider;
         
-    public MultiframeImage(IImageProvider aP) {
-        iWidth;
-        iHeight;
-        iNoOfFrames;   
+    public MultiframeImage(ImageProvider aP) {
+        iProvider = aP;
+        
+        iWidth = iProvider.getWidth();
+        iHeight = iProvider.getHeight();
+        iNumFrames = iProvider.getNumFrames();   
         iMin = Double.NaN;
         iMax = Double.NaN;
 
-        PixelSpacing iPixelSpacing;
-        TimeSliceVector iTimeSlices; 
-        ArrayList<ImageFrame> iFrames = aP       
+        iPixelSpacing = iProvider.getPixelSpacing();
+        iTimeSlices = iProvider.getTimeSliceVector(); 
+        
+        
+        //ArrayList<ImageFrame> iFrames       
     }
    
+    protected void computeStatistics() {
+        
+        iProvider.iFrames.stream().forEach((f) -> {
+            if (f.getMin() < iMin)
+                iMin = f.getMin();
+            else if (f.getMax() > iMax)
+                iMax = f.getMax();
+        });               
+    }
     
      @Override
     public int getWidth() {
@@ -67,7 +79,7 @@ public class MultiframeImage extends IMultiframeImage {
     
      @Override
     public int getNumFrames() {       
-        return iNoOfFrames;    
+        return iNumFrames;    
     }
     
      @Override
@@ -84,22 +96,7 @@ public class MultiframeImage extends IMultiframeImage {
     public ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException {                  
         return iProvider.frame(aFrameNumber);         
     }     
-       
-     @Override
-    public int getNumFrames() {        
-        return iProvider.getNumFrames();       
-    }
-    
-     @Override
-    public int getWidth() {
-        return iProvider.getWidth();
-    }
-    
-     @Override
-    public int getHeight() {
-        return iProvider.getHeight();
-    }  
-    
+                 
      @Override
     public PixelSpacing getPixelSpacing() {
         return iProvider.getPixelSpacing();
@@ -107,14 +104,16 @@ public class MultiframeImage extends IMultiframeImage {
     
      @Override             
     public double getMin() { 
-        return iProvider.getMin();
+        if (Double.isFinite(iMin))
+            computeStatistics();
+        return iMin;
     }  
     
      @Override
     public double getMax() { 
-        return iProvider.getMax();
-    }
-    
-    private static final Logger logger = LogManager.getLogger(MultiframeImage.class);    
+        if (Double.isFinite(iMax))
+            computeStatistics();
+        return iMax;
+    }  
 }
 

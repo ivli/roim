@@ -17,13 +17,12 @@
  */
 package com.ivli.roim;
 
-import com.ivli.roim.core.IImageProvider;
+
 import com.ivli.roim.core.TimeSliceVector;
 import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.Instant;
-import java.io.IOException;
+
 import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
@@ -33,38 +32,34 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public abstract class ImageProvider implements IImageProvider {               
+public abstract class ImageProvider {               
     protected int iWidth;
     protected int iHeight;
     protected int iNoOfFrames;   
-    protected Double iMin = Double.NaN;
-    protected Double iMax = Double.NaN;
+    //protected Double iMin = Double.NaN;
+    //protected Double iMax = Double.NaN;
     
     protected PixelSpacing iPixelSpacing;
     protected TimeSliceVector iTimeSlices; 
     protected ArrayList<ImageFrame> iFrames;
-    
-    
-    protected ImageProvider() {
-        //iLoader = new DCMImageLoader(); 
+        
+    protected ImageProvider() {        
         iFrames = new ArrayList();        
     }
-           
-    @Override
+    
     public int getWidth() {
         return iWidth;
     }
     
-    @Override
     public int getHeight() {
         return iHeight;
     }  
-    
-    @Override
+   
     public int getNumFrames() {       
         return iNoOfFrames;    
     }
     
+    /*
     protected void calcGlobals() {
         Double min = Double.MAX_VALUE;
         Double max = Double.MIN_VALUE;
@@ -96,34 +91,32 @@ public abstract class ImageProvider implements IImageProvider {
         else {       
             calcGlobals(); 
             return iMax; 
-        }
-        
+        }        
     }
+    */
     
-    @Override
     public PixelSpacing getPixelSpacing() {
         return iPixelSpacing;        
     }
     
-    @Override
+   
     public TimeSliceVector getTimeSliceVector() {
         return iTimeSlices;
     }
     
-    @Override
+   
     public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException/*, IOException */{
        return iFrames.get(anIndex);
     }
     
-    @Override
-    public IImageProvider slice(TimeSlice aS) {
+   
+    public ImageProvider slice(TimeSlice aS) {
         VirtualImageProvider ret = new VirtualImageProvider(this);
         
         return ret;
     }
-    
-    @Override
-    public IImageProvider collapse(TimeSlice aS) /*throws IOException */{   
+       
+    public ImageProvider collapse(TimeSlice aS) /*throws IOException */{   
         int frameTo = aS.getTo().isInfinite() ? getNumFrames() : iTimeSlices.frameNumber(aS.getTo());
         int frameFrom = iTimeSlices.frameNumber(aS.getFrom());        
        
