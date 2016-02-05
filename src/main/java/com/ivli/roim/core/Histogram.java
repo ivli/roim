@@ -39,8 +39,7 @@ public class Histogram {//extends HashMap<Integer, Integer>{
     public Integer get(final Integer aKey) {
         return iMap.get(aKey);
     }
-    
-                
+         
     public void increment(final Integer aKey) {
         Integer val = iMap.get(aKey);
         if (null != val)
@@ -57,8 +56,7 @@ public class Histogram {//extends HashMap<Integer, Integer>{
         
         iMap.put(aKey, aVal);
     }
-    /*  */
-    
+ 
     protected XYSeries convert(final String aName, HashMap<Integer, Integer> aMap){            
         XYSeries ret = new XYSeries(aName);
         

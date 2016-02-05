@@ -22,45 +22,12 @@ package com.ivli.roim.core;
  * @author likhachev
  */
 public interface IImageProvider {                  
-    public int getWidth() ;    
-    public int getHeight() ;   
-    public int getNumFrames();            
-    public PixelSpacing getPixelSpacing();       
-    public TimeSliceVector getTimeSliceVector();       
-    public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException;
-     
-    
-    /*   
-    public ImageProvider slice(TimeSlice aS) {
-        //VirtualImageProvider ret = new VirtualImageProvider(this);
-        
-        return null;
-    }
-       
-   
-    public ImageProvider collapse(TimeSlice aS){   
-        int frameTo = aS.getTo().isInfinite() ? getNumFrames() : getTimeSliceVector().frameNumber(aS.getTo());
-        int frameFrom = getTimeSliceVector().frameNumber(aS.getFrom());        
-               
-        java.awt.image.WritableRaster comp = frame(0).getRaster().createCompatibleWritableRaster();
-                
-        for (int n = frameFrom; n < frameTo; ++n) {
-            final java.awt.image.Raster r = frame(n).getRaster();
-            for (int i = 0; i < getWidth(); ++i)
-               for (int j = 0; j < getHeight(); ++j) 
-                   comp.setSample(i, j, 0, comp.getSample(i, j, 0) + r.getSample(i, j, 0));           
-        
-        }
-        
-        VirtualImageProvider ret = new VirtualImageProvider(this);
-        
-        ret.iTimeSliceVector = getTimeSliceVector().slice(aS);
-        ret.iFrames.add(new ImageFrame(comp));
-        ret.iNoOfFrames = 1;
-        
-        return ret; 
-    }
-    */
+    int getWidth() ;    
+    int getHeight() ;   
+    int getNumFrames();            
+    ImageType getImageType();
+    PixelSpacing getPixelSpacing();       
+    SliceSpacing getSliceSpacing();
+    TimeSliceVector getTimeSliceVector();       
+    ImageFrame frame(int anIndex) throws IndexOutOfBoundsException;    
 }
-
-

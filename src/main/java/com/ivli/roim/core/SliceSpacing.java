@@ -31,6 +31,5 @@ public class SliceSpacing implements java.io.Serializable {
         iZ = aZ;
     }
     
-    public double get() {return iZ;}
-    
+    public double get() {return iZ;}    
 }

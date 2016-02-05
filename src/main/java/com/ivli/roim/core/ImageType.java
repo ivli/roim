@@ -21,12 +21,24 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public final class ImageType {
-    public static final int PRIMARY   = 0x00;
-    public static final int DERIVED   = 0x01;
-    public static final int STATIC    = 0x00;
-    public static final int DYNAMIC   = 0x10;
-    public static final int WHOLEBODY = 0x20;
-    public static final int TOMO      = 0x40;
-    public static final int VOLUME    = TOMO | DERIVED;
+public enum ImageType {   
+    IMAGE("IMAGE"),        
+    STATIC("STATIC"),        
+    DYNAMIC("DYNAMIC"), 
+    GATED("DYNAMIC/GATED"), 
+    WHOLEBODY("WHOLE BODY"),
+    TOMO("TOMO"),
+    TOMO_G("TOMO/GATED"),
+    VOLUME("VOLUME"),
+    VOLUME_G("VOLUME/GATED");
+    
+    private final String iName;
+    
+    private ImageType(String aN) {               
+        iName = aN;
+    }
+   
+    public String getName() {
+        return iName;
+    }
 }

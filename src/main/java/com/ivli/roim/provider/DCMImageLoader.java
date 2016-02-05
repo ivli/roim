@@ -62,8 +62,7 @@ public class DCMImageLoader  {
         ImageIO.scanForPlugins(); 
     }
     
-    static final ImageReader _installImageReader() {    
-        
+    static final ImageReader installImageReader() {            
         ImageReader ir = ImageIO.getImageReadersByFormatName("DICOM").next(); //NOI18N
 
         if (null == ir) {
@@ -75,16 +74,13 @@ public class DCMImageLoader  {
            
         return ir;      
     }  
-    
-    private String iFile;
-    
-    private ImageReader iReader = _installImageReader();   
-    private Attributes  iDataSet;
-        
+       
+    private final ImageReader iReader = installImageReader();   
+    private Attributes  iDataSet;        
     
     public void open(String aFile) throws IOException {
          
-        try (DicomInputStream dis = new DicomInputStream(new File(iFile = aFile))) {  
+        try (DicomInputStream dis = new DicomInputStream(new File(aFile))) {  
             
             iDataSet = dis.readDataset(-1, -1);//readFileMetaInformation();
            
@@ -95,10 +91,8 @@ public class DCMImageLoader  {
         ImageInputStream iis = ImageIO.createImageInputStream(new File(aFile));
         iReader.setInput(iis);  
     }
-        
-    
-    public TimeSliceVector getTimeSliceVector() throws IOException {        
-       
+            
+    public TimeSliceVector getTimeSliceVector() throws IOException {               
         ArrayList<PhaseInformation> phases = new ArrayList();
                    
         Sequence pid = (Sequence)iDataSet.getValue(Tag.PhaseInformationSequence);
@@ -118,33 +112,26 @@ public class DCMImageLoader  {
          
         return new TimeSliceVector(phases);
     }   
-    
-    
+          
     public PixelSpacing getPixelSpacing() throws IOException {        
         double[] ps = iDataSet.getDoubles(Tag.PixelSpacing); 
         if (null != ps && ps.length >=2 )
             return new PixelSpacing (ps[0], ps[1]);
         else
             return PixelSpacing.UNITY_PIXEL_SPACING;
-    }
-    
+    }    
     
     public double getMin() {
-       double ret = iDataSet.getDouble(Tag.SmallestImagePixelValue, Double.NaN);
-       return ret;
+      return iDataSet.getDouble(Tag.SmallestImagePixelValue, Double.NaN);
     }
-    
-    
+        
     public double getMax() {
-        double ret = iDataSet.getDouble(Tag.LargestImagePixelValue, Double.NaN);
-        return ret;   
+        return iDataSet.getDouble(Tag.LargestImagePixelValue, Double.NaN);
     }
-    
     
     public int getNumImages() throws IOException {
         return iReader.getNumImages(false);
     }    
-
    
     public Raster readRaster(int aIndex) throws IOException {
         return iReader.readRaster(aIndex, readParam());

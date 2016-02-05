@@ -25,7 +25,7 @@ public class FrameOffset {
     protected int iX;
     protected int iY;
     
-    public static final FrameOffset ZERO = new FrameOffset(0,0);
+    public static final FrameOffset ZERO = new FrameOffset(0, 0);
     
     public FrameOffset() {
         iX = 0;
@@ -41,7 +41,5 @@ public class FrameOffset {
     public void setY(int aY) {iY = aY;}
               
     public int getX() {return iX;}
-    public int getY() {return iY;}                
-    
-        
+    public int getY() {return iY;}                     
 }

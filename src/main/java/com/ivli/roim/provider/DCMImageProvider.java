@@ -22,7 +22,9 @@ import com.ivli.roim.core.IImageProvider;
 import java.io.IOException;
 
 import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.PixelSpacing;
+import com.ivli.roim.core.SliceSpacing;
 import com.ivli.roim.core.TimeSliceVector;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,6 +42,8 @@ public class DCMImageProvider implements IImageProvider {
     int iNumFrames;     
     TimeSliceVector iTimeSliceVector;
     PixelSpacing iPixelSpacing;    
+    SliceSpacing iSliceSpacing;
+    ImageType iImageType;
     
     public DCMImageProvider(String aFile) throws IOException { 
         iLoader = new DCMImageLoader();
@@ -84,7 +88,16 @@ public class DCMImageProvider implements IImageProvider {
     public PixelSpacing getPixelSpacing() {
         return iPixelSpacing;
     }
+    
+    public SliceSpacing getSliceSpacing() {
+        return iSliceSpacing;    
+    }
+    
+    public ImageType getImageType() {
        
+        return ImageType.IMAGE;
+    }
+    
     @Override
     public TimeSliceVector getTimeSliceVector() {
         return iTimeSliceVector;

@@ -50,8 +50,7 @@ public enum Measurement {//implements java.io.Serializable {
     
     public String getName() {return iName;}
     public String getUnits() {return iUnits;}
-    
-    
+
     public static String[] getAllMeasurements() {            
         java.util.Set<Measurement> so = java.util.EnumSet.allOf(Measurement.class);
 
