@@ -5,7 +5,7 @@ package com.ivli.roim.core;
  * Pixel Spacing in mm as described in (0028,0030) 
  * @author likhachev
  */
-public class PixelSpacing { 
+public class PixelSpacing implements java.io.Serializable { 
     public final static double UNITY_PIXEL_SPACING_X = 1.0;
     public final static double UNITY_PIXEL_SPACING_Y = 1.0;       
     public final static PixelSpacing UNITY_PIXEL_SPACING = new PixelSpacing(UNITY_PIXEL_SPACING_X, UNITY_PIXEL_SPACING_Y);
