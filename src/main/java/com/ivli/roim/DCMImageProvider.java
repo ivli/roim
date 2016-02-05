@@ -22,6 +22,7 @@ import java.io.IOException;
 import com.ivli.roim.core.IImageLoader;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PixelSpacing;
+import com.ivli.roim.core.TimeSliceVector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,24 +31,22 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class DCMImageProvider extends ImageProvider {
+public class DCMImageProvider extends ImageProvider {    
+    private final IImageLoader iLoader;
     
-    protected final IImageLoader iLoader;
+    TimeSliceVector iTimeSliceVector;
+    PixelSpacing iPixelSpacing;
     
-    public DCMImageProvider(String aFile) throws IOException {
-                
-        //java.io.File f = new java.io.File(aFile);
-        
+    public DCMImageProvider(String aFile) throws IOException { 
         iLoader = new DCMImageLoader();//DCMImageLoader(); 
         
         try {           
             iLoader.open(aFile);
-            iTimeSlices = iLoader.getTimeSliceVector();        
+            iTimeSliceVector = iLoader.getTimeSliceVector();        
 
             try{
                 iPixelSpacing = iLoader.getPixelSpacing();
             } catch (IOException ex) {
-
                 iPixelSpacing = new PixelSpacing(1.0, 1.0);
             }
             
@@ -64,6 +63,14 @@ public class DCMImageProvider extends ImageProvider {
             logger.error("FATAL!!", ex);
         }            
     }  
+    
+    public PixelSpacing getPixelSpacing() {
+        return iPixelSpacing;
+    }
+       
+    public TimeSliceVector getTimeSliceVector() {
+        return iTimeSliceVector;
+    }
     
     @Override
     public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException/*, IOException*/ {
@@ -96,28 +103,6 @@ public class DCMImageProvider extends ImageProvider {
         }
         return f;
     } 
-     /*           
-    public double getMin() {
-        if (!iMin.isNaN())
-            return iMin;        
-        try {
-            return iLoader.getMin();
-        } catch (IOException ex) {
-            return super.getMin();
-        }
-    }
-    
-    public double getMax() {
-        if (!iMax.isNaN())
-            return iMax;
         
-        try {
-            return iLoader.getMax();
-        } catch (IOException ex) {            
-           return super.getMax(); 
-        }
-    }
-    */
-    
     private static final Logger logger = LogManager.getLogger(DCMImageProvider.class);       
 }

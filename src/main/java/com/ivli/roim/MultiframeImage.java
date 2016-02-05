@@ -25,9 +25,6 @@ import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.TimeSliceVector;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 
 public class MultiframeImage extends IMultiframeImage {
     protected int iWidth;

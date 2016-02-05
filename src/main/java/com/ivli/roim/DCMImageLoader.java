@@ -125,7 +125,7 @@ public class DCMImageLoader implements IImageLoader {
         if (null != ps && ps.length >=2 )
             return new PixelSpacing (ps[0], ps[1]);
         else
-            return new PixelSpacing();
+            return PixelSpacing.UNITY_SPACING;
     }
     
     @Override

@@ -10,40 +10,13 @@ import org.apache.logging.log4j.Logger;
  * @author likhachev
  */
 public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSliceVector> {
-
     private static final long serialVersionUID = 42L;
                     
+       
     private ArrayList<PhaseInformation> iPhases; 
       //frame start time in millisecons from series begin
     private ArrayList<Long>             iSlices; 
     
-    /*public TimeSliceVector(ArrayList<PhaseInformation> aPi) {
-        iPhases = aPi;
-         fillSlicesArray();
-    }
-    
-    public TimeSliceVector(Attributes aAttr) {        
-        iPhases = new ArrayList();
-        iSlices = new ArrayList();        
-        
-        Sequence pid = (Sequence)aAttr.getValue(Tag.PhaseInformationSequence);
-        
-        if (null != pid) {        
-            for (Attributes a : pid) {
-                int fd = a.getInt(Tag.ActualFrameDuration, 1);     
-                int nf = a.getInt(Tag.NumberOfFramesInPhase, 1);  
-                iPhases.add(new PhaseInformation(nf, fd));
-            }  
-        } else {  
-             // single frame image
-            iPhases.add(new PhaseInformation(1, aAttr.getInt(Tag.ActualFrameDuration, 1)));   
-        }
-        
-        fillSlicesArray();
-        
-        logger.debug(iSlices);
-    }
-    */   
     
     public TimeSliceVector(ArrayList<PhaseInformation> aP) {                
         iPhases =  new ArrayList();

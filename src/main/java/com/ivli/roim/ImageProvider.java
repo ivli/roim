@@ -17,13 +17,12 @@
  */
 package com.ivli.roim;
 
+import java.util.ArrayList;
 
 import com.ivli.roim.core.TimeSliceVector;
 import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.ImageFrame;
-
-import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,18 +34,11 @@ import org.apache.logging.log4j.Logger;
 public abstract class ImageProvider {               
     protected int iWidth;
     protected int iHeight;
-    protected int iNoOfFrames;   
-    //protected Double iMin = Double.NaN;
-    //protected Double iMax = Double.NaN;
-    
-    protected PixelSpacing iPixelSpacing;
-    protected TimeSliceVector iTimeSlices; 
-    protected ArrayList<ImageFrame> iFrames;
-        
-    protected ImageProvider() {        
-        iFrames = new ArrayList();        
-    }
-    
+    protected int iNoOfFrames;           
+    //protected PixelSpacing iPixelSpacing;
+    //protected TimeSliceVector iTimeSlices; 
+    protected ArrayList<ImageFrame> iFrames = new ArrayList();
+               
     public int getWidth() {
         return iWidth;
     }
@@ -58,58 +50,15 @@ public abstract class ImageProvider {
     public int getNumFrames() {       
         return iNoOfFrames;    
     }
-    
-    /*
-    protected void calcGlobals() {
-        Double min = Double.MAX_VALUE;
-        Double max = Double.MIN_VALUE;
-        
-        for (int i = 0; i < getNumFrames(); ++i) {
-            final ImageFrame f = frame(i);
-            if (f.getMin() < min)
-                min = f.getMin();
-            else if (f.getMax() > max)
-                max = f.getMax();
-        }
-        
-        iMin = min;
-        iMax = max;
-    }
-    
-    public double getMin() {
-        if (!iMin.isNaN())
-            return iMin;
-        else {
-           calcGlobals();
-           return iMin;
-        }
-    }
-    
-    public double getMax() {
-        if (!iMax.isNaN())
-            return iMax;
-        else {       
-            calcGlobals(); 
-            return iMax; 
-        }        
-    }
-    */
-    
-    public PixelSpacing getPixelSpacing() {
-        return iPixelSpacing;        
-    }
-    
-   
-    public TimeSliceVector getTimeSliceVector() {
-        return iTimeSlices;
-    }
-    
-   
-    public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException/*, IOException */{
+            
+    public abstract PixelSpacing getPixelSpacing();
+       
+    public abstract TimeSliceVector getTimeSliceVector();
+       
+    public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException {
        return iFrames.get(anIndex);
     }
-    
-   
+       
     public ImageProvider slice(TimeSlice aS) {
         VirtualImageProvider ret = new VirtualImageProvider(this);
         
@@ -117,10 +66,9 @@ public abstract class ImageProvider {
     }
        
     public ImageProvider collapse(TimeSlice aS) /*throws IOException */{   
-        int frameTo = aS.getTo().isInfinite() ? getNumFrames() : iTimeSlices.frameNumber(aS.getTo());
-        int frameFrom = iTimeSlices.frameNumber(aS.getFrom());        
-       
-        
+        int frameTo = aS.getTo().isInfinite() ? getNumFrames() : getTimeSliceVector().frameNumber(aS.getTo());
+        int frameFrom = getTimeSliceVector().frameNumber(aS.getFrom());        
+               
         java.awt.image.WritableRaster comp = iFrames.get(0).getRaster().createCompatibleWritableRaster();
                 
         for (int n = frameFrom; n < frameTo; ++n) {
@@ -133,14 +81,14 @@ public abstract class ImageProvider {
         
         VirtualImageProvider ret = new VirtualImageProvider(this);
         
-        ret.iTimeSlices = iTimeSlices.slice(aS);
+        ret.iTimeSliceVector = getTimeSliceVector().slice(aS);
         ret.iFrames.add(new ImageFrame(comp));
         ret.iNoOfFrames = 1;
         
         return ret; 
     }
     
-    private static final Logger logger = LogManager.getLogger(ImageProvider.class);     
+    //private static final Logger logger = LogManager.getLogger(ImageProvider.class);     
 }
 
 

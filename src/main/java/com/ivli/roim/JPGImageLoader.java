@@ -83,7 +83,7 @@ public class JPGImageLoader implements IImageLoader {
     
     @Override
     public PixelSpacing getPixelSpacing() throws IOException {             
-        return new PixelSpacing();
+        return PixelSpacing.UNITY_SPACING;
     }
     
     @Override
