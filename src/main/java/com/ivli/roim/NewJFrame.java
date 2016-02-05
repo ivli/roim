@@ -455,7 +455,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1.removeAll();
         jPanel3.removeAll();
                 
-        iPanel = new ImagePanel(new ImageView(new MultiframeImage(iProvider)));          
+        com.ivli.roim.core.IMultiframeImage mi = new MultiframeImage(iProvider);
+        
+        iPanel = new ImagePanel(new ImageView(mi));          
        
         iPanel.setPreferredSize(jPanel1.getSize());
         iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -470,6 +472,15 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iChart.setPreferredSize(jPanel3.getPreferredSize());
         jPanel3.add(iChart);
         
+        
+        iGrid = new ImagePanel(new GridImageView(mi, 2, 2));
+        iGrid.setPreferredSize(jPanel4.getSize());
+        iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        
+        jPanel4.setLayout(new BorderLayout());
+        jPanel4.add(iGrid, BorderLayout.CENTER);
+       
+        jPanel4.validate();
         /* ELSE */
         jPanel1.validate(); 
                 

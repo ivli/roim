@@ -1,5 +1,5 @@
 
-package com.ivli.roim;
+package com.ivli.roim.algorithm;
 
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
