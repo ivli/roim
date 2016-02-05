@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim;
+package com.ivli.roim.provider;
 
 
 import java.io.File;
@@ -45,7 +45,7 @@ import org.dcm4che3.data.Sequence;
 import com.ivli.roim.core.PhaseInformation;
 import com.ivli.roim.core.TimeSliceVector;
 import com.ivli.roim.core.PixelSpacing;
-import com.ivli.roim.core.IImageLoader;
+
 
 /* ENDIF */
 
@@ -56,7 +56,7 @@ import org.apache.logging.log4j.Logger;
 /*
  * This class incapsulates dcm4che access to DICOM file entities 
  */
-public class DCMImageLoader implements IImageLoader {
+public class DCMImageLoader  {
     
     static {   
         ImageIO.scanForPlugins(); 
@@ -81,7 +81,7 @@ public class DCMImageLoader implements IImageLoader {
     private ImageReader iReader = _installImageReader();   
     private Attributes  iDataSet;
         
-    @Override
+    
     public void open(String aFile) throws IOException {
          
         try (DicomInputStream dis = new DicomInputStream(new File(iFile = aFile))) {  
@@ -96,7 +96,7 @@ public class DCMImageLoader implements IImageLoader {
         iReader.setInput(iis);  
     }
         
-    @Override
+    
     public TimeSliceVector getTimeSliceVector() throws IOException {        
        
         ArrayList<PhaseInformation> phases = new ArrayList();
@@ -119,33 +119,33 @@ public class DCMImageLoader implements IImageLoader {
         return new TimeSliceVector(phases);
     }   
     
-    @Override
+    
     public PixelSpacing getPixelSpacing() throws IOException {        
         double[] ps = iDataSet.getDoubles(Tag.PixelSpacing); 
         if (null != ps && ps.length >=2 )
             return new PixelSpacing (ps[0], ps[1]);
         else
-            return PixelSpacing.UNITY_SPACING;
+            return PixelSpacing.UNITY_PIXEL_SPACING;
     }
     
-    @Override
+    
     public double getMin() {
        double ret = iDataSet.getDouble(Tag.SmallestImagePixelValue, Double.NaN);
        return ret;
     }
     
-    @Override
+    
     public double getMax() {
         double ret = iDataSet.getDouble(Tag.LargestImagePixelValue, Double.NaN);
         return ret;   
     }
     
-    @Override
+    
     public int getNumImages() throws IOException {
         return iReader.getNumImages(false);
     }    
 
-    @Override
+   
     public Raster readRaster(int aIndex) throws IOException {
         return iReader.readRaster(aIndex, readParam());
     }

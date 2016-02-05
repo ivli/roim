@@ -15,7 +15,7 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
        
     private ArrayList<PhaseInformation> iPhases; 
       //frame start time in millisecons from series begin
-    private ArrayList<Long>             iSlices; 
+    private ArrayList<Long> iSlices; 
     
     
     public TimeSliceVector(ArrayList<PhaseInformation> aP) {                
@@ -30,28 +30,20 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         fillSlicesArray();
     }
       
-    public TimeSliceVector slice(TimeSlice aS) {
-        
+    public TimeSliceVector slice(TimeSlice aS) {        
         ArrayList<PhaseInformation> phases =  new ArrayList();
         
-        
-        
         final int frameTo = (0 == aS.getTo().compareTo(Instant.INFINITE)) ? getNumFrames() - 1 : frameNumber(aS.getTo()) - 1;
-
-        final int frameFrom = frameNumber(aS.getFrom());   
-        
+        final int frameFrom = frameNumber(aS.getFrom());           
         final int phaseFrom = phaseFrame(frameFrom);
         final int phaseTo   = phaseFrame(frameTo);               
         
-        for (int n = phaseFrom; n <= phaseTo; ++n) {        
-            
+        for (int n = phaseFrom; n <= phaseTo; ++n) {                    
             PhaseInformation pi = new PhaseInformation(iPhases.get(n));
             
-            if (phaseFrom == n)  {
+            if (phaseFrom == n) {
                 pi.iNumberOfFrames = pi.iNumberOfFrames - (frameFrom - framesToPhase(n));
-            }
-            
-            else if (phaseTo == n) {
+            } else if (phaseTo == n) {    
                 pi.iNumberOfFrames = frameTo - framesToPhase(n) + 1;
             }
             

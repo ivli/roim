@@ -15,30 +15,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim;
+package com.ivli.roim.core;
 
 
-import com.ivli.roim.core.IMultiframeImage;
-import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.TimeSlice;
-import com.ivli.roim.core.PixelSpacing;
-import com.ivli.roim.core.TimeSliceVector;
 import java.util.ArrayList;
 
 
 public class MultiframeImage extends IMultiframeImage {
+    protected final IImageProvider iProvider;
+     //read from ImageProvider
     protected int iWidth;
     protected int iHeight;
     protected int iNumFrames;   
+    protected PixelSpacing iPixelSpacing;
+    protected TimeSliceVector iTimeSliceVector; 
+     //computed
     protected Double iMin = Double.NaN;
     protected Double iMax = Double.NaN;
     
-    protected PixelSpacing iPixelSpacing;
-    protected TimeSliceVector iTimeSlices; 
-    protected ArrayList<ImageFrame> iFrames = new ArrayList();;
-    protected final ImageProvider iProvider;
-        
-    public MultiframeImage(ImageProvider aP) {
+    protected final ArrayList<ImageFrame> iFrames; 
+    
+    public MultiframeImage(IImageProvider aP) {
         iProvider = aP;
         
         iWidth = iProvider.getWidth();
@@ -48,15 +45,16 @@ public class MultiframeImage extends IMultiframeImage {
         iMax = Double.NaN;
 
         iPixelSpacing = iProvider.getPixelSpacing();
-        iTimeSlices = iProvider.getTimeSliceVector(); 
+        iTimeSliceVector = iProvider.getTimeSliceVector(); 
+       
+        iFrames = new ArrayList(iNumFrames);
         
-        
-        //ArrayList<ImageFrame> iFrames       
+        for (int n=0; n < iNumFrames; ++n)
+            iFrames.add(n, null);        
     }
    
-    protected void computeStatistics() {
-        
-        iProvider.iFrames.stream().forEach((f) -> {
+    protected void computeStatistics() {        
+        iFrames.stream().forEach((f) -> {
             if (f.getMin() < iMin)
                 iMin = f.getMin();
             else if (f.getMax() > iMax)
@@ -80,24 +78,27 @@ public class MultiframeImage extends IMultiframeImage {
     }
     
      @Override
+    public PixelSpacing getPixelSpacing() {
+        return iPixelSpacing;
+    }
+    
+     @Override
     public TimeSliceVector getTimeSliceVector() {
-        return iTimeSlices;
+        return iTimeSliceVector;
     }
     
      @Override
     public boolean hasAt(int aFrameNumber) {               
-        return (aFrameNumber >=0 && aFrameNumber < iProvider.getNumFrames());          
+        return (aFrameNumber >=0 && aFrameNumber < iNumFrames);          
     }
        
      @Override
-    public ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException {                  
-        return iProvider.frame(aFrameNumber);         
-    }     
-                 
-     @Override
-    public PixelSpacing getPixelSpacing() {
-        return iProvider.getPixelSpacing();
-    }
+    public ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException {       
+        ImageFrame ret = iFrames.get(aFrameNumber);
+        if (null == ret)
+            iFrames.add(aFrameNumber, (ret = iProvider.frame(aFrameNumber)));
+        return ret;         
+    }          
     
      @Override             
     public double getMin() { 
@@ -108,10 +109,40 @@ public class MultiframeImage extends IMultiframeImage {
     
      @Override
     public double getMax() { 
-
         if (Double.isFinite(iMax))
             computeStatistics();
         return iMax;
     }  
+        
+    protected MultiframeImage(MultiframeImage aM) {
+        iProvider = aM.iProvider;
+        iFrames = new ArrayList<>();
+    }
+       
+    public MultiframeImage collapse(TimeSlice aS){   
+        int frameTo = aS.getTo().isInfinite() ? getNumFrames() : getTimeSliceVector().frameNumber(aS.getTo());
+        int frameFrom = getTimeSliceVector().frameNumber(aS.getFrom());        
+               
+        java.awt.image.WritableRaster comp = iFrames.get(0).getRaster().createCompatibleWritableRaster();
+                
+        for (int n = frameFrom; n < frameTo; ++n) {
+            final java.awt.image.Raster r = iFrames.get(n).getRaster();
+            for (int i = 0; i < getWidth(); ++i)
+               for (int j = 0; j < getHeight(); ++j) 
+                   comp.setSample(i, j, 0, comp.getSample(i, j, 0) + r.getSample(i, j, 0));           
+        
+        }
+        
+        MultiframeImage ret = new MultiframeImage(this.iProvider);
+        
+        ret.iTimeSliceVector = getTimeSliceVector().slice(aS);
+        ret.iFrames.add(new ImageFrame(comp));
+        ret.iNumFrames = 1;
+        
+        return ret; 
+    }
+    
+    
+    
 }
 

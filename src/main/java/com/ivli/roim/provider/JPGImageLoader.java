@@ -15,9 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim;
+package com.ivli.roim.provider;
 
-import com.ivli.roim.core.IImageLoader;
+
 import com.ivli.roim.core.PhaseInformation;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.TimeSliceVector;
@@ -39,7 +39,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class JPGImageLoader implements IImageLoader {
+public class JPGImageLoader {
     
     static {   
         ImageIO.scanForPlugins(); 
@@ -66,14 +66,14 @@ public class JPGImageLoader implements IImageLoader {
         
     BufferedImage iImage;
     
-    @Override
+    
     public void open(String aFile) throws IOException {
          
         iImage = ImageIO.read(new File(aFile));
         
     }
         
-    @Override
+   
     public TimeSliceVector getTimeSliceVector() throws IOException {        
        
         ArrayList<PhaseInformation> phases = new ArrayList();
@@ -81,28 +81,28 @@ public class JPGImageLoader implements IImageLoader {
         return new TimeSliceVector(phases);
     }   
     
-    @Override
+    
     public PixelSpacing getPixelSpacing() throws IOException {             
-        return PixelSpacing.UNITY_SPACING;
+        return PixelSpacing.UNITY_PIXEL_SPACING;
     }
     
-    @Override
+    
     public double getMin() {
        //double ret = iDataSet.getDouble(Tag.SmallestImagePixelValue, Double.NaN);
        return Double.NaN;
     }
     
-    @Override
+    
     public double getMax() {
        return Double.NaN;   
     }
     
-    @Override
+    
     public int getNumImages() throws IOException {
         return 1;
     }    
 
-    @Override
+   
     public Raster readRaster(int aIndex) throws IOException {
         return iImage.getRaster();
     }

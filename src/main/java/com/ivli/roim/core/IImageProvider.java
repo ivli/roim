@@ -15,61 +15,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim;
-
-import java.util.ArrayList;
-
-import com.ivli.roim.core.TimeSliceVector;
-import com.ivli.roim.core.TimeSlice;
-import com.ivli.roim.core.PixelSpacing;
-import com.ivli.roim.core.ImageFrame;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+package com.ivli.roim.core;
 
 /**
  *
  * @author likhachev
  */
-public abstract class ImageProvider {               
-    protected int iWidth;
-    protected int iHeight;
-    protected int iNoOfFrames;           
-    //protected PixelSpacing iPixelSpacing;
-    //protected TimeSliceVector iTimeSlices; 
-    protected ArrayList<ImageFrame> iFrames = new ArrayList();
-               
-    public int getWidth() {
-        return iWidth;
-    }
+public interface IImageProvider {                  
+    public int getWidth() ;    
+    public int getHeight() ;   
+    public int getNumFrames();            
+    public PixelSpacing getPixelSpacing();       
+    public TimeSliceVector getTimeSliceVector();       
+    public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException;
+     
     
-    public int getHeight() {
-        return iHeight;
-    }  
-   
-    public int getNumFrames() {       
-        return iNoOfFrames;    
-    }
-            
-    public abstract PixelSpacing getPixelSpacing();
-       
-    public abstract TimeSliceVector getTimeSliceVector();
-       
-    public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException {
-       return iFrames.get(anIndex);
-    }
-       
+    /*   
     public ImageProvider slice(TimeSlice aS) {
-        VirtualImageProvider ret = new VirtualImageProvider(this);
+        //VirtualImageProvider ret = new VirtualImageProvider(this);
         
-        return ret;
+        return null;
     }
        
-    public ImageProvider collapse(TimeSlice aS) /*throws IOException */{   
+   
+    public ImageProvider collapse(TimeSlice aS){   
         int frameTo = aS.getTo().isInfinite() ? getNumFrames() : getTimeSliceVector().frameNumber(aS.getTo());
         int frameFrom = getTimeSliceVector().frameNumber(aS.getFrom());        
                
-        java.awt.image.WritableRaster comp = iFrames.get(0).getRaster().createCompatibleWritableRaster();
+        java.awt.image.WritableRaster comp = frame(0).getRaster().createCompatibleWritableRaster();
                 
         for (int n = frameFrom; n < frameTo; ++n) {
             final java.awt.image.Raster r = frame(n).getRaster();
@@ -87,8 +60,7 @@ public abstract class ImageProvider {
         
         return ret; 
     }
-    
-    //private static final Logger logger = LogManager.getLogger(ImageProvider.class);     
+    */
 }
 
 

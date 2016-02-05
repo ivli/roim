@@ -15,11 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim;
+package com.ivli.roim.provider;
 
 
+import com.ivli.roim.core.IImageProvider;
 import java.io.IOException;
-import com.ivli.roim.core.IImageLoader;
+
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.TimeSliceVector;
@@ -31,14 +32,17 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class DCMImageProvider extends ImageProvider {    
-    private final IImageLoader iLoader;
+public class DCMImageProvider implements IImageProvider {    
+    private final DCMImageLoader iLoader;    
     
+    int iWidth;
+    int iHeight;
+    int iNumFrames;     
     TimeSliceVector iTimeSliceVector;
-    PixelSpacing iPixelSpacing;
+    PixelSpacing iPixelSpacing;    
     
     public DCMImageProvider(String aFile) throws IOException { 
-        iLoader = new DCMImageLoader();//DCMImageLoader(); 
+        iLoader = new DCMImageLoader();
         
         try {           
             iLoader.open(aFile);
@@ -50,59 +54,49 @@ public class DCMImageProvider extends ImageProvider {
                 iPixelSpacing = new PixelSpacing(1.0, 1.0);
             }
             
-            iNoOfFrames = iLoader.getNumImages();
-            iFrames.clear();
-            iFrames.ensureCapacity(iNoOfFrames);
-
+            iNumFrames = iLoader.getNumImages();
            
-            ImageFrame f = doLoadFrame(0);
+            java.awt.image.Raster f = iLoader.readRaster(0);
 
-            iWidth = f.getWidth();
+            iWidth  = f.getWidth();
             iHeight = f.getHeight();        
         } catch (IOException ex) {
             logger.error("FATAL!!", ex);
         }            
     }  
     
+    @Override
+    public int getWidth() {
+        return iWidth;
+    }
+    
+    @Override
+    public int getHeight() {
+        return iHeight;
+    }
+   
+    @Override
+    public int getNumFrames() {
+        return iNumFrames;
+    }
+    
+    @Override
     public PixelSpacing getPixelSpacing() {
         return iPixelSpacing;
     }
        
+    @Override
     public TimeSliceVector getTimeSliceVector() {
         return iTimeSliceVector;
     }
     
-    @Override
     public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException/*, IOException*/ {
-        return doLoadFrame(anIndex);
-    }
-    
-    protected ImageFrame doLoadFrame(int anIndex) throws IndexOutOfBoundsException/*, IOException */ {        
-        if (anIndex > getNumFrames() || anIndex < 0)
-            throw new IndexOutOfBoundsException();
-        
-        ImageFrame f = null;
-        
         try {
-            f = iFrames.get(anIndex);                        
-        } catch (IndexOutOfBoundsException e) {   
-            try {
-                f = new ImageFrame(iLoader.readRaster(anIndex));
-
-                iFrames.add(anIndex, f);
-                 //record only cache misses
-                logger.info("Frame: "   + anIndex + // NOI18N                              
-                            ", MIN: "   + f.getMin() +  // NOI18N
-                            ", MAX: "   + f.getMax() +  // NOI18N
-                            ", DEN: "   + f.getIden() + "."); // NOI18N     
-                
-                  
-            } catch (IOException ee) {
-                logger.error("FATAL!!!", ee);
-            }
+            return new ImageFrame(iLoader.readRaster(anIndex));
+        } catch (IOException e) {
+            throw new IndexOutOfBoundsException();
         }
-        return f;
-    } 
-        
+    }
+
     private static final Logger logger = LogManager.getLogger(DCMImageProvider.class);       
 }

@@ -18,6 +18,9 @@
 package com.ivli.roim;
 
 
+import com.ivli.roim.core.MultiframeImage;
+import com.ivli.roim.provider.DCMImageProvider;
+import com.ivli.roim.core.IImageProvider;
 import java.awt.*;
 import java.io.IOException;
 import java.io.File;
@@ -39,7 +42,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private ImagePanel  iOff;
     private ChartView   iChart;
     private ChartView   iChart2;
-    private ImageProvider iProvider;
+    private IImageProvider iProvider;
     
     static {
         
