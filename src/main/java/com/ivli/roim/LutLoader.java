@@ -19,16 +19,13 @@
  */
 package com.ivli.roim;
 
-
-import java.awt.image.IndexColorModel;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.DataInputStream;
 import java.awt.Color;
-
+import java.awt.image.IndexColorModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
