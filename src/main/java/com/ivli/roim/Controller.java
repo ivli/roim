@@ -1,14 +1,12 @@
 
 package com.ivli.roim;
 
-import com.ivli.roim.controls.VOILUTPanel;
+
 import com.ivli.roim.core.Window;
 import java.awt.Graphics2D;
 import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Dimension;
 
 import java.awt.geom.RectangularShape;
 import java.awt.geom.Rectangle2D;
@@ -24,7 +22,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JDialog;
 
 import javax.swing.SwingUtilities;
 import javax.swing.JPopupMenu;
@@ -162,11 +159,28 @@ class Controller implements ActionListener {
             iAction.paint(gc);
     }
      
-    private Overlay findActionTarget(Point aP) {
+    protected Overlay findActionTarget(Point aP) {
        Overlay ret = iControlled.getROIMgr().findOverlay(aP);
        if (null != ret && true == ret.isSelectable())
            return ret;
        return null;
+    }
+    
+    protected void addSelection(Overlay aO) {
+        if (null != aO) {
+            iSelected = aO;
+            iSelected.select(true);
+        }
+    }
+    
+    protected void releaseSelection(Overlay aO) {
+        if (null != aO) {
+            aO.select(false);                    
+        } else if (null != iSelected) {
+            iSelected.select(false);
+        }
+        
+        iSelected = null;
     }
     
     boolean blockObjectSpecificPopupMenu() {
@@ -192,8 +206,10 @@ class Controller implements ActionListener {
         
         public void mouseClicked(MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e)) {
-                if (null != (iSelected = iControlled.getROIMgr().findOverlay(e.getPoint()))) {
-                    ///JPopupMenu mnu''
+                Overlay tmp = iControlled.getROIMgr().findOverlay(e.getPoint());
+                
+                if (null != tmp) {
+                    addSelection(tmp);
                     
                     if (iSelected.hasMenu() && !blockObjectSpecificPopupMenu()) {
                         buildObjectSpecificPopupMenu(iSelected).show(iControlled, e.getX(), e.getY());
@@ -211,43 +227,43 @@ class Controller implements ActionListener {
         }
 
         public void mousePressed(MouseEvent e) {
+            Overlay tmp = null;
             if (null != iAction) {
-                iAction.action(e.getX(), e.getY());
-             //   return;
-            }
-            else if (null != (iSelected = findActionTarget(e.getPoint()) )) { // Object specific handling                    
-                    iAction = new BaseActionItem(e.getX(), e.getY()) {
-                        protected void DoAction(int aX, int aY) {
-                            iControlled.getROIMgr().moveRoi(iSelected, aX-iX, aY-iY);
-                            iControlled.repaint();//old.createIntersection(iSelected.iShape.getBounds2D())); 
-                        }    
-                        protected boolean DoRelease(int aX, int aY) {                           
-                            iSelected = null;
+                iAction.action(e.getX(), e.getY());             
+            } else if (null != (tmp = findActionTarget(e.getPoint()) )) { // Object specific handling                    
+                addSelection(tmp);
+                iAction = new BaseActionItem(e.getX(), e.getY()) {
+                    protected void DoAction(int aX, int aY) {
+                        iControlled.getROIMgr().moveRoi(iSelected, aX-iX, aY-iY);
+                        iControlled.repaint();//old.createIntersection(iSelected.iShape.getBounds2D())); 
+                    }    
+                    protected boolean DoRelease(int aX, int aY) {    
+                        //iSelected.select(false);
+                        //iSelected = null;
+                        releaseSelection(null);
+                        iControlled.repaint();
+                        return false;
+                    }  
+                    protected boolean DoWheel(int aX) {
+                        if (iSelected instanceof Overlay.IRotate) {
+                            ((Overlay.IRotate)iSelected).rotate(aX);
                             iControlled.repaint();
-                            return false;
-                        }  
-                        protected boolean DoWheel(int aX) {
-                            if (iSelected instanceof Overlay.IRotate) {
-                                ((Overlay.IRotate)iSelected).rotate(aX);
-                                iControlled.repaint();
-                            }
-                            return true;
                         }
-                    };
-            } 
-            else if (SwingUtilities.isLeftMouseButton(e)) {
+                        return true;
+                    }
+                };
+            } else if (SwingUtilities.isLeftMouseButton(e)) {
                 iAction = NewAction(iLeftAction, e.getX(), e.getY());
-            }
-            else if (SwingUtilities.isMiddleMouseButton(e)) {
+            } else if (SwingUtilities.isMiddleMouseButton(e)) {
                 iAction = NewAction(iMiddleAction, e.getX(), e.getY());
-            }
-            else if (SwingUtilities.isRightMouseButton(e)) {                
+            } else if (SwingUtilities.isRightMouseButton(e)) {                
                 iAction = NewAction(iRightAction, e.getX(), e.getY());
             }
         }
 
         public void mouseReleased(MouseEvent e) {
-            if (null != iAction && !iAction.release(e.getX(), e.getY())) iAction = null;               
+            if (null != iAction && !iAction.release(e.getX(), e.getY())) 
+                iAction = null;               
         }
 
         public void mouseMoved(MouseEvent e) {   
@@ -407,7 +423,9 @@ class Controller implements ActionListener {
             case KCommandRoiClone:   
                 iControlled.getROIMgr().cloneRoi((ROI)iSelected);
                 iControlled.repaint();
-                iSelected = null;
+                //iSelected.select(false);
+                //iSelected = null;
+                releaseSelection(null);
                 break;
             case KCommandRoiMove: break;            
             case KCommandRoiPin: 
@@ -415,7 +433,8 @@ class Controller implements ActionListener {
                 break;
             case KCommandRoiDelete: 
                 iControlled.getROIMgr().deleteOverlay(iSelected); 
-                iSelected = null; 
+                //iSelected = null; 
+                releaseSelection(null);
                 iControlled.repaint(); 
                 break;                
             case KCommandRoiFlipHorz:
@@ -440,6 +459,7 @@ class Controller implements ActionListener {
                 ;break;
             case KCommandRoiDeleteAll: 
                 iSelected = null; 
+                releaseSelection(null);
                 iControlled.getROIMgr().clear();//deleteAllOverlays(); 
                 iControlled.repaint();
                 break;

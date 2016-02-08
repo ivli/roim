@@ -10,7 +10,7 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.event.EventListenerList;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
-import java.awt.Rectangle;
+
 /**
  *
  * @author likhachev
@@ -33,15 +33,16 @@ public abstract class Overlay implements java.io.Serializable {
     
     protected Shape  iShape;
     protected String iName;
+    protected boolean iSelected = false;
     protected boolean iPinned = false;
     
-    private final EventListenerList iList;    
+    private final EventListenerList iListeners;    
     
     protected Overlay(String aName, Shape aShape, ROIManager aMgr) {
         iMgr   = aMgr;
         iShape = aShape;         
         iName = (null != aName)? aName : new String(aName);                      
-        iList = new EventListenerList();   
+        iListeners = new EventListenerList();   
     }
     
     public final ROIManager getManager() {
@@ -69,6 +70,16 @@ public abstract class Overlay implements java.io.Serializable {
         return iPinned;
     }
     
+    
+    
+    public void select(boolean aSelected) {
+        iSelected = aSelected;
+    }
+    
+    public boolean isSelected() {
+        return iSelected;
+    }
+    
     boolean isSelectable() {return 0 != (getCaps() & SELECTABLE);}
     boolean isMovable() {return 0 != (getCaps() & MOVEABLE);}
     boolean isPermanent() {return 0 != (getCaps() & PERMANENT);}
@@ -85,7 +96,7 @@ public abstract class Overlay implements java.io.Serializable {
     boolean intersects(Rectangle2D aR) {
         return getShape().intersects(aR);
     }   
-    
+        
     void move(double adX, double adY) {
         if (!isPinned()) {          
             Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);        
@@ -116,17 +127,17 @@ public abstract class Overlay implements java.io.Serializable {
     }
             
     public void addROIChangeListener(ROIChangeListener aL) {       
-        iList.add(ROIChangeListener.class, aL);
+        iListeners.add(ROIChangeListener.class, aL);
     }
     
     public void removeROIChangeListener(ROIChangeListener aL) {        
-        iList.remove(ROIChangeListener.class, aL);
+        iListeners.remove(ROIChangeListener.class, aL);
     }
     
     protected void notifyROIChanged(ROIChangeEvent.CHG aS, Object aEx) {        
         ROIChangeEvent evt = new ROIChangeEvent(this, aS, this, aEx);
 
-        ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);
+        ROIChangeListener arr[] = iListeners.getListeners(ROIChangeListener.class);
 
         for (ROIChangeListener l : arr)
             l. ROIChanged(evt);
