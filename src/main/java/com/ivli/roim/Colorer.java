@@ -1,36 +1,38 @@
 
 package com.ivli.roim;
 
-import java.io.Serializable;
+
 import java.awt.Color;
-import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Iterator;
+
 /**
  *
  * @author likhachev
  */
-public class Colorer implements Serializable {    
-    private static final Color [] iCols = new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.ORANGE, Color.PINK, Color.YELLOW};
-    private static final Map <Class, Color> iHash = new HashMap();
+public class Colorer {    
+    private static final Color [] COLORS = new Color[] {Color.RED, Color.PINK, Color.ORANGE, 
+                                                        Color.YELLOW, Color.GREEN, Color.MAGENTA,
+                                                        Color.CYAN, Color.BLUE, Color.GRAY
+                                                       };
     
-        static synchronized Color getNextColor(Object aO) {
-        Color ret = iCols[0];
+    private static final Map <Class, Integer> iHash = new HashMap();
+    
+    static synchronized Color getNextColor(Object aO) {        
+        int ret = 0;
+        
         if (iHash.containsKey(aO.getClass())) {
-
-            ret = iHash.get(aO.getClass());
-            
-            for (int i=0; i < iCols.length; ++i)
-                if (iCols[i] == ret) {
-                    if (i  < iCols.length -1)                         
-                        ret = iCols[i+1];                     
-                    else
-                        ret = iCols[0];
-                    break;
-                }            
+            int ndx = iHash.get(aO.getClass()) + 1;
+            if (ndx >= COLORS.length)
+                ret = 0;
+            else
+                ret = ndx;
         }
+        
         iHash.put(aO.getClass(), ret);
-        return ret;
+        
+        return COLORS[ret];
     }
+    
+    private Colorer() {}
 }
