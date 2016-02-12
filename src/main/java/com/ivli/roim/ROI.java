@@ -9,7 +9,7 @@ import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.BasicStroke;
 import java.awt.image.Raster;
 
 import com.ivli.roim.core.Measurement;
@@ -21,6 +21,8 @@ import org.apache.logging.log4j.Logger;
 
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {          
     private final static boolean DRAW_PROFILES = false;
+    private final static int EMPHASIZED_STROKE = 20;
+    private final static Color EMPHASIZED_COLOR = Color.RED;
     
     private Color iColor;          
     private int iAreaInPixels;   
@@ -125,9 +127,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
             for (int n = 1; n < profileX.length; ++n) 
                 xpath.lineTo(iShape.getBounds().getX() + n, iShape.getBounds().getY() - profileX[n] * scale);
 
-            Path2D.Double ypath = new Path2D.Double();
-        
-           
+            Path2D.Double ypath = new Path2D.Double();                   
         
             for (double d : profileY) {
                 min = Math.min(min, d);
@@ -151,31 +151,22 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
             aGC.setPaintMode(); //turn XOR mode off
          
     }
-    
+           
     @Override
-    void paint(Graphics2D aGC, AffineTransform aTrans) {
-        aGC.setColor(iColor);
+    void paint(Graphics2D aGC, AffineTransform aTrans) {        
+        if (iEmphasized) {
+            aGC.setColor(EMPHASIZED_COLOR);
+            aGC.setStroke(new BasicStroke(2));        
+        } else {
+            aGC.setColor(iColor);
+        }
+        
         aGC.draw(aTrans.createTransformedShape(getShape()));       
+        
         if (DRAW_PROFILES)
             drawProfiles(aGC, aTrans);
     }
-    
-    /*
-    @Override
-    void move(double adX, double adY) {
-           
-        Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);        
-        Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());
         
-        if (bounds.contains(temp.getBounds())) {                   
-            Shape old = iShape;
-            iShape = temp;               
-            update();            
-            notifyROIChanged(ROIChangeEvent.CHG.Moved, new double[]{adX, adY});        
-        }
-    }  
-     */
-    
     private int calculateAreaInPixels() {
         final java.awt.Rectangle bnds = getShape().getBounds();
         int AreaInPixels = 0;
@@ -195,8 +186,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }
     
     @Override
-    public void flip(boolean aV) {                
-        
+    public void flip(boolean aV) {                        
         Rectangle r = iShape.getBounds();
         AffineTransform tx;
         

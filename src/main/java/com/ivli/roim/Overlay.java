@@ -33,7 +33,7 @@ public abstract class Overlay implements java.io.Serializable {
     
     protected Shape  iShape;
     protected String iName;
-    protected boolean iSelected = false;
+    protected boolean iEmphasized = false;
     protected boolean iPinned = false;
     
     private final EventListenerList iListeners;    
@@ -69,15 +69,13 @@ public abstract class Overlay implements java.io.Serializable {
     public boolean isPinned() {
         return iPinned;
     }
-    
-    
-    
-    public void select(boolean aSelected) {
-        iSelected = aSelected;
+  
+    public void setEmphasized(boolean aE) {
+        iEmphasized = aE;
     }
     
-    public boolean isSelected() {
-        return iSelected;
+    public boolean isEmphasized() {
+        return iEmphasized;
     }
     
     boolean isSelectable() {return 0 != (getCaps() & SELECTABLE);}

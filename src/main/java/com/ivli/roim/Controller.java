@@ -94,6 +94,7 @@ class Controller implements ActionListener {
             iControlled.repaint();
             return false;
         }
+        
         public void DoPaint(Graphics2D gc) {
             if (null != iShape)
                 gc.draw(iShape);
@@ -169,15 +170,15 @@ class Controller implements ActionListener {
     protected void addSelection(Overlay aO) {
         if (null != aO) {
             iSelected = aO;
-            iSelected.select(true);
+            iSelected.setEmphasized(true);
         }
     }
     
     protected void releaseSelection(Overlay aO) {
         if (null != aO) {
-            aO.select(false);                    
+            aO.setEmphasized(false);                    
         } else if (null != iSelected) {
-            iSelected.select(false);
+            iSelected.setEmphasized(false);
         }
         
         iSelected = null;
