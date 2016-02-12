@@ -28,21 +28,15 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.WritableRaster;
 import java.awt.image.BufferedImage;
-
-
 import java.awt.image.Kernel;
 import java.awt.image.Raster;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-
 import javax.swing.event.EventListenerList;
 import javax.swing.JComponent;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import org.jfree.data.xy.XYSeries;
 
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.IWLManager;
@@ -53,15 +47,10 @@ import com.ivli.roim.core.ImageFrame;
 
 
 public class ImageView extends JComponent {     
-    private static final double  DEFAULT_SCALE_X = 1.;
-    private static final double  DEFAULT_SCALE_Y = 1.;
+    private static final double  DEFAULT_SCALE_X = 1.0;
+    private static final double  DEFAULT_SCALE_Y = 1.0;
     
-    public static final int FIT_NO_FIT  = 0;
-    public static final int FIT_VISIBLE = 1;
-    public static final int FIT_WIDTH   = 2;
-    public static final int FIT_HEIGHT  = 3; 
-    
-    private int iFit = Settings.DEFAULT_FIT;     
+    protected Fit iFit = Settings.DEFAULT_FIT;     
     protected final IMultiframeImage iModel;                     
     protected       Controller iController;    
     protected final AffineTransform iZoom;
@@ -121,9 +110,7 @@ public class ImageView extends JComponent {
         return iLUTMgr;
     }    
     
-    public void setFit(int aFit) {        
-        if (aFit < FIT_NO_FIT || aFit > FIT_HEIGHT)
-            throw new java.lang.IllegalArgumentException();
+    public void setFit(Fit aFit) {               
         iFit = aFit; 
         invalidateBuffer();       
     }
@@ -144,13 +131,13 @@ public class ImageView extends JComponent {
         double scale;
         
         switch (iFit) {
-            case FIT_VISIBLE:
+            case VISIBLE:
                 final double scaleX = (double)getWidth() / (double)getVisualWidth(); 
                 final double scaleY = (double)getHeight() / (double)getVisualHeight(); 
                 scale = Math.min(scaleX, scaleY); break;                
-            case FIT_HEIGHT: scale = (double)getHeight() / (double)getVisualHeight(); break;
-            case FIT_WIDTH:  scale = (double)getWidth() / (double)getVisualWidth(); break;
-            case FIT_NO_FIT: //falltrough to default
+            case HEIGHT: scale = (double)getHeight() / (double)getVisualHeight(); break;
+            case WIDTH:  scale = (double)getWidth() / (double)getVisualWidth(); break;
+            case NONE: //falltrough to default
             default: 
                 return;                            
         }        
@@ -263,7 +250,7 @@ public class ImageView extends JComponent {
     }
     
     public void zoom(double aFactor) {
-        iFit = FIT_NO_FIT;
+        iFit = Fit.NONE;
         
         iZoom.setToScale(iZoom.getScaleX() + aFactor, iZoom.getScaleY() + aFactor);        
         

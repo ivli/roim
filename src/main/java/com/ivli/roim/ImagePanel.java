@@ -70,7 +70,7 @@ public class ImagePanel extends JPanel {
         repaint();    
     }
     
-    public void setFit(int aFit) {   
+    public void setFit(Fit aFit) {   
         iView.setFit(aFit);     
         repaint();   
     }

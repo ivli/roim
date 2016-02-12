@@ -34,7 +34,7 @@ public class Settings implements java.io.Serializable {
     public static int MOUSE_DEFAULT_ACTION_RIGHT  = Controller.MOUSE_ACTION_WINDOW;
     public static int MOUSE_DEFAULT_ACTION_WHEEL  = Controller.MOUSE_ACTION_LIST;    
         
-    public static int DEFAULT_FIT = ImageView.FIT_VISIBLE;
+    public static Fit DEFAULT_FIT = Fit.VISIBLE;
     public static boolean KEEP_WINDOW_AMONG_FRAMES = true;
     
     private Settings(){}

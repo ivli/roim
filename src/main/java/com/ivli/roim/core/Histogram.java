@@ -18,28 +18,41 @@
 package com.ivli.roim.core;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYDataItem;
+
 /**
  *
  * @author likhachev
  */
-public class Histogram {//extends HashMap<Integer, Integer>{
+public class Histogram {
     
     HashMap<Integer, Integer> iMap = new HashMap<>();
    
     int iMin = Integer.MAX_VALUE;
     int iMax = Integer.MIN_VALUE;
     
+    /**
+     *
+     * @param aName
+     * @return
+     */
     public XYSeries getSeries(final String aName){                                           
         return convert(aName, iMap);
     }
       
+    /**
+     *
+     * @param aKey
+     * @return
+     */
     public Integer get(final Integer aKey) {
         return iMap.get(aKey);
     }
          
+    /**
+     *
+     * @param aKey
+     */
     public void increment(final Integer aKey) {
         Integer val = iMap.get(aKey);
         if (null != val)
@@ -48,6 +61,11 @@ public class Histogram {//extends HashMap<Integer, Integer>{
             this.put(aKey, 1);
     }
     
+    /**
+     *
+     * @param aKey
+     * @param aVal
+     */
     public void put(final Integer aKey, final Integer aVal) {
         if (aKey > iMax)
             iMax = aKey;
@@ -57,6 +75,12 @@ public class Histogram {//extends HashMap<Integer, Integer>{
         iMap.put(aKey, aVal);
     }
  
+    /**
+     *
+     * @param aName
+     * @param aMap
+     * @return
+     */
     protected XYSeries convert(final String aName, HashMap<Integer, Integer> aMap){            
         XYSeries ret = new XYSeries(aName);
         
@@ -67,6 +91,12 @@ public class Histogram {//extends HashMap<Integer, Integer>{
         return ret;
     }
         
+    /**
+     *
+     * @param aName
+     * @param aNoOfBins
+     * @return
+     */
     public XYSeries getSeriesRebinned(final String aName, final int aNoOfBins) {
               
         final int binSize = Math.max(1, (iMax - 0) / aNoOfBins);
