@@ -59,7 +59,9 @@ public abstract class ActionItem {
      * @param aY
      */
     public final void action(int aX, int aY) {
-        DoAction(aX, aY); iX = aX; iY = aY;
+        DoAction(aX, aY);  
+        iX = aX; 
+        iY = aY;
     }
 
     /**
@@ -82,14 +84,15 @@ public abstract class ActionItem {
     }
 
     /**
-     *
+     * the main method must be implemented in descendants to handle action 
+     * actual coordinates are provided
      * @param aX
      * @param aY
      */
     protected abstract void DoAction(int aX, int aY); 
     
     /**
-     *
+     * 
      * @param aX
      * @return
      */
@@ -97,13 +100,11 @@ public abstract class ActionItem {
         return false;
     }
     
-     // it shall return true if action is not completed and ought to be continued
-
     /**
      *
      * @param aX
      * @param aY
-     * @return
+     * @return it shall return true if action is not complete and ought to be continued
      */
     protected boolean DoRelease(int aX, int aY)  {
         return false;
