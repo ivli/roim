@@ -137,16 +137,19 @@ public class ImageView extends JComponent {
         return iInterpolation;
     }
         
+    protected int getVisualWidth() {return iModel.getWidth();}
+    protected int getVisualHeight() {return iModel.getHeight();}
+    
     protected void updateScale() {
         double scale;
         
         switch (iFit) {
             case FIT_VISIBLE:
-                final double scaleX = (double)getWidth() / (double)iModel.getWidth(); 
-                final double scaleY = (double)getHeight() / (double)iModel.getHeight(); 
+                final double scaleX = (double)getWidth() / (double)getVisualWidth(); 
+                final double scaleY = (double)getHeight() / (double)getVisualHeight(); 
                 scale = Math.min(scaleX, scaleY); break;                
-            case FIT_HEIGHT: scale = (double)getHeight() / (double)iModel.getHeight(); break;
-            case FIT_WIDTH:  scale = (double)getWidth() / (double)iModel.getWidth(); break;
+            case FIT_HEIGHT: scale = (double)getHeight() / (double)getVisualHeight(); break;
+            case FIT_WIDTH:  scale = (double)getWidth() / (double)getVisualWidth(); break;
             case FIT_NO_FIT: //falltrough to default
             default: 
                 return;                            
@@ -154,6 +157,7 @@ public class ImageView extends JComponent {
         
         iZoom.setToScale(scale, scale); //does it make sense to implement non isomorphic scale?
     }
+                     
                      
     public void addWindowChangeListener(WindowChangeListener aL) {
         logger.info("-> addWindowChangeListener {}", aL);

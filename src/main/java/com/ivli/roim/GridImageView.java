@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import javax.swing.JCheckBoxMenuItem;
@@ -36,20 +37,19 @@ import javax.swing.JPopupMenu;
 public class GridImageView extends ImageView {
     
     private int iRows;
-    private int iColumns;
+    private int iCols;
     private boolean iDisplayFrameNumbers = true;
     
     private static final String KCommandShowFrameNumbers = "MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS"; // NOI18N
     private static final String KCommandOptimalLayout = "MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL"; // NOI18N
     
     GridImageView(IMultiframeImage anImage, int aRows, int aColunmns) {
-        super(anImage);
-       // iModel = ;
-        iRows  = aRows;
-        iColumns = aColunmns;
-        iController = new Controller(this) {
-            
-            
+        super(anImage);      
+        iRows = aRows;
+        iCols = aColunmns;
+         //GRID CONTROLLER
+        iController = new Controller(this) {                        
+            @Override
             JPopupMenu buildContextPopupMenu() {
             
                 JPopupMenu mnu = new JPopupMenu("MNU_CONTEXT_GRIDVIEW"); 
@@ -68,9 +68,30 @@ public class GridImageView extends ImageView {
                     mnu.add(mi);
                     }                                         
                 }
-
                 return mnu;
             }
+            
+            @Override
+            public void keyPressed(KeyEvent e) {        
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_PLUS: 
+                        if (iRows > 1 && iCols > 2) {                                                    
+                            setGrid(++iRows, iCols);                        
+                        } else if (1 == iRows && iCols > 1) {
+                            setGrid(iRows, ++iCols);
+                        }
+                        break;
+                    case KeyEvent.VK_MINUS: 
+                        if (iRows > 1 && iCols > 2) {                                                    
+                            setGrid(--iRows, iCols);                        
+                        } else if (1 == iRows && iCols > 1) {
+                            setGrid(iRows, --iCols);
+                        }
+                        break;
+                    default: break;
+                }
+            }
+            
             
             JPopupMenu buildObjectSpecificPopupMenu() {
                 return buildContextPopupMenu();
@@ -93,7 +114,7 @@ public class GridImageView extends ImageView {
         
     public void setGrid(int aRows, int aColunmns) {
         iRows = aRows;
-        iColumns = aColunmns;
+        iCols = aColunmns;
     }
     
     @Override
@@ -106,7 +127,7 @@ public class GridImageView extends ImageView {
             Double min = Double.MAX_VALUE;
             Double max = Double.MIN_VALUE;
             
-            for (int n = 0; n < iRows * iColumns; ++n) {             
+            for (int n = 0; n < iRows * iCols; ++n) {             
                 min = Math.min(min, iModel.get(iCurrent + n).getMin()); 
                 max = Math.max(max, iModel.get(iCurrent + n).getMax());
             } 
@@ -126,10 +147,9 @@ public class GridImageView extends ImageView {
     
     private final int GAPX = 2;
     private final int GAPY = 4;
-    
-    
+        
     protected int getVisualWidth() {
-        return iColumns*(iModel.getWidth() + GAPX) + GAPX;
+        return iCols*(iModel.getWidth() + GAPX) + GAPX;
     }
     
     protected int getVisualHeight() {
@@ -163,8 +183,8 @@ public class GridImageView extends ImageView {
         do {   
             int posx = GAPX; 
             
-            for (int i = 0; i < iColumns; ++i) {
-                final int ndx = getCurrent() + j*iColumns + i;
+            for (int i = 0; i < iCols; ++i) {
+                final int ndx = getCurrent() + j*iCols + i;
                               
                 if (iModel.hasAt(ndx)) {                    
                     BufferedImage img = iModel.get(ndx).getBufferedImage();

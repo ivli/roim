@@ -37,7 +37,7 @@ import com.ivli.roim.events.*;
 
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {     
-    private ImagePanel  iPanel;
+    private ImagePanel  iImage;
     private ImagePanel  iGrid;    
     private ImagePanel  iOff;
     private ChartView   iChart;
@@ -143,17 +143,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jSplitPane1.TabConstraints.tabTitle"), jSplitPane1); // NOI18N
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 863, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
-        );
-
+        jPanel4.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -456,39 +446,35 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel3.removeAll();
                 
         com.ivli.roim.core.IMultiframeImage mi = new MultiframeImage(iProvider);
+         //IMAGE
+        iImage = new ImagePanel(new ImageView(mi));                 
+        iImage.setPreferredSize(jPanel1.getSize());
+        iImage.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        jPanel1.setLayout(new BorderLayout());
+        jPanel1.add(iImage, BorderLayout.CENTER);
+        jPanel1.validate(); 
         
-        iPanel = new ImagePanel(new ImageView(mi));          
-       
-        iPanel.setPreferredSize(jPanel1.getSize());
-        iPanel.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-       
+        //CHART
         iChart = new ChartView();        
         iChart.initChart();
-        iPanel.addROIChangeListener(iChart);
-     
-        /* IF !CHART_ON_THE_SAME_PAGE */    
-        jPanel1.setLayout(new BorderLayout());
-        jPanel1.add(iPanel, BorderLayout.CENTER);
         iChart.setPreferredSize(jPanel3.getPreferredSize());
         jPanel3.add(iChart);
         
-        
-        iGrid = new ImagePanel(new GridImageView(mi, 2, 2));
+
+        //GRID
+        iGrid = new ImagePanel(new GridImageView(mi, 4, 4));       
         iGrid.setPreferredSize(jPanel4.getSize());
-        iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        ///iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));        
+        jPanel4.setLayout(new BorderLayout());     
+        jPanel4.add(iGrid, BorderLayout.CENTER);        
+       // jPanel4.validate();
         
-        jPanel4.setLayout(new BorderLayout());
-        jPanel4.add(iGrid, BorderLayout.CENTER);
-       
-        jPanel4.validate();
-        /* ELSE */
-        jPanel1.validate(); 
-                
-        iPanel.addFrameChangeListener(this);        
-        iPanel.addWindowChangeListener(this);
-        iPanel.addZoomChangeListener(this);
-        iPanel.addROIChangeListener(this);          
-       
+        //
+        iImage.addROIChangeListener(iChart);       
+        iImage.addFrameChangeListener(this);        
+        iImage.addWindowChangeListener(this);
+        iImage.addZoomChangeListener(this);
+        iImage.addROIChangeListener(this);                 
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -504,7 +490,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                     
     private void jMenu2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu2ComponentShown
         // TODO add your handling code here:
-        if (null == iPanel) {
+        if (null == iImage) {
         
         } else {
         
@@ -512,8 +498,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenu2ComponentShown
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        if(null != iPanel) {
-            iPanel.reset();        
+        if(null != iImage) {
+            iImage.reset();        
         }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
@@ -547,7 +533,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                
         switch(jTabbedPane1.getSelectedIndex()) {
             case 0:
-                pane = iPanel; break;
+                pane = iImage; break;
             case 2:
                 pane = iOff; break;
             default: break;    
@@ -572,7 +558,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         fd.setVisible(true);
         String cm ;
         if (null != fd.getFile()) {
-            iPanel.setLUT(fd.getDirectory() + fd.getFile());
+            iImage.setLUT(fd.getDirectory() + fd.getFile());
             jPanel1.repaint();
             //iLut.setLUT(cm);
             //iLut.repaint();
@@ -583,7 +569,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         switch(jTabbedPane1.getSelectedIndex()) {
             case 0:
-                iPanel.showLUTDialog(); break;
+                iImage.showLUTDialog(); break;
             case 2:
                 iOff.showLUTDialog(); break;
             default: break;    
@@ -591,27 +577,27 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        iPanel.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        iImage.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
-        iPanel.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        iImage.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
-        iPanel.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        iImage.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        iPanel.setFit(ImageView.FIT_HEIGHT);        
+        iImage.setFit(ImageView.FIT_HEIGHT);        
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
     private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
-        iPanel.setFit(ImageView.FIT_VISIBLE);
+        iImage.setFit(ImageView.FIT_VISIBLE);
     }//GEN-LAST:event_jMenuItem15ActionPerformed
 
     private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem13ActionPerformed
-        iPanel.setFit(ImageView.FIT_WIDTH);
+        iImage.setFit(ImageView.FIT_WIDTH);
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
@@ -619,7 +605,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                
         switch(jTabbedPane1.getSelectedIndex()) {
             case 0:
-                pane = iPanel; break;
+                pane = iImage; break;
             case 2:
                 pane = iOff; break;
             default: break;    

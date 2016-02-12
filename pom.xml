@@ -73,10 +73,26 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>    
+        <!--dependency>
+         <groupId>org.codehaus.javancss</groupId>
+         <artifactId>javancss</artifactId>
+         <version>${javancss-version}</version>
+      </dependency-->
     </dependencies>
           
     <reporting>
-        <plugins>            
+        <plugins>  
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>javancss-maven-plugin</artifactId>
+                <version>2.1</version>
+
+                <configuration>
+                  <failOnViolation>true</failOnViolation>
+                  <ccnLimit>12</ccnLimit>
+                  <ncssLimit>90</ncssLimit>
+                </configuration>
+            </plugin>            
         </plugins>
     </reporting>
        
@@ -110,18 +126,7 @@
                 </execution>
               </executions>
             </plugin>  
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>javancss-maven-plugin</artifactId>
-                <version>2.1</version>
-
-                <configuration>
-                  <failOnViolation>true</failOnViolation>
-                  <ccnLimit>12</ccnLimit>
-                  <ncssLimit>90</ncssLimit>
-                </configuration>
-
-              </plugin>    
+            
           </plugins>         
         </build> 
       </profile>
@@ -154,6 +159,7 @@
                   </archive>
                 </configuration>       
               </plugin>
+              
             </plugins>
           </build>
         </profile>                

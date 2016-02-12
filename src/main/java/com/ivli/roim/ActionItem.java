@@ -1,8 +1,6 @@
 
 package com.ivli.roim;
 
-import java.awt.Graphics2D;
-
 /**
  *
  * @author likhachev
@@ -28,7 +26,7 @@ public abstract class ActionItem {
         DoWheel(aX);
     }     
 
-    public final void paint(Graphics2D gc) {
+    public final void paint(java.awt.Graphics2D gc) {
         java.awt.Color oc = gc.getColor();
         gc.setColor(Settings.ACTIVE_ROI_COLOR);
         DoPaint(gc);
@@ -36,9 +34,16 @@ public abstract class ActionItem {
     }
 
     protected abstract void DoAction(int aX, int aY); 
-    protected boolean DoWheel(int aX){return false;}
-    // return true if action shall be continued
-    protected boolean DoRelease(int aX, int aY) {return false;}
-    protected void DoPaint(Graphics2D aGC) {}   
+    
+    protected boolean DoWheel(int aX) {
+        return false;
+    }
+    
+     // it shall return true if action is not completed and ought to be continued
+    protected boolean DoRelease(int aX, int aY)  {
+        return false;
+    }
+    
+    protected void DoPaint(java.awt.Graphics2D aGC) {}   
 }
 
