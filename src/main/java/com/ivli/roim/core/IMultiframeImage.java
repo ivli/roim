@@ -25,18 +25,62 @@ package com.ivli.roim.core;
  * 
  */
 public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.Serializable {          
+
+    /**
+     *
+     * @return image widht in pixels
+     */
     public abstract int getWidth();  
+
+    /**
+     *
+     * @return image heigdht in pixels
+     */
     public abstract int getHeight();
+
+    /**
+     *
+     * @return pixel spacing X and Y in mm
+     */
     public abstract PixelSpacing getPixelSpacing();   
+
+    /**
+     *
+     * @return temporal characteristics of the image 
+     */
     public abstract TimeSliceVector getTimeSliceVector();
+
+    /**
+     *
+     * @return
+     */
     public abstract int getNumFrames();  
     
+    /**
+     *
+     * @return minimal pixel value either loaded fro dicom or calculated at loading time
+     */
     public abstract double getMin();  
+
+    /**
+     *
+     * @return maximal pixel value either loaded fro dicom or calculated at loading time
+     */
     public abstract double getMax();
     
+    /**
+     *
+     * @param aFrameNumber
+     * @return safe check whwter frame is present or not
+     */
     public abstract boolean hasAt(int aFrameNumber);
     
-     //returns a frame at aFrameNumber leaving cursor unaltered 
+    /**
+     *
+     * @param aFrameNumber
+     * @return
+     * @throws java.util.NoSuchElementException
+     */
     public abstract ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException; 
     
     

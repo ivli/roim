@@ -2,7 +2,7 @@
 package com.ivli.roim.core;
 
 /**
- * Pixel Spacing in mm as described in (0028,0030) 
+ * Pixel Spacing in mm as stored in dicom in (0028,0030) 
  * @author likhachev
  */
 public class PixelSpacing implements java.io.Serializable { 

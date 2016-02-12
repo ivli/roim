@@ -18,7 +18,7 @@
 package com.ivli.roim.core;
 
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 
 public class MultiframeImage extends IMultiframeImage {
@@ -33,7 +33,7 @@ public class MultiframeImage extends IMultiframeImage {
     protected Double iMin = Double.NaN;
     protected Double iMax = Double.NaN;
     
-    protected final ArrayList<ImageFrame> iFrames; 
+    protected final java.util.ArrayList<ImageFrame> iFrames; 
     
     public MultiframeImage(IImageProvider aP) {
         iProvider = aP;
@@ -47,7 +47,7 @@ public class MultiframeImage extends IMultiframeImage {
         iPixelSpacing = iProvider.getPixelSpacing();
         iTimeSliceVector = iProvider.getTimeSliceVector(); 
        
-        iFrames = new ArrayList(iNumFrames);
+        iFrames = new java.util.ArrayList<>(iNumFrames);
         
         for (int n=0; n < iNumFrames; ++n)
             iFrames.add(n, null);        
@@ -116,7 +116,7 @@ public class MultiframeImage extends IMultiframeImage {
         
     protected MultiframeImage(MultiframeImage aM) {
         iProvider = aM.iProvider;
-        iFrames = new ArrayList<>();
+        iFrames = new java.util.ArrayList<>();
     }
        
     public MultiframeImage collapse(TimeSlice aS){   
@@ -140,9 +140,6 @@ public class MultiframeImage extends IMultiframeImage {
         ret.iNumFrames = 1;
         
         return ret; 
-    }
-    
-    
-    
+    } 
 }
 
