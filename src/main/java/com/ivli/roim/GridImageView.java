@@ -34,8 +34,7 @@ import javax.swing.JPopupMenu;
  *
  * @author likhachev
  */
-public class GridImageView extends ImageView {
-    
+public class GridImageView extends ImageView {    
     private int iRows;
     private int iCols;
     private boolean iDisplayFrameNumbers = true;
@@ -74,12 +73,8 @@ public class GridImageView extends ImageView {
             @Override
             public void keyPressed(KeyEvent e) {        
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_PLUS: 
-                        if (iRows > 1 && iCols > 2) {                                                    
-                            setGrid(++iRows, iCols);                        
-                        } else if (1 == iRows && iCols > 1) {
-                            setGrid(iRows, ++iCols);
-                        }
+                    case KeyEvent.VK_PLUS:                         
+                        setGrid(++iRows, ++iCols);                       
                         break;
                     case KeyEvent.VK_MINUS: 
                         if (iRows > 1 && iCols > 2) {                                                    
@@ -91,8 +86,7 @@ public class GridImageView extends ImageView {
                     default: break;
                 }
             }
-            
-            
+                        
             JPopupMenu buildObjectSpecificPopupMenu() {
                 return buildContextPopupMenu();
             }
@@ -115,6 +109,8 @@ public class GridImageView extends ImageView {
     public void setGrid(int aRows, int aColunmns) {
         iRows = aRows;
         iCols = aColunmns;
+        invalidateBuffer();
+        repaint();
     }
     
     @Override
@@ -148,14 +144,17 @@ public class GridImageView extends ImageView {
     private final int GAPX = 2;
     private final int GAPY = 4;
         
+    @Override
     protected int getVisualWidth() {
         return iCols*(iModel.getWidth() + GAPX) + GAPX;
     }
     
+    @Override
     protected int getVisualHeight() {
         return iRows*(iModel.getHeight() + GAPY) + GAPY;
     }
     
+    @Override
     protected void updateBufferedImage() {                  
         updateScale();
         

@@ -17,65 +17,62 @@
  */
 package com.ivli.roim.controls;
 
-import com.ivli.roim.core.Filter;
 import javax.swing.table.AbstractTableModel;
-
-import com.ivli.roim.core.Measurement;
 import javax.swing.SwingUtilities;
-
+import com.ivli.roim.core.Filter;
+import com.ivli.roim.core.Measurement;
 /**
  *
  * @author likhachev
  */
 public class AnnotationPanel extends javax.swing.JPanel {
-    Object rowData[][];// = new Object[str.length][2];
-    /*{ { "1", Boolean.FALSE }, 
-                               { "2", Boolean.FALSE }, 
-                               { "3", Boolean.FALSE },
-                               { "4", Boolean.FALSE }, 
-                               { "5", Boolean.FALSE }, 
-                             };
-        */
-        
-    final String columnNames[] = {"NAME", 
-                                "DISPLAY"};
+    Object rowData[][];
+    final String columnNames[] = {java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ANNOTATION_PANEL.NAME"), 
+                                  java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ANNOTATION_PANEL.DISPLAY")};
+                                
     
-    class PropertyTableModel extends AbstractTableModel {
+    private class PropertyTableModel extends AbstractTableModel {
+        @Override
         public int getColumnCount() {
           return columnNames.length;
         }
 
+        @Override
         public String getColumnName(int column) {
           return columnNames[column];
         }
 
+        @Override
         public int getRowCount() {
           return rowData.length;
         }
 
+        @Override
         public Object getValueAt(int row, int column) {
           return rowData[row][column];
         }
 
+        @Override
         public Class getColumnClass(int column) {
           return (getValueAt(0, column).getClass());
         }
 
+        @Override
         public void setValueAt(Object value, int row, int column) {
             rowData[row][column] = value;
         }
 
+        @Override
         public boolean isCellEditable(int row, int column) {
           return (column != 0);
         }
     }    
-    
-    
-   final String[] str = Measurement.getAllMeasurements();
-
-   final com.ivli.roim.Annotation.Static iAnno;
+        
+   private final String[] str = Measurement.getAllMeasurements();
+   private final com.ivli.roim.Annotation.Static iAnno;
     /**
      * Creates new form AnnotationPanel
+     * @param anA
      */
     public AnnotationPanel(com.ivli.roim.Annotation.Static anA) {
         iAnno = anA;
@@ -87,7 +84,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
             rowData[n][1] = false;
             
             for (com.ivli.roim.core.Filter f : iAnno.getFilters())
-                if (f.getMeasurement().getName() == str[n]) {
+                if (f.getMeasurement().getName().equals(str[n])) {
                     rowData[n][1] = true;
                     break;
                 }            
@@ -113,14 +110,15 @@ public class AnnotationPanel extends javax.swing.JPanel {
         jTable1.setModel(new PropertyTableModel());
         jScrollPane1.setViewportView(jTable1);
 
-        jButton1.setText("OK");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle"); // NOI18N
+        jButton1.setText(bundle.getString("OK")); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jCheckBox1.setText("MULTILINE");
+        jCheckBox1.setText(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MULTILINE"));
         jCheckBox1.setSelected(iAnno.isMultiline());
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

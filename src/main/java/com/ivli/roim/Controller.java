@@ -466,18 +466,18 @@ class Controller implements ActionListener,  KeyListener,
                 iControlled.repaint();
                 break;
             case KCommandCustomCommand: {
-                //((Profile)iSelected).showHistogram();
-                ///iControlled.repaint();
-                ///iSelected.customCommand();
-                
-                com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel((Annotation.Static)iSelected);
-                javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
+                if (iSelected instanceof Annotation.Static) {
+                    com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel((Annotation.Static)iSelected);
+                    javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
 
-                dialog.setContentPane(panel);
-                dialog.validate();
-                dialog.pack();
-                dialog.setResizable(false);
-                dialog.setVisible(true);
+                    dialog.setContentPane(panel);
+                    dialog.validate();
+                    dialog.pack();
+                    dialog.setResizable(false);
+                    dialog.setVisible(true);
+                } else {
+                    
+                }
             } break;
             default: 
                 if(!handleCustomCommand(aCommand)) {
@@ -624,12 +624,9 @@ class Controller implements ActionListener,  KeyListener,
             mi11.addActionListener(this);
             mi11.setActionCommand(KCommandProfileShow);
             mnu.add(mi11);
-        }
- 
+        } 
     }
-        
-   
-
+ 
     private static final Logger logger = LogManager.getLogger(Controller.class);
 } 
 

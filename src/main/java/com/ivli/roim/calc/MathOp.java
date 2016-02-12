@@ -68,8 +68,7 @@ public abstract class MathOp {
     public String getOperationChar() {
         return getOperation().iStr;           
     }
-    
-    
+        
     public abstract IOperand product(IOperand aLhs, IOperand aRhs);
        
     static final MathOp getNop() {
@@ -88,9 +87,9 @@ public abstract class MathOp {
         return getOP(OP.SUBTRACTION);
     }
     
-    static final MathOp fromString(String aStr) {
+    static final MathOp fromString(final String aStr) {
         for (OP o : OP.values()) {
-            if (o.iStr == aStr)
+            if (o.iStr.equals(aStr))
                 return getOP(o);
         }
         return getNop(); //wouldn't it better raise an exception
@@ -100,31 +99,37 @@ public abstract class MathOp {
         switch (anO) {
             case CHSIGN: 
                 return new MathOp(OP.NOP) {            
+                    @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand((-1.0) * aLhs.value());
                 }};                                 
             case ADDITION: 
                 return new MathOp(OP.ADDITION) {
+                    @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() + aRhs.value());
                 }};                    
             case SUBTRACTION: 
                 return new MathOp(OP.SUBTRACTION) {            
+                    @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() - aRhs.value());
                 }};                    
             case MULTIPLICATION:  
                 return new MathOp(OP.MULTIPLICATION) {            
+                    @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() * aRhs.value());
                 }};                   
             case DIVISION:  
                 return new MathOp(OP.DIVISION) {            
+                    @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() / aRhs.value());
                 }};            
             case NOP: //fall thru
             default: return new MathOp(OP.NOP) {            
+                    @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
                         return new Operand(aLhs.value() / aRhs.value());
                 }};
