@@ -1,17 +1,32 @@
-
+/*
+ * Copyright (C) 2015 likhachev
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 package com.ivli.roim;
 
-
-import static com.ivli.roim.Overlay.HASMENU;
-import com.ivli.roim.calc.IOperation;
-import com.ivli.roim.core.Filter;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
-import com.ivli.roim.events.ROIChangeEvent;
-import com.ivli.roim.events.ROIChangeListener;
 import java.awt.Color;
 import java.awt.Shape;
+
+import com.ivli.roim.events.ROIChangeEvent;
+import com.ivli.roim.events.ROIChangeListener;
+import com.ivli.roim.calc.IOperation;
+import com.ivli.roim.core.Filter;
 
 /**
  *
@@ -25,14 +40,35 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
     @Override
     int getCaps(){return HASMENU|MOVEABLE|SELECTABLE|PINNABLE|HASCUSTOMMENU;}    
    
+    /**
+     *
+     */
     public static class Static extends Annotation {
+
+        /**
+         * 
+         */
         protected boolean iMultiline = true;
+
+        /**
+         * filters to display measurenment results
+         */
         protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
-        protected final ROI iRoi; 
-         // private final Color iColor;
+
+        /**
+         * source ROI this annotation is for
+         */
+        protected final ROI iRoi;          
+        /**
+         * string annotations 
+         */
         protected final java.util.ArrayList<String> iAnnotation = new java.util.ArrayList<>();           
 
-
+        /**
+         *
+         * @param aRoi
+         * @param aRM
+         */
         public Static(ROI aRoi, ROIManager aRM) {
             super("ANNOTATION", null, null != aRM ? aRM : aRoi.getManager());  
             iRoi = aRoi;     
@@ -50,22 +86,42 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             aRoi.addROIChangeListener(this);
         }
 
+        /**
+         *
+         * @return
+         */
         public ROI getRoi() {return iRoi;}
 
+        /**
+         *
+         * @param aF
+         */
         public void setFilters(Filter[] aF) {
             iFilters = aF;
             notifyROIChanged(ROIChangeEvent.CHG.Changed, null);
         }  
 
+        /**
+         *
+         * @return
+         */
         public Filter[] getFilters() {
             return iFilters;
         }
 
+        /**
+         *
+         * @param aM
+         */
         public void setMultiline(boolean aM) {
             iMultiline = aM;
             notifyROIChanged(ROIChangeEvent.CHG.Changed, null);
         }
 
+        /**
+         *
+         * @return
+         */
         public boolean isMultiline() {
             return iMultiline;
         }
@@ -91,6 +147,8 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             return new Rectangle2D.Double(0, 0, width, height);
         }
 
+        
+        @Override
         public void update() {     
             iAnnotation.clear();
 
@@ -103,6 +161,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
                                             bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                                                
         }
 
+        
         @Override
         public void ROIChanged(ROIChangeEvent anEvt) {               
             switch (anEvt.getChange()) {
@@ -141,21 +200,27 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             aGC.draw(temp);                 
         }               
 
-
+        /**
+         * returns a list of menu strings
+         * @return
+         */
         public String []getCustomMenu() {
             java.util.ArrayList<String> ret = new java.util.ArrayList<>();
 
-            for (Filter f:iFilters)
+            for (Filter f : iFilters)
                 ret.add(f.getMeasurement().getName());
 
             return (String[])ret.toArray();
         }
     }
           
+    /**
+     *
+     */
     public static class Active extends Annotation {
-        Color    iColor = Color.RED;
-        String   iAnnotation;
-        IOperation       iOp;
+        private Color iColor = Color.RED;
+        private String iAnnotation;
+        private IOperation iOp;
     
         Active(IOperation aOp, ROIManager aRM) {
             super("ANNOTATION.ACTIVE", null, aRM);        
@@ -166,8 +231,9 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
 
             iShape = new Rectangle2D.Double(0, 0, bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
                                             bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());   
-        }
-   
+        }   
+        
+        @Override
         public void ROIChanged(ROIChangeEvent anEvt) {              
             switch (anEvt.getChange()) {
                 case Cleared: 
@@ -180,6 +246,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             }        
         }
 
+        @Override
         void paint(Graphics2D aGC, AffineTransform aTrans) {
             final Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();     
             aGC.setColor(iColor);
@@ -187,7 +254,8 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             aGC.drawString(iOp.getCompleteString(), (int)temp.getX(), (int)(temp.getY() + temp.getHeight() - 4));       
             aGC.draw(temp);                 
         }
-
+        
+        @Override
         public void update() {        
             iAnnotation = iOp.getCompleteString();
 
