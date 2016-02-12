@@ -25,8 +25,8 @@ package com.ivli.roim.core;
 public class PhaseInformation implements java.io.Serializable, Comparable<PhaseInformation> {   
     private static final long serialVersionUID = 42L;
     
-    int iNumberOfFrames;
-    int iFrameDuration;
+    protected int iNumberOfFrames;
+    protected int iFrameDuration;
    
     public PhaseInformation(int aNoOfFRames, int aFrameDurationMilliseconds) {
         iNumberOfFrames = aNoOfFRames;

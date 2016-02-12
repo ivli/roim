@@ -223,6 +223,7 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         fillSlicesArray();
     }
    
+    @Override
     public int compareTo(TimeSliceVector aV) {       
         if (getNumPhases() == aV.getNumPhases() && getNumFrames() == aV.getNumFrames())
             return 0;

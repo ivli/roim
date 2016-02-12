@@ -17,8 +17,6 @@
  */
 package com.ivli.roim;
 
-import com.ivli.roim.core.IMultiframeImage;
-import com.ivli.roim.core.Range;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -27,9 +25,11 @@ import java.awt.event.KeyEvent;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import javax.swing.JCheckBoxMenuItem;
-
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.Range;
+
 /**
  *
  * @author likhachev
@@ -73,16 +73,16 @@ public class GridImageView extends ImageView {
             @Override
             public void keyPressed(KeyEvent e) {        
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_PLUS:                         
-                        setGrid(++iRows, ++iCols);                       
+                    case KeyEvent.VK_PLUS:
+                    case KeyEvent.VK_EQUALS:    
+                        setGrid(++iRows, iCols);                       
                         break;
                     case KeyEvent.VK_MINUS: 
                         if (iRows > 1 && iCols > 2) {                                                    
                             setGrid(--iRows, iCols);                        
                         } else if (1 == iRows && iCols > 1) {
                             setGrid(iRows, --iCols);
-                        }
-                        break;
+                        } break;                        
                     default: break;
                 }
             }
