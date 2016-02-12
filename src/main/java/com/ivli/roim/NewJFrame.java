@@ -573,7 +573,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             case 2:
                 iOff.showLUTDialog(); break;
             default: break;    
-        };
+        }
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
