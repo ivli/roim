@@ -26,6 +26,7 @@ import org.jfree.data.xy.XYSeries;
  */
 public class Curve extends Histogram {
         
+    @Override
     public XYSeries getSeriesRebinned(final String aName, final int aNoOfBins) {               
         final int binSize = Math.max(1, (iMax - 0) / aNoOfBins);
      

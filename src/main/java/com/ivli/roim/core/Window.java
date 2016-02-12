@@ -3,61 +3,112 @@ package com.ivli.roim.core;
 
 
 /**
- *
- * @author likhachev
+ * VOI window set by pair of values window width and level 
  * 
+ * @author likhachev
  */
 public class Window implements java.io.Serializable {      
     private static final long serialVersionUID = 42L;
     private static final double MINIMAL_WINDOW_WIDTH = 1.;
     
+    /**
+     * 
+     */
     protected double iLevel;
+
+    /**
+     *
+     */
     protected double iWidth;
 
+    /**
+     * 
+     */
     public Window() {
         iLevel = .5;
         iWidth = MINIMAL_WINDOW_WIDTH;
     }
     
+    /**
+     * 
+     * @param aW
+     */
     public Window(Window aW) {
         iLevel = aW.iLevel; 
         iWidth = aW.iWidth;
     }
     
+    /**
+     *
+     * @param aR
+     */
     public Window(Range aR) {
         iLevel = aR.range() / 2.0; 
         iWidth = aR.range();
     }
     
+    /**
+     *
+     * @param aL
+     * @param aW
+     */
     public Window(double aL, double aW) {
         iLevel = aL; 
         iWidth = Math.max(MINIMAL_WINDOW_WIDTH, aW);   
     }
 
+    /**
+     *
+     * @return
+     */
     public double getLevel() {
         return iLevel;
     }
     
+    /**
+     *
+     * @return
+     */
     public double getWidth() {
         return iWidth;
     }
 
+    /**
+     *
+     * @param aC
+     */
     public void setLevel(double aC) {
         iLevel = aC;
     }
     
+    /**
+     *
+     * @param aW
+     */
     public void setWidth(double aW) {
         iWidth = Math.max(aW, MINIMAL_WINDOW_WIDTH);
     }   
 
+    /**
+     *
+     * @return
+     */
     public double getTop() {
         return iLevel + iWidth / 2.;
     }
     
+    /**
+     *
+     * @return
+     */
     public double getBottom() {
         return iLevel - iWidth / 2.;
     }
 
+    /**
+     *
+     * @param aT
+     */
     public void setTop(double aT) { 
         final double oldTop = getTop();
         final double oldBottom = getBottom();
@@ -66,6 +117,10 @@ public class Window implements java.io.Serializable {
         iLevel = oldBottom + iWidth / 2.0;        
     }
     
+    /**
+     *
+     * @param aB
+     */
     public void setBottom(double aB) { 
         final double oldTop = getTop();
         final double oldBottom = getBottom();
@@ -74,22 +129,46 @@ public class Window implements java.io.Serializable {
         iLevel = oldTop - iWidth / 2.0;       
     }
     
+    /**
+     *
+     * @param aW
+     */
     public void setWindow(Window aW) {
         setLevel(aW.iLevel);
         setWidth(aW.iWidth);
     }
     
+    /**
+     *
+     * @param aL
+     * @param aW
+     */
     public void setWindow(double aL, double aW) {
         setLevel(aL);
         setWidth(aW);
     }
 
+    /**
+     *
+     * @param aV
+     * @return
+     */
     public boolean inside(double aV) {return aV > getBottom() && aV < getTop();}
 
+    /**
+     *
+     * @param aW
+     * @return
+     */
     public boolean compare(Window aW) {
         return  aW.iLevel == this.iLevel && aW.iWidth == this.iWidth;
     }
     
+    /**
+     *
+     * @param aW
+     * @return
+     */
     public boolean contains(Window aW) {
         return  aW.getTop() <= this.getTop() && aW.getBottom() >= this.getBottom();
     }

@@ -13,30 +13,24 @@ import com.ivli.roim.events.ROIChangeListener;
 import java.awt.Color;
 import java.awt.Shape;
 
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 /**
  *
  * @author likhachev
  */
-public abstract class Annotation extends Overlay implements ROIChangeListener {      
-    
-    
+public abstract class Annotation extends Overlay implements ROIChangeListener {              
     Annotation(String aName, Shape aShape, ROIManager aRM) {
         super(aName, aShape, aRM);    
     }
     
     @Override
-    int getCaps(){return HASMENU|MOVEABLE|SELECTABLE|PINNABLE|HASCUSTOMMENU;}
-    
+    int getCaps(){return HASMENU|MOVEABLE|SELECTABLE|PINNABLE|HASCUSTOMMENU;}    
    
     public static class Static extends Annotation {
-        boolean iMultiline = true;
-        Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
-        final ROI iRoi; 
+        protected boolean iMultiline = true;
+        protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
+        protected final ROI iRoi; 
          // private final Color iColor;
-        final java.util.Collection<String> iAnnotation = new java.util.ArrayList<>();           
+        protected final java.util.ArrayList<String> iAnnotation = new java.util.ArrayList<>();           
 
 
         public Static(ROI aRoi, ROIManager aRM) {
@@ -203,8 +197,5 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), getShape().getBounds2D().getY(),                                                                                        
                                             bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);
         }
-    }
-   
-    
-    private static final Logger logger = LogManager.getLogger(Annotation.class);
+    }  
 }

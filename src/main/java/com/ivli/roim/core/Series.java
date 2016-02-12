@@ -12,12 +12,9 @@ import org.apache.commons.math3.fitting.leastsquares.*;
  *
  * @author likhachev
  */
-
-public class Series extends java.util.ArrayList<Double>{
-     
-    private final Measurement   iId; 
-    ///private final String        iName;
-    
+public class Series extends java.util.ArrayList<Double>{     
+    private final Measurement iId; 
+        
     public Series(Measurement anId) {        
         iId   = anId;        
     }
@@ -31,7 +28,6 @@ public class Series extends java.util.ArrayList<Double>{
     }
     
     public Series fit() {
-
         SplineInterpolator ipo = new SplineInterpolator();
 
         double[] x = new double[this.size()];

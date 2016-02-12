@@ -48,8 +48,8 @@ public enum Filter {
          * to be continued
          */
         
-        final Measurement iM;
-        final IFilter     iF;
+        protected final Measurement iM;
+        protected final IFilter     iF;
                 
         Filter(IFilter aF, Measurement aM) {
             iM = aM;
@@ -67,16 +67,16 @@ public enum Filter {
         public static String[] getAllFilters() {            
             java.util.Set<Filter> so = java.util.EnumSet.allOf(Filter.class);
 
-            String[] ret = new String[so.size()];//String();
+            String[] ret = new String[so.size()];
             int n = 0;
             for (Filter o : Filter.values())
                 ret[n++] = o.iM.iName;
             return ret;        
         }
         
-        public static Filter getFilter(String aS) {
+        public static Filter getFilter(final String aS) {
             for (Filter o : Filter.values())
-                if(aS == o.iM.iName)
+                if(o.iM.iName.equals(aS))
                     return o;
             return DENSITY;     
         }

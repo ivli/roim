@@ -17,13 +17,11 @@
  */
 package com.ivli.roim.core;
 
-import com.ivli.roim.ROI;
-
 /**
  *
  * @author likhachev
  */
  @FunctionalInterface
 public interface IFilter {        
-    public double get(ROI aR);
+    public double get(com.ivli.roim.ROI aR);
 }
