@@ -74,7 +74,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             iRoi = aRoi;     
 
             for (Filter f : iFilters)
-                iAnnotation.add(f.getMeasurement().format(f.get(iRoi)));        
+                iAnnotation.add(f.getMeasurement().format(f.filter(iRoi)));        
 
             final Rectangle2D bnds = calcBounds();
 
@@ -153,7 +153,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             iAnnotation.clear();
 
             for (Filter f : iFilters)
-                iAnnotation.add(f.getMeasurement().format(f.get(iRoi)));     
+                iAnnotation.add(f.getMeasurement().format(f.filter(iRoi)));     
 
             final Rectangle2D bnds = calcBounds();
             final double scaleX =  getManager().getView().screenToVirtual().getScaleX();       

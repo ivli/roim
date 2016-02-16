@@ -30,14 +30,17 @@ public class UnaryOp implements IOperation {
         iOp = anOp;
     }
     
+    @Override
     public IOperand value() {
         return iOp.product(new Operand(.0), iLhs);
     }
     
+    @Override
     public String getString() {
         return iOp.getOperationChar() + " " + iLhs.getString();                
     }
     
+    @Override
     public String getCompleteString() {
         return this.getString() + "=" 
                 + value().getString();

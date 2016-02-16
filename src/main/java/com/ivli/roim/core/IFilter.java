@@ -23,5 +23,5 @@ package com.ivli.roim.core;
  */
  @FunctionalInterface
 public interface IFilter {        
-    public double get(com.ivli.roim.ROI aR);
+    public double filter(com.ivli.roim.ROI aR);
 }

@@ -25,24 +25,13 @@ import com.ivli.roim.events.ROIChangeListener;
  *
  * @author likhachev
  */
-public class ConcreteOperand  implements IOperand, ROIChangeListener, AutoCloseable {
-    
-    @FunctionalInterface
-    interface IFilter {        
-        public double get(ROI aR);
-    }
-        
-    Filter iF; 
-    ROI  iRoi;
+public class ConcreteOperand  implements IOperand, ROIChangeListener, AutoCloseable {   
+    private Filter iF; 
+    private ROI iRoi;
        
-    public ConcreteOperand(ROI aRoi, Filter aF) {
-        //super(.0);//aRoi.getDensity());
+    public ConcreteOperand(ROI aRoi, Filter aF) {        
         iRoi = aRoi;    
-        if (null == aF)
-            iF = Filter.DENSITY;
-        else
-            iF = aF;
-        //iValue = iF.get(iRoi);
+        iF = (null != aF) ?  aF : Filter.DENSITY;   
         iRoi.addROIChangeListener(this);
     }
        
@@ -51,12 +40,11 @@ public class ConcreteOperand  implements IOperand, ROIChangeListener, AutoClosea
     }
     
     public double value() {
-        return iF.get(iRoi);
+        return iF.filter(iRoi);
     }
     
     @Override
-    public void ROIChanged(ROIChangeEvent anEvt) {
-        //calculate();
+    public void ROIChanged(ROIChangeEvent anEvt) {   
         //TODO: dispatch to upper level container
     } 
     

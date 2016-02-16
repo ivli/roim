@@ -54,8 +54,8 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     private static final boolean CLONE_INHERIT_COLOUR = false;
 
     transient private final ImageView iView;     
-    private HashSet<Overlay>      iOverlays;          
-    private EventListenerList     iList;
+    private HashSet<Overlay> iOverlays;          
+    private EventListenerList iList;
     
     final class TUid {
         int iUid;

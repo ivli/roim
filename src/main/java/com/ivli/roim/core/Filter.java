@@ -25,24 +25,16 @@ import com.ivli.roim.ROI;
  * @author likhachev
  */
 public enum Filter {        
-        DENSITY(new IFilter() {
-                    public double get(ROI aR) {return aR.getDensity();}
-                },
+        DENSITY((ROI aR) -> aR.getDensity(),
                 Measurement.DENSITY),
        
-        AREAINPIXELS(new IFilter() {
-                    public double get(ROI aR) {return aR.getAreaInPixels();}
-                },
+        AREAINPIXELS((ROI aR) -> aR.getAreaInPixels(),
                 Measurement.AREAINPIXELS),
         
-        MINPIXEL(new IFilter() {
-                    public double get(ROI aR) {return aR.getMinPixel();}
-                },
+        MINPIXEL((ROI aR) -> aR.getMinPixel(),
                 Measurement.MINPIXEL),
         
-        MAXPIXEL(new IFilter() {
-                    public double get(ROI aR) {return aR.getMaxPixel();}
-                },
+        MAXPIXEL((ROI aR) -> aR.getMaxPixel(),
                 Measurement.MAXPIXEL);
         /*
          * to be continued
@@ -51,13 +43,13 @@ public enum Filter {
         protected final Measurement iM;
         protected final IFilter     iF;
                 
-        Filter(IFilter aF, Measurement aM) {
+        private Filter(IFilter aF, Measurement aM) {             
             iM = aM;
             iF = aF;
         }
-                      
-        public double get(ROI aRoi) {
-            return iF.get(aRoi);
+                             
+        public double filter(ROI aRoi) {
+            return iF.filter(aRoi);
         }
         
         public Measurement getMeasurement() {

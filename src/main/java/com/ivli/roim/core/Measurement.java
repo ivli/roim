@@ -89,6 +89,5 @@ public enum Measurement {
             return String.format(getFormatString(), (int)aDouble);
         else
             return String.format(getFormatString(), aDouble);
-    }
-    
+    }    
 }
