@@ -149,19 +149,17 @@ public class ImageView extends JComponent {
     public void addWindowChangeListener(WindowChangeListener aL) {
         logger.info("-> addWindowChangeListener {}", aL);
         iListeners.add(WindowChangeListener.class, aL);
-        aL.windowChanged(new WindowChangeEvent(this, iLUTMgr.getWindow()/*, iImage.image().getMin(), iImage.image().getMax(), true*/));
+        aL.windowChanged(new WindowChangeEvent(this, iLUTMgr.getWindow()));
     }
    
     public void removeWindowChangeListener(WindowChangeListener aL) {
         iListeners.remove(WindowChangeListener.class, aL);
-        //iWinListeners.remove(aL);
     }
             
     protected void notifyWindowChanged() {
-        final WindowChangeEvent evt = new WindowChangeEvent(this, iLUTMgr.getWindow()/*, iImage.image().getMin(), iImage.image().getMax(), aRC*/);
+        final WindowChangeEvent evt = new WindowChangeEvent(this, iLUTMgr.getWindow());
                 
         for (WindowChangeListener l : iListeners.getListeners(WindowChangeListener.class)) {
-            logger.info("-> notified {}", l );
             l.windowChanged(evt);     
         }
     }
@@ -222,9 +220,7 @@ public class ImageView extends JComponent {
         return ret;
     }
    
-    protected void invalidateBuffer() {
-        iBuf = null;
-    }
+   
     
     public int getCurrent() {
         return iCurrent;
@@ -283,13 +279,15 @@ public class ImageView extends JComponent {
         return op.filter(aR, null);
     }
       
+    protected void invalidateBuffer() {
+        iBuf = null;
+    }
+    
     protected void updateBufferedImage() {                  
-        updateScale();
-        
-        RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
+        updateScale();        
+        RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
-        BufferedImage src  = getLUTMgr().transform(iModel.get(iCurrent).getBufferedImage(), null);
-                
+        BufferedImage src = getLUTMgr().transform(iModel.get(iCurrent).getBufferedImage(), null);                
         iBuf = z.filter(src, null);                  
     }
     
@@ -300,7 +298,7 @@ public class ImageView extends JComponent {
               
         g.drawImage(iBuf, iOrigin.x, iOrigin.y, iBuf.getWidth(), iBuf.getHeight(), null);        
         iROIMgr.paint((Graphics2D)g, virtualToScreen());                         
-        iController.paint((Graphics2D)g); //must reside last in the paint queue   
+        iController.paint((Graphics2D)g); //must reside last in the paint chain   
     }
            
     public class WLManager implements IWLManager {    

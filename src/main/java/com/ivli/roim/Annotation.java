@@ -44,90 +44,46 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
      *
      */
     public static class Static extends Annotation {
-
-        /**
-         * 
-         */
-        protected boolean iMultiline = true;
-
-        /**
-         * filters to display measurenment results
-         */
-        protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
-
-        /**
-         * source ROI this annotation is for
-         */
-        protected final ROI iRoi;          
-        /**
-         * string annotations 
-         */
+        protected boolean iMultiline = true;       
+        protected final ROI iRoi;                 
         protected final java.util.ArrayList<String> iAnnotation = new java.util.ArrayList<>();           
-
-        /**
-         *
-         * @param aRoi
-         * @param aRM
-         */
+      
+        protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
+        
         public Static(ROI aRoi, ROIManager aRM) {
-            super("ANNOTATION", null, null != aRM ? aRM : aRoi.getManager());  
+            super("ANNOTATION::STATIC", // NOI18N
+                    null, null != aRM ? aRM : aRoi.getManager());  
             iRoi = aRoi;     
-
+            /* */
             for (Filter f : iFilters)
                 iAnnotation.add(f.getMeasurement().format(f.filter(iRoi)));        
 
-            final Rectangle2D bnds = calcBounds();
-
-            iShape = new Rectangle2D.Double(iRoi.getShape().getBounds2D().getX(),  
-                                            iRoi.getShape().getBounds2D().getY() - bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX() , 
-                                            bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
-                                            bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());
+            computeShape(true);
 
             aRoi.addROIChangeListener(this);
         }
 
-        /**
-         *
-         * @return
-         */
-        public ROI getRoi() {return iRoi;}
-
-        /**
-         *
-         * @param aF
-         */
         public void setFilters(Filter[] aF) {
             iFilters = aF;
             notifyROIChanged(ROIChangeEvent.CHG.Changed, null);
         }  
+                      
+        public ROI getRoi() {return iRoi;}
 
-        /**
-         *
-         * @return
-         */
         public Filter[] getFilters() {
             return iFilters;
         }
 
-        /**
-         *
-         * @param aM
-         */
         public void setMultiline(boolean aM) {
             iMultiline = aM;
             notifyROIChanged(ROIChangeEvent.CHG.Changed, null);
         }
 
-        /**
-         *
-         * @return
-         */
         public boolean isMultiline() {
             return iMultiline;
         }
-
-        private Rectangle2D calcBounds() {
-
+               
+        private void computeShape(boolean aInitial) {            
             double width  = 0;
             double height = 0;
 
@@ -144,10 +100,21 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
                     height = Math.max(height, b.getHeight());
                 }
             }
-            return new Rectangle2D.Double(0, 0, width, height);
+            
+            final Rectangle2D bnds = new Rectangle2D.Double(0, 0, width, height);            
+            final double scaleX = getManager().getView().screenToVirtual().getScaleX();      
+            
+            if (aInitial) 
+                iShape = new Rectangle2D.Double(iRoi.getShape().getBounds2D().getX(),  
+                                                iRoi.getShape().getBounds2D().getY() - bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX() , 
+                                                bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
+                                                bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());
+            else
+                iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), getShape().getBounds2D().getY(),                                                                                        
+                                                bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);
+                                             
         }
-
-        
+                
         @Override
         public void update() {     
             iAnnotation.clear();
@@ -155,10 +122,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             for (Filter f : iFilters)
                 iAnnotation.add(f.getMeasurement().format(f.filter(iRoi)));     
 
-            final Rectangle2D bnds = calcBounds();
-            final double scaleX =  getManager().getView().screenToVirtual().getScaleX();       
-            iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), getShape().getBounds2D().getY(),                                                                                        
-                                            bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                                                
+            computeShape(false);   
         }
 
         

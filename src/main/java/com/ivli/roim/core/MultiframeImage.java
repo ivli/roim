@@ -17,10 +17,6 @@
  */
 package com.ivli.roim.core;
 
-
-//import java.util.ArrayList;
-
-
 public class MultiframeImage extends IMultiframeImage {
     protected final IImageProvider iProvider;
      //read from ImageProvider

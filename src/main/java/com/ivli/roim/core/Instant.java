@@ -21,8 +21,7 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public class Instant implements java.io.Serializable, Comparable<Instant> {
-      
+public class Instant implements java.io.Serializable, Comparable<Instant> {      
     private static final long MINUTES_IN_HOUR   = 60L;
     private static final long SECONDS_IN_MINUTE = 60L;
     private static final long MILLIS_IN_SECOND  = 1000L;        
@@ -54,9 +53,9 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
         return ((Long)iInstant).compareTo(o.iInstant);
     }
     
-    public boolean isInfinite() {return INFINITE.iInstant == this.iInstant; }
-       
-    
+    public boolean isInfinite() {
+        return INFINITE.iInstant == this.iInstant; 
+    }           
     
     private static final String SUFFIX_MILLIS  = "mS";
     private static final String SUFFIX_SECONDS = "S";
@@ -70,38 +69,30 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
         final long seconds = (theMillis - hours*MILLIS_IN_HOUR - minutes*MILLIS_IN_MINUTE) / MILLIS_IN_SECOND;        
         final long millis  = theMillis - hours*MILLIS_IN_HOUR - minutes*MILLIS_IN_MINUTE - seconds*MILLIS_IN_SECOND ;
                
-            if (0L != millis) {
-
-                if (0L == hours && 0L == minutes && 0L == seconds)
-                    return String.format("%d " + SUFFIX_MILLIS, millis);               
-                else if (0L == hours && 0L == minutes)
-                    return String.format("%2d:%d " + SUFFIX_MILLIS, seconds, millis);                
-                else if (0L == hours)
-                    return String.format("%2d:%2d:%d " + SUFFIX_MILLIS, minutes, seconds, millis);
-                else
-                    return String.format("%2d:%2d:%2d:%3d " + SUFFIX_MILLIS, hours, minutes, seconds, millis);  
-                
-            } else if (0L != seconds) {
-             
-                if (0L == hours && 0L == minutes)
-                    return String.format("%2d " + SUFFIX_SECONDS, seconds);
-                else if (0L == hours)
-                    return String.format("%2d:%2d " + SUFFIX_SECONDS, minutes, seconds);
-                else
-                    return String.format("%2d:%2d:%2d " + SUFFIX_SECONDS, hours, minutes, seconds);
-                
-            } else if (0L != minutes) {  
-                
-                if (0L == hours)               
-                    return String.format("%2d " + SUFFIX_MINUTES, minutes);                     
-                else
-                    return String.format("%2d:%2d " + SUFFIX_MINUTES, hours, minutes);
-                
-            } else if (0L != hours)            
-                return String.format("%2d " + SUFFIX_HOURS, hours);
-        
+        if (0L != millis) {
+            if (0L == hours && 0L == minutes && 0L == seconds)
+                return String.format("%d " + SUFFIX_MILLIS, millis);               
+            else if (0L == hours && 0L == minutes)
+                return String.format("%2d:%d " + SUFFIX_MILLIS, seconds, millis);                
+            else if (0L == hours)
+                return String.format("%2d:%2d:%d " + SUFFIX_MILLIS, minutes, seconds, millis);
             else
-               return String.format(STR_TIME_ZERO);
-    }
-    
+                return String.format("%2d:%2d:%2d:%3d " + SUFFIX_MILLIS, hours, minutes, seconds, millis);                  
+        } else if (0L != seconds) {             
+            if (0L == hours && 0L == minutes)
+                return String.format("%2d " + SUFFIX_SECONDS, seconds);
+            else if (0L == hours)
+                return String.format("%2d:%2d " + SUFFIX_SECONDS, minutes, seconds);
+            else
+                return String.format("%2d:%2d:%2d " + SUFFIX_SECONDS, hours, minutes, seconds);                
+        } else if (0L != minutes) {                  
+            if (0L == hours)               
+                return String.format("%2d " + SUFFIX_MINUTES, minutes);                     
+            else
+                return String.format("%2d:%2d " + SUFFIX_MINUTES, hours, minutes);                
+        } else if (0L != hours)            
+            return String.format("%2d " + SUFFIX_HOURS, hours);        
+        else
+           return String.format(STR_TIME_ZERO);
+    }    
 }
