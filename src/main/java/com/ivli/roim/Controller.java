@@ -404,8 +404,7 @@ class Controller implements ActionListener,  KeyListener,
                            gc.drawLine(0, bn.y+bn.height, iControlled.getWidth(), bn.y + bn.height);                       
                     }
                 }; break;
-            
-                
+                            
             case KCommandRoiCreateRuler: {
                 iAction = new BaseActionItem(-1, -1) {
                     //boolean first = true;
@@ -435,11 +434,12 @@ class Controller implements ActionListener,  KeyListener,
                 };
                 } break;
             case KCommandRoiClone:   
-                iControlled.getROIMgr().cloneRoi((ROI)iSelected);
+                ROI r = iControlled.getROIMgr().cloneRoi((ROI)iSelected);
                 iControlled.repaint();
                 //iSelected.select(false);
                 //iSelected = null;
                 releaseSelection(null);
+                addSelection(r);
                 break;
             case KCommandRoiMove: break;            
             case KCommandRoiPin: 

@@ -179,7 +179,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, null);
     }
     
-    public void cloneRoi(ROI aR) {       
+    public ROI cloneRoi(ROI aR) {       
         ROI newRoi = new ROI(iUid.getNext(), aR.getShape(), this, CLONE_INHERIT_COLOUR ? aR.getColor() : null);
                
         iOverlays.add(newRoi); 
@@ -190,7 +190,8 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         newRoi.addROIChangeListener(this);
         
         newRoi.update();
-        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, aR);        
+        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, aR); 
+        return newRoi;
     }
     
     public void moveRoi(Overlay aO, double adX, double adY) {                         
@@ -238,18 +239,16 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
            
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
          //out.writeObject(iList);
-         out.writeObject(iOverlays);
-         
+         out.writeObject(iOverlays);         
     }
     
-    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {                                
-            
-            HashSet<Overlay> tmp = (HashSet<Overlay>)ois.readObject();  
-                        
-            for (Overlay r : tmp) {               
-                if (r instanceof ROI)
-                    internalCreateROI((ROI)r);
-            }
+    private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {                                            
+        HashSet<Overlay> tmp = (HashSet<Overlay>)ois.readObject();  
+
+        for (Overlay r : tmp) {               
+            if (r instanceof ROI)
+                internalCreateROI((ROI)r);
+        }
     }
     
     void externalize(String aFileName) {        
