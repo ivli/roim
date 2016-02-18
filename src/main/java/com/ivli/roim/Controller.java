@@ -324,7 +324,6 @@ class Controller implements ActionListener,  KeyListener,
     public void keyTyped(KeyEvent e) {
      // System.out.print("\n\t keyTyped");    
     }
-
     
     private static final String KCommandRoiCreateRect = "COMMAND_ROI_CREATE_RECT"; // NOI18N
     private static final String KCommandRoiCreateOval = "COMMAND_ROI_CREATE_OVAL"; // NOI18N

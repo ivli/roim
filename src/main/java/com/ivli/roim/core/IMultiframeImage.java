@@ -25,7 +25,9 @@ package com.ivli.roim.core;
  * 
  */
 public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.Serializable {          
-
+      
+    public abstract ImageDataType getImageDataType();
+    public abstract ImageType getImageType();
     /**
      *
      * @return image widht in pixels
@@ -83,6 +85,8 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.
      */
     public abstract ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException; 
     
+    public abstract IMultiframeImage createCompatibleImage(int anInitialCapacity); 
+    public abstract IMultiframeImage duplicate(); 
     
     @Override
     public java.util.Iterator<ImageFrame> iterator() {    

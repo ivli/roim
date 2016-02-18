@@ -58,6 +58,16 @@ public class MultiframeImage extends IMultiframeImage {
         });               
     }
     
+    public ImageDataType getImageDataType() {
+        return iFrames.get(0).getImageDataType();
+    }
+     
+    @Override
+    public ImageType getImageType() {
+         //TODO: implement reading from DICOM and sanity check
+        return getNumFrames() > 1 ? ImageType.DYNAMIC : ImageType.STATIC;
+    }
+    
      @Override
     public int getWidth() {
         return iWidth;
@@ -110,6 +120,28 @@ public class MultiframeImage extends IMultiframeImage {
         return iMax;
     }  
         
+    @Override
+    public IMultiframeImage createCompatibleImage(int aI) {
+        //TODO: change type and ... 
+        MultiframeImage ret = new MultiframeImage(this);
+        
+        return ret;
+    }
+    
+    /**
+     * 
+     * @return 
+     */    
+    @Override
+    public IMultiframeImage duplicate() {      
+        try {
+            return (MultiframeImage)this.clone();        
+        } catch (CloneNotSupportedException ex) {
+            throw new IllegalStateException("");
+        }        
+    }
+    
+    
     protected MultiframeImage(MultiframeImage aM) {
         iProvider = aM.iProvider;
         iFrames = new java.util.ArrayList<>();

@@ -26,7 +26,7 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
-
+import java.awt.image.DataBuffer;
 /**
  * 
  * @author likhachev
@@ -69,6 +69,26 @@ public class ImageFrame implements java.io.Serializable {
         return iIden;
     }
 
+    public int getPixel(int aX, int aY) {   
+        int temp[] = new int [iRaster.getNumBands()];
+        temp = iRaster.getPixel(aX, aY, temp);
+        return temp[0];
+    }
+    
+    public void setPixel(int aX, int aY, int aVal) {
+        int temp[] = new int [iRaster.getNumBands()];
+        ((WritableRaster)iRaster).setPixel(aX, aY, temp);        
+    }
+    
+    public ImageDataType getImageDataType() {
+        switch (iRaster.getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE: return ImageDataType.GRAYS8;
+            case DataBuffer.TYPE_SHORT: return ImageDataType.GRAYS16;
+            case DataBuffer.TYPE_INT: //fall through
+            default: return ImageDataType.GRAYS32;
+        }
+    }
+    
     public BufferedImage getBufferedImage() {        
         WritableRaster wr = iRaster.createCompatibleWritableRaster();
         wr.setRect(iRaster);
@@ -96,17 +116,16 @@ public class ImageFrame implements java.io.Serializable {
         iMax  = .0; 
         iIden = .0;
 
-        double temp[] = new double [iRaster.getNumBands()];
+        int temp[] = new int [iRaster.getNumBands()];
 
         for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
             for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) { 
-
-                    temp = iRaster.getPixel(i, j, temp);
-                    if (temp[0] > iMax) 
-                        iMax = temp[0];
-                    else if (temp[0] < iMin) 
-                        iMin = temp[0];
-                    iIden += temp[0];
+                temp = iRaster.getPixel(i, j, temp);
+                if (temp[0] > iMax) 
+                    iMax = temp[0];
+                else if (temp[0] < iMin) 
+                    iMin = temp[0];
+                iIden += temp[0];
         }
     }
            
