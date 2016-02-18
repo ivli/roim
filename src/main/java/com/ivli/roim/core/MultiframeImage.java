@@ -150,7 +150,7 @@ public class MultiframeImage extends IMultiframeImage {
     public MultiframeImage collapse(TimeSlice aS){   
         int frameTo = aS.getTo().isInfinite() ? getNumFrames() : getTimeSliceVector().frameNumber(aS.getTo());
         int frameFrom = getTimeSliceVector().frameNumber(aS.getFrom());        
-               
+        /*     
         java.awt.image.WritableRaster comp = iFrames.get(0).getRaster().createCompatibleWritableRaster();
                 
         for (int n = frameFrom; n < frameTo; ++n) {
@@ -160,13 +160,13 @@ public class MultiframeImage extends IMultiframeImage {
                    comp.setSample(i, j, 0, comp.getSample(i, j, 0) + r.getSample(i, j, 0));           
         
         }
-        
+        */
         MultiframeImage ret = new MultiframeImage(this.iProvider);
-        
+         /* 
         ret.iTimeSliceVector = getTimeSliceVector().slice(aS);
         ret.iFrames.add(new ImageFrame(comp));
         ret.iNumFrames = 1;
-        
+        */
         return ret; 
     } 
 }

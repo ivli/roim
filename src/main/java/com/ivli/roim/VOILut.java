@@ -33,7 +33,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         iInverted = false;
         iLinear = true;
         iPVt = new PValueTransform();
-        iBuffer = new Buffer(aI.getRaster().getSampleModel().getDataType());  
+        iBuffer = new Buffer(DataBuffer.TYPE_USHORT);  //!!!-> stub
         iLook = null;
         reset(new Range(aI.getMin(), aI.getMax()));
     }  

@@ -48,7 +48,7 @@ public class MIPProjector implements Runnable {
         double minVol = img.getMin();
         double maxVol = img.getMax();
 
-        final int imageType = img.get(0).getRaster().getDataBuffer().getDataType();
+        //final int imageType = img.get(0).getRaster().getDataBuffer().getDataType();
 
         projImg = img.createCompatibleImage(nProj);
 

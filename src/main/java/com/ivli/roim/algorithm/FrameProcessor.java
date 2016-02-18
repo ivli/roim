@@ -37,21 +37,21 @@ public class FrameProcessor {
         iFrame = aF;
         width  = iFrame.getWidth();
         height = iFrame.getHeight();
-        pixels = iFrame.getRaster().getSamples(0, 0, width, height, 0, (int[])null);
+        pixels = iFrame.getSamples();
     }
     
     public void setInterpolate(boolean aI) {
         iInterpol = aI? InterpolationMethod.BICUBIC : InterpolationMethod.NONE;
     }
        
-    protected int[] getPixelsCopy() {
-        int[] pixels2 = new int[width*height];
+    protected short[] getPixelsCopy() {
+        short[] pixels2 = new short[width*height];
         System.arraycopy(pixels, 0, pixels2, 0, width*height);
         return pixels2;	
     }
        
     public void rotate(double angle) {       
-        int[] pixels2 = getPixelsCopy();
+        short[] pixels2 = getPixelsCopy();
 
         int roiX = 0;
         int roiY = 0;
@@ -109,7 +109,7 @@ public class FrameProcessor {
     }
    
 
-    private double getInterpolatedPixel(double x, double y, int[] pixels) {
+    private double getInterpolatedPixel(double x, double y, short[] pixels) {
         int xbase = (int)x;
         int ybase = (int)y;
         double xFraction = x - xbase;

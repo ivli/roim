@@ -26,6 +26,7 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
+import static java.awt.image.BufferedImage.TYPE_USHORT_GRAY;
 import java.awt.image.DataBuffer;
 /**
  * 
@@ -34,27 +35,35 @@ import java.awt.image.DataBuffer;
 public class ImageFrame implements java.io.Serializable {
     private static final long serialVersionUID = 042L;
     
-    private Raster iRaster;  
+    //private Raster iRaster;  
+    
+    private int iWidth;
+    private int iHeight;
+    private int []iPixels;
+    
     
     private double iMin;
     private double iMax; 
     private double iIden;
     
-    public ImageFrame(Raster aRaster) {
-        iRaster = aRaster;        
+    public ImageFrame(Raster aRaster) {       
+        iWidth = aRaster.getWidth();
+        iHeight = aRaster.getHeight();
+        iPixels = aRaster.getSamples(0, 0, iWidth, iHeight, 0, (int[])null);
+        //iPixels = new short[iWidth*iHeight];
+        
+        //for (int n = 0; n < iWidth*iHeight; ++n)
+        //    iPixels[n] = (short)tmp[n];
+        
         computeStatistics();       
     }
-    
-    public Raster getRaster() {
-        return iRaster;
-    }
-        
+          
     public int getWidth() {
-        return iRaster.getWidth();
+        return iWidth;
     }
     
     public int getHeight() {
-        return iRaster.getHeight();
+        return iHeight;
     }
      
     public double getMin() {
@@ -68,31 +77,31 @@ public class ImageFrame implements java.io.Serializable {
     public double getIden() {
         return iIden;
     }
-
-    public int getPixel(int aX, int aY) {   
-        int temp[] = new int [iRaster.getNumBands()];
-        temp = iRaster.getPixel(aX, aY, temp);
-        return temp[0];
-    }
     
-    public void setPixel(int aX, int aY, int aVal) {
-        int temp[] = new int [iRaster.getNumBands()];
-        ((WritableRaster)iRaster).setPixel(aX, aY, temp);        
+    public final int getPixel(int x, int y) {
+        return iPixels[y*iWidth+x]&0xffff;
+    }
+
+    public final void setPixel(int x, int y, int value) {
+        iPixels[y*iWidth+x] = (short)value;
     }
     
     public ImageDataType getImageDataType() {
+        /*
         switch (iRaster.getDataBuffer().getDataType()) {
             case DataBuffer.TYPE_BYTE: return ImageDataType.GRAYS8;
             case DataBuffer.TYPE_SHORT: return ImageDataType.GRAYS16;
             case DataBuffer.TYPE_INT: //fall through
             default: return ImageDataType.GRAYS32;
-        }
+        } */
+        return ImageDataType.GRAYS32;
     }
     
     public BufferedImage getBufferedImage() {        
-        WritableRaster wr = iRaster.createCompatibleWritableRaster();
-        wr.setRect(iRaster);
-        
+       
+        WritableRaster wr = Raster.createBandedRaster(DataBuffer.TYPE_INT, iWidth, iHeight, 1, new java.awt.Point());
+        wr.setDataElements(0, 0, iWidth, iHeight, iPixels);
+       
         return new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
                                                          new int[] {8},
                                                          false,		// has alpha
@@ -100,37 +109,38 @@ public class ImageFrame implements java.io.Serializable {
                                                          Transparency.OPAQUE,
                                                          wr.getDataBuffer().getDataType()),                                                                                                                                                                                         
                                  wr, true, null);
+        
     }     
     
     void rotate(double anAngle) {
         AffineTransform r = AffineTransform.getRotateInstance(anAngle * Math.PI/180);
         AffineTransformOp op = new AffineTransformOp(r, null);
-        iRaster = op.filter(iRaster, iRaster.createCompatibleWritableRaster());
+        //iRaster = op.filter(iRaster, iRaster.createCompatibleWritableRaster());
         computeStatistics();  
     }
            
-    private void computeStatistics() throws ArrayIndexOutOfBoundsException {
-        final Rectangle bnds = iRaster.getBounds();
-        
+    private void computeStatistics() throws ArrayIndexOutOfBoundsException { 
         iMin  = 65535.; 
         iMax  = .0; 
         iIden = .0;
-
-        int temp[] = new int [iRaster.getNumBands()];
-
-        for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
-            for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) { 
-                temp = iRaster.getPixel(i, j, temp);
-                if (temp[0] > iMax) 
-                    iMax = temp[0];
-                else if (temp[0] < iMin) 
-                    iMin = temp[0];
-                iIden += temp[0];
+        
+        for (int i = 0; i < iWidth; ++i)
+            for (int j = 0; j < iHeight; ++j) { 
+                final int temp = getPixel(i, j);
+                if (temp > iMax) 
+                    iMax = temp;
+                else if (temp < iMin) 
+                    iMin = temp;
+                iIden += temp;
         }
     }
-           
+         
+    public int[] getSamples() {
+        return iPixels;
+    }
+    
     public void extract(Extractor aEx) {
-        aEx.apply(iRaster);
+       // aEx.apply(iRaster);
     }
         
 }

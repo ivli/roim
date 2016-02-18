@@ -34,7 +34,7 @@ public class CurveExtractor {
             }
             
             ImageFrame f = anImage.get(n);
-            Measure m = measure(f.getRaster(), roi); 
+            Measure m = measure(f, roi); 
             density.add(m.getIden());   
             mins.add(m.getMin());
             maxs.add(m.getMax());
@@ -47,26 +47,26 @@ public class CurveExtractor {
         return c;
     }    
    
-    private static Measure measure(java.awt.image.Raster aRaster, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
+    private static Measure measure(ImageFrame aF, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
         final java.awt.Rectangle bnds = aShape.getBounds();
 
         double min = Double.MAX_VALUE; 
         double max = Double.MIN_VALUE;
         double sum = .0;//, pix = .0;
 
-        double temp[] = new double [aRaster.getNumBands()];
+       // double temp[] = new double [aRaster.getNumBands()];
 
         for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
             for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) //{ 
                 if (aShape.contains(i, j)) {
                    /// ++pix;
-                    temp = aRaster.getPixel(i, j, temp);
+                    final int temp = aF.getPixel(i, j);
 
-                    if (temp[0] > max) 
-                        max = temp[0];
-                    else if (temp[0] < min) 
-                        min = temp[0];
-                    sum += temp[0];
+                    if (temp > max) 
+                        max = temp;
+                    else if (temp < min) 
+                        min = temp;
+                    sum += temp;
                 }
 
         return new Measure(min, max, sum);
