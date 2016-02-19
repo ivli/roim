@@ -438,7 +438,7 @@ class Controller implements ActionListener,  KeyListener,
                 //iSelected.select(false);
                 //iSelected = null;
                 releaseSelection(null);
-                addSelection(r);
+                //addSelection(r);
                 break;
             case KCommandRoiMove: break;            
             case KCommandRoiPin: 

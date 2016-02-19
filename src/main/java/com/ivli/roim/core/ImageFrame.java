@@ -17,7 +17,6 @@
  */
 package com.ivli.roim.core;
 
-import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -26,7 +25,6 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
-import static java.awt.image.BufferedImage.TYPE_USHORT_GRAY;
 import java.awt.image.DataBuffer;
 /**
  * 
@@ -34,9 +32,7 @@ import java.awt.image.DataBuffer;
  */
 public class ImageFrame implements java.io.Serializable {
     private static final long serialVersionUID = 042L;
-    
-    //private Raster iRaster;  
-    
+   
     private int iWidth;
     private int iHeight;
     private int []iPixels;
@@ -50,10 +46,6 @@ public class ImageFrame implements java.io.Serializable {
         iWidth = aRaster.getWidth();
         iHeight = aRaster.getHeight();
         iPixels = aRaster.getSamples(0, 0, iWidth, iHeight, 0, (int[])null);
-        //iPixels = new short[iWidth*iHeight];
-        
-        //for (int n = 0; n < iWidth*iHeight; ++n)
-        //    iPixels[n] = (short)tmp[n];
         
         computeStatistics();       
     }
@@ -126,7 +118,7 @@ public class ImageFrame implements java.io.Serializable {
         
         for (int i = 0; i < iWidth; ++i)
             for (int j = 0; j < iHeight; ++j) { 
-                final int temp = getPixel(i, j);
+                final double temp = (double)getPixel(i, j);
                 if (temp > iMax) 
                     iMax = temp;
                 else if (temp < iMin) 

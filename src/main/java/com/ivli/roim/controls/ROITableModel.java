@@ -112,8 +112,7 @@ public class ROITableModel extends DefaultTableModel {
         
     /**
      * this methods formats table columns and fills the table data
-     * @param aTable - table to attach to SIC: you must set an instance of this class as a model to a given table  
-     * @param aList - a list of ROI 
+     * @param aTable - table to attach to SIC: you must set an instance of this class as a model to a given table      
      */
     public void attach(javax.swing.JTable aTable) {        
         aTable.setModel(this);       
@@ -197,8 +196,4 @@ public class ROITableModel extends DefaultTableModel {
             return button;
         }   
     }
-    
-    
-    
-          
 }
