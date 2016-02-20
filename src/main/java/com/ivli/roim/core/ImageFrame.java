@@ -35,9 +35,7 @@ public class ImageFrame implements java.io.Serializable {
    
     private int iWidth;
     private int iHeight;
-    private int []iPixels;
-    
-    
+    private int []iPixels;        
     private double iMin;
     private double iMax; 
     private double iIden;
@@ -70,12 +68,28 @@ public class ImageFrame implements java.io.Serializable {
         return iIden;
     }
     
-    public final int getPixel(int x, int y) {
-        return iPixels[y*iWidth+x]&0xffff;
+    public final int get(int x, int y) {
+        return iPixels[y*iWidth+x];//&0xffff;
     }
 
-    public final void setPixel(int x, int y, int value) {
-        iPixels[y*iWidth+x] = (short)value;
+    public final void set(int x, int y, int value) {
+        iPixels[y*iWidth+x] = value;
+    }
+    
+    public final boolean isValidIndex(int aX, int aY) {
+        return aX >=0 && aY >= 0 && aX < iWidth && aY < iHeight;
+    }
+    
+    public final int getPixel(int aX, int aY) throws IndexOutOfBoundsException {
+        if (!isValidIndex(aX, aY))
+            throw new IndexOutOfBoundsException();            
+        return get(aX, aY);
+    }
+
+    public final void setPixel(int aY, int aX, int aV) throws IndexOutOfBoundsException {
+        if (!isValidIndex(aX, aY))
+            throw new IndexOutOfBoundsException();  
+        set(aX, aY, aV);
     }
     
     public ImageDataType getImageDataType() {

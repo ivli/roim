@@ -17,7 +17,6 @@
  */
 package com.ivli.roim;
 
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -26,7 +25,6 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.BasicStroke;
-import java.awt.image.Raster;
 
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
@@ -43,8 +41,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     private Color iColor;          
     private int iAreaInPixels;   
     
-    private transient SeriesCollection iSeries;           
-    
+    private transient SeriesCollection iSeries;               
     
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU|PINNABLE;}
@@ -116,56 +113,51 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
                     if (iShape.contains(new Point(i + bounds.x, j ))) 
                         profileY[i] += aR.getPixel(i + bounds.x, j);
               
-        }}
-        );
-            
-            double min = Double.MAX_VALUE;
-            double max = Double.MIN_VALUE;
-        
-            for (double d : profileX) {
-                min = Math.min(min, d);
-                max = Math.max(max, d);
             }
-                    
-            double range = max - min;
-        
-            ///final Rectangle imageBounds = new Rectangle(0, 0, getManager().getWidth(), getManager().getHeight());
-                       
-            double scale = Math.min(iShape.getBounds().getY() / (range), getManager().getHeight() / (4*range));
-                                      
-           
+        });
             
-            Path2D.Double xpath = new Path2D.Double();
-        
-            
-            xpath.moveTo(iShape.getBounds().getX(), iShape.getBounds().getY() - profileX[0] * scale);
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
 
-            for (int n = 1; n < profileX.length; ++n) 
-                xpath.lineTo(iShape.getBounds().getX() + n, iShape.getBounds().getY() - profileX[n] * scale);
+        for (double d : profileX) {
+            min = Math.min(min, d);
+            max = Math.max(max, d);
+        }
 
-            Path2D.Double ypath = new Path2D.Double();                   
-        
-            for (double d : profileY) {
-                min = Math.min(min, d);
-                max = Math.max(max, d);
-            }
-                    
-            range = max - min;
-        
-            scale = Math.min(iShape.getBounds().getX() / (range), 
-                                      getManager().getWidth() / (4*range) );
-            
-            ypath.moveTo(iShape.getBounds().getX() + iShape.getBounds().getWidth() + profileY[0] * scale , iShape.getBounds().getY());
+        double range = max - min;
+        double scale = Math.min(iShape.getBounds().getY() / (range), getManager().getHeight() / (4*range));
 
-            for (int n = 1; n < profileY.length; ++n) 
-                ypath.lineTo(iShape.getBounds().getX() + iShape.getBounds().getWidth() + profileY[n] * scale , iShape.getBounds().getY() + n);
+        Path2D.Double xpath = new Path2D.Double();
 
 
-            aGC.setXORMode(Color.WHITE);   
-            aGC.draw(aTrans.createTransformedShape(xpath));
-            aGC.draw(aTrans.createTransformedShape(ypath));
-            aGC.setPaintMode(); //turn XOR mode off
-         
+        xpath.moveTo(iShape.getBounds().getX(), iShape.getBounds().getY() - profileX[0] * scale);
+
+        for (int n = 1; n < profileX.length; ++n) 
+            xpath.lineTo(iShape.getBounds().getX() + n, iShape.getBounds().getY() - profileX[n] * scale);
+
+        Path2D.Double ypath = new Path2D.Double();                   
+
+        for (double d : profileY) {
+            min = Math.min(min, d);
+            max = Math.max(max, d);
+        }
+
+        range = max - min;
+
+        scale = Math.min(iShape.getBounds().getX() / (range), 
+                                  getManager().getWidth() / (4*range) );
+
+        ypath.moveTo(iShape.getBounds().getX() + iShape.getBounds().getWidth() + profileY[0] * scale , iShape.getBounds().getY());
+
+        for (int n = 1; n < profileY.length; ++n) 
+            ypath.lineTo(iShape.getBounds().getX() + iShape.getBounds().getWidth() + profileY[n] * scale , iShape.getBounds().getY() + n);
+
+
+        aGC.setXORMode(Color.WHITE);   
+        aGC.draw(aTrans.createTransformedShape(xpath));
+        aGC.draw(aTrans.createTransformedShape(ypath));
+        aGC.setPaintMode(); //turn XOR mode off
+
     }
            
     @Override
