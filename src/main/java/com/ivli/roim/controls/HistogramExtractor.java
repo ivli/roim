@@ -28,7 +28,7 @@ public class HistogramExtractor implements Extractor {
     }
     
     @Override
-    public void apply(Raster aR) throws ArrayIndexOutOfBoundsException {
+    public void apply(com.ivli.roim.core.ImageFrame aR) throws ArrayIndexOutOfBoundsException {
         extractOne(aR);
         //extractBinned256(aR);
     }
@@ -45,24 +45,24 @@ public class HistogramExtractor implements Extractor {
     }
     */
     
-    private int getDataTypeMaxValue(Raster aR) {
-       return 2 << aR.getDataBuffer().getDataTypeSize(aR.getDataBuffer().getDataType()); 
+    private int getDataTypeMaxValue(com.ivli.roim.core.ImageFrame aR) {
+       return 32;//2 << aR.getDataBuffer().getDataTypeSize(aR.getDataBuffer().getDataType()); 
     }
     
-    void extractOne(Raster aR) throws ArrayIndexOutOfBoundsException {
-        final Shape shape = (null != iRoi) ? iRoi : aR.getBounds();
+    void extractOne(com.ivli.roim.core.ImageFrame aR) throws ArrayIndexOutOfBoundsException {
+        final Shape shape = (null != iRoi) ? iRoi : new Rectangle(0,0, aR.getWidth(), aR.getHeight());
         final Rectangle bnds = shape.getBounds();
-        int []temp = new int[3];// = new int [aRaster.getNumBands()];
+        ///int []temp = new int[3];// = new int [aRaster.getNumBands()];
         
         int [] buf = new int [2 << 16];
                 
         for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
             for (int j=bnds.y; j < (bnds.y + bnds.height); ++j) 
                 if (shape.contains(i, j)) {                   
-                    temp = aR.getPixel(i, j, temp);    
-                    final Integer key = temp[0];
-                    final Integer val = iHist.get(key);
-                    iHist.put(key, null != val ? val + 1 : 1);                      
+                    int temp = aR.getPixel(i, j);    
+                    //final Integer key = temp[0];
+                    final Integer val = iHist.get(temp);
+                    iHist.put(temp, null != val ? val + 1 : 1);                      
                 }
      
     }

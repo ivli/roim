@@ -5,12 +5,12 @@
  */
 package com.ivli.roim.core;
 
-import java.awt.image.Raster;
+//import java.awt.image.Raster;
 /**
  *
  * @author likhachev
  */
  @FunctionalInterface
 public interface Extractor {
-    void apply(Raster aR) throws ArrayIndexOutOfBoundsException;
+    void apply(ImageFrame aR) throws ArrayIndexOutOfBoundsException;
 }

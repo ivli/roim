@@ -132,7 +132,7 @@ public class ImageFrame implements java.io.Serializable {
     }
     
     public void extract(Extractor aEx) {
-       // aEx.apply(iRaster);
+        aEx.apply(this);
     }
         
 }

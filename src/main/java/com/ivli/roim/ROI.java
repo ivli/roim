@@ -100,24 +100,24 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         final Rectangle bounds = iShape.getBounds();
         
         final int profileX[] = new int[bounds.width];;
-        final int profileY[] =new int[bounds.height];;
+        final int profileY[] = new int[bounds.height];;
         
-        getManager().getView().getImage().extract((Raster aR) -> {            
-
-            double temp[] = new double [aR.getNumBands()];
+        getManager().getView().getImage().extract(new com.ivli.roim.core.Extractor(){            
+            public void apply(com.ivli.roim.core.ImageFrame aR){
+            //double temp[] = new double [aR.getNumBands()];
             
             for (int i = 0 ; i < bounds.width; ++i)
                 for (int j = bounds.y; j < bounds.y + bounds.height; ++j)
                     if (iShape.contains(new Point(i + bounds.x, j))) 
-                        profileX[i] += aR.getPixel(i + bounds.x, j, temp)[0];
+                        profileX[i] += aR.getPixel(i + bounds.x, j);
             
             for (int i = 0; i < bounds.height; ++i)
                 for (int j = bounds.y; j < bounds.y + bounds.width; ++j)
                     if (iShape.contains(new Point(i + bounds.x, j ))) 
-                        profileY[i] += aR.getPixel(i + bounds.x, j, temp)[0];
-            
-                                   
-        });
+                        profileY[i] += aR.getPixel(i + bounds.x, j);
+              
+        }}
+        );
             
             double min = Double.MAX_VALUE;
             double max = Double.MIN_VALUE;

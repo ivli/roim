@@ -90,15 +90,18 @@ public class Profile extends Overlay {
     private void makeHistogram() {
         final Rectangle bounds = iShape.getBounds();
 
-        getManager().getView().getImage().extract((Raster aR) -> {
+        getManager().getView().getImage().extract(new com.ivli.roim.core.Extractor() {
+            
+        public void apply(com.ivli.roim.core.ImageFrame aR) {
+                
             iHist = new double[bounds.width];
             
-            double temp[] = new double [aR.getNumBands()];
+            //double temp[] = new double [aR.getNumBands()];
             
             for (int i = 0; i < bounds.width; ++i)
                 for (int j = bounds.y; j < bounds.y + bounds.height; ++j)
-                    iHist[i] += aR.getPixel(i, j, temp)[0];
-        });
+                    iHist[i] += aR.getPixel(i, j);
+        }});
     
     }
     
