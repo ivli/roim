@@ -54,7 +54,7 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.
 
     /**
      *
-     * @return
+     * @return a number of frames
      */
     public abstract int getNumFrames();  
     
@@ -73,19 +73,30 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.
     /**
      *
      * @param aFrameNumber
-     * @return safe check whwter frame is present or not
+     * @return safe check whether frame is present or not
      */
     public abstract boolean hasAt(int aFrameNumber);
     
     /**
      *
-     * @param aFrameNumber
-     * @return
+     * @param aFrameNumber - requested frame number
+     * @return - a frame
      * @throws java.util.NoSuchElementException
      */
     public abstract ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException; 
     
+    /**
+     * Creates a multiframe image with physical characteristics of original but Z or time axis whose lenght is set in the first parementer
+     * frames are zeroed out  
+     * @param anInitialCapacity - initial number of frames
+     * @return - a multiframe image of the same physical dimensions   
+     */
     public abstract IMultiframeImage createCompatibleImage(int anInitialCapacity); 
+    
+    /**
+     * Creates a deep coopy of original image    
+     * @return - a multiframe image   
+     */
     public abstract IMultiframeImage duplicate(); 
     
     @Override
