@@ -58,12 +58,7 @@ public class MIPProjector implements Runnable {
         double angCurr = 0.;
 
         for (int currProj = 1; angCurr < 360.0; angCurr += angStep, currProj++) {
-
-            //IJ.showStatus("Building projection # " + currProj + " ...");
-            //IJ.showProgress((double)angCurr / 360.0);
-
-            //ImageProcessor projSliceIp = projStack.getProcessor(currProj);
-
+            //progress = ((double)angCurr / 360.0
             IMultiframeImage tempStack = img.duplicate();
 
             for (int sectCurr = 0; sectCurr < nSlices; sectCurr++) {				                        
@@ -83,19 +78,19 @@ public class MIPProjector implements Runnable {
                             final int pixVal = Math.max(0, modifSliceIp.getPixel(x, y));					                    
 
                             if (img.getImageDataType() == ImageDataType.GRAYS16) {
-                                    if (iDepthCorr) 
-                                            pixSum = ((double)pixVal / weightFact);      							
-                                    else
-                                            pixSum = (double)pixVal;
+                                if (iDepthCorr) 
+                                    pixSum = ((double)pixVal / weightFact);      							
+                                else
+                                    pixSum = (double)pixVal;
                             } else {						
-                                    if (iDepthCorr)
-                                            pixSum = ((double)(0xff & pixVal) / weightFact);
-                                    else
-                                            pixSum = (double)(0xff & pixVal);
+                                if (iDepthCorr)
+                                    pixSum = ((double)(0xff & pixVal) / weightFact);
+                                else
+                                    pixSum = (double)(0xff & pixVal);
                             }
 
                             if (pixSum > pixMax)
-                                    pixMax = pixSum;
+                                pixMax = pixSum;
                     }
 
                     final short pixNormVal = (short)((pixMax / maxVol) * 32767.0);

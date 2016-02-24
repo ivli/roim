@@ -35,11 +35,14 @@ public class ImageFrame implements java.io.Serializable {
    
     private int iWidth;
     private int iHeight;
-    private int []iPixels;        
-    private double iMin;
-    private double iMax; 
-    private double iIden;
+        
+    private double iMin = Double.NaN;
+    private double iMax = Double.NaN; 
+    private double iIden = Double.NaN;
     
+    private int []iPixels;        
+    
+    /* 
     public ImageFrame(Raster aRaster) {       
         iWidth = aRaster.getWidth();
         iHeight = aRaster.getHeight();
@@ -47,7 +50,28 @@ public class ImageFrame implements java.io.Serializable {
         
         computeStatistics();       
     }
-          
+    */
+    
+    public ImageFrame(int aWidth, int aHeight, int[] aPixels) {       
+        iWidth  = aWidth;
+        iHeight = aHeight;
+        iPixels = aPixels;      
+    }
+    
+    public ImageFrame(int aWidth, int aHeight) {       
+        iWidth = aWidth;
+        iHeight = aHeight;
+        iPixels = new int[aWidth * aHeight];         
+    }
+       
+    public ImageFrame duplicate() {       
+        ImageFrame ret = new ImageFrame(iWidth, iHeight, iPixels);    
+        ret.iMin = iMin;
+        ret.iMax = iMax;
+        ret.iIden = iIden;
+        return ret;
+    }
+    
     public int getWidth() {
         return iWidth;
     }
@@ -57,23 +81,29 @@ public class ImageFrame implements java.io.Serializable {
     }
      
     public double getMin() {
+        if (Double.isNaN(iMin))
+            computeStatistics();
         return iMin;
     }
     
     public double getMax() {
+        if (Double.isNaN(iMax))
+            computeStatistics();
         return iMax;
     } 
     
     public double getIden() {
+        if (Double.isNaN(iIden))
+            computeStatistics();
         return iIden;
     }
     
-    public final int get(int x, int y) {
-        return iPixels[y*iWidth+x];//&0xffff;
+    public final int get(int aX, int aY) {
+        return iPixels[aX*iWidth+aY];
     }
 
-    public final void set(int x, int y, int value) {
-        iPixels[y*iWidth+x] = value;
+    public final void set(int aX, int aY, int aV) {
+        iPixels[aY*iWidth+aX] = aV;
     }
     
     public final boolean isValidIndex(int aX, int aY) {

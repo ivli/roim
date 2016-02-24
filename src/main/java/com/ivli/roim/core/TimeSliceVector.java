@@ -25,7 +25,8 @@ import java.util.ArrayList;
  */
 public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSliceVector> {
     private static final long serialVersionUID = 42L;
-                    
+    
+    public static final TimeSliceVector ONESHOT = new TimeSliceVector();
        
     private ArrayList<PhaseInformation> iPhases; 
       //frame start time in milliseconds from the beginning of the serie
@@ -43,7 +44,13 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         
         fillSlicesArray();
     }
-      
+      /**/
+    protected TimeSliceVector() {
+        iPhases =  new ArrayList();
+        iPhases.add(PhaseInformation.ONESHOT);
+        fillSlicesArray();        
+    }
+    
     public TimeSliceVector slice(TimeSlice aS) {        
         ArrayList<PhaseInformation> phases =  new ArrayList();
         

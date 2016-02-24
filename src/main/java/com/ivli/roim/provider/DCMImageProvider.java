@@ -105,7 +105,8 @@ public class DCMImageProvider implements IImageProvider {
     
     public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException/*, IOException*/ {
         try {
-            return new ImageFrame(iLoader.readRaster(anIndex));
+            java.awt.image.Raster r = iLoader.readRaster(anIndex);
+            return new ImageFrame(r.getWidth(), r.getHeight(), r.getSamples(0, 0, iWidth, iHeight, 0, (int[])null));
         } catch (IOException e) {
             throw new IndexOutOfBoundsException();
         }

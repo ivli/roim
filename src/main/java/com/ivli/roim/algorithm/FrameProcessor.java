@@ -50,7 +50,17 @@ public class FrameProcessor {
         return pixels2;	
     }
        
-    public void rotate(double angle) {       
+    public void add(ImageFrame aF) throws IllegalArgumentException {
+        if (iFrame.getWidth() != aF.getWidth() && iFrame.getHeight() != aF.getHeight())
+            throw new IllegalArgumentException("Frames must be of identical size");
+        
+        for (int i = 0; i < iFrame.getWidth(); ++i)
+            for (int j = 0; j < iFrame.getHeight(); ++j) 
+                iFrame.set(i, j, iFrame.get(i, j) + aF.get(i, j));
+        
+    }
+    
+    public void rotate(double anAngle) {       
         short[] pixels2 = getPixelsCopy();
 
         int roiX = 0;
@@ -67,7 +77,7 @@ public class FrameProcessor {
         double centerY = roiY + (roiHeight-1)/2.0;
         int xMax = roiX + roiWidth - 1;
 
-        double angleRadians = -angle/(180.0/Math.PI);
+        double angleRadians = -anAngle/(180.0/Math.PI);
         double ca = Math.cos(angleRadians);
         double sa = Math.sin(angleRadians);
         double tmp1 = centerY*sa-centerX*ca;
