@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.core;
 
-public class MultiframeImage extends IMultiframeImage {
+public class MultiframeImage extends IMultiframeImage implements Cloneable {
     protected final IImageProvider iProvider;
      //read from ImageProvider
     protected int iWidth;
@@ -29,7 +29,7 @@ public class MultiframeImage extends IMultiframeImage {
     protected Double iMin;
     protected Double iMax;
     
-    protected final java.util.ArrayList<ImageFrame> iFrames; 
+    protected java.util.ArrayList<ImageFrame> iFrames; 
     
     public MultiframeImage(IImageProvider aP) {
         iProvider = aP;        
@@ -150,19 +150,20 @@ public class MultiframeImage extends IMultiframeImage {
        
      @Override
     public IMultiframeImage duplicate() {      
+        MultiframeImage ret;
         try {
-            return (MultiframeImage)this.clone();        
+             ret = (MultiframeImage)this.clone();  
+             ret.iFrames = (java.util.ArrayList<ImageFrame>)this.iFrames.clone();
         } catch (CloneNotSupportedException ex) {
             throw new IllegalStateException("");
         }        
+        return ret;
     }
        
     public MultiframeImage collapse(TimeSlice aS){   
         int frameTo = aS.getTo().isInfinite() ? getNumFrames() : getTimeSliceVector().frameNumber(aS.getTo());
         int frameFrom = getTimeSliceVector().frameNumber(aS.getFrom());        
-        /*    */ 
-        ///java.awt.image.WritableRaster comp = iFrames.get(0).getRaster().createCompatibleWritableRaster();
-
+        
         ImageFrame sum = iFrames.get(frameFrom).duplicate();
         
         com.ivli.roim.algorithm.FrameProcessor fp = new com.ivli.roim.algorithm.FrameProcessor(sum);

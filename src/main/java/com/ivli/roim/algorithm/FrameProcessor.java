@@ -33,10 +33,7 @@ public class FrameProcessor {
     private InterpolationMethod iInterpol = InterpolationMethod.NONE;
         
     public FrameProcessor(ImageFrame aF) {
-        iFrame = aF;
-        //width  = iFrame.getWidth();
-        //height = iFrame.getHeight();
-        //pixels = iFrame.getSamples();
+        iFrame = aF;        
     }
     
     public void setInterpolate(boolean aI) {
@@ -113,7 +110,7 @@ public class FrameProcessor {
                         pixels2[index++] = pixels[width*iys+ixs];
                     }
                 } else
-                    pixels[index++] = background;
+                    pixels2[index++] = background;
             }
         }
         iFrame.setPixelData(width, height, pixels2);

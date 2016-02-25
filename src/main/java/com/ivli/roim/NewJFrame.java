@@ -21,6 +21,7 @@ package com.ivli.roim;
 import com.ivli.roim.core.MultiframeImage;
 import com.ivli.roim.provider.DCMImageProvider;
 import com.ivli.roim.core.IImageProvider;
+import com.ivli.roim.core.IMultiframeImage;
 import java.awt.*;
 import java.io.IOException;
 import java.io.File;
@@ -63,13 +64,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         UIManager.put("FileChooser.fileTypeHeaderText", "Тип"); 
         UIManager.put("FileChooser.fileDateHeaderText", "дата"); 
         UIManager.put("FileChooser.fileAttrHeaderText", "Аттрибуты");
-         UIManager.put("FileChooser.listViewButtonToolTipText", "Список"); 
+        UIManager.put("FileChooser.listViewButtonToolTipText", "Список"); 
         UIManager.put("FileChooser.listViewButtonAccessibleName", "Список"); 
         /*UIManager.put("FileChooser.acceptAllFileFilterText", "Directorios");
         UIManager.put("FileChooser.lookInLabelText", "Localização");
        
          */
-        UIManager.put("FileChooser.openDialogTitleText","Выберите файл");
+        UIManager.put("FileChooser.openDialogTitleText", "Выберите файл");
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
         
     }
@@ -445,7 +446,14 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1.removeAll();
         jPanel3.removeAll();
                 
-        com.ivli.roim.core.IMultiframeImage mi = new MultiframeImage(iProvider);
+        IMultiframeImage mi = new MultiframeImage(iProvider);
+       /* IMultiframeImage mi2 = mi.duplicate();
+        
+        for (int n=0; n < mi.getNumFrames(); ++n){// com.ivli.roim.core.ImageFrame f : mi) {
+            com.ivli.roim.algorithm.FrameProcessor fp = new com.ivli.roim.algorithm.FrameProcessor(mi.get(n));
+            fp.rotate(30.);
+        }
+        */
          //IMAGE
         iImage = new ImagePanel(new ImageView(mi));                 
         iImage.setPreferredSize(jPanel1.getSize());
@@ -461,7 +469,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel3.add(iChart);
         
 
-        //GRID
+        //GRID  
         iGrid = new ImagePanel(new GridImageView(mi, 4, 4));       
         iGrid.setPreferredSize(jPanel4.getSize());
         ///iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));        

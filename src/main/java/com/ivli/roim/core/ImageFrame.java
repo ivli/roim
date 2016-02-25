@@ -30,7 +30,7 @@ import java.awt.image.DataBuffer;
  * 
  * @author likhachev
  */
-public class ImageFrame implements java.io.Serializable {
+public class ImageFrame implements java.io.Serializable, Cloneable {
     private static final long serialVersionUID = 042L;
    
     private int iWidth;
@@ -99,7 +99,7 @@ public class ImageFrame implements java.io.Serializable {
     }
     
     public final int get(int aX, int aY) {
-        return iPixels[aX*iWidth+aY];
+        return iPixels[aY*iWidth+aX];
     }
 
     public final void set(int aX, int aY, int aV) {
@@ -112,13 +112,14 @@ public class ImageFrame implements java.io.Serializable {
     
     public final int getPixel(int aX, int aY) throws IndexOutOfBoundsException {
         if (!isValidIndex(aX, aY))
-            throw new IndexOutOfBoundsException();            
+            throw new IndexOutOfBoundsException(String.format("bad index x=%d (%d), y=%d (%d)", aX, iWidth, aY, iHeight));            
+        
         return get(aX, aY);
     }
 
     public final void setPixel(int aY, int aX, int aV) throws IndexOutOfBoundsException {
         if (!isValidIndex(aX, aY))
-            throw new IndexOutOfBoundsException();  
+            throw new IndexOutOfBoundsException(String.format("bad index x=%d (%d), y=%d (%d)", aX, iWidth, aY, iHeight));  
         set(aX, aY, aV);
     }
     
@@ -133,8 +134,7 @@ public class ImageFrame implements java.io.Serializable {
         return ImageDataType.GRAYS32;
     }
     
-    public BufferedImage getBufferedImage() {        
-       
+    public BufferedImage getBufferedImage() {               
         WritableRaster wr = Raster.createBandedRaster(DataBuffer.TYPE_INT, iWidth, iHeight, 1, new java.awt.Point());
         wr.setDataElements(0, 0, iWidth, iHeight, iPixels);
        
@@ -147,21 +147,14 @@ public class ImageFrame implements java.io.Serializable {
                                  wr, true, null);
         
     }     
-    
-    void rotate(double anAngle) {
-        AffineTransform r = AffineTransform.getRotateInstance(anAngle * Math.PI/180);
-        AffineTransformOp op = new AffineTransformOp(r, null);
-        //iRaster = op.filter(iRaster, iRaster.createCompatibleWritableRaster());
-        computeStatistics();  
-    }
-           
-    private void computeStatistics() throws ArrayIndexOutOfBoundsException { 
+                  
+    private void computeStatistics() throws IndexOutOfBoundsException { 
         iMin  = 65535.; 
         iMax  = .0; 
         iIden = .0;
         
-        for (int i = 0; i < iWidth; ++i)
-            for (int j = 0; j < iHeight; ++j) { 
+        for (int i = 0; i < iWidth; i++)
+            for (int j = 0; j < iHeight; j++) { 
                 final double temp = (double)getPixel(i, j);
                 if (temp > iMax) 
                     iMax = temp;
@@ -186,6 +179,5 @@ public class ImageFrame implements java.io.Serializable {
     
     public void extract(Extractor aEx) {
         aEx.apply(this);
-    }
-        
+    }        
 }

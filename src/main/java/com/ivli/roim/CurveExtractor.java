@@ -14,8 +14,7 @@ import com.ivli.roim.core.FrameOffset;
  *
  * @author likhachev
  */
-public class CurveExtractor {
-    
+public class CurveExtractor {    
     public static SeriesCollection extract(IMultiframeImage anImage, ROI aRoi, FrameOffsetVector anOff) {
         SeriesCollection c = new SeriesCollection();
        
@@ -29,12 +28,10 @@ public class CurveExtractor {
             if (null != anOff) {
                 FrameOffset off = anOff.get(n);
                 if (off != FrameOffset.ZERO)
-                   roi = AffineTransform.getTranslateInstance(off.getX(), off.getY()).createTransformedShape(roi);
-               
+                   roi = AffineTransform.getTranslateInstance(off.getX(), off.getY()).createTransformedShape(roi);               
             }
             
-            ImageFrame f = anImage.get(n);
-            Measure m = measure(f, roi); 
+            Measure m = measure(anImage.get(n), roi); 
             density.add(m.getIden());   
             mins.add(m.getMin());
             maxs.add(m.getMax());
@@ -47,15 +44,13 @@ public class CurveExtractor {
         return c;
     }    
    
-    private static Measure measure(ImageFrame aF, java.awt.Shape aShape) throws ArrayIndexOutOfBoundsException {          
-        final java.awt.Rectangle bnds = aShape.getBounds();
-
+    private static Measure measure(final ImageFrame aF, Shape aShape) throws ArrayIndexOutOfBoundsException {          
         double min = Double.MAX_VALUE; 
         double max = Double.MIN_VALUE;
-        double sum = .0;//, pix = .0;
+        double sum = .0;
 
-       // double temp[] = new double [aRaster.getNumBands()];
-
+        final java.awt.Rectangle bnds = aShape.getBounds();
+        
         for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
             for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) //{ 
                 if (aShape.contains(i, j)) {
@@ -70,5 +65,5 @@ public class CurveExtractor {
                 }
 
         return new Measure(min, max, sum);
-        }   
+    }   
 }
