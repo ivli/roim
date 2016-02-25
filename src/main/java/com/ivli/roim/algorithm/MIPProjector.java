@@ -19,8 +19,6 @@ package com.ivli.roim.algorithm;
 
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageDataType;
-import com.ivli.roim.core.MultiframeImage;
-import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.ImageFrame;
 
 /**
@@ -28,77 +26,75 @@ import com.ivli.roim.core.ImageFrame;
  * @author likhachev
  */
 public class MIPProjector implements Runnable {
-    private Integer nProj;
-    private Double  valDepthCorr = .1; //must have value between [0 - 1]
+    //private int nProj;
+    private double  valDepthCorr = .1; //value must lie between [0 - 1]
     private boolean iDepthCorr = true;
-    final IMultiframeImage img;
-          IMultiframeImage projImg;
+    final IMultiframeImage iImage;
+    
 
-    public MIPProjector(IMultiframeImage anImage, Integer aProjections) {
-        img = anImage;
-        nProj = aProjections;
+    public MIPProjector(IMultiframeImage anImage) {
+        iImage = anImage;    
     }
 
-    @Override
-    public void run() {       						
-        final int nSlices = img.getNumFrames();		                
-        final int width  = img.getWidth();
-        final int height = img.getHeight();
+    public IMultiframeImage project(int aProjections) {
+        final int nSlices = iImage.getNumFrames();		                
+        final int width = iImage.getWidth();
+        final int height = iImage.getHeight();
 
-        double minVol = img.getMin();
-        double maxVol = img.getMax();
+        double minVol = iImage.getMin();
+        double maxVol = iImage.getMax();
 
-        //final int imageType = img.get(0).getRaster().getDataBuffer().getDataType();
-
-        projImg = img.createCompatibleImage(nProj);
-
-        //final ImageStack projStack = projImg.getStack();		
-
-        final double angStep = 360.0 / nProj;			
+        IMultiframeImage mip = iImage.createCompatibleImage(aProjections);
+	
+        final double angStep = 360.0 / aProjections;			
         double angCurr = 0.;
 
-        for (int currProj = 1; angCurr < 360.0; angCurr += angStep, currProj++) {
+        for (int currProj = 0; angCurr < 360.0; angCurr += angStep, ++currProj) {
             //progress = ((double)angCurr / 360.0
-            IMultiframeImage tempStack = img.duplicate();
+            IMultiframeImage temp = iImage.duplicate();
 
-            for (int sectCurr = 0; sectCurr < nSlices; sectCurr++) {				                        
-                FrameProcessor fp = new FrameProcessor(tempStack.get(sectCurr));                        
+            ImageFrame frm = mip.get(currProj);
+            
+            /**/
+            for (ImageFrame f : temp) {				                        
+                FrameProcessor fp = new FrameProcessor(f);                        
                 fp.setInterpolate(true);				
                 fp.rotate(angCurr);				
             }
-          for (int z = 0; z < nSlices; z++) {
-                ImageFrame modifSliceIp = tempStack.get(z);
+            
+            
+            for (int z = 0; z < nSlices; ++z) {
+                ImageFrame modifSliceIp = temp.get(z);
 
-                for (int x = 0; x < width; x++) {
+                for (int x = 0; x < width; ++x) {
                     double pixSum = 0.0;               
                     double pixMax = 0.0;					
 
-                    for (int y = 0; y < height; y++) {
+                    for (int y = 0; y < height; ++y) {
                             final double weightFact = ((double)y + 1.0) * valDepthCorr ;					 
                             final int pixVal = Math.max(0, modifSliceIp.getPixel(x, y));					                    
 
-                            if (img.getImageDataType() == ImageDataType.GRAYS16) {
-                                if (iDepthCorr) 
-                                    pixSum = ((double)pixVal / weightFact);      							
-                                else
-                                    pixSum = (double)pixVal;
-                            } else {						
-                                if (iDepthCorr)
-                                    pixSum = ((double)(0xff & pixVal) / weightFact);
-                                else
-                                    pixSum = (double)(0xff & pixVal);
-                            }
+                            if (iDepthCorr) 
+                                pixSum = ((double)pixVal / weightFact);      							
+                            else
+                                pixSum = (double)pixVal;
+                           
 
                             if (pixSum > pixMax)
                                 pixMax = pixSum;
                     }
 
-                    final short pixNormVal = (short)((pixMax / maxVol) * 32767.0);
+                    final int pixNormVal = (int)((pixMax / maxVol) * 32767.0);
 
-                    projImg.get(currProj).setPixel(width-x-1, z-1, pixNormVal);
+                    frm.setPixel(width-x-1, z, pixNormVal);
                 }
             }			
         }
+        return mip;
     }
+    
+    @Override
+    public void run() {       						
+    }    
         
 }

@@ -103,7 +103,7 @@ public class DCMImageProvider implements IImageProvider {
         return iTimeSliceVector;
     }
     
-    public ImageFrame frame(int anIndex) throws IndexOutOfBoundsException/*, IOException*/ {
+    public ImageFrame get(int anIndex) throws IndexOutOfBoundsException/*, IOException*/ {
         try {
             java.awt.image.Raster r = iLoader.readRaster(anIndex);            
             int [] buf = new int[iWidth*iHeight];

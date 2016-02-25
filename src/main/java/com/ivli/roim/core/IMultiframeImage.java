@@ -24,7 +24,7 @@ package com.ivli.roim.core;
  * note: this is just an iterator/accessor actual frames are stored in descendants  
  * 
  */
-public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.Serializable {          
+public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.Serializable, IImageProvider {          
       
     public abstract ImageDataType getImageDataType();
     public abstract ImageType getImageType();
@@ -52,6 +52,8 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.
      */
     public abstract TimeSliceVector getTimeSliceVector();
 
+    @Override
+    public abstract SliceSpacing getSliceSpacing();
     /**
      *
      * @return a number of frames

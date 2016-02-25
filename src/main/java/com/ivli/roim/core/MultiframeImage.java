@@ -24,6 +24,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
     protected int iHeight;
     protected int iNumFrames;   
     protected PixelSpacing iPixelSpacing;
+    protected SliceSpacing iSliceSpacing;
     protected TimeSliceVector iTimeSliceVector; 
      //computed
     protected Double iMin;
@@ -57,7 +58,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
         iMax = Double.NaN;
 
         iPixelSpacing = PixelSpacing.UNITY_PIXEL_SPACING;
-        iTimeSliceVector = null;//TimeSliceVector.ONESHOT; 
+        iTimeSliceVector = TimeSliceVector.ONESHOT; 
        
         iFrames = new java.util.ArrayList<>(iNumFrames);
         
@@ -65,22 +66,64 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
             iFrames.add(n, null);      
     }
     
-    protected MultiframeImage(MultiframeImage aM) {
-        iProvider = aM.iProvider;
-        iFrames = new java.util.ArrayList<>();
+    private MultiframeImage(IMultiframeImage aM, int anImages) {
+        
+        iProvider = null;/*new IImageProvider() {            
+            public int getWidth() {return aM.getWidth();}   
+            public int getHeight() {return aM.getHeight();}   
+            public int getNumFrames() {return iNumFrames;}     
+            public ImageType getImageType() {return aM.getImageType();}
+            public PixelSpacing getPixelSpacing() {return aM.getPixelSpacing();}      
+            public SliceSpacing getSliceSpacing() {return aM.getSliceSpacing();}
+            public TimeSliceVector getTimeSliceVector() {return aM.getTimeSliceVector();}       
+            public ImageFrame get(int anIndex) throws IndexOutOfBoundsException {
+                return new ImageFrame(getWidth(), getHeight());
+            }
+        };
+        */
+        iNumFrames = anImages;
+        
+        iWidth = aM.getWidth();
+        iHeight = aM.getHeight();
+        
+        iPixelSpacing = aM.getPixelSpacing();
+        iSliceSpacing = aM.getSliceSpacing();
+        iTimeSliceVector = aM.getTimeSliceVector();
+        
+        iFrames = new java.util.ArrayList<>(iNumFrames);
+        for (int n=0; n < iNumFrames; ++n)
+            iFrames.add(n, new ImageFrame(iWidth, iHeight));  
+        
+        iMin = iMax = Double.NaN;
+    }
+    
+    private MultiframeImage() {//MultiframeImage aM) {
+        iProvider = null;
+        /*
+        iNumFrames = aM.iNumFrames;
+        iMin = aM.iMin;
+        iMax = aM.iMax;
+        iFrames = new java.util.ArrayList<>(iNumFrames);
+       // for (int n=0; n < iNumFrames; ++n)
+       //     iFrames.add(n, null);   
+        */
     }
      
     protected void computeStatistics() {        
-        iFrames.stream().forEach((f) -> {
+        iMin = Double.MAX_VALUE;
+        iMax = Double.MIN_VALUE;
+        
+        for(int i=0; i < getNumFrames(); ++i) {
+            ImageFrame f = get(i);
             if (f.getMin() < iMin)
                 iMin = f.getMin();
             else if (f.getMax() > iMax)
                 iMax = f.getMax();
-        });               
+        }               
     }
     
     public ImageDataType getImageDataType() {
-        return iFrames.get(0).getImageDataType();
+        return ImageDataType.GRAYS32;
     }
      
     @Override
@@ -109,6 +152,10 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
         return iPixelSpacing;
     }
     
+    public SliceSpacing getSliceSpacing() {
+        return iSliceSpacing;
+    }
+     
      @Override
     public TimeSliceVector getTimeSliceVector() {
         return iTimeSliceVector;
@@ -121,22 +168,29 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
        
      @Override
     public ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException {       
-        ImageFrame ret = iFrames.get(aFrameNumber);
-        if (null == ret)
-            iFrames.add(aFrameNumber, (ret = iProvider.frame(aFrameNumber)));
+        ImageFrame ret=null;
+        try {
+            ret = iFrames.get(aFrameNumber);                            
+        } catch (IndexOutOfBoundsException ex) {        
+            iFrames.add(aFrameNumber, (ret = iProvider.get(aFrameNumber)));
+        } finally {
+            if (null == ret)
+                iFrames.add(aFrameNumber, (ret = iProvider.get(aFrameNumber)));
+        }
+    
         return ret;         
     }          
     
      @Override             
     public double getMin() { 
-        if (Double.isFinite(iMin))
+        if (Double.isNaN(iMin))
             computeStatistics();
         return iMin;
     }  
     
      @Override
     public double getMax() { 
-        if (Double.isFinite(iMax))
+        if (Double.isNaN(iMax))
             computeStatistics();
         return iMax;
     }  
@@ -144,19 +198,30 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
      @Override
     public IMultiframeImage createCompatibleImage(int aI) {
         //TODO: change type and ... 
-        MultiframeImage ret = new MultiframeImage(this);        
+        MultiframeImage ret = new MultiframeImage(this, aI); 
+        /*
+        ret.iNumFrames = aI;
+        ret.iWidth = iWidth;
+        ret.iHeight = iHeight;
+        ret.iMin = ret.iMax = Double.NaN;
+        ret.iPixelSpacing = iPixelSpacing;
+        ret.iSliceSpacing = iSliceSpacing;
+        ret.iTimeSliceVector = iTimeSliceVector;
+        
+        ret.iFrames = new java.util.ArrayList<>(iNumFrames);
+        for (int n=0; n < iNumFrames; ++n)
+            iFrames.add(n, new ImageFrame(iWidth, iHeight, new int[iWidth*iHeight]));   
+        */
         return ret;
     }
        
      @Override
     public IMultiframeImage duplicate() {      
-        MultiframeImage ret;
-        try {
-             ret = (MultiframeImage)this.clone();  
-             ret.iFrames = (java.util.ArrayList<ImageFrame>)this.iFrames.clone();
-        } catch (CloneNotSupportedException ex) {
-            throw new IllegalStateException("");
-        }        
+        MultiframeImage ret = new MultiframeImage(this);
+
+        for(int n = 0; n < getNumFrames(); ++n)
+           ret.iFrames.add(n, iFrames.get(n).duplicate());
+       
         return ret;
     }
        

@@ -42,15 +42,16 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     
     private int []iPixels;        
     
-    /* 
-    public ImageFrame(Raster aRaster) {       
-        iWidth = aRaster.getWidth();
-        iHeight = aRaster.getHeight();
-        iPixels = aRaster.getSamples(0, 0, iWidth, iHeight, 0, (int[])null);
-        
-        computeStatistics();       
+    /* */
+    public ImageFrame(ImageFrame aI) {       
+        iWidth = aI.getWidth();
+        iHeight = aI.getHeight();
+        iPixels = new int[iWidth*iHeight];
+        System.arraycopy(aI.getSamples(), 0, iPixels, 0, iWidth*iHeight);
+        iMin = aI.iMin;
+        iMax = aI.iMax;
+        iIden = aI.iIden;
     }
-    */
     
     public ImageFrame(int aWidth, int aHeight, int[] aPixels) {       
         iWidth  = aWidth;
@@ -65,7 +66,8 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     }
        
     public ImageFrame duplicate() {       
-        ImageFrame ret = new ImageFrame(iWidth, iHeight, iPixels);    
+        ImageFrame ret = new ImageFrame(iWidth, iHeight); 
+        System.arraycopy(getSamples(), 0, ret.iPixels, 0, iWidth*iHeight);
         ret.iMin = iMin;
         ret.iMax = iMax;
         ret.iIden = iIden;
@@ -144,23 +146,23 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
                                                          false,		// alpha premultipled
                                                          Transparency.OPAQUE,
                                                          wr.getDataBuffer().getDataType()),                                                                                                                                                                                         
-                                 wr, true, null);
-        
+                                 wr, true, null);        
     }     
                   
     private void computeStatistics() throws IndexOutOfBoundsException { 
-        iMin  = 65535.; 
-        iMax  = .0; 
+        iMin  = Double.MAX_VALUE; 
+        iMax  = Double.MIN_VALUE; 
         iIden = .0;
         
-        for (int i = 0; i < iWidth; i++)
+        for (int i = 0; i < iWidth; i++) {
             for (int j = 0; j < iHeight; j++) { 
-                final double temp = (double)getPixel(i, j);
+                final double temp = (double)get(i, j);
                 if (temp > iMax) 
                     iMax = temp;
                 else if (temp < iMin) 
                     iMin = temp;
                 iIden += temp;
+            }
         }
     }
          

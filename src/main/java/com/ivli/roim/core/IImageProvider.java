@@ -22,12 +22,12 @@ package com.ivli.roim.core;
  * @author likhachev
  */
 public interface IImageProvider {                  
-    int getWidth() ;    
-    int getHeight() ;   
+    int getWidth();    
+    int getHeight();   
     int getNumFrames();            
     ImageType getImageType();
     PixelSpacing getPixelSpacing();       
     SliceSpacing getSliceSpacing();
     TimeSliceVector getTimeSliceVector();       
-    ImageFrame frame(int anIndex) throws IndexOutOfBoundsException;    
+    ImageFrame get(int anIndex) throws IndexOutOfBoundsException;    
 }

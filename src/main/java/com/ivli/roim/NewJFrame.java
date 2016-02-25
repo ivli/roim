@@ -447,13 +447,19 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel3.removeAll();
                 
         IMultiframeImage mi = new MultiframeImage(iProvider);
-       /* IMultiframeImage mi2 = mi.duplicate();
+        /*
+        IMultiframeImage mi2 = mi.duplicate();
         
-        for (int n=0; n < mi.getNumFrames(); ++n){// com.ivli.roim.core.ImageFrame f : mi) {
-            com.ivli.roim.algorithm.FrameProcessor fp = new com.ivli.roim.algorithm.FrameProcessor(mi.get(n));
+        for (com.ivli.roim.core.ImageFrame f:mi2) {
+            com.ivli.roim.algorithm.FrameProcessor fp = new com.ivli.roim.algorithm.FrameProcessor(f);
             fp.rotate(30.);
         }
         */
+        com.ivli.roim.algorithm.MIPProjector mp = new com.ivli.roim.algorithm.MIPProjector(mi);
+        IMultiframeImage mi2 = mp.project(128);
+        
+        
+        /**/
          //IMAGE
         iImage = new ImagePanel(new ImageView(mi));                 
         iImage.setPreferredSize(jPanel1.getSize());
@@ -466,11 +472,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iChart = new ChartView();        
         iChart.initChart();
         iChart.setPreferredSize(jPanel3.getPreferredSize());
-        jPanel3.add(iChart);
-        
+        jPanel3.add(iChart);        
 
         //GRID  
-        iGrid = new ImagePanel(new GridImageView(mi, 4, 4));       
+        iGrid = new ImagePanel(new GridImageView(mi2, 4, 4));       
         iGrid.setPreferredSize(jPanel4.getSize());
         ///iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));        
         jPanel4.setLayout(new BorderLayout());     
