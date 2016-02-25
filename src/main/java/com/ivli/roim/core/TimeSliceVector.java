@@ -48,6 +48,7 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
     protected TimeSliceVector() {
         iPhases =  new ArrayList();
         iPhases.add(PhaseInformation.ONESHOT);
+        iSlices = new ArrayList(); 
         fillSlicesArray();        
     }
     

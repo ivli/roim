@@ -16,6 +16,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package com.ivli.roim.algorithm;
+
+
 import com.ivli.roim.core.ImageFrame;
 /**
  *
@@ -27,26 +29,23 @@ public class FrameProcessor {
     }       
     
     private ImageFrame iFrame;
-    private int[] pixels;    
-    private int width;
-    private int height;
-    
+       
     private InterpolationMethod iInterpol = InterpolationMethod.NONE;
         
     public FrameProcessor(ImageFrame aF) {
         iFrame = aF;
-        width  = iFrame.getWidth();
-        height = iFrame.getHeight();
-        pixels = iFrame.getSamples();
+        //width  = iFrame.getWidth();
+        //height = iFrame.getHeight();
+        //pixels = iFrame.getSamples();
     }
     
     public void setInterpolate(boolean aI) {
         iInterpol = aI? InterpolationMethod.BICUBIC : InterpolationMethod.NONE;
     }
        
-    protected short[] getPixelsCopy() {
-        short[] pixels2 = new short[width*height];
-        System.arraycopy(pixels, 0, pixels2, 0, width*height);
+    protected int[] getPixelsCopy() {
+        int[] pixels2 = new int[iFrame.getWidth()*iFrame.getHeight()];
+        System.arraycopy(iFrame.getSamples(), 0, pixels2, 0, iFrame.getWidth()*iFrame.getHeight());
         return pixels2;	
     }
        
@@ -56,19 +55,20 @@ public class FrameProcessor {
         
         for (int i = 0; i < iFrame.getWidth(); ++i)
             for (int j = 0; j < iFrame.getHeight(); ++j) 
-                iFrame.set(i, j, iFrame.get(i, j) + aF.get(i, j));
-        
+                iFrame.set(i, j, iFrame.get(i, j) + aF.get(i, j));        
     }
     
-    public void rotate(double anAngle) {       
-        short[] pixels2 = getPixelsCopy();
-
+    public void rotate(final double anAngle) {               
         int roiX = 0;
         int roiY = 0;
-        int roiWidth = width;
-        int roiHeight = height;
+        final int width = iFrame.getWidth();
+        final int height = iFrame.getHeight();
+        final int roiWidth = width;
+        final int roiHeight = height;
         
-  
+        final int[] pixels = iFrame.getSamples(); //source
+        final int[] pixels2 = getPixelsCopy(); //destination
+        
         //ImageProcessor ip2 = null;
         //if (interpolationMethod==BICUBIC)
         //        ip2 = new ShortProcessor(getWidth(), getHeight(), pixels2, null);
@@ -77,19 +77,19 @@ public class FrameProcessor {
         double centerY = roiY + (roiHeight-1)/2.0;
         int xMax = roiX + roiWidth - 1;
 
-        double angleRadians = -anAngle/(180.0/Math.PI);
-        double ca = Math.cos(angleRadians);
-        double sa = Math.sin(angleRadians);
-        double tmp1 = centerY*sa-centerX*ca;
-        double tmp2 = -centerX*sa-centerY*ca;
-        double tmp3, tmp4, xs, ys;
-        int index, ixs, iys;
-        double dwidth=width, dheight=height;
-        double xlimit = width-1.0, xlimit2 = width-1.001;
-        double ylimit = height-1.0, ylimit2 = height-1.001;
+        final double angleRadians = -anAngle/(180.0/Math.PI);
+        final double ca = Math.cos(angleRadians);
+        final double sa = Math.sin(angleRadians);
+        final double tmp1 = centerY*sa-centerX*ca;
+        final double tmp2 = -centerX*sa-centerY*ca;
+        
+        final double dwidth = width, dheight = height;
+        final double xlimit = width-1.0, xlimit2 = width-1.001;
+        final double ylimit = height-1.0, ylimit2 = height-1.001;
         // zero is 32768 for signed images
         int background = 0;//cTable!=null && cTable[0]==-32768?32768:0; 
-
+        double tmp3, tmp4, xs, ys;
+        int index, ixs, iys;
        
         for (int y=roiY; y<(roiY + roiHeight); y++) {
             index = y*width + roiX;
@@ -104,33 +104,33 @@ public class FrameProcessor {
                         if (xs>=xlimit) xs = xlimit2;
                         if (ys<0.0) ys = 0.0;			
                         if (ys>=ylimit) ys = ylimit2;
-                        pixels[index++] = (short)(getInterpolatedPixel(xs, ys, pixels2)+0.5);
+                        pixels2[index++] = (short)(getInterpolatedPixel(xs, ys, pixels) + 0.5);
                     } else {
                         ixs = (int)(xs+0.5);
                         iys = (int)(ys+0.5);
                         if (ixs>=width) ixs = width - 1;
                         if (iys>=height) iys = height -1;
-                        pixels[index++] = pixels2[width*iys+ixs];
+                        pixels2[index++] = pixels[width*iys+ixs];
                     }
                 } else
-                    pixels[index++] = (short)background;
+                    pixels[index++] = background;
             }
         }
+        iFrame.setPixelData(width, height, pixels2);
     }
    
-
-    private double getInterpolatedPixel(double x, double y, short[] pixels) {
-        int xbase = (int)x;
-        int ybase = (int)y;
-        double xFraction = x - xbase;
-        double yFraction = y - ybase;
-        int offset = ybase * width + xbase;
-        int lowerLeft = pixels[offset]&0xffff;
-        int lowerRight = pixels[offset + 1]&0xffff;
-        int upperRight = pixels[offset + width + 1]&0xffff;
-        int upperLeft = pixels[offset + width]&0xffff;
-        double upperAverage = upperLeft + xFraction * (upperRight - upperLeft);
-        double lowerAverage = lowerLeft + xFraction * (lowerRight - lowerLeft);
+    private double getInterpolatedPixel(final double aX, final double aY, final int[] aPixels) {
+        final int xbase = (int)aX;
+        final int ybase = (int)aY;
+        final double xFraction = aX - xbase;
+        final double yFraction = aY - ybase;
+        final int offset = ybase * iFrame.getWidth() + xbase;
+        final int lowerLeft = aPixels[offset];
+        final int lowerRight = aPixels[offset + 1];
+        final int upperRight = aPixels[offset + iFrame.getWidth() + 1];
+        final int upperLeft = aPixels[offset + iFrame.getWidth()];
+        final double upperAverage = upperLeft + xFraction * (upperRight - upperLeft);
+        final double lowerAverage = lowerLeft + xFraction * (lowerRight - lowerLeft);
         return lowerAverage + yFraction * (upperAverage - lowerAverage);
     }
 

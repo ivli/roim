@@ -175,6 +175,15 @@ public class ImageFrame implements java.io.Serializable {
         return iPixels;
     }
     
+    public void setPixelData(int aWidth, int aHeight, int[] aPixels) {       
+        iWidth  = aWidth;
+        iHeight = aHeight;
+        iPixels = aPixels;   
+        iMin = Double.NaN;
+        iMax = Double.NaN; 
+        iIden = Double.NaN;
+    }
+    
     public void extract(Extractor aEx) {
         aEx.apply(this);
     }
