@@ -446,17 +446,18 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1.removeAll();
         jPanel3.removeAll();
                 
-        IMultiframeImage mi = new MultiframeImage(iProvider);
-        /*
-        IMultiframeImage mi2 = mi.duplicate();
+        IMultiframeImage mi2 = new MultiframeImage(iProvider);
+        
+       /* IMultiframeImage mi2 = mi;//.duplicate();
         
         for (com.ivli.roim.core.ImageFrame f:mi2) {
             com.ivli.roim.algorithm.FrameProcessor fp = new com.ivli.roim.algorithm.FrameProcessor(f);
             fp.rotate(30.);
         }
         */
-        com.ivli.roim.algorithm.MIPProjector mp = new com.ivli.roim.algorithm.MIPProjector(mi);
-        IMultiframeImage mi2 = mp.project(128);
+        /**/
+        com.ivli.roim.algorithm.MIPProjector mp = new com.ivli.roim.algorithm.MIPProjector(mi2);
+        IMultiframeImage mi = mp.project(128);
         
         
         /**/
@@ -676,8 +677,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }
     
     public void windowChanged(WindowChangeEvent aE) {
-        jLabel2.setText(String.format("%3.0f/%3.0f", aE.getWindow().getLevel(), aE.getWindow().getWidth())); // NOI18N
-        
+        jLabel2.setText(String.format("%3.0f/%3.0f", aE.getWindow().getLevel(), aE.getWindow().getWidth())); // NOI18N        
     }
     
     public void frameChanged(FrameChangeEvent aE) {

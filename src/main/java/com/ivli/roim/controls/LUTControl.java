@@ -12,9 +12,7 @@ import java.awt.Image;
 import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.Cursor;
-import java.awt.event.*;
-import java.awt.color.*;
-import java.awt.image.*;
+
 import java.awt.geom.Rectangle2D;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -26,17 +24,38 @@ import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.ivli.roim.ActionItem;
-import com.ivli.roim.events.*;
 
+import java.awt.color.ColorSpace;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.ComponentSampleModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferUShort;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import javax.swing.event.EventListenerList;
+
+import com.ivli.roim.ActionItem;
 import com.ivli.roim.LutLoader;
 import com.ivli.roim.Settings;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.IWLManager;
 import com.ivli.roim.core.Range;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
-import javax.swing.event.EventListenerList;
+import com.ivli.roim.events.FrameChangeEvent;
+import com.ivli.roim.events.FrameChangeListener;
+import com.ivli.roim.events.WindowChangeEvent;
+import com.ivli.roim.events.WindowChangeListener;
 /**
  *
  * @author likhachev
@@ -88,9 +107,9 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             });
     } 
 
-     /* 
-      * complete object constructor
-      */    
+    /* 
+     * complete object constructor
+     */    
     public LUTControl(IWLManager aW) {           
         iWLM    = aW;  
         iList   = new EventListenerList();
@@ -153,18 +172,17 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         for (WindowChangeListener l : iList.getListeners(WindowChangeListener.class))            
             l.windowChanged(anE);            
     }
-    
+           
     @Override
     public void windowChanged(WindowChangeEvent anE) {   
         if (null != iTop && null != iBottom ) { //theoretically we'd never get here in passive mode
             iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
             iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom()));                       
-                
+            //updateWindow(anE.getWindow());
             notifyWindowChange(anE);
             
             invalidateBuffer();
             repaint();     
-            logger.info("->windowChanged {}", anE);
         }         
     }   
     
@@ -172,7 +190,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     public void frameChanged(FrameChangeEvent anE) {   
         if (null != iTop && null != iBottom) { //theoretically we'd never get here in passive mode
             iRange = anE.getRange();
-            invalidateBuffer();
+            directNotifyWindowChange(new Window(anE.getRange()));
             repaint();      
         }                          
     }   
@@ -298,19 +316,15 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         public void mouseClicked(MouseEvent e) {    
             if (SwingUtilities.isRightMouseButton(e)) 
                 showPopupMenu(e.getX(), e.getY());
-            else if (SwingUtilities.isLeftMouseButton(e)) {
-                    if(e.getClickCount() == 2){                        
-                        directNotifyWindowChange(new Window(iRange));
-                    }
-            }
+            else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)                                            
+                directNotifyWindowChange(new Window(iRange));         
         }
     } 
     
     private void updateBufferedImage() {
         final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
         final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
-       
-        
+               
         final int size = (width * height - 1);
         DataBuffer data = new DataBufferUShort(width * height);
         
@@ -318,14 +332,14 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         
         for (int i = 0; i < height; ++i) {                                   
             final int lineNdx =  size - (i * width);
-   
+            
             for (int j = 0; j < width; ++j) {               
                 data.setElem(lineNdx - j, (short)((double)i * ratio));            
             }                      
         }
        
         final WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
-                                                             data, new Point(0,0)
+                                                              data, new Point(0,0)
                                                              );        
         
         iBuf = iWLM.transform(new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               

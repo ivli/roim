@@ -37,7 +37,7 @@ public class FrameProcessor {
     }
     
     public void setInterpolate(boolean aI) {
-        iInterpol = aI? InterpolationMethod.BICUBIC : InterpolationMethod.NONE;
+        iInterpol = aI ? InterpolationMethod.BICUBIC : InterpolationMethod.NONE;
     }
        
     protected int[] getPixelsCopy() {
@@ -86,10 +86,10 @@ public class FrameProcessor {
         // zero is 32768 for signed images
         int background = 0;//cTable!=null && cTable[0]==-32768?32768:0; 
         double tmp3, tmp4, xs, ys;
-        int index, ixs, iys;
+        int ixs, iys;
        
         for (int y=roiY; y<(roiY + roiHeight); y++) {
-            index = y*width + roiX;
+            int index = width*y + roiX;
             tmp3 = tmp1 - y*sa + centerX;
             tmp4 = tmp2 + y*ca + centerY;
             for (int x=roiX; x<=xMax; x++) {
