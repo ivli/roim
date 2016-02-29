@@ -119,7 +119,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         return get(aX, aY);
     }
 
-    public final void setPixel(int aY, int aX, int aV) throws IndexOutOfBoundsException {
+    public final void setPixel(int aX, int aY, int aV) throws IndexOutOfBoundsException {
         if (!isValidIndex(aX, aY))
             throw new IndexOutOfBoundsException(String.format("bad index x=%d (%d), y=%d (%d)", aX, iWidth, aY, iHeight));  
         set(aX, aY, aV);
@@ -156,10 +156,10 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         
         for (int i = 0; i < iWidth; i++) {
             for (int j = 0; j < iHeight; j++) { 
-                final double temp = (double)get(i, j);
+                final double temp = get(i, j);
                 if (temp > iMax) 
                     iMax = temp;
-                else if (temp < iMin) 
+                if (temp < iMin) 
                     iMin = temp;
                 iIden += temp;
             }

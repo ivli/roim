@@ -19,6 +19,7 @@ package com.ivli.roim.algorithm;
 
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.IMultiframeImage;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -52,7 +53,7 @@ public class MIPProjector implements Runnable {
         
         try{
             for (int currProj = 0; currProj < aProjections; ++currProj) 
-                es.execute(new Projector(iImage, angStep*currProj, mip.get(currProj)));
+                es.execute(new Projector(iImage, angStep*currProj));
 
                 //es.shutdown();
             boolean finshed = es.awaitTermination(1, TimeUnit.MINUTES);
@@ -62,19 +63,19 @@ public class MIPProjector implements Runnable {
         return mip;
     }
     
-    class Projector implements Runnable {
+    class Projector implements Runnable {//Callable<ImageFrame> {
     
         private IMultiframeImage iSrc;        
         private double iAngle;
-        private ImageFrame iRet;
+        //private  iRet;
         
-        public Projector(IMultiframeImage aS, double anA, ImageFrame aR) {
+        public Projector(IMultiframeImage aS, double anA) {
             iSrc = aS;
             iAngle = anA;
-            iRet = aR;
+            //iRet = aR;
         }
         
-        private void project() {
+        private void project(ImageFrame aF) {
             IMultiframeImage temp = iSrc.duplicate();
             final int nSlices = iImage.getNumFrames();		                
             final int width = iImage.getWidth();
@@ -113,14 +114,19 @@ public class MIPProjector implements Runnable {
 
                     final int pixNormVal = (int)((pixMax / maxVol) * 32767.0);
 
-                    iRet.setPixel(width-x-1, z, pixNormVal);
+                    aF.setPixel(width-x-1, z, pixNormVal);
                 }
             }			
     
         }
-        
         public void run() {
-            
+        
+        }
+        
+        public ImageFrame call() {
+            ImageFrame ret = new ImageFrame(iSrc.getWidth(), iSrc.getHeight());
+            project(ret);
+            return ret;
         }
     }
     
