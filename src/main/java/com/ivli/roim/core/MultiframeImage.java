@@ -23,6 +23,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
     protected int iWidth;
     protected int iHeight;
     protected int iNumFrames;   
+    protected ImageType iImageType;
     protected PixelSpacing iPixelSpacing;
     protected SliceSpacing iSliceSpacing;
     protected TimeSliceVector iTimeSliceVector; 
@@ -39,7 +40,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
         iNumFrames = aP.getNumFrames();   
         iMin = Double.NaN;
         iMax = Double.NaN;
-
+        iImageType = aP.getImageType();
         iPixelSpacing = aP.getPixelSpacing();
         iTimeSliceVector = aP.getTimeSliceVector(); 
        
@@ -129,7 +130,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
     @Override
     public ImageType getImageType() {
          //TODO: implement reading from DICOM and sanity check
-        return getNumFrames() > 1 ? ImageType.DYNAMIC : ImageType.STATIC;
+        return iImageType;
     }
     
      @Override

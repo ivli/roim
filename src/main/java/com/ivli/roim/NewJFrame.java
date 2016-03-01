@@ -34,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.UIManager;
 
 import com.ivli.roim.controls.*;
+import com.ivli.roim.core.ImageType;
 import com.ivli.roim.events.*;
 
 
@@ -93,14 +94,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jSplitPane1 = new javax.swing.JSplitPane();
         jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -108,10 +108,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
-        jMenuItem6 = new javax.swing.JMenuItem();
-        jMenuItem9 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
@@ -142,7 +139,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel3.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
-        jTabbedPane1.addTab(bundle.getString("NewJFrame.jSplitPane1.TabConstraints.tabTitle"), jSplitPane1); // NOI18N
 
         jPanel4.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
@@ -157,37 +153,42 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
         jLabel4.setText(bundle.getString("NewJFrame.jLabel4.text")); // NOI18N
 
-        jLabel5.setText(bundle.getString("NewJFrame.jLabel5.text")); // NOI18N
+        jLabel6.setText(bundle.getString("NewJFrame.jLabel6.text")); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(197, 197, 197)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(99, 99, 99))
+                .addGap(117, 117, 117)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(70, 70, 70)
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(103, 103, 103))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel1))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel1)))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        jLabel6.getAccessibleContext().setAccessibleDescription(bundle.getString("NewJFrame.jLabel6.AccessibleContext.accessibleDescription")); // NOI18N
 
         jMenu1.setText(bundle.getString("NewJFrame.jMenu1.text")); // NOI18N
 
@@ -225,14 +226,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu2.add(jMenuItem3);
 
-        jMenuItem5.setText(bundle.getString("LUT_MENU.CHOOSE_LUT_FILE")); // NOI18N
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem5);
-
         jMenuItem7.setText(bundle.getString("NewJFrame.jMenuItem7.text")); // NOI18N
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -240,22 +233,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             }
         });
         jMenu2.add(jMenuItem7);
-
-        jMenuItem6.setText(bundle.getString("NewJFrame.jMenuItem6.text")); // NOI18N
-        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem6ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem6);
-
-        jMenuItem9.setText(bundle.getString("NewJFrame.jMenuItem9.text")); // NOI18N
-        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem9ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem9);
 
         jMenuItem8.setText(bundle.getString("NewJFrame.jMenuItem8.text")); // NOI18N
         jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
@@ -345,7 +322,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -456,9 +433,14 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         }
         */
         /**/
-        com.ivli.roim.algorithm.MIPProjector mp = new com.ivli.roim.algorithm.MIPProjector(mi2);
-        IMultiframeImage mi = mp.project(128);
+        IMultiframeImage mi;
         
+        if (mi2.getImageType() == ImageType.VOLUME) {
+            com.ivli.roim.algorithm.MIPProjector mp = new com.ivli.roim.algorithm.MIPProjector(mi2);
+            mi = mp.project(128);
+        } else {
+            mi = mi2;
+        }
         
         /**/
          //IMAGE
@@ -495,11 +477,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         openImage(null);//"d:\\images\\H2_res.dcm"); // NOI18N                   
     }//GEN-LAST:event_jMenuItem2ActionPerformed
     
-    private void jTabbedPane1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jTabbedPane1ComponentShown
-        // TODO add your handling code here:
-        logger.info(evt);
-    }//GEN-LAST:event_jTabbedPane1ComponentShown
-
             //static boolean b = true; 
                     
     private void jMenu2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu2ComponentShown
@@ -516,30 +493,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             iImage.reset();        
         }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
-
-    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-        FileDialog fd = new FileDialog(this, "NEWJFRAME.CHOOSE_ROILIST_FILE", FileDialog.LOAD);
-        fd.setDirectory(Settings.DEFAULT_FOLDER_ROILIST);
-        fd.setFile(Settings.FILE_SUFFIX_ROILIST);
-        fd.setVisible(true);
-        String ff ;
-        if (null != fd.getFile()) { /*
-            iPanel.iView.getROIMgr().internalize(fd.getDirectory() + fd.getFile());
-            iPanel.repaint();
-            */
-        }
-    }//GEN-LAST:event_jMenuItem9ActionPerformed
-
-    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
-        FileDialog fd = new FileDialog(this, "NEWJFRAME.CHOOSE_ROILIST_FILE", FileDialog.SAVE);
-        fd.setDirectory(Settings.DEFAULT_FOLDER_ROILIST);
-        fd.setFile(Settings.FILE_SUFFIX_ROILIST);
-        fd.setVisible(true);
-        
-       /* if (null != fd.getFile()) 
-            iPanel.iView.getROIMgr().externalize(fd.getDirectory() + fd.getFile());
-        */
-    }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         
@@ -564,21 +517,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             repaint();
         }
     }//GEN-LAST:event_jMenuItem7ActionPerformed
-
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        FileDialog fd = new FileDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_LUT_FILE"), FileDialog.LOAD);
-        fd.setDirectory(Settings.DEFAULT_FOLDER_LUT);
-        fd.setFile(Settings.FILE_SUFFIX_LUT);
-        fd.setVisible(true);
-        String cm ;
-        if (null != fd.getFile()) {
-            iImage.setLUT(fd.getDirectory() + fd.getFile());
-            jPanel1.repaint();
-            //iLut.setLUT(cm);
-            //iLut.repaint();
-            logger.info("LUT changed"); // NOI18N
-        }
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         switch(jTabbedPane1.getSelectedIndex()) {
@@ -637,6 +575,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         }
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
+    private void jTabbedPane1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jTabbedPane1ComponentShown
+        // TODO add your handling code here:
+        logger.info(evt);
+    }//GEN-LAST:event_jTabbedPane1ComponentShown
+
     /**
      * @param args the command line arguments
      */
@@ -673,18 +616,22 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }
         
     public void zoomChanged(ZoomChangeEvent aE) {
-        jLabel1.setText(String.format("%3.0f", aE.getZoom() * 100.0)); // NOI18N
+        jLabel6.setText(String.format("%3.0f", aE.getZoom() * 100.0)); // NOI18N
+        
     }
     
     public void windowChanged(WindowChangeEvent aE) {
-        jLabel2.setText(String.format("%3.0f/%3.0f", aE.getWindow().getLevel(), aE.getWindow().getWidth())); // NOI18N        
+        jLabel4.setText(String.format("%3.0f/%3.0f", aE.getWindow().getLevel(), aE.getWindow().getWidth())); // NOI18N        
     }
     
-    public void frameChanged(FrameChangeEvent aE) {
-        jLabel4.setText(String.format("%d:%d", aE.getFrame() + 1, aE.getTotal())); // NOI18N
-        jLabel3.setText(String.format("%3.0f/%3.0f", aE.getRange().getMin(), aE.getRange().getMax())); // NOI18N
-        jLabel5.setText(String.format("%s - %s", aE.getTimeSlice().getFrom().format(), 
+    public void frameChanged(FrameChangeEvent aE) {     
+        jLabel1.setText(String.format("%d:%d", aE.getFrame() + 1, aE.getTotal())); // NOI18N
+        jLabel2.setText(String.format("%s - %s", aE.getTimeSlice().getFrom().format(), // NOI18N
                                                         aE.getTimeSlice().getTo().format()));
+        
+        
+        jLabel3.setText(String.format("%3.0f/%3.0f", aE.getRange().getMin(), aE.getRange().getMax())); // NOI18N
+        
     }
   
     public void ROIChanged(ROIChangeEvent anEvt) {
@@ -699,7 +646,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -716,17 +663,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
-    private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 

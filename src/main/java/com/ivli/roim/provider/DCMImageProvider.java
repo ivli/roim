@@ -50,8 +50,9 @@ public class DCMImageProvider implements IImageProvider {
         
         try {           
             iLoader.open(aFile);
+            iImageType = iLoader.getImageType();
             iTimeSliceVector = iLoader.getTimeSliceVector();        
-
+            
             try{
                 iPixelSpacing = iLoader.getPixelSpacing();
             } catch (IOException ex) {
@@ -93,9 +94,8 @@ public class DCMImageProvider implements IImageProvider {
         return iSliceSpacing;    
     }
     
-    public ImageType getImageType() {
-       
-        return ImageType.IMAGE;
+    public ImageType getImageType() {       
+        return iImageType;
     }
     
     @Override

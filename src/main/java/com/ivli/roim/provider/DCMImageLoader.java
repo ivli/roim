@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.provider;
 
-
+import com.ivli.roim.core.ImageType;
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.Raster;
@@ -34,7 +34,7 @@ import org.dcm4che2.imageioimpl.plugins.dcm.DicomImageReaderSpi;
 import org.dcm4che2.data.Attributes;
 import org.dcm4che2.io.DicomInputStream;
 /* ENDIF */
-/* IFDEF_DCM4CHE3 */
+ /* IFDEF_DCM4CHE3 */
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReaderSpi;
 import org.dcm4che3.io.DicomInputStream;
@@ -48,7 +48,6 @@ import com.ivli.roim.core.PixelSpacing;
 
 
 /* ENDIF */
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,90 +55,122 @@ import org.apache.logging.log4j.Logger;
 /*
  * This class incapsulates dcm4che access to DICOM file entities 
  */
-public class DCMImageLoader  {
-    
-    static {   
-        ImageIO.scanForPlugins(); 
+public class DCMImageLoader {
+
+    static {
+        ImageIO.scanForPlugins();
     }
-    
-    static final ImageReader installImageReader() {            
+
+    static final ImageReader installImageReader() {
         ImageReader ir = ImageIO.getImageReadersByFormatName("DICOM").next(); //NOI18N
 
         if (null == ir) {
             logger.error("It seems there's no DICOM reader available, make a try to install one"); //NOI18N
             IIORegistry registry = IIORegistry.getDefaultInstance();
-            registry.registerServiceProvider(new DicomImageReaderSpi());            
+            registry.registerServiceProvider(new DicomImageReaderSpi());
             ir = ImageIO.getImageReadersByFormatName("DICOM").next();  //NOI18N
-        } 
-           
-        return ir;      
-    }  
-       
-    private final ImageReader iReader = installImageReader();   
-    private Attributes  iDataSet;        
-    
-    public void open(String aFile) throws IOException {
-         
-        try (DicomInputStream dis = new DicomInputStream(new File(aFile))) {  
-            
-            iDataSet = dis.readDataset(-1, -1);//readFileMetaInformation();
-           
-        } catch (IOException e) {
-            logger.error("FATAL!", e);              
-        }        
-        
-        ImageInputStream iis = ImageIO.createImageInputStream(new File(aFile));
-        iReader.setInput(iis);  
-    }
-            
-    public TimeSliceVector getTimeSliceVector() throws IOException {               
-        ArrayList<PhaseInformation> phases = new ArrayList();
-                   
-        Sequence pid = (Sequence)iDataSet.getValue(Tag.PhaseInformationSequence);
-        
-        if (null != pid) {        
-            for (Attributes a : pid) {
-                int fd = a.getInt(Tag.ActualFrameDuration, 1);     
-                int nf = a.getInt(Tag.NumberOfFramesInPhase, 1);  
-                phases.add(new PhaseInformation(nf, fd));
-            }  
-        } else {  
-             // either image is single frame or phase information is not present
-            if (getNumImages() != 1)
-                logger.info("file is suspicious");
-            phases.add(new PhaseInformation(Math.max(1, getNumImages()), iDataSet.getInt(Tag.ActualFrameDuration, 1000)));   
         }
-         
-        return new TimeSliceVector(phases);
-    }   
-          
-    public PixelSpacing getPixelSpacing() throws IOException {        
-        double[] ps = iDataSet.getDoubles(Tag.PixelSpacing); 
-        if (null != ps && ps.length >=2 )
-            return new PixelSpacing (ps[0], ps[1]);
-        else
-            return PixelSpacing.UNITY_PIXEL_SPACING;
-    }    
-    
-    public double getMin() {
-      return iDataSet.getDouble(Tag.SmallestImagePixelValue, Double.NaN);
+
+        return ir;
     }
-        
+
+    private final ImageReader iReader = installImageReader();
+    private Attributes iDataSet;
+
+    public void open(String aFile) throws IOException {
+
+        try (DicomInputStream dis = new DicomInputStream(new File(aFile))) {
+
+            iDataSet = dis.readDataset(-1, -1);//readFileMetaInformation();
+
+        } catch (IOException e) {
+            logger.error("FATAL!", e);
+        }
+
+        ImageInputStream iis = ImageIO.createImageInputStream(new File(aFile));
+        iReader.setInput(iis);
+    }
+
+    public TimeSliceVector getTimeSliceVector() throws IOException {
+        ArrayList<PhaseInformation> phases = new ArrayList();
+
+        Sequence pid = (Sequence) iDataSet.getValue(Tag.PhaseInformationSequence);
+
+        if (null != pid) {
+            for (Attributes a : pid) {
+                int fd = a.getInt(Tag.ActualFrameDuration, 1);
+                int nf = a.getInt(Tag.NumberOfFramesInPhase, 1);
+                phases.add(new PhaseInformation(nf, fd));
+            }
+        } else {
+            // either image is single frame or phase information is not present
+            if (getNumImages() != 1) {
+                logger.info("file is suspicious");
+            }
+            phases.add(new PhaseInformation(Math.max(1, getNumImages()), iDataSet.getInt(Tag.ActualFrameDuration, 1000)));
+        }
+
+        return new TimeSliceVector(phases);
+    }
+
+    public PixelSpacing getPixelSpacing() throws IOException {
+        double[] ps = iDataSet.getDoubles(Tag.PixelSpacing);
+        if (null != ps && ps.length >= 2) {
+            return new PixelSpacing(ps[0], ps[1]);
+        } else {
+            return PixelSpacing.UNITY_PIXEL_SPACING;
+        }
+    }
+
+    public double getMin() {
+        return iDataSet.getDouble(Tag.SmallestImagePixelValue, Double.NaN);
+    }
+
     public double getMax() {
         return iDataSet.getDouble(Tag.LargestImagePixelValue, Double.NaN);
     }
-    
+
     public int getNumImages() throws IOException {
         return iReader.getNumImages(false);
-    }    
-   
+    }
+
+    static final private String DICOM_KEYWORD_STATIC = "STATIC";
+    static final private String DICOM_KEYWORD_DYNAMIC = "DYNAMIC";   
+    static final private String DICOM_KEYWORD_WB = "WHOLE BODY";
+    static final private String DICOM_KEYWORD_TOMO = "TOMO";
+    static final private String DICOM_KEYWORD_VOLUME = "RECON TOMO";
+    
+    public com.ivli.roim.core.ImageType getImageType() throws IOException {
+        Object o = iDataSet.getValue(Tag.ImageType);
+        ImageType ret = ImageType.IMAGE;
+        
+        if (null != o) {
+            
+            final String s = new String((byte[])o);
+                   
+            if(s.contains(DICOM_KEYWORD_STATIC))
+                ret = ImageType.STATIC;            
+            else if (s.contains("DYNAMIC"))
+                ret = ImageType.DYNAMIC;
+            else if (s.contains(DICOM_KEYWORD_WB))
+                ret = ImageType.WHOLEBODY;    
+            else if (s.contains(DICOM_KEYWORD_VOLUME)) //SIC:order is important
+                ret = ImageType.VOLUME;
+            else if (s.contains(DICOM_KEYWORD_TOMO))
+                ret = ImageType.TOMO;    
+                                    
+        }
+
+        return ret;
+    }
+
     public Raster readRaster(int aIndex) throws IOException {
         return iReader.readRaster(aIndex, readParam());
     }
 
     private ImageReadParam readParam() {
-        DicomImageReadParam param =
-                (DicomImageReadParam) iReader.getDefaultReadParam();
+        DicomImageReadParam param
+                = (DicomImageReadParam) iReader.getDefaultReadParam();
         //param.setWindowCenter(windowCenter);
         //param.setWindowWidth(windowWidth);
         param.setAutoWindowing(false);
@@ -151,7 +182,6 @@ public class DCMImageLoader  {
         //param.setOverlayGrayscaleValue(overlayGrayscaleValue);
         return param;
     }
-    
-    
+
     private static final Logger logger = LogManager.getLogger(DCMImageLoader.class);
 }
