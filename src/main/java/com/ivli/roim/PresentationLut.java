@@ -35,7 +35,8 @@ public final class PresentationLut implements com.ivli.roim.core.Transformation 
     }
           
     public void open(String aName) {
-        iLUT = LutLoader.open(iName = (null == aName ? Settings.DEFAULT_PRESENTATION_LUT:aName));
+        iName = (null == aName ? Settings.get(Settings.DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[1]):aName);
+        iLUT = LutLoader.open(iName);
     }
     
     @Override

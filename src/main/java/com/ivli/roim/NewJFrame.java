@@ -120,6 +120,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jMenuItem13 = new javax.swing.JMenuItem();
         jMenuItem14 = new javax.swing.JMenuItem();
         jMenuItem15 = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
@@ -307,6 +308,14 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             }
         });
         jMenu5.add(jMenuItem15);
+
+        jMenuItem5.setText(bundle.getString("NewJFrame.jMenuItem5.text")); // NOI18N
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItem5);
 
         jMenu4.add(jMenu5);
 
@@ -580,6 +589,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         logger.info(evt);
     }//GEN-LAST:event_jTabbedPane1ComponentShown
 
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        iImage.setFit(Fit.ONE_TO_ONE);
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -663,6 +676,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JPanel jPanel1;

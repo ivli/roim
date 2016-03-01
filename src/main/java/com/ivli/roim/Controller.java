@@ -65,12 +65,13 @@ class Controller implements ActionListener,  KeyListener,
     public static final int MOUSE_ACTION_MENU   = 200;
     public static final int MOUSE_ACTION_ROI    = 500;
     
-    protected int iLeftAction   = Settings.MOUSE_DEFAULT_ACTION_LEFT;
-    protected int iMiddleAction = Settings.MOUSE_DEFAULT_ACTION_MIDDLE;
-    protected int iRightAction  = Settings.MOUSE_DEFAULT_ACTION_RIGHT;
-    protected int iWheelAction  = Settings.MOUSE_DEFAULT_ACTION_WHEEL;
+    protected int iLeftAction   = Settings.get(Settings.MOUSE_DEFAULT_ACTION_LEFT, Controller.MOUSE_ACTION_ZOOM);
+    protected int iMiddleAction = Settings.get(Settings.MOUSE_DEFAULT_ACTION_MIDDLE, Controller.MOUSE_ACTION_PAN);
+                       ;
+    protected int iRightAction  = Settings.get(Settings.MOUSE_DEFAULT_ACTION_RIGHT, Controller.MOUSE_ACTION_WINDOW);
+    protected int iWheelAction  = Settings.get(Settings.MOUSE_DEFAULT_ACTION_WHEEL, Controller.MOUSE_ACTION_LIST);
 
-    private double iZoomStep = Settings.ZOOM_STEP_FACTOR;
+    private double iZoomStep = Settings.get(Settings.ZOOM_STEP_FACTOR, 10.);
     
     abstract class BaseActionItem extends ActionItem {
         BaseActionItem(int aX, int aY) {

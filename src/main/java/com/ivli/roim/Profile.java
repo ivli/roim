@@ -24,8 +24,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Path2D;
 import java.awt.Rectangle;
-import java.awt.image.Raster;
-
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +31,10 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class Profile extends Overlay {      
+public class Profile extends Overlay {   
+    public static final Color BLUEVIOLET = new Color(0.5411765f, 0.16862746f, 0.8862745f);
+    public static final Color VIOLET     = new Color(0.93333334f, 0.50980395f, 0.93333334f);
+    
     private boolean iShow = true;
     
     private boolean iNormalize = false;
@@ -54,7 +55,7 @@ public class Profile extends Overlay {
         final Rectangle bn = aTrans.createTransformedShape(iShape).getBounds();          
         final Color tmp = aGC.getColor();
         
-        aGC.setColor(Settings.BLUEVIOLET);
+        aGC.setColor(BLUEVIOLET);
         aGC.drawLine(bn.x, bn.y, bn.x+bn.width, bn.y);                           
         
         aGC.setColor(java.awt.Color.RED);

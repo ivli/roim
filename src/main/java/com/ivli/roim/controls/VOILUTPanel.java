@@ -43,7 +43,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private boolean iShowHistogram = true;
     //private HistogramExtractor iHEx = null;
     
-    private final ImageView iView;    
+    private final ImageFrame iFrame;    
     private final ChartPanel iPanel;
     private final String iCurveName;
     private Histogram iHist;
@@ -54,9 +54,10 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private XYSeries makeHistogram(int aWidth) {  
         if (null == iHist) {
             HistogramExtractor iHEx = new HistogramExtractor(null);
-            iView.getImage().extract(iHEx);
+            iFrame.extract(iHEx);
             iHist = iHEx.iHist;
         }
+        
         final String name = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM");
         XYSeries s = iHist.getSeriesRebinned(name, 256);
         return s;
@@ -67,14 +68,13 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         iPanel.getChart().getXYPlot().setDataset(0, updateLUTCurve(jPanel1.getWidth()));
     }   
     
-    public VOILUTPanel(LUTControl aP, ImageView aV) {
+    public VOILUTPanel(LUTControl aP, ImageFrame aF) {
         iCurveName = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT");
         iLUT = new LUTControl(aP);
         
         initComponents();
-        
-                        
-        if (null != (iView = aV)) {
+                                
+        if (null != (iFrame = aF)) {
             iShowHistogram = true;       
         } else             
             iShowHistogram = false;

@@ -21,9 +21,10 @@ package com.ivli.roim;
  *
  * @author likhachev
  */
-public enum Fit {
-    NONE,
-    VISIBLE,
-    WIDTH,
-    HEIGHT    
+public class Fit {
+    public static final int NONE = 0;    
+    public static final int VISIBLE = 1;
+    public static final int WIDTH = 2;
+    public static final int HEIGHT = 3;
+    public static final int ONE_TO_ONE = 4;    
 }

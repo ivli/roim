@@ -86,13 +86,13 @@ public class ImagePanel extends JPanel {
         repaint();    
     }
     
-    public void setFit(Fit aFit) {   
+    public void setFit(int aFit) {   
         iView.setFit(aFit);     
         repaint();   
     }
         
     public void showLUTDialog() {
-        VOILUTPanel panel = new VOILUTPanel(iLut, iView);//.getImage());
+        VOILUTPanel panel = new VOILUTPanel(iLut, iView.getImage());
         JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
 
         dialog.setContentPane(panel);

@@ -30,10 +30,6 @@ import java.awt.image.IndexColorModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/** Opens NIH Image look-up tables (LUTs), 768 byte binary LUTs
-	(256 reds, 256 greens and 256 blues), LUTs in text format, 
-	or generates the LUT specified by the string argument 
-	passed to the run() method. */
 public final class LutLoader {
     
     static final String BUILTIN_LUTS[] = {

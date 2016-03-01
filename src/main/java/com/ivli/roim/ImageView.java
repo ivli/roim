@@ -44,13 +44,14 @@ import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.events.*;
 import com.ivli.roim.core.ImageFrame;
+import java.awt.Color;
 
 
 public class ImageView extends JComponent {     
     private static final double  DEFAULT_SCALE_X = 1.0;
     private static final double  DEFAULT_SCALE_Y = 1.0;
     
-    protected Fit iFit = Settings.DEFAULT_FIT;     
+    protected int iFit = Settings.get(Settings.DEFAULT_IMAGE_SCALE, Fit.ONE_TO_ONE);     
     protected final IMultiframeImage iModel;                     
     protected       Controller iController;    
     protected final AffineTransform iZoom;
@@ -73,7 +74,7 @@ public class ImageView extends JComponent {
         
         iZoom   = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
         iOrigin = new Point(0, 0); 
-        iInterpolation = Settings.INTERPOLATION_METHOD;
+        iInterpolation = InterpolationMethod.get(Settings.get(Settings.INTERPOLATION_METHOD, InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR));
         iLUTMgr = new WLManager();        
         iROIMgr = new ROIManager(this);         
         iListeners = new EventListenerList();
@@ -110,13 +111,15 @@ public class ImageView extends JComponent {
         return iLUTMgr;
     }    
     
-    public void setFit(Fit aFit) {               
+    public void setFit(int aFit) {               
         iFit = aFit; 
+        Settings.set(Settings.DEFAULT_IMAGE_SCALE, aFit);
         invalidateBuffer();       
     }
            
     public void setInterpolationMethod(Object aMethod) {
         iInterpolation = aMethod;
+        Settings.set(Settings.INTERPOLATION_METHOD, InterpolationMethod.get(aMethod));
         invalidateBuffer();       
     }
     
@@ -131,13 +134,14 @@ public class ImageView extends JComponent {
         double scale;
         
         switch (iFit) {
-            case VISIBLE:
+            case Fit.ONE_TO_ONE: scale = 1.0; break;
+            case Fit.VISIBLE:
                 final double scaleX = (double)getWidth() / (double)getVisualWidth(); 
                 final double scaleY = (double)getHeight() / (double)getVisualHeight(); 
                 scale = Math.min(scaleX, scaleY); break;                
-            case HEIGHT: scale = (double)getHeight() / (double)getVisualHeight(); break;
-            case WIDTH:  scale = (double)getWidth() / (double)getVisualWidth(); break;
-            case NONE: //falltrough to default
+            case Fit.HEIGHT: scale = (double)getHeight() / (double)getVisualHeight(); break;
+            case Fit.WIDTH:  scale = (double)getWidth() / (double)getVisualWidth(); break;
+            case Fit.NONE: //falltrough to default
             default: 
                 return;                            
         }        
@@ -265,7 +269,7 @@ public class ImageView extends JComponent {
         iROIMgr.clear();
         iOrigin.x = iOrigin.y = 0;
         iZoom.setToScale(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
-        iFit = Settings.DEFAULT_FIT;
+        iFit = Settings.get(Settings.DEFAULT_IMAGE_SCALE, Fit.ONE_TO_ONE);
         invalidateBuffer();
     }    
     
