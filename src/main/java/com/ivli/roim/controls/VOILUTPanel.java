@@ -75,9 +75,9 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         
                         
         if (null != (iView = aV)) {
-            jCheckBox2.setSelected(iShowHistogram);       
+            iShowHistogram = true;       
         } else             
-            jCheckBox2.setEnabled(iShowHistogram = false);
+            iShowHistogram = false;
     
         XYPlot plot = new XYPlot();
    
@@ -85,7 +85,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         plot.setRenderer(0, new XYSplineRenderer());  
         
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
-        plot.setRangeAxis(0, new NumberAxis("VOILUTPANEL.AXIS_LABEL_VOI_CURVE"));                
+        plot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_VOI_CURVE")));                
         
         if (iShowHistogram) {             
             XYSeriesCollection col2 = new XYSeriesCollection();
@@ -93,11 +93,11 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
             
             plot.setDataset(1, col2);
             plot.setRenderer(1, new XYBarRenderer());
-            plot.setRangeAxis(1, new NumberAxis("VOILUTPANEL.AXIS_LABEL_IMAGE_HISTOGRAM"));
+            plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_IMAGE_SPACE")));
             plot.mapDatasetToRangeAxis(1, 1);
         }
         
-        plot.setDomainAxis(new NumberAxis("VOILUTPANEL.AXIS_LABEL_IMAGE_SPACE"));                
+        plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_IMAGE_HISTOGRAM")));                
         plot.setRangeGridlinesVisible(true);
         plot.setDomainGridlinesVisible(true);
         // change the rendering order so the primary dataset appears "behind" the 
@@ -144,7 +144,6 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jCheckBox2 = new javax.swing.JCheckBox();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setVerifyInputWhenFocusTarget(false);
@@ -157,7 +156,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 264, Short.MAX_VALUE)
+            .addGap(0, 274, Short.MAX_VALUE)
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(240, 240, 240)));
@@ -175,51 +174,34 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
             .addGap(0, 253, Short.MAX_VALUE)
         );
 
-        jCheckBox2.setText("<LUT_PANEL.SHOWHISTOGRAM>");
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addComponent(jCheckBox2)))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
-        // TODO add your handling code here:
-        iShowHistogram = !iShowHistogram;
-    }//GEN-LAST:event_jCheckBox2ActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
