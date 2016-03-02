@@ -513,7 +513,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 break;
             case KCommandShowDialog:    /**    TODO: refactor the dialog     **/     
                 
-                VOILUTPanel panel = new VOILUTPanel(this, null);
+                VOILUTPanel panel = new VOILUTPanel(this, iWLM.getView().getImage());
                 
                 javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
                 dialog.setContentPane(panel);

@@ -47,7 +47,7 @@ import com.ivli.roim.core.ImageFrame;
 import java.awt.Color;
 
 
-public class ImageView extends JComponent {     
+public class ImageView extends JComponent implements IWLManager {     
     private static final double  DEFAULT_SCALE_X = 1.0;
     private static final double  DEFAULT_SCALE_Y = 1.0;
     
@@ -58,12 +58,13 @@ public class ImageView extends JComponent {
     protected final Point iOrigin;    
     protected       Object iInterpolation;
     
-    protected final IWLManager iLUTMgr;        
+    //protected final IWLManager iLUTMgr;        
     protected final ROIManager iROIMgr;
     protected final EventListenerList iListeners;
     
     protected BufferedImage iBuf; 
-    
+    private VOILut          iVLUT;
+    private PresentationLut iPLUT;
     protected int iCurrent;
        
     ImageView(IMultiframeImage anImage) {  
@@ -75,7 +76,8 @@ public class ImageView extends JComponent {
         iZoom   = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
         iOrigin = new Point(0, 0); 
         iInterpolation = InterpolationMethod.get(Settings.get(Settings.INTERPOLATION_METHOD, InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR));
-        iLUTMgr = new WLManager();        
+        iVLUT = new VOILut(iModel.get(iCurrent));
+        iPLUT = new PresentationLut(null);        
         iROIMgr = new ROIManager(this);         
         iListeners = new EventListenerList();
         
@@ -106,11 +108,11 @@ public class ImageView extends JComponent {
     public ROIManager getROIMgr() {
         return iROIMgr;
     }    
-      
+     /* 
     public IWLManager getLUTMgr() {
         return iLUTMgr;
     }    
-    
+    */
     public void setFit(int aFit) {               
         iFit = aFit; 
         Settings.set(Settings.DEFAULT_IMAGE_SCALE, aFit);
@@ -153,7 +155,7 @@ public class ImageView extends JComponent {
     public void addWindowChangeListener(WindowChangeListener aL) {
         logger.info("-> addWindowChangeListener {}", aL);
         iListeners.add(WindowChangeListener.class, aL);
-        aL.windowChanged(new WindowChangeEvent(this, iLUTMgr.getWindow()));
+        aL.windowChanged(new WindowChangeEvent(this, this.getWindow()));
     }
    
     public void removeWindowChangeListener(WindowChangeListener aL) {
@@ -161,7 +163,7 @@ public class ImageView extends JComponent {
     }
             
     protected void notifyWindowChanged() {
-        final WindowChangeEvent evt = new WindowChangeEvent(this, iLUTMgr.getWindow());
+        final WindowChangeEvent evt = new WindowChangeEvent(this, this.getWindow());
                 
         for (WindowChangeListener l : iListeners.getListeners(WindowChangeListener.class)) {
             l.windowChanged(evt);     
@@ -172,7 +174,7 @@ public class ImageView extends JComponent {
         iListeners.add(FrameChangeListener.class, aL);
         aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),
                                                             //new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()),
-                                                    getLUTMgr().getRange(),                                                
+                                                    this.getRange(),                                                
                                                     iModel.getTimeSliceVector().getSlice(getCurrent())));                           
     }
     
@@ -183,7 +185,7 @@ public class ImageView extends JComponent {
     protected void notifyFrameChanged() {
         final FrameChangeEvent evt = new FrameChangeEvent(this, getCurrent(), iModel.getNumFrames(),
                                                             //new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()),
-                                                            getLUTMgr().getRange(),
+                                                            this.getRange(),
                                                             iModel.getTimeSliceVector().getSlice(getCurrent()));                
       
         for (FrameChangeListener l : iListeners.getListeners(FrameChangeListener.class))
@@ -224,8 +226,6 @@ public class ImageView extends JComponent {
         return ret;
     }
    
-   
-    
     public int getCurrent() {
         return iCurrent;
     }  
@@ -236,7 +236,7 @@ public class ImageView extends JComponent {
         } else {        
             iCurrent = aN;
          
-            iLUTMgr.setRange(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));// frameChanged();
+            this.setRange(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));
 
             iROIMgr.update();   
 
@@ -255,8 +255,7 @@ public class ImageView extends JComponent {
         iZoom.setToScale(iZoom.getScaleX() + aFactor, iZoom.getScaleY() + aFactor);        
         
         notifyZoomChanged();
-        invalidateBuffer();
-        ///repaint();            
+        invalidateBuffer();             
     }
      
     public void pan(int adX, int adY) {
@@ -291,7 +290,7 @@ public class ImageView extends JComponent {
         updateScale();        
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
-        BufferedImage src = getLUTMgr().transform(iModel.get(iCurrent).getBufferedImage(), null);                
+        BufferedImage src = this.transform(iModel.get(iCurrent).getBufferedImage(), null);                
         iBuf = z.filter(src, null);                  
     }
     
@@ -305,19 +304,13 @@ public class ImageView extends JComponent {
         iController.paint((Graphics2D)g); //must reside last in the paint chain   
     }
            
-    public class WLManager implements IWLManager {    
-        private VOILut          iVLUT;
-        private PresentationLut iPLUT;
+    //public class WLManager implements IWLManager {    
+        
         
         private boolean iLockRange  = false;
         private boolean iLockWindow = false;
         
-        //private 
-        WLManager() {       
-            iVLUT = new VOILut(iModel.get(iCurrent));
-            iPLUT = new PresentationLut(null);
-        }
-            
+                    
         public void lockRange(boolean aLock) {
             iLockRange = aLock;
         }
@@ -394,7 +387,11 @@ public class ImageView extends JComponent {
         public java.awt.image.BufferedImage transform (java.awt.image.BufferedImage aSrc, java.awt.image.BufferedImage aDst) {
             return iPLUT.transform(iVLUT.transform(aSrc, aDst), null);
         }
-    }
+    
+        @Override
+        public ImageView getView() {
+            return this;
+        }
     
     private static final Logger logger = LogManager.getLogger(ImageView.class);
 }

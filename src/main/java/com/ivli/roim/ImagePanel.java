@@ -38,7 +38,7 @@ public class ImagePanel extends JPanel {
                   
     public ImagePanel(ImageView aView) {       
         iView = aView;
-        iLut  = new LUTControl(iView.getLUTMgr());                                     
+        iLut  = new LUTControl(iView);                                     
         
         iView.addWindowChangeListener(iLut); 
         iView.addFrameChangeListener(iLut);
@@ -69,7 +69,7 @@ public class ImagePanel extends JPanel {
     }
     
     void setLUT(String aName) {
-        iView.getLUTMgr().openLUT(aName);        
+        iView.openLUT(aName);        
     }
     
     void reset() {    

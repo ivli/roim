@@ -124,7 +124,7 @@ class Controller implements ActionListener,  KeyListener,
             case MOUSE_ACTION_WINDOW: 
                  return new BaseActionItem(aX, aY) {
                      public void DoAction(int aX, int aY) {                        
-                        iControlled.getLUTMgr().setWindow(new Window(iControlled.getLUTMgr().getWindow().getLevel() + iY - aY, iControlled.getLUTMgr().getWindow().getWidth() + aX - iX));
+                        iControlled.setWindow(new Window(iControlled.getWindow().getLevel() + iY - aY, iControlled.getWindow().getWidth() + aX - iX));
                         iControlled.repaint();
                  }}; 
             case MOUSE_ACTION_ZOOM: return new BaseActionItem(aX, aY) {

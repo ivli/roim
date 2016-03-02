@@ -17,7 +17,8 @@ public interface IWLManager extends Transformation {
     void setLinear(boolean aLinear);
     boolean isLinear();   
     void lockRange(boolean aLock);
-    void lockWindow(boolean aLock);    
+    void lockWindow(boolean aLock);
+    com.ivli.roim.ImageView getView();    
      //TODO: 
     Curve getCurve();
 }

@@ -128,7 +128,7 @@ public class GridImageView extends ImageView {
                 max = Math.max(max, iModel.get(iCurrent + n).getMax());
             } 
             
-            iLUTMgr.setRange(new Range(min, max)); // frameChanged();
+            setRange(new Range(min, max)); // frameChanged();
 
             iROIMgr.update();   
 
@@ -169,7 +169,7 @@ public class GridImageView extends ImageView {
                                                     BufferedImage.TYPE_INT_RGB);//getImage().get(getCurrent()).getBufferedImage().getType());
         Graphics2D gc = tmp.createGraphics(); 
        
-        if (getLUTMgr().isInverted()) { 
+        if (isInverted()) { 
             final Color old = gc.getColor();
             gc.setColor(Color.WHITE);
             gc.fillRect(0, 0, getVisualWidth(), getVisualHeight());
@@ -187,7 +187,7 @@ public class GridImageView extends ImageView {
                               
                 if (iModel.hasAt(ndx)) {                    
                     BufferedImage img = iModel.get(ndx).getBufferedImage();
-                    BufferedImage src = getLUTMgr().transform(img, null);
+                    BufferedImage src = this.transform(img, null);
 
                     gc.drawImage(src, posx, posy, width, height, null);
                     
@@ -196,7 +196,7 @@ public class GridImageView extends ImageView {
                         gc.drawString(String.format("%d", ndx), posx + 2, posy + 12); // NOI18N
                     }                
                 } else {
-                    if (getLUTMgr().isInverted())                          
+                    if (this.isInverted())                          
                         gc.setColor(Color.WHITE);
                     else
                         gc.setColor(Color.BLACK);
