@@ -21,7 +21,9 @@ public class SeriesCollection implements java.io.Serializable {
       //  iTimeSliceVector = aV;
     }
     
-    //public SeriesCollection() {}
+    public boolean isEmpty() {
+        return iSeries.isEmpty();
+    }
     
     
     public void addSeries(Series aC) {

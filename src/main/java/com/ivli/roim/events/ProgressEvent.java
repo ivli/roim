@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 likhachev
+ * Copyright (C) 2016 likhachev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,15 @@ package com.ivli.roim.events;
  *
  * @author likhachev
  */
-public interface SettingsChangeListener extends java.util.EventListener {
-    void settingsChanged(SettingsChangeEvent anEvt); 
+public class ProgressEvent extends java.util.EventObject {    
+    private final int iProgress; 
+    
+    public ProgressEvent(Object aO, int aProgress) {
+        super(aO); 
+        iProgress = aProgress;        
+    }  
+    
+    public int getProgress() {
+        return iProgress;
+    }  
 }

@@ -129,28 +129,15 @@ public class ImageView extends JComponent implements IWLManager {
         return iInterpolation;
     }
         
-    protected int getVisualWidth() {return iModel.getWidth();}
-    protected int getVisualHeight() {return iModel.getHeight();}
-    
-    protected void updateScale() {
-        double scale;
-        
-        switch (iFit) {
-            case Fit.ONE_TO_ONE: scale = 1.0; break;
-            case Fit.VISIBLE:
-                final double scaleX = (double)getWidth() / (double)getVisualWidth(); 
-                final double scaleY = (double)getHeight() / (double)getVisualHeight(); 
-                scale = Math.min(scaleX, scaleY); break;                
-            case Fit.HEIGHT: scale = (double)getHeight() / (double)getVisualHeight(); break;
-            case Fit.WIDTH:  scale = (double)getWidth() / (double)getVisualWidth(); break;
-            case Fit.NONE: //falltrough to default
-            default: 
-                return;                            
-        }        
-        
-        iZoom.setToScale(scale, scale); //does it make sense to implement non isomorphic scale?
+    protected int getVisualWidth() {
+        return iModel.getWidth();
     }
-                     
+    
+    protected int getVisualHeight() {
+        return iModel.getHeight();
+    }
+    
+        
                      
     public void addWindowChangeListener(WindowChangeListener aL) {
         logger.info("-> addWindowChangeListener {}", aL);
@@ -249,12 +236,11 @@ public class ImageView extends JComponent implements IWLManager {
         return true;
     }
     
+    private static final double MIN_ZOOM = .1;
+    
     public void zoom(double aFactor) {
-        iFit = Fit.NONE;
-        
-        iZoom.setToScale(iZoom.getScaleX() + aFactor, iZoom.getScaleY() + aFactor);        
-        
-        notifyZoomChanged();
+        iFit = Fit.NONE;        
+        iZoom.setToScale(Math.max(iZoom.getScaleX() + aFactor, MIN_ZOOM), Math.max(iZoom.getScaleY() + aFactor, MIN_ZOOM));               
         invalidateBuffer();             
     }
      
@@ -286,12 +272,35 @@ public class ImageView extends JComponent implements IWLManager {
         iBuf = null;
     }
     
+    protected void updateScale() {
+        double scale;
+        
+        switch (iFit) {
+            case Fit.ONE_TO_ONE: scale = 1.0; break;
+            case Fit.VISIBLE:
+                final double scaleX = (double)getWidth() / (double)getVisualWidth(); 
+                final double scaleY = (double)getHeight() / (double)getVisualHeight(); 
+                scale = Math.min(scaleX, scaleY); break;                
+            case Fit.HEIGHT: scale = (double)getHeight() / (double)getVisualHeight(); break;
+            case Fit.WIDTH:  scale = (double)getWidth() / (double)getVisualWidth(); break;
+            case Fit.NONE: //falltrough to default
+            default: 
+                return;                            
+        } 
+                  
+        iZoom.setToScale(scale, scale); 
+            
+       
+    }                 
+    
     protected void updateBufferedImage() {                  
         updateScale();        
+        notifyZoomChanged();
+        
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
-        BufferedImage src = this.transform(iModel.get(iCurrent).getBufferedImage(), null);                
-        iBuf = z.filter(src, null);                  
+        BufferedImage src = transform(iModel.get(iCurrent).getBufferedImage(), null);                
+        iBuf = z.filter(src, null); 
     }
     
     @Override

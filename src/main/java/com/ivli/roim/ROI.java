@@ -51,27 +51,38 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);
           
-        iAreaInPixels = calculateAreaInPixels();
-        iSeries = CurveExtractor.extract(getManager().getImage(), this, getManager().getOffsetVector());
+        iAreaInPixels = -1;///calculateAreaInPixels();
+        iSeries = null;//new SeriesCollection();//CurveExtractor.extract(getManager().getImage(), this, getManager().getOffsetVector());
     }
         
+    private void boildSeriesIfNeeded() {
+        if (null == iSeries)
+            iSeries = CurveExtractor.extract(getManager().getImage(), this, getManager().getOffsetVector());
+    }
+    
     public int getAreaInPixels() {
+        if(-1 == iAreaInPixels)///
+            calculateAreaInPixels();
         return iAreaInPixels;
     }
     
     public double getDensity() {
+        boildSeriesIfNeeded();
         return getSeries(Measurement.DENSITY).get(getManager().getView().getCurrent());
     }
     
     public double getMinPixel() {
+        boildSeriesIfNeeded();
         return getSeries(Measurement.MINPIXEL).get(getManager().getView().getCurrent());
     }
     
     public double getMaxPixel() {
+        boildSeriesIfNeeded();
         return getSeries(Measurement.MAXPIXEL).get(getManager().getView().getCurrent());
     }
     
-    public Series getSeries(Measurement anId) {       
+    public Series getSeries(Measurement anId) {  
+        boildSeriesIfNeeded();
         return iSeries.get(anId);
     }
     
@@ -92,8 +103,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
        notifyROIChanged(ROIChangeEvent.CHG.ChangedName, old);         
     }
    
-    void drawProfiles(Graphics2D aGC, AffineTransform aTrans) {
-        
+    void drawProfiles(Graphics2D aGC, AffineTransform aTrans) {        
         final Rectangle bounds = iShape.getBounds();
         
         final int profileX[] = new int[bounds.width];;
@@ -175,7 +185,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
             drawProfiles(aGC, aTrans);
     }
         
-    private int calculateAreaInPixels() {
+    private void calculateAreaInPixels() {
         final java.awt.Rectangle bnds = getShape().getBounds();
         int AreaInPixels = 0;
 
@@ -184,13 +194,13 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
                 if (getShape().contains(i, j)) 
                   ++AreaInPixels;
         
-        return AreaInPixels;
+        iAreaInPixels = AreaInPixels;
     }                 
         
     @Override
     void update() {    
-        iAreaInPixels = calculateAreaInPixels();
-        iSeries = CurveExtractor.extract(this.getManager().getImage(), this, getManager().getOffsetVector());           
+        iAreaInPixels = -1;
+        iSeries = null;//new SeriesCollection();            
     }
     
     @Override

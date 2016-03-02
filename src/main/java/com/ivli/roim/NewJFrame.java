@@ -38,7 +38,7 @@ import com.ivli.roim.core.ImageType;
 import com.ivli.roim.events.*;
 
 
-public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener {     
+public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
     private ImagePanel  iImage;
     private ImagePanel  iGrid;    
     private ImagePanel  iOff;
@@ -628,6 +628,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
     }
         
+    public void ProgressChanged(ProgressEvent anEvt) {
+        
+    }
+    
     public void zoomChanged(ZoomChangeEvent aE) {
         jLabel6.setText(String.format("%3.0f", aE.getZoom() * 100.0)); // NOI18N
         
