@@ -24,9 +24,10 @@ import java.awt.RenderingHints;
  * @author likhachev
  */
 public class InterpolationMethod {
-    public static final int INTERPOLATION_NEAREST_NEIGHBOR = 0;
-    public static final int INTERPOLATION_BILINEAR = 1;
-    public static final int INTERPOLATION_BICUBIC = 2;
+    public static final int INTERPOLATION_NONE = 0;
+    public static final int INTERPOLATION_NEAREST_NEIGHBOR = 1;
+    public static final int INTERPOLATION_BILINEAR = 2;
+    public static final int INTERPOLATION_BICUBIC = 3;
     
     public static Object get(int aMethod) {        
         switch(aMethod) {            

@@ -44,6 +44,7 @@ import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.events.*;
 import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.ImageType;
 import java.awt.Color;
 
 
@@ -109,11 +110,7 @@ public class ImageView extends JComponent implements IWLManager {
     public ROIManager getROIMgr() {
         return iROIMgr;
     }    
-     /* 
-    public IWLManager getLUTMgr() {
-        return iLUTMgr;
-    }    
-    */
+    
     public void setFit(int aFit) {               
         iFit = aFit; 
         Settings.set(Settings.DEFAULT_IMAGE_SCALE, aFit);
@@ -139,7 +136,7 @@ public class ImageView extends JComponent implements IWLManager {
     }
         
     public void addWindowChangeListener(WindowChangeListener aL) {
-        logger.info("-> addWindowChangeListener {}", aL);
+        logger.info("-> addWindowChangeListener {}", aL); //NOI18N
         iListeners.add(WindowChangeListener.class, aL);
         aL.windowChanged(new WindowChangeEvent(this, this.getWindow()));
     }
@@ -158,10 +155,14 @@ public class ImageView extends JComponent implements IWLManager {
     
     public void addFrameChangeListener(FrameChangeListener aL) {
         iListeners.add(FrameChangeListener.class, aL);
-        aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),
-                                                            //new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()),
-                                                    this.getRange(),                                                
-                                                    iModel.getTimeSliceVector().getSlice(getCurrent())));                           
+        if (iModel.getImageType() == ImageType.DYNAMIC)
+            aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),                                                            
+                                                        this.getRange(),                                                
+                                                        iModel.getTimeSliceVector().getSlice(getCurrent()))); 
+        else
+            aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),                                                            
+                                                        this.getRange(),                                                
+                                                        iModel.getTimeSliceVector().getSlice(getCurrent()))); 
     }
     
     public void removeFrameChangeListener(FrameChangeListener aL) {

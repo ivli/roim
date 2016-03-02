@@ -47,7 +47,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         iWidth = aI.getWidth();
         iHeight = aI.getHeight();
         iPixels = new int[iWidth*iHeight];
-        System.arraycopy(aI.getSamples(), 0, iPixels, 0, iWidth*iHeight);
+        System.arraycopy(aI.getPixelData(), 0, iPixels, 0, iWidth*iHeight);
         iMin = aI.iMin;
         iMax = aI.iMax;
         iIden = aI.iIden;
@@ -67,7 +67,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
        
     public ImageFrame duplicate() {       
         ImageFrame ret = new ImageFrame(iWidth, iHeight); 
-        System.arraycopy(getSamples(), 0, ret.iPixels, 0, iWidth*iHeight);
+        System.arraycopy(getPixelData(), 0, ret.iPixels, 0, iWidth*iHeight);
         ret.iMin = iMin;
         ret.iMax = iMax;
         ret.iIden = iIden;
@@ -166,7 +166,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         }
     }
          
-    public int[] getSamples() {
+    public int[] getPixelData() {
         return iPixels;
     }
     

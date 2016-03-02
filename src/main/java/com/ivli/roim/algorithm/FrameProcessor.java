@@ -18,31 +18,28 @@
 package com.ivli.roim.algorithm;
 
 
+import com.ivli.roim.InterpolationMethod;
 import com.ivli.roim.core.ImageFrame;
 /**
  *
  * @author likhachev
  */
-public class FrameProcessor {    
-    public enum InterpolationMethod {
-        NONE, BICUBIC, BILINEAR
-    }       
-    
-    private ImageFrame iFrame;
+public class FrameProcessor {       
+    private final ImageFrame iFrame;
        
-    private InterpolationMethod iInterpol = InterpolationMethod.NONE;
+    private int iInterpol = InterpolationMethod.INTERPOLATION_NONE;
         
     public FrameProcessor(ImageFrame aF) {
         iFrame = aF;        
     }
     
     public void setInterpolate(boolean aI) {
-        iInterpol = aI ? InterpolationMethod.BICUBIC : InterpolationMethod.NONE;
+        iInterpol = aI ? InterpolationMethod.INTERPOLATION_BILINEAR : InterpolationMethod.INTERPOLATION_NONE;
     }
        
     protected int[] getPixelsCopy() {
         int[] pixels2 = new int[iFrame.getWidth()*iFrame.getHeight()];
-        System.arraycopy(iFrame.getSamples(), 0, pixels2, 0, iFrame.getWidth()*iFrame.getHeight());
+        System.arraycopy(iFrame.getPixelData(), 0, pixels2, 0, iFrame.getWidth()*iFrame.getHeight());
         return pixels2;	
     }
        
@@ -55,6 +52,19 @@ public class FrameProcessor {
                 iFrame.set(i, j, iFrame.get(i, j) + aF.get(i, j));        
     }
     
+    public void flipVert() {
+        final int width = iFrame.getWidth();
+        final int height = iFrame.getHeight() ;
+        final int [] buf = iFrame.getPixelData();
+        
+        for (int i=0; i < height/2; ++i)
+            for(int j=0; j< width; ++j) {
+                final int temp = buf[width*i+j];
+                buf[width*i+j] = buf[width*(width-i-1)+j];
+                buf[width*(width-i-1)+j] = temp;
+            }
+    }
+    
     public void rotate(final double anAngle) {               
         int roiX = 0;
         int roiY = 0;
@@ -63,13 +73,9 @@ public class FrameProcessor {
         final int roiWidth = width;
         final int roiHeight = height;
         
-        final int[] pixels = iFrame.getSamples(); //source
+        final int[] pixels = iFrame.getPixelData(); //source
         final int[] pixels2 = getPixelsCopy(); //destination
-        
-        //ImageProcessor ip2 = null;
-        //if (interpolationMethod==BICUBIC)
-        //        ip2 = new ShortProcessor(getWidth(), getHeight(), pixels2, null);
-        
+               
         double centerX = roiX + (roiWidth-1)/2.0;
         double centerY = roiY + (roiHeight-1)/2.0;
         int xMax = roiX + roiWidth - 1;
@@ -96,7 +102,7 @@ public class FrameProcessor {
                 xs = x*ca + tmp3;
                 ys = x*sa + tmp4;
                 if ((xs>=-0.01) && (xs<dwidth) && (ys>=-0.01) && (ys<dheight)) {
-                    if (InterpolationMethod.BILINEAR == iInterpol) {
+                    if (InterpolationMethod.INTERPOLATION_BILINEAR == iInterpol) {
                         if (xs<0.0) xs = 0.0;
                         if (xs>=xlimit) xs = xlimit2;
                         if (ys<0.0) ys = 0.0;			

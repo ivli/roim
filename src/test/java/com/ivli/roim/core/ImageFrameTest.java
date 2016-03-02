@@ -78,7 +78,7 @@ public class ImageFrameTest {
             ImageFrame instance = new ImageFrame(size_x, size_y, t2);
             ImageFrame result = instance.duplicate();
 
-            assertArrayEquals(test, result.getSamples());
+            assertArrayEquals(test, result.getPixelData());
             assertEquals(instance.getWidth(), result.getWidth());
             assertEquals(instance.getHeight(), result.getHeight());
             assertEquals(instance.getMin(), result.getMin(), THETA);
@@ -318,7 +318,7 @@ public class ImageFrameTest {
     }
 
     /**
-     * Test of getSamples method, of class ImageFrame.
+     * Test of getPixelData method, of class ImageFrame.
      */
     @Test
     public void testGetSamples() {
@@ -342,7 +342,7 @@ public class ImageFrameTest {
                 for (int j=0; j<size_y; ++j)
                     instance.setPixel(i, j, test[j*size_x + i]); 
 
-            int[] t2 = instance.getSamples();               
+            int[] t2 = instance.getPixelData();               
 
             assertArrayEquals(test, t2);
         }
@@ -368,7 +368,7 @@ public class ImageFrameTest {
 
             instance.setPixelData(size_x, size_y, test);        
 
-            int[] t2 = instance.getSamples();          
+            int[] t2 = instance.getPixelData();          
 
             assertArrayEquals(test, t2);
         }

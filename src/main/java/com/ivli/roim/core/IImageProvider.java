@@ -18,16 +18,70 @@
 package com.ivli.roim.core;
 
 /**
- *
+ *  
  * @author likhachev
  */
 public interface IImageProvider {                  
-    int getWidth();    
+    /**
+     *
+     * @return image width in pixels
+     */
+    int getWidth();  
+    /**
+     *
+     * @return image width in pixels
+     */
     int getHeight();   
-    int getNumFrames();            
+    /**
+     *
+     * @return a number of frames
+     */
+    int getNumFrames();      
+    
+    /**
+     *
+     * @return type of the image
+     * @see ImageDataType
+     * @sic it always returs INT32
+     */
+    ImageDataType getImageDataType();
+        
+    /**
+     *
+     * @return type of the image
+     * @see ImageType
+     */
     ImageType getImageType();
-    PixelSpacing getPixelSpacing();       
+    /**
+     *
+     * @return pixel physical dimensions in mm
+     */
+    PixelSpacing getPixelSpacing();  
+    /**
+     *
+     * @return for TOMO RECON images - physical slice thickness 
+     */
     SliceSpacing getSliceSpacing();
-    TimeSliceVector getTimeSliceVector();       
-    ImageFrame get(int anIndex) throws IndexOutOfBoundsException;    
+    /**
+     *
+     * @return for DYNAMIC images - temporal characteristics of multiframe image 
+     */
+    TimeSliceVector getTimeSliceVector();      
+    /**
+     *
+     * @param anIndex
+     * @return a frame of the image specified by parameter anIndex 
+     */
+    ImageFrame get(int anIndex) throws IndexOutOfBoundsException;   
+    /**
+     *
+     * @return minimal pixel value either loaded from dicom or calculated at loading time
+     */
+    public abstract double getMin();  
+
+    /**
+     *
+     * @return maximal pixel value either loaded from dicom or calculated at loading time
+     */
+    public abstract double getMax();
 }

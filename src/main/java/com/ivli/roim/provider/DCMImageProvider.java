@@ -19,6 +19,7 @@ package com.ivli.roim.provider;
 
 
 import com.ivli.roim.core.IImageProvider;
+import com.ivli.roim.core.ImageDataType;
 import java.io.IOException;
 
 import com.ivli.roim.core.ImageFrame;
@@ -98,6 +99,10 @@ public class DCMImageProvider implements IImageProvider {
         return iImageType;
     }
     
+    public ImageDataType getImageDataType() {
+        return ImageDataType.GRAYS32;
+    }
+    
     @Override
     public TimeSliceVector getTimeSliceVector() {
         return iTimeSliceVector;
@@ -113,5 +118,13 @@ public class DCMImageProvider implements IImageProvider {
         }
     }
 
+    public double getMin() {
+        return iLoader.getMin();
+    } 
+
+    public double getMax() {
+        return iLoader.getMax();
+    }
+    
     private static final Logger logger = LogManager.getLogger(DCMImageProvider.class);       
 }

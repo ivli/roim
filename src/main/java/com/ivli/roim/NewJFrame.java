@@ -456,21 +456,25 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1.validate(); 
         
         //CHART
-        iChart = new ChartView();        
-        iChart.initChart();
-        iChart.setPreferredSize(jPanel3.getPreferredSize());
-        jPanel3.add(iChart);        
-
-        //GRID  
-        iGrid = new ImagePanel(new GridImageView(mi2, 4, 4));       
-        iGrid.setPreferredSize(jPanel4.getSize());
-        ///iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));        
-        jPanel4.setLayout(new BorderLayout());     
-        jPanel4.add(iGrid, BorderLayout.CENTER);        
-       // jPanel4.validate();
+        
+        if (mi.getImageType() == ImageType.DYNAMIC) {
+            iChart = new ChartView();        
+            iChart.initChart();
+            iChart.setPreferredSize(jPanel3.getPreferredSize());
+            jPanel3.add(iChart);  
+            iImage.addROIChangeListener(iChart);
+        }
+        
+        if (mi.getImageType() != ImageType.STATIC) {        
+            iGrid = new ImagePanel(new GridImageView(mi2, 4, 4));       
+            iGrid.setPreferredSize(jPanel4.getSize());
+            ///iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));        
+            jPanel4.setLayout(new BorderLayout());     
+            jPanel4.add(iGrid, BorderLayout.CENTER);        
+        }
         
         //
-        iImage.addROIChangeListener(iChart);       
+               
         iImage.addFrameChangeListener(this);        
         iImage.addWindowChangeListener(this);
         iImage.addZoomChangeListener(this);

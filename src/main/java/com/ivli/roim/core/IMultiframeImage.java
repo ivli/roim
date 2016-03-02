@@ -26,52 +26,8 @@ package com.ivli.roim.core;
  */
 public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.Serializable, IImageProvider {          
       
-    public abstract ImageDataType getImageDataType();
-    public abstract ImageType getImageType();
-    /**
-     *
-     * @return image widht in pixels
-     */
-    public abstract int getWidth();  
-
-    /**
-     *
-     * @return image heigdht in pixels
-     */
-    public abstract int getHeight();
-
-    /**
-     *
-     * @return pixel spacing X and Y in mm
-     */
-    public abstract PixelSpacing getPixelSpacing();   
-
-    /**
-     *
-     * @return temporal characteristics of the image 
-     */
-    public abstract TimeSliceVector getTimeSliceVector();
-
-    @Override
-    public abstract SliceSpacing getSliceSpacing();
-    /**
-     *
-     * @return a number of frames
-     */
-    public abstract int getNumFrames();  
     
-    /**
-     *
-     * @return minimal pixel value either loaded fro dicom or calculated at loading time
-     */
-    public abstract double getMin();  
-
-    /**
-     *
-     * @return maximal pixel value either loaded fro dicom or calculated at loading time
-     */
-    public abstract double getMax();
-    
+   
     /**
      *
      * @param aFrameNumber

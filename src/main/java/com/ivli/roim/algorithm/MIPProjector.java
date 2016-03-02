@@ -151,8 +151,7 @@ public class MIPProjector extends ProgressNotifier implements Runnable, IProgres
         
         for (int currProj = 0; currProj < aProjections; ++currProj) {
             notifyProgressChanged((int)(((angStep*currProj)/360.) * 100.));
-            
-            
+                        
             IMultiframeImage temp = iImage.duplicate();
 
             ImageFrame frm = mip.get(currProj);
@@ -190,13 +189,18 @@ public class MIPProjector extends ProgressNotifier implements Runnable, IProgres
                 }
             }			
         }
-        notifyProgressChanged(100);
+        
+        for (ImageFrame f : mip) {
+            FrameProcessor fp = new FrameProcessor(f);
+            fp.flipVert();
+        }
         return mip;
     }
     
     @Override
     public void run() {  
-        iRet = project(128);        
+        iRet = project(128);  
+        notifyProgressChanged(100);      
     }    
    
   

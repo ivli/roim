@@ -13,6 +13,7 @@ public final class FrameChangeEvent extends java.util.EventObject {
     
     private final Range iRange;
     private final TimeSlice iTimeSlice;
+    private final Double iAngularStep;
     
     public FrameChangeEvent(Object aO, int aFrame, int aTotal, Range aRange, TimeSlice aTimeSlice) {
         super(aO); 
@@ -20,6 +21,16 @@ public final class FrameChangeEvent extends java.util.EventObject {
         iTotal = aTotal;
         iRange = aRange;
         iTimeSlice = aTimeSlice;
+        iAngularStep = Double.NaN;
+    }  
+    
+    public FrameChangeEvent(Object aO, int aFrame, int aTotal, Range aRange, Double anAngularStep) {
+        super(aO); 
+        iFrame = aFrame;
+        iTotal = aTotal;
+        iRange = aRange;
+        iTimeSlice = null;
+        iAngularStep = anAngularStep;
     }  
     
     public int getFrame() {
@@ -37,6 +48,10 @@ public final class FrameChangeEvent extends java.util.EventObject {
     public TimeSlice getTimeSlice() {
         return iTimeSlice;
     }
+    
+    public double getAngularStep() {
+        return iAngularStep;
+    }    
 }
 
 
