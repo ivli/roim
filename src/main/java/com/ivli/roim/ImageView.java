@@ -48,8 +48,9 @@ import java.awt.Color;
 
 
 public class ImageView extends JComponent implements IWLManager {     
-    private static final double  DEFAULT_SCALE_X = 1.0;
-    private static final double  DEFAULT_SCALE_Y = 1.0;
+    private static final double DEFAULT_SCALE_X = 1.0;
+    private static final double DEFAULT_SCALE_Y = 1.0;    
+    private static final double MIN_SCALE = .01;
     
     protected int iFit = Settings.get(Settings.DEFAULT_IMAGE_SCALE, Fit.ONE_TO_ONE);     
     protected final IMultiframeImage iModel;                     
@@ -136,9 +137,7 @@ public class ImageView extends JComponent implements IWLManager {
     protected int getVisualHeight() {
         return iModel.getHeight();
     }
-    
         
-                     
     public void addWindowChangeListener(WindowChangeListener aL) {
         logger.info("-> addWindowChangeListener {}", aL);
         iListeners.add(WindowChangeListener.class, aL);
@@ -221,26 +220,20 @@ public class ImageView extends JComponent implements IWLManager {
         if (!iModel.hasAt(aN)) {            
             return false;
         } else {        
-            iCurrent = aN;
-         
+            iCurrent = aN;         
             this.setRange(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));
-
             iROIMgr.update();   
-
             notifyFrameChanged();
             notifyWindowChanged();
-
             invalidateBuffer();
         }
         
         return true;
     }
     
-    private static final double MIN_ZOOM = .1;
-    
     public void zoom(double aFactor) {
         iFit = Fit.NONE;        
-        iZoom.setToScale(Math.max(iZoom.getScaleX() + aFactor, MIN_ZOOM), Math.max(iZoom.getScaleY() + aFactor, MIN_ZOOM));               
+        iZoom.setToScale(Math.max(iZoom.getScaleX() + aFactor, MIN_SCALE), Math.max(iZoom.getScaleY() + aFactor, MIN_SCALE));               
         invalidateBuffer();             
     }
      
@@ -288,9 +281,7 @@ public class ImageView extends JComponent implements IWLManager {
                 return;                            
         } 
                   
-        iZoom.setToScale(scale, scale); 
-            
-       
+        iZoom.setToScale(scale, scale);  
     }                 
     
     protected void updateBufferedImage() {                  

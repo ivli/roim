@@ -8,14 +8,20 @@ import java.awt.Color;
  * @author likhachev
  */
 public class Settings {//java.io.Serializable { 
-    public static final String ACTIVE_ROI_COLOR = "ACTIVE_ROI_COLOR";//Color.RED;  
-    public static final String ZOOM_STEP_FACTOR = "ZOOM_STEP_FACTOR";//Double = 10.;    
-    public static final String DEFAULT_PRESENTATION_LUT = "DEFAULT_PRESENTATION_LUT";//Integer = 1;//LutLoader.BUILTIN_LUTS[1]; //GRAYS
-    public static final String INTERPOLATION_METHOD = "INTERPOLATION_METHOD";//= RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;//VALUE_INTERPOLATION_BILINEAR;//
+    public static final String ACTIVE_ROI_COLOR = "ACTIVE_ROI_COLOR";///NOI18N  
+    public static final String ZOOM_STEP_FACTOR = "ZOOM_STEP_FACTOR";//NOI18N   
+    public static final String DEFAULT_PRESENTATION_LUT = "DEFAULT_PRESENTATION_LUT";//NOI18N
+    public static final String INTERPOLATION_METHOD = "INTERPOLATION_METHOD";//NOI18N
+    
+    public static final String FILE_SUFFIX_LUT     = "FILE_SUFFIX_LUT";  //NOI18N    //= "*.lut";  
+    public static final String FILE_SUFFIX_DICOM   = "FILE_SUFFIX_DICOM";//NOI18N
+    public static final String FILE_SUFFIX_ROILIST = "FILE_SUFFIX_ROILIST";//NOI18N    = "*"; 
+    
     public static final String DEFAULT_FOLDER_LUT = "DEFAULT_FOLDER_LUT";//= "D:\\temp\\Lookup_Tables\\"; //NOI18N
-    public static final String FILE_SUFFIX_LUT = "FILE_SUFFIX_LUT";//= "*.lut"; //NOI18N    
+    public static final String DEFAULT_FOLDER_DICOM = "DEFAULT_FOLDER_DICOM";
     public static final String DEFAULT_FOLDER_ROILIST = "DEFAULT_FOLDER_ROILIST";//= ".\\"; //NOI18N
-    public static final String FILE_SUFFIX_ROILIST = "FILE_SUFFIX_ROILIST";//= "*"; //NOI18N
+    
+    
     
     public static final String MOUSE_DEFAULT_ACTION_LEFT = "MOUSE_DEFAULT_ACTION_LEFT";//= Controller.MOUSE_ACTION_ZOOM;
     public static final String MOUSE_DEFAULT_ACTION_MIDDLE = "MOUSE_DEFAULT_ACTION_MIDDLE";//= Controller.MOUSE_ACTION_PAN;

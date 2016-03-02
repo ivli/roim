@@ -18,17 +18,14 @@
 package com.ivli.roim;
 
 
+import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.MultiframeImage;
 import com.ivli.roim.provider.DCMImageProvider;
 import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.core.IMultiframeImage;
 import java.awt.*;
 import java.io.IOException;
-import java.io.File;
-import java.io.FilenameFilter;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import javax.swing.UIManager;
@@ -361,7 +358,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         } else {
             FileDialog fd = new FileDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_DICOM_FILE"), FileDialog.LOAD);
             
-            fd.setFile("*.dcm"); // NOI18N
+            fd.setFile(Settings.get(Settings.FILE_SUFFIX_DICOM, "*.dcm")); // NOI18N
             /* it doesn't work on win f*** 
             fd.setFilenameFilter(new FilenameFilter(){
                 @Override
@@ -370,7 +367,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 }
             });
             */
-            fd.setDirectory("D:\\images\\"); // NOI18N
+            fd.setDirectory(Settings.get(Settings.DEFAULT_FOLDER_DICOM, "D:\\images\\")); // NOI18N
             fd.setVisible(true);
 
             if (null != fd.getFile()) 
@@ -431,24 +428,22 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private void initPanels() {         
         jPanel1.removeAll();
         jPanel3.removeAll();
-                
-        IMultiframeImage mi2 = new MultiframeImage(iProvider);
+        jPanel4.removeAll();
         
-       /* IMultiframeImage mi2 = mi;//.duplicate();
-        
-        for (com.ivli.roim.core.ImageFrame f:mi2) {
-            com.ivli.roim.algorithm.FrameProcessor fp = new com.ivli.roim.algorithm.FrameProcessor(f);
-            fp.rotate(30.);
-        }
-        */
-        /**/
+        IMultiframeImage mi2 = new MultiframeImage(iProvider);       
         IMultiframeImage mi;
         
-        if (mi2.getImageType() == ImageType.VOLUME) {
-            com.ivli.roim.algorithm.MIPProjector mp = new com.ivli.roim.algorithm.MIPProjector(mi2);
-            mi = mp.project(128);
-        } else {
+        if (mi2.getImageType() != ImageType.VOLUME) {
             mi = mi2;
+        } else {
+        
+            MIPProjector mp = new MIPProjector(mi2);            
+            JDialog dialog = ProgressDialog.getPprogressDialog(this, mp, "Building MIP...");//JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);            
+            Thread t = new Thread(mp);            
+            t.start();
+            dialog.setVisible(true);
+            mi = mp.iRet;
+            //repaint();
         }
         
         /**/
@@ -483,11 +478,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        openImage(null);//"d:\\images\\H2_res.dcm"); // NOI18N                   
+        openImage(null);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
-    
-            //static boolean b = true; 
-                    
+          
     private void jMenu2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu2ComponentShown
         // TODO add your handling code here:
         if (null == iImage) {
@@ -628,8 +621,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
     }
         
-    public void ProgressChanged(ProgressEvent anEvt) {
-        
+    public void ProgressChanged(ProgressEvent aE) {
+        logger.debug(String.format("%d %% complete", (int)(aE.getProgress() * 100)));
+        jLabel2.setText(String.format("%d %% complete", (int)(aE.getProgress() * 100)));
+        jLabel2.repaint();
     }
     
     public void zoomChanged(ZoomChangeEvent aE) {
@@ -692,5 +687,4 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     // End of variables declaration//GEN-END:variables
 
     private final static Logger logger = LogManager.getLogger(NewJFrame.class);
-
 }

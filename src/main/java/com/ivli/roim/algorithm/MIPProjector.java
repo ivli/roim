@@ -19,7 +19,8 @@ package com.ivli.roim.algorithm;
 
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.IMultiframeImage;
-import java.util.concurrent.Callable;
+import com.ivli.roim.events.IProgressor;
+import com.ivli.roim.events.ProgressNotifier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -28,13 +29,17 @@ import java.util.concurrent.TimeUnit;
  *
  * @author likhachev
  */
-public class MIPProjector implements Runnable {
+public class MIPProjector extends ProgressNotifier implements Runnable, IProgressor {
     //private int nProj;
     private double  valDepthCorr = .1; //a value must lie between [0 - 1]
     private boolean iDepthCorr = true;
     final IMultiframeImage iImage;
-    
+    public IMultiframeImage iRet = null;
 
+    public ProgressNotifier getNotifier() {
+        return this;
+    }
+    
     public MIPProjector(IMultiframeImage anImage) {
         iImage = anImage;    
     }
@@ -145,8 +150,8 @@ public class MIPProjector implements Runnable {
         //final int noOfProj = (int) Math.ceil(360. /angStep);
         
         for (int currProj = 0; currProj < aProjections; ++currProj) {
-            //progress = ((double)angCurr / 360.0
-            //angCurr < 360.0; angCurr += angStep,
+            notifyProgressChanged((int)(((angStep*currProj)/360.) * 100.));
+            
             
             IMultiframeImage temp = iImage.duplicate();
 
@@ -185,11 +190,14 @@ public class MIPProjector implements Runnable {
                 }
             }			
         }
+        notifyProgressChanged(100);
         return mip;
     }
     
     @Override
-    public void run() {       						
+    public void run() {  
+        iRet = project(128);        
     }    
-        
+   
+  
 }
