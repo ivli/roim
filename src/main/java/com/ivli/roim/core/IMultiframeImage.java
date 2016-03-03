@@ -24,7 +24,7 @@ package com.ivli.roim.core;
  * note: this is just an iterator/accessor actual frames are stored in descendants  
  * 
  */
-public abstract class IMultiframeImage implements Iterable<ImageFrame>, java.io.Serializable, IImageProvider {          
+public abstract class IMultiframeImage implements Iterable<ImageFrame>, IImageProvider {          
       
     
    

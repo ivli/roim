@@ -33,6 +33,12 @@ import javax.swing.UIManager;
 import com.ivli.roim.controls.*;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.events.*;
+import java.io.File;
+import java.util.Locale;
+//import java.io.FileFilter;
+import javax.swing.JFileChooser;
+import javax.swing.LookAndFeel;
+import javax.swing.filechooser.FileFilter;
 
 
 public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
@@ -43,8 +49,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private ChartView   iChart2;
     private IImageProvider iProvider;
     
-    static {
-        
+    /**/
+    private static final void addjustLAF() {
+        UIManager.put("FileChooser.lookInLabelText", "Папка");
         UIManager.put("FileChooser.cancelButtonText", "Отмена");
         UIManager.put("FileChooser.cancelButtonToolTipText", "Отмена");
         UIManager.put("FileChooser.openButtonText", "Открыть");
@@ -63,16 +70,12 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         UIManager.put("FileChooser.fileDateHeaderText", "дата"); 
         UIManager.put("FileChooser.fileAttrHeaderText", "Аттрибуты");
         UIManager.put("FileChooser.listViewButtonToolTipText", "Список"); 
-        UIManager.put("FileChooser.listViewButtonAccessibleName", "Список"); 
-        /*UIManager.put("FileChooser.acceptAllFileFilterText", "Directorios");
-        UIManager.put("FileChooser.lookInLabelText", "Localização");
-       
-         */
+        UIManager.put("FileChooser.listViewButtonAccessibleName", "Список");      
         UIManager.put("FileChooser.openDialogTitleText", "Выберите файл");
-        UIManager.put("FileChooser.readOnly", Boolean.TRUE);
-        
+        UIManager.put("FileChooser.saveAsButtonText", "Сохранить как");
+        //UIManager.put("FileChooser.readOnly", Boolean.TRUE);        
     }
-
+    
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
         //iPanel = new ImagePanel();
@@ -160,7 +163,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(117, 117, 117)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -185,8 +188,6 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-
-        jLabel6.getAccessibleContext().setAccessibleDescription(bundle.getString("NewJFrame.jLabel6.AccessibleContext.accessibleDescription")); // NOI18N
 
         jMenu1.setText(bundle.getString("NewJFrame.jMenu1.text")); // NOI18N
 
@@ -327,8 +328,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             .addGroup(layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -352,22 +353,23 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private void openImage(String aF) /*throws IOException*/ {   
         String dicomFileName;
         
-        /* NOT_USE_SWING_DIALOG */
+        /* NOT_USE_SWING_DIALOG 
         if (null != aF) {
             dicomFileName = aF;
         } else {
             FileDialog fd = new FileDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_DICOM_FILE"), FileDialog.LOAD);
             
-            fd.setFile(Settings.get(Settings.FILE_SUFFIX_DICOM, "*.dcm")); // NOI18N
-            /* it doesn't work on win f*** 
+            fd.setFile(Settings.get(Settings.KEY_FILE_SUFFIX_DICOM, "*.dcm")); // NOI18N
+            
+            // following doesn't work on windows see JDK-4031440 f**k 
             fd.setFilenameFilter(new FilenameFilter(){
                 @Override
                 public boolean accept(File dir, String name) {
                     return name.endsWith(".dcm") || name.endsWith(".dicom");
                 }
             });
-            */
-            fd.setDirectory(Settings.get(Settings.DEFAULT_FOLDER_DICOM, "D:\\images\\")); // NOI18N
+            
+            fd.setDirectory(Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home"))); // NOI18N
             fd.setVisible(true);
 
             if (null != fd.getFile()) 
@@ -375,12 +377,15 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             else
                 return;
         }
-        /*
-      
         
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        fileChooser.setFileFilter(new FileFilter(){ 
+        
+        /* ELSE*/
+        JFileChooser jfc = new JFileChooser();;
+        
+        
+        jfc.setCurrentDirectory(new File(Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")))); // NOI18N
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setFileFilter(new FileFilter(){ 
             public  boolean accept(File f) {                                 
                 if (f.isDirectory()) 
                     return true;
@@ -405,12 +410,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         
         
-        int result = fileChooser.showOpenDialog(this);
+        int result = jfc.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
+            File selectedFile = jfc.getSelectedFile();
             System.out.println("Selected file: " + (dicomFileName = selectedFile.getAbsolutePath()));
-             
+            Settings.set(Settings.KEY_DEFAULT_FOLDER_DICOM,  selectedFile.getPath());
         } else {return;}
+        
         /* ENDIF */
         
         try {                           
@@ -418,7 +424,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             logger.info("opened file: " + dicomFileName);            
         } catch (IOException ex) {            
             logger.info("Unable to open file: " + dicomFileName); //NOI18N            
-            javax.swing.JOptionPane.showMessageDialog(this, "Unable to open file " + dicomFileName);
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE")
+                    + dicomFileName);
             return;
         } 
         
@@ -438,7 +446,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         } else {
         
             MIPProjector mp = new MIPProjector(mi2);            
-            JDialog dialog = ProgressDialog.getPprogressDialog(this, mp, "Building MIP...");//JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);            
+            JDialog dialog = ProgressDialog.getPprogressDialog(this, mp, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_BUILDING_MIP"));//JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);            
             Thread t = new Thread(mp);            
             t.start();
             dialog.setVisible(true);
@@ -606,6 +614,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                     break;
                 }
             }
+            
+            ///UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());//UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
@@ -616,7 +626,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        if (Locale.getDefault().equals(new Locale("ru", "RU")))
+            addjustLAF();
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -643,9 +655,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     public void frameChanged(FrameChangeEvent aE) {     
         jLabel1.setText(String.format("%d:%d", aE.getFrame() + 1, aE.getTotal())); // NOI18N
         jLabel2.setText(String.format("%s - %s", aE.getTimeSlice().getFrom().format(), // NOI18N
-                                                        aE.getTimeSlice().getTo().format()));
-        
-        
+                                                 aE.getTimeSlice().getTo().format()));
+                
         jLabel3.setText(String.format("%3.0f/%3.0f", aE.getRange().getMin(), aE.getRange().getMax())); // NOI18N
         
     }

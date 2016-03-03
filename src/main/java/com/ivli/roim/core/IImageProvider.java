@@ -39,10 +39,10 @@ public interface IImageProvider {
     int getNumFrames();      
     
     /**
-     *
+     * it always returs GRAYS32
      * @return type of the image
      * @see ImageDataType
-     * @sic it always returs INT32
+     *      
      */
     ImageDataType getImageDataType();
         

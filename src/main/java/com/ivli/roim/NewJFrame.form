@@ -214,8 +214,8 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPanel2" max="32767" attributes="0"/>
                   <Component id="jTabbedPane1" pref="767" max="32767" attributes="0"/>
+                  <Component id="jPanel2" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -314,7 +314,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" pref="38" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="109" max="32767" attributes="0"/>
                   <Component id="jLabel2" min="-2" pref="83" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="117" max="-2" attributes="0"/>
                   <Component id="jLabel3" min="-2" pref="55" max="-2" attributes="0"/>
@@ -382,11 +382,6 @@
               <ResourceString bundle="com/ivli/roim/Bundle.properties" key="NewJFrame.jLabel6.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
-          <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="com/ivli/roim/Bundle.properties" key="NewJFrame.jLabel6.AccessibleContext.accessibleDescription" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-          </AccessibilityProperties>
         </Component>
       </SubComponents>
     </Container>

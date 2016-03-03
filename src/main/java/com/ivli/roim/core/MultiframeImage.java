@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.core;
 
-public class MultiframeImage extends IMultiframeImage implements Cloneable {
+public class MultiframeImage extends IMultiframeImage implements Cloneable, java.io.Serializable  {
     protected final IImageProvider iProvider;
      //read from ImageProvider
     protected int iWidth;
@@ -28,8 +28,8 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
     protected SliceSpacing iSliceSpacing;
     protected TimeSliceVector iTimeSliceVector; 
      //computed
-    protected Double iMin;
-    protected Double iMax;
+    protected Double iMin = Double.NaN;
+    protected Double iMax = Double.NaN;
     
     protected java.util.ArrayList<ImageFrame> iFrames; 
     
@@ -37,9 +37,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
         iProvider = aP;        
         iWidth = aP.getWidth();
         iHeight = aP.getHeight();
-        iNumFrames = aP.getNumFrames();   
-        iMin = Double.NaN;
-        iMax = Double.NaN;
+        iNumFrames = aP.getNumFrames();           
         iImageType = aP.getImageType();
         iPixelSpacing = aP.getPixelSpacing();
         iTimeSliceVector = aP.getTimeSliceVector(); 
@@ -55,9 +53,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
         iWidth = aF.getWidth();
         iHeight = aF.getHeight();
         iNumFrames = 1;   
-        iMin = Double.NaN;
-        iMax = Double.NaN;
-
+        
         iPixelSpacing = PixelSpacing.UNITY_PIXEL_SPACING;
         iTimeSliceVector = TimeSliceVector.ONESHOT; 
        
@@ -67,21 +63,8 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
             iFrames.add(n, null);      
     }
     
-    private MultiframeImage(IMultiframeImage aM, int anImages) {
-        
-        iProvider = null;/*new IImageProvider() {            
-            public int getWidth() {return aM.getWidth();}   
-            public int getHeight() {return aM.getHeight();}   
-            public int getNumFrames() {return iNumFrames;}     
-            public ImageType getImageType() {return aM.getImageType();}
-            public PixelSpacing getPixelSpacing() {return aM.getPixelSpacing();}      
-            public SliceSpacing getSliceSpacing() {return aM.getSliceSpacing();}
-            public TimeSliceVector getTimeSliceVector() {return aM.getTimeSliceVector();}       
-            public ImageFrame get(int anIndex) throws IndexOutOfBoundsException {
-                return new ImageFrame(getWidth(), getHeight());
-            }
-        };
-        */
+    private MultiframeImage(IMultiframeImage aM, int anImages) {        
+        iProvider = null;
         iNumFrames = anImages;
         
         iWidth = aM.getWidth();
@@ -94,22 +77,9 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
         iFrames = new java.util.ArrayList<>(iNumFrames);
         for (int n=0; n < iNumFrames; ++n)
             iFrames.add(n, new ImageFrame(iWidth, iHeight));  
+  
+    }
         
-        iMin = iMax = Double.NaN;
-    }
-    
-    private MultiframeImage() {//MultiframeImage aM) {
-        iProvider = null;
-        /*
-        iNumFrames = aM.iNumFrames;
-        iMin = aM.iMin;
-        iMax = aM.iMax;
-        iFrames = new java.util.ArrayList<>(iNumFrames);
-       // for (int n=0; n < iNumFrames; ++n)
-       //     iFrames.add(n, null);   
-        */
-    }
-     
     protected void computeStatistics() {        
         iMin = Double.MAX_VALUE;
         iMax = Double.MIN_VALUE;
@@ -169,7 +139,8 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable {
        
      @Override
     public ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException {       
-        ImageFrame ret=null;
+        ImageFrame ret = null;
+        
         try {
             ret = iFrames.get(aFrameNumber);                            
         } catch (IndexOutOfBoundsException ex) {        

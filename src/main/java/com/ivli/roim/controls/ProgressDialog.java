@@ -72,11 +72,9 @@ public class ProgressDialog extends JPanel implements ProgressListener{
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    public void ProgressChanged(ProgressEvent anEvt) {
-        logger.debug(String.format("progress is %d", anEvt.getProgress()));
+    public void ProgressChanged(ProgressEvent anEvt) {        
         jProgressBar1.setValue(anEvt.getProgress());
-        if (anEvt.getProgress() >= 100) {
-            logger.debug("calling setVisible(false) - bye, bye...");
+        if (anEvt.getProgress() >= 100) {            
            ((ProgressNotifier)anEvt.getSource()).removeProgressListener(this);
             setVisible(false);
             JDialog dlg = (JDialog)this.getRootPane().getParent();
@@ -97,9 +95,12 @@ public class ProgressDialog extends JPanel implements ProgressListener{
             dialog.setTitle(aCaption);
         
         dialog.setContentPane(panel);
+        
         dialog.validate();
         dialog.pack();
         dialog.setResizable(false);
+        dialog.setLocation(aParent.getLocation().x + (aParent.getWidth() - dialog.getWidth())/2, 
+                           aParent.getLocation().y + (aParent.getHeight() - dialog.getHeight())/2);
         return dialog;
     }
     

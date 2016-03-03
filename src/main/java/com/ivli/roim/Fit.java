@@ -22,9 +22,24 @@ package com.ivli.roim;
  * @author likhachev
  */
 public class Fit {
+    /*
+     * no fit - zooming used
+     */
     public static final int NONE = 0;    
-    public static final int VISIBLE = 1;
-    public static final int WIDTH = 2;
-    public static final int HEIGHT = 3;
+    /*
+     * zoom to fit entire image into view
+     */
+    public static final int VISIBLE = 1; 
+    /*
+     * width
+     */
+    public static final int WIDTH = 2; 
+    /*
+     * height
+     */
+    public static final int HEIGHT = 3; 
+    /*
+     * apply 100% zoom thus image is displayed pixel to pixel no matter how big it is
+     */
     public static final int ONE_TO_ONE = 4;    
 }

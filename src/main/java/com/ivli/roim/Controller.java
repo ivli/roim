@@ -65,11 +65,11 @@ class Controller implements ActionListener,  KeyListener,
     public static final int MOUSE_ACTION_MENU   = 200;
     public static final int MOUSE_ACTION_ROI    = 500;
     
-    protected int iLeftAction   = Settings.get(Settings.MOUSE_DEFAULT_ACTION_LEFT, Controller.MOUSE_ACTION_ZOOM);
-    protected int iMiddleAction = Settings.get(Settings.MOUSE_DEFAULT_ACTION_MIDDLE, Controller.MOUSE_ACTION_PAN);
+    protected int iLeftAction   = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_LEFT, Controller.MOUSE_ACTION_ZOOM);
+    protected int iMiddleAction = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_MIDDLE, Controller.MOUSE_ACTION_PAN);
                        ;
-    protected int iRightAction  = Settings.get(Settings.MOUSE_DEFAULT_ACTION_RIGHT, Controller.MOUSE_ACTION_WINDOW);
-    protected int iWheelAction  = Settings.get(Settings.MOUSE_DEFAULT_ACTION_WHEEL, Controller.MOUSE_ACTION_LIST);
+    protected int iRightAction  = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_RIGHT, Controller.MOUSE_ACTION_WINDOW);
+    protected int iWheelAction  = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_WHEEL, Controller.MOUSE_ACTION_LIST);
 
     private  final double iZoomStep;// = Settings.get(Settings.ZOOM_STEP_FACTOR, 10.);
     
@@ -164,7 +164,7 @@ class Controller implements ActionListener,  KeyListener,
     
     public Controller(ImageView aC) {
         iControlled = aC;
-        iZoomStep = Math.min(aC.getImage().getWidth(), aC.getImage().getHeight()) / Settings.get(Settings.ZOOM_STEP_FACTOR, 10.);
+        iZoomStep = Math.min(aC.getImage().getWidth(), aC.getImage().getHeight()) / Settings.get(Settings.KEY_ZOOM_STEP_FACTOR, 10.);
         iWheel = NewAction(iWheelAction, 0, 0);        
         iControlled.addMouseListener(this);
         iControlled.addMouseMotionListener(this);

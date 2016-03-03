@@ -53,7 +53,7 @@ public class ImageView extends JComponent implements IWLManager {
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
     
-    protected int iFit = Settings.get(Settings.DEFAULT_IMAGE_SCALE, Fit.ONE_TO_ONE);     
+    protected int iFit = Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, Fit.ONE_TO_ONE);     
     protected final IMultiframeImage iModel;                     
     protected       Controller iController;    
     protected final AffineTransform iZoom;
@@ -77,7 +77,7 @@ public class ImageView extends JComponent implements IWLManager {
         
         iZoom   = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
         iOrigin = new Point(0, 0); 
-        iInterpolation = InterpolationMethod.get(Settings.get(Settings.INTERPOLATION_METHOD, InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR));
+        iInterpolation = InterpolationMethod.get(Settings.get(Settings.KEY_INTERPOLATION_METHOD, InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR));
         iVLUT = new VOILut(iModel.get(iCurrent));
         iPLUT = new PresentationLut(null);        
         iROIMgr = new ROIManager(this);         
@@ -113,13 +113,13 @@ public class ImageView extends JComponent implements IWLManager {
     
     public void setFit(int aFit) {               
         iFit = aFit; 
-        Settings.set(Settings.DEFAULT_IMAGE_SCALE, aFit);
+        Settings.set(Settings.KEY_DEFAULT_IMAGE_SCALE, aFit);
         invalidateBuffer();       
     }
            
     public void setInterpolationMethod(Object aMethod) {
         iInterpolation = aMethod;
-        Settings.set(Settings.INTERPOLATION_METHOD, InterpolationMethod.get(aMethod));
+        Settings.set(Settings.KEY_INTERPOLATION_METHOD, InterpolationMethod.get(aMethod));
         invalidateBuffer();       
     }
     
@@ -248,7 +248,7 @@ public class ImageView extends JComponent implements IWLManager {
         iROIMgr.clear();
         iOrigin.x = iOrigin.y = 0;
         iZoom.setToScale(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
-        iFit = Settings.get(Settings.DEFAULT_IMAGE_SCALE, Fit.ONE_TO_ONE);
+        iFit = Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, Fit.ONE_TO_ONE);
         invalidateBuffer();
     }    
     

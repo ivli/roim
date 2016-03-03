@@ -44,7 +44,7 @@ public class OverlayPicture extends Overlay {
     
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         
-        RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.INTERPOLATION_METHOD);
+        RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.KEY_INTERPOLATION_METHOD);
         AffineTransformOp z = new AffineTransformOp(aTrans, hts);
                     
         //BufferedImage src = iWM.transform(true != SUMMED_FRAME_PANE ? iImg.getBufferedImage():iImg.makeCompositeFrame(0, -1), null);

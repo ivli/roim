@@ -236,7 +236,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     }
   
     private void reset(Range aR) {            
-        if(Settings.get(Settings.PRESERVE_WINDOW, false) && null != iWin && null != iRange) {                    
+        if(Settings.get(Settings.KEY_PRESERVE_WINDOW, false) && null != iWin && null != iRange) {                    
             final double scale = aR.range() / iRange.range();           
             final double bottom = iWin.getBottom() * scale;
             final double range  = (iWin.getTop() - iWin.getBottom()) * scale; 

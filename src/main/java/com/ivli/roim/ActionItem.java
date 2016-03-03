@@ -80,7 +80,7 @@ public abstract class ActionItem {
      */
     public final void paint(java.awt.Graphics2D gc) {
         Color oc = gc.getColor();
-        gc.setColor(Settings.get(Settings.ACTIVE_ROI_COLOR, Color.RED));
+        gc.setColor(Settings.get(Settings.KEY_ACTIVE_ROI_COLOR, Color.RED));
         DoPaint(gc);
         gc.setColor(oc);
     }

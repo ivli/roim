@@ -37,7 +37,7 @@ public final class LutLoader {
     /*1*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_GRAYS"),
     /*2*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_ICE"),
     /*3*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_SPECTRUM"),
-    /*4*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_3-3-2 RGB"),
+    /*4*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_3-3-2_RGB"),
     /*5*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_RED"),
     /*6*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_GREEN"),
     /*7*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_BLUE"),

@@ -8,28 +8,28 @@ import java.awt.Color;
  * @author likhachev
  */
 public class Settings {//java.io.Serializable { 
-    public static final String ACTIVE_ROI_COLOR = "ACTIVE_ROI_COLOR";///NOI18N  
-    public static final String ZOOM_STEP_FACTOR = "ZOOM_STEP_FACTOR";//NOI18N   
-    public static final String DEFAULT_PRESENTATION_LUT = "DEFAULT_PRESENTATION_LUT";//NOI18N
-    public static final String INTERPOLATION_METHOD = "INTERPOLATION_METHOD";//NOI18N
+    public static final String KEY_ACTIVE_ROI_COLOR = "ACTIVE_ROI_COLOR";///NOI18N  
+    public static final String KEY_ZOOM_STEP_FACTOR = "ZOOM_STEP_FACTOR";//NOI18N   
+    public static final String KEY_DEFAULT_PRESENTATION_LUT = "DEFAULT_PRESENTATION_LUT";//NOI18N
+    public static final String KEY_INTERPOLATION_METHOD = "INTERPOLATION_METHOD";//NOI18N
     
-    public static final String FILE_SUFFIX_LUT     = "FILE_SUFFIX_LUT";  //NOI18N    //= "*.lut";  
-    public static final String FILE_SUFFIX_DICOM   = "FILE_SUFFIX_DICOM";//NOI18N
-    public static final String FILE_SUFFIX_ROILIST = "FILE_SUFFIX_ROILIST";//NOI18N    = "*"; 
+    public static final String KEY_FILE_SUFFIX_LUT     = "FILE_SUFFIX_LUT";  //NOI18N    //= "*.lut";  
+    public static final String KEY_FILE_SUFFIX_DICOM   = "FILE_SUFFIX_DICOM";//NOI18N
+    public static final String KEY_FILE_SUFFIX_ROILIST = "FILE_SUFFIX_ROILIST";//NOI18N    = "*"; 
     
-    public static final String DEFAULT_FOLDER_LUT = "DEFAULT_FOLDER_LUT";//= "D:\\temp\\Lookup_Tables\\"; //NOI18N
-    public static final String DEFAULT_FOLDER_DICOM = "DEFAULT_FOLDER_DICOM";
-    public static final String DEFAULT_FOLDER_ROILIST = "DEFAULT_FOLDER_ROILIST";//= ".\\"; //NOI18N
+    public static final String KEY_DEFAULT_FOLDER_LUT = "DEFAULT_FOLDER_LUT";//= "D:\\temp\\Lookup_Tables\\"; //NOI18N
+    public static final String KEY_DEFAULT_FOLDER_DICOM = "DEFAULT_FOLDER_DICOM";
+    public static final String KEY_DEFAULT_FOLDER_ROILIST = "DEFAULT_FOLDER_ROILIST";//= ".\\"; //NOI18N
     
     
     
-    public static final String MOUSE_DEFAULT_ACTION_LEFT = "MOUSE_DEFAULT_ACTION_LEFT";//= Controller.MOUSE_ACTION_ZOOM;
-    public static final String MOUSE_DEFAULT_ACTION_MIDDLE = "MOUSE_DEFAULT_ACTION_MIDDLE";//= Controller.MOUSE_ACTION_PAN;
-    public static final String MOUSE_DEFAULT_ACTION_RIGHT = "MOUSE_DEFAULT_ACTION_RIGHT";//= Controller.MOUSE_ACTION_WINDOW;
-    public static final String MOUSE_DEFAULT_ACTION_WHEEL = "MOUSE_DEFAULT_ACTION_WHEEL";//= Controller.MOUSE_ACTION_LIST;    
+    public static final String KEY_MOUSE_DEFAULT_ACTION_LEFT = "MOUSE_DEFAULT_ACTION_LEFT";//= Controller.MOUSE_ACTION_ZOOM;
+    public static final String KEY_MOUSE_DEFAULT_ACTION_MIDDLE = "MOUSE_DEFAULT_ACTION_MIDDLE";//= Controller.MOUSE_ACTION_PAN;
+    public static final String KEY_MOUSE_DEFAULT_ACTION_RIGHT = "MOUSE_DEFAULT_ACTION_RIGHT";//= Controller.MOUSE_ACTION_WINDOW;
+    public static final String KEY_MOUSE_DEFAULT_ACTION_WHEEL = "MOUSE_DEFAULT_ACTION_WHEEL";//= Controller.MOUSE_ACTION_LIST;    
         
-    public static final String DEFAULT_IMAGE_SCALE = "DEFAULT_IMAGE_SCALE";//Fit.ONE_TO_ONE;
-    public static final String PRESERVE_WINDOW = "PRESERVE_WINDOW";//true;
+    public static final String KEY_DEFAULT_IMAGE_SCALE = "DEFAULT_IMAGE_SCALE";//Fit.ONE_TO_ONE;
+    public static final String KEY_PRESERVE_WINDOW = "PRESERVE_WINDOW";//true;
        
     
     static java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userNodeForPackage(Settings.class);

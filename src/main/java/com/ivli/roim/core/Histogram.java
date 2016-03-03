@@ -24,8 +24,7 @@ import org.jfree.data.xy.XYSeries;
  *
  * @author likhachev
  */
-public class Histogram {
-    
+public class Histogram {    
     HashMap<Integer, Integer> iMap = new HashMap<>();
    
     int iMin = Integer.MAX_VALUE;
