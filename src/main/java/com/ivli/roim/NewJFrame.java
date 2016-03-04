@@ -51,29 +51,32 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     
     /**/
     private static final void addjustLAF() {
-        UIManager.put("FileChooser.lookInLabelText", "Папка");
-        UIManager.put("FileChooser.cancelButtonText", "Отмена");
-        UIManager.put("FileChooser.cancelButtonToolTipText", "Отмена");
-        UIManager.put("FileChooser.openButtonText", "Открыть");
-        UIManager.put("FileChooser.openButtonToolTipText", "Открыть");
-        UIManager.put("FileChooser.filesOfTypeLabelText", "Тип");
-        UIManager.put("FileChooser.fileNameLabelText", "Файл");
-        UIManager.put("FileChooser.detailsViewButtonToolTipText", "Подробно");
-        UIManager.put("FileChooser.detailsViewButtonAccessibleName", "Подробно");
-        UIManager.put("FileChooser.upFolderToolTipText", "На один уровень вверх"); 
-        UIManager.put("FileChooser.upFolderAccessibleName", "На один уровень вверх"); 
-        UIManager.put("FileChooser.homeFolderToolTipText", "Домой"); 
-        UIManager.put("FileChooser.homeFolderAccessibleName", "Домой"); 
-        UIManager.put("FileChooser.fileNameHeaderText", "Имя"); 
-        UIManager.put("FileChooser.fileSizeHeaderText", "Размер");
-        UIManager.put("FileChooser.fileTypeHeaderText", "Тип"); 
-        UIManager.put("FileChooser.fileDateHeaderText", "дата"); 
-        UIManager.put("FileChooser.fileAttrHeaderText", "Аттрибуты");
-        UIManager.put("FileChooser.listViewButtonToolTipText", "Список"); 
-        UIManager.put("FileChooser.listViewButtonAccessibleName", "Список");      
-        UIManager.put("FileChooser.openDialogTitleText", "Выберите файл");
-        UIManager.put("FileChooser.saveAsButtonText", "Сохранить как");
-        //UIManager.put("FileChooser.readOnly", Boolean.TRUE);        
+        if (Locale.getDefault().equals(new Locale("ru", "RU"))) { //NOI18N
+            /*  add locale to JFileChooser */
+            UIManager.put("FileChooser.lookInLabelText", "Папка");
+            UIManager.put("FileChooser.cancelButtonText", "Отмена");
+            UIManager.put("FileChooser.cancelButtonToolTipText", "Отмена");
+            UIManager.put("FileChooser.openButtonText", "Открыть");
+            UIManager.put("FileChooser.openButtonToolTipText", "Открыть");
+            UIManager.put("FileChooser.filesOfTypeLabelText", "Тип");
+            UIManager.put("FileChooser.fileNameLabelText", "Файл");
+            UIManager.put("FileChooser.detailsViewButtonToolTipText", "Подробно");
+            UIManager.put("FileChooser.detailsViewButtonAccessibleName", "Подробно");
+            UIManager.put("FileChooser.upFolderToolTipText", "На один уровень вверх"); 
+            UIManager.put("FileChooser.upFolderAccessibleName", "На один уровень вверх"); 
+            UIManager.put("FileChooser.homeFolderToolTipText", "Домой"); 
+            UIManager.put("FileChooser.homeFolderAccessibleName", "Домой"); 
+            UIManager.put("FileChooser.fileNameHeaderText", "Имя"); 
+            UIManager.put("FileChooser.fileSizeHeaderText", "Размер");
+            UIManager.put("FileChooser.fileTypeHeaderText", "Тип"); 
+            UIManager.put("FileChooser.fileDateHeaderText", "дата"); 
+            UIManager.put("FileChooser.fileAttrHeaderText", "Аттрибуты");
+            UIManager.put("FileChooser.listViewButtonToolTipText", "Список"); 
+            UIManager.put("FileChooser.listViewButtonAccessibleName", "Список");      
+            UIManager.put("FileChooser.openDialogTitleText", "Выберите файл");
+            UIManager.put("FileChooser.saveAsButtonText", "Сохранить как");
+            //UIManager.put("FileChooser.readOnly", Boolean.TRUE);               
+        }
     }
     
     public NewJFrame() {         
@@ -443,8 +446,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         
         if (mi2.getImageType() != ImageType.VOLUME) {
             mi = mi2;
-        } else {
-        
+        } else {        
             MIPProjector mp = new MIPProjector(mi2);            
             JDialog dialog = ProgressDialog.getPprogressDialog(this, mp, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_BUILDING_MIP"));//JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);            
             Thread t = new Thread(mp);            
@@ -479,8 +481,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             ///iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));        
             jPanel4.setLayout(new BorderLayout());     
             jPanel4.add(iGrid, BorderLayout.CENTER);        
-        }
-        
+        }        
         //
                
         iImage.addFrameChangeListener(this);        
@@ -607,15 +608,19 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
+        
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+         /*   for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) { // NOI18N
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
+        */
+        
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             
-            ///UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());//UIManager.getSystemLookAndFeelClassName());
+            
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
@@ -626,8 +631,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        if (Locale.getDefault().equals(new Locale("ru", "RU")))
-            addjustLAF();
+        
+        addjustLAF();
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
