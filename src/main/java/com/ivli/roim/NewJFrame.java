@@ -610,17 +610,19 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
          */
         
         try {
-         /*   for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+         /*  IF USE_NIMBUS_LAF */ 
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) { // NOI18N
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        */
         
+        /*  ELSE 
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             
-            
+        /*  END_IF USE_NIMBUS_LAF */    
+        
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {

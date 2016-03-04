@@ -24,7 +24,6 @@ import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import java.awt.color.ColorSpace;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -558,11 +557,13 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         mi12.setActionCommand(KCommandTriggerDirect); 
         mi12.setState(iWLM.isInverted());
         mnu.add(mi12);
-
-        JMenuItem mi13 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.SHOW_DIALOG"));
-        mi13.addActionListener(this);
-        mi13.setActionCommand(KCommandShowDialog); 
-        mnu.add(mi13);
+        
+        if (null == iParent) {
+            JMenuItem mi13 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.SHOW_DIALOG"));
+            mi13.addActionListener(this);
+            mi13.setActionCommand(KCommandShowDialog); 
+            mnu.add(mi13);
+        }
         
         JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.OPEN_BUILTIN_LUT"));
                

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.ivli</groupId>
   <artifactId>roim</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   <scm>
     <connection>scm:git:git@github.com:ivli/roim.git</connection>
     <developerConnection>scm:git:git@github.com:ivli/roim.git</developerConnection>
@@ -33,13 +33,7 @@
                 </goals>
                 <configuration>
                   <artifactSet>
-                    <excludes>
-                      <exclude>junit:junit</exclude>
-                      <exclude>jmock:*</exclude>
-                      <exclude>*:xml-apis</exclude>
-                      <exclude>org.apache.maven:lib:tests</exclude>
-                      <exclude>log4j:log4j:jar:</exclude>
-                    </excludes>
+                    <excludes />
                   </artifactSet>
                   <transformers>
                     <transformer>
