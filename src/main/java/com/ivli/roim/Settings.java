@@ -13,15 +13,16 @@ public class Settings {//java.io.Serializable {
     public static final String KEY_DEFAULT_PRESENTATION_LUT = "DEFAULT_PRESENTATION_LUT";//NOI18N
     public static final String KEY_INTERPOLATION_METHOD = "INTERPOLATION_METHOD";//NOI18N
     
-    public static final String KEY_FILE_SUFFIX_LUT     = "FILE_SUFFIX_LUT";  //NOI18N    //= "*.lut";  
-    public static final String KEY_FILE_SUFFIX_DICOM   = "FILE_SUFFIX_DICOM";//NOI18N
-    public static final String KEY_FILE_SUFFIX_ROILIST = "FILE_SUFFIX_ROILIST";//NOI18N    = "*"; 
+    public static final String KEY_FILE_SUFFIX_LUT     = "FILE_SUFFIX_LUT";  //NOI18N    //  
+    public static final String DEFAULT_FILE_SUFFIX_LUT = "lut";
+    public static final String KEY_LASTFILE_LUT        = ""; //NOI18N
+    public static final String DEFAULT_FILE_SUFFIX_DICOM = "dcm";
     
-    public static final String KEY_DEFAULT_FOLDER_LUT = "DEFAULT_FOLDER_LUT";//= "D:\\temp\\Lookup_Tables\\"; //NOI18N
-    public static final String KEY_DEFAULT_FOLDER_DICOM = "DEFAULT_FOLDER_DICOM";
-    public static final String KEY_DEFAULT_FOLDER_ROILIST = "DEFAULT_FOLDER_ROILIST";//= ".\\"; //NOI18N
+    public static final String KEY_FILE_SUFFIX_ROILIST = "FILE_SUFFIX_ROILIST"; //NOI18N    = "*"; 
     
-    
+    public static final String KEY_DEFAULT_FOLDER_LUT     = "DEFAULT_FOLDER_LUT"; // NOI18N
+    public static final String KEY_DEFAULT_FOLDER_DICOM   = "DEFAULT_FOLDER_DICOM";
+    public static final String KEY_DEFAULT_FOLDER_ROILIST = "DEFAULT_FOLDER_ROILIST";//= ".\\"; //NOI18N        
     
     public static final String KEY_MOUSE_DEFAULT_ACTION_LEFT = "MOUSE_DEFAULT_ACTION_LEFT";//= Controller.MOUSE_ACTION_ZOOM;
     public static final String KEY_MOUSE_DEFAULT_ACTION_MIDDLE = "MOUSE_DEFAULT_ACTION_MIDDLE";//= Controller.MOUSE_ACTION_PAN;

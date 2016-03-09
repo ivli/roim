@@ -77,9 +77,9 @@ public class DCMImageLoader {
     private final ImageReader iReader = installImageReader();
     private Attributes iDataSet;
 
-    public void open(String aFile) throws IOException {
+    public void open(File aFile) throws IOException {
 
-        try (DicomInputStream dis = new DicomInputStream(new File(aFile))) {
+        try (DicomInputStream dis = new DicomInputStream(aFile)) {
 
             iDataSet = dis.readDataset(-1, -1);//readFileMetaInformation();
 
@@ -87,7 +87,7 @@ public class DCMImageLoader {
             logger.error("FATAL!", e);
         }
 
-        ImageInputStream iis = ImageIO.createImageInputStream(new File(aFile));
+        ImageInputStream iis = ImageIO.createImageInputStream(aFile);
         iReader.setInput(iis);
     }
 

@@ -27,6 +27,7 @@ import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.SliceSpacing;
 import com.ivli.roim.core.TimeSliceVector;
+import java.io.File;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +47,7 @@ public class DCMImageProvider implements IImageProvider {
     SliceSpacing iSliceSpacing;
     ImageType iImageType;
     
-    public DCMImageProvider(String aFile) throws IOException { 
+    public DCMImageProvider(File aFile) throws IOException { 
         iLoader = new DCMImageLoader();
         
         try {           

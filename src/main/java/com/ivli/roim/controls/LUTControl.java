@@ -523,12 +523,14 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 break;
             case KCommandChangeLUT:
                 FileDialog fd = new FileDialog((Frame)null , java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.CHOOSE_LUT_FILE"), FileDialog.LOAD);
-                fd.setDirectory(Settings.KEY_DEFAULT_FOLDER_LUT);
-                fd.setFile(Settings.KEY_FILE_SUFFIX_LUT);
+                fd.setDirectory(Settings.get(Settings.KEY_DEFAULT_FOLDER_LUT, System.getProperty("user.home")));
+                fd.setFile(Settings.get(Settings.KEY_FILE_SUFFIX_LUT, Settings.DEFAULT_FILE_SUFFIX_LUT));
                 fd.setVisible(true);
                   
                 if (null != fd.getFile()) {
-                    iWLM.openLUT(fd.getDirectory() + fd.getFile());
+                    final String lutFile = fd.getDirectory() + fd.getFile();
+                    Settings.set(Settings.KEY_LASTFILE_LUT, lutFile);
+                    iWLM.openLUT(lutFile);
                     invalidateBuffer();                  
                     repaint();
                 } 

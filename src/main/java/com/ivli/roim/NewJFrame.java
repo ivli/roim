@@ -37,7 +37,6 @@ import java.io.File;
 import java.util.Locale;
 //import java.io.FileFilter;
 import javax.swing.JFileChooser;
-import javax.swing.LookAndFeel;
 import javax.swing.filechooser.FileFilter;
 
 
@@ -62,20 +61,29 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             UIManager.put("FileChooser.fileNameLabelText", "Файл");
             UIManager.put("FileChooser.detailsViewButtonToolTipText", "Подробно");
             UIManager.put("FileChooser.detailsViewButtonAccessibleName", "Подробно");
-            UIManager.put("FileChooser.upFolderToolTipText", "На один уровень вверх"); 
+            UIManager.put("FileChooser.upFolderToolTipText",    "На один уровень вверх"); 
             UIManager.put("FileChooser.upFolderAccessibleName", "На один уровень вверх"); 
-            UIManager.put("FileChooser.homeFolderToolTipText", "Домой"); 
+            UIManager.put("FileChooser.homeFolderToolTipText",   "Домой"); 
             UIManager.put("FileChooser.homeFolderAccessibleName", "Домой"); 
             UIManager.put("FileChooser.fileNameHeaderText", "Имя"); 
             UIManager.put("FileChooser.fileSizeHeaderText", "Размер");
             UIManager.put("FileChooser.fileTypeHeaderText", "Тип"); 
-            UIManager.put("FileChooser.fileDateHeaderText", "дата"); 
+            UIManager.put("FileChooser.fileDateHeaderText", "Дата"); 
             UIManager.put("FileChooser.fileAttrHeaderText", "Аттрибуты");
             UIManager.put("FileChooser.listViewButtonToolTipText", "Список"); 
             UIManager.put("FileChooser.listViewButtonAccessibleName", "Список");      
             UIManager.put("FileChooser.openDialogTitleText", "Выберите файл");
+            UIManager.put("FileChooser.saveDialogTitleText", "Выберите файл");
             UIManager.put("FileChooser.saveAsButtonText", "Сохранить как");
-            //UIManager.put("FileChooser.readOnly", Boolean.TRUE);               
+            UIManager.put("FileChooser.saveButtonText", "Сохранить");
+            UIManager.put("FileChooser.saveButtonToolTipText", "Сохранить");
+            
+            UIManager.put("FileChooser.acceptAllFileFilterText", "Все файлы");
+            
+            UIManager.put("FileChooser.desktopAccessibleName", "Рабочий стол");
+            UIManager.put("FileChooser.desktopToolTipText",    "Рабочий стол");
+            
+            UIManager.put("FileChooser.readOnly", Boolean.TRUE);               
         }
     }
     
@@ -124,6 +132,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jMenuItem14 = new javax.swing.JMenuItem();
         jMenuItem15 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
+        jMenu6 = new javax.swing.JMenu();
+        jMenuItem6 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
@@ -322,6 +332,20 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
         jMenuBar1.add(jMenu4);
 
+        jMenu6.setText(bundle.getString("NewJFrame.jMenu6.text")); // NOI18N
+        jMenu6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jMenu6.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        jMenuItem6.setText(bundle.getString("NewJFrame.jMenuItem6.text")); // NOI18N
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu6.add(jMenuItem6);
+
+        jMenuBar1.add(jMenu6);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -383,9 +407,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         
         
         /* ELSE*/
-        JFileChooser jfc = new JFileChooser();;
-        
-        
+        JFileChooser jfc = new JFileChooser();   
         jfc.setCurrentDirectory(new File(Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")))); // NOI18N
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setFileFilter(new FileFilter(){ 
@@ -401,35 +423,35 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                         ext = s.substring(i+1).toLowerCase();
                     }    
 
-                    if (ext.equalsIgnoreCase("dcm"))
+                    if (ext.equalsIgnoreCase(Settings.DEFAULT_FILE_SUFFIX_DICOM))
                         return true;
-  
                 }
                 
                 return false;
             }
             
-            public String getDescription() {return "DICOM";}                           
+            public String getDescription() {return java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("JFC.FILE_DESCRIPTION_DICOM");}                           
         });
         
         
         int result = jfc.showOpenDialog(this);
+        
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
             System.out.println("Selected file: " + (dicomFileName = selectedFile.getAbsolutePath()));
             Settings.set(Settings.KEY_DEFAULT_FOLDER_DICOM,  selectedFile.getPath());
-        } else {return;}
+        } else {
+            return;
+        }
         
         /* ENDIF */
         
         try {                           
-            iProvider = new DCMImageProvider(dicomFileName);
+            iProvider = new DCMImageProvider(new File(dicomFileName));
             logger.info("opened file: " + dicomFileName);            
         } catch (IOException ex) {            
             logger.info("Unable to open file: " + dicomFileName); //NOI18N            
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE")
-                    + dicomFileName);
+            javax.swing.JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dicomFileName);       
             return;
         } 
         
@@ -440,6 +462,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1.removeAll();
         jPanel3.removeAll();
         jPanel4.removeAll();
+        
+        jPanel1.repaint();
+        jPanel3.repaint();
+        jPanel4.repaint();
         
         IMultiframeImage mi2 = new MultiframeImage(iProvider);       
         IMultiframeImage mi;
@@ -599,6 +625,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         iImage.setFit(Fit.ONE_TO_ONE);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        AboutDialog dlg = new AboutDialog(this);
+        dlg.setVisible(true);
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -686,6 +717,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
+    private javax.swing.JMenu jMenu6;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
@@ -698,6 +730,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JPanel jPanel1;
