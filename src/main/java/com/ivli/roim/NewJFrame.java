@@ -18,6 +18,7 @@
 package com.ivli.roim;
 
 
+import com.ivli.roim.algorithm.FrameProcessor;
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.MultiframeImage;
 import com.ivli.roim.provider.DCMImageProvider;
@@ -31,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.UIManager;
 
 import com.ivli.roim.controls.*;
+import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.events.*;
 import java.io.File;
@@ -472,13 +474,14 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         
         if (mi2.getImageType() != ImageType.VOLUME) {
             mi = mi2;
+          
         } else {        
             MIPProjector mp = new MIPProjector(mi2);            
             JDialog dialog = ProgressDialog.getPprogressDialog(this, mp, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_BUILDING_MIP"));//JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);            
-            Thread t = new Thread(mp);            
-            t.start();
+            //Thread t = new Thread(mp);            
+            (new Thread(mp)).start();
             dialog.setVisible(true);
-            mi = mp.iRet;
+            mi = mp.getResult();
             //repaint();
         }
         

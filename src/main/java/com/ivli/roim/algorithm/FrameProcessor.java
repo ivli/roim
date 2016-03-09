@@ -27,13 +27,19 @@ import com.ivli.roim.core.ImageFrame;
 public class FrameProcessor {       
     private final ImageFrame iFrame;
        
-    private int iInterpol = InterpolationMethod.INTERPOLATION_NONE;
+    private int iInterpol;// 
         
     public FrameProcessor(ImageFrame aF) {
-        iFrame = aF;        
+        iFrame = aF;   
+        iInterpol = InterpolationMethod.INTERPOLATION_NONE;
     }
     
-    public void setInterpolate(boolean aI) {
+    public FrameProcessor(ImageFrame aF, int aI) {
+        iFrame = aF;   
+        iInterpol = aI;
+    }
+    
+    public void setInterpolation(boolean aI) {
         iInterpol = aI ? InterpolationMethod.INTERPOLATION_BILINEAR : InterpolationMethod.INTERPOLATION_NONE;
     }
        
@@ -53,7 +59,7 @@ public class FrameProcessor {
     }
     
     public void flipVert() {
-        final int width = iFrame.getWidth();
+        final int width  = iFrame.getWidth();
         final int height = iFrame.getHeight() ;
         final int [] buf = iFrame.getPixelData();
         
@@ -65,6 +71,19 @@ public class FrameProcessor {
             }
     }
     
+    public void flipHorz() {
+       final int width  = iFrame.getWidth();
+        final int height = iFrame.getHeight() ;
+        final int [] buf = iFrame.getPixelData();
+        
+        for (int i=0; i < height; ++i)
+            for(int j=0; j< width/2; ++j) {
+                final int temp = buf[width*i+j];                
+                buf[width*i+j] = buf[width*(i+1) - j-1];
+               buf[width*(i+1) - j -1] = temp;
+            } 
+    }
+        
     public void rotate(final double anAngle) {               
         int roiX = 0;
         int roiY = 0;
@@ -128,10 +147,10 @@ public class FrameProcessor {
         final double xFraction = aX - xbase;
         final double yFraction = aY - ybase;
         final int offset = ybase * iFrame.getWidth() + xbase;
-        final int lowerLeft = aPixels[offset];
+        final int lowerLeft  = aPixels[offset];
         final int lowerRight = aPixels[offset + 1];
         final int upperRight = aPixels[offset + iFrame.getWidth() + 1];
-        final int upperLeft = aPixels[offset + iFrame.getWidth()];
+        final int upperLeft  = aPixels[offset + iFrame.getWidth()];
         final double upperAverage = upperLeft + xFraction * (upperRight - upperLeft);
         final double lowerAverage = lowerLeft + xFraction * (lowerRight - lowerLeft);
         return lowerAverage + yFraction * (upperAverage - lowerAverage);

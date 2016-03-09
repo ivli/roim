@@ -17,6 +17,8 @@
  */
 package com.ivli.roim.core;
 
+import com.ivli.roim.algorithm.ImageProcessor;
+
 public class MultiframeImage extends IMultiframeImage implements Cloneable, java.io.Serializable  {
     protected final IImageProvider iProvider;
      //read from ImageProvider
@@ -217,5 +219,10 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable, java
         */
         return ret; 
     } 
+    
+    @Override
+    public ImageProcessor processor() {
+        return new ImageProcessor(this);     
+    }
 }
 
