@@ -57,7 +57,7 @@ public class FrameProcessor {
             for (int j = 0; j < iFrame.getHeight(); ++j) 
                 iFrame.set(i, j, iFrame.get(i, j) + aF.get(i, j));        
     }
-    
+        
     public void flipVert() {
         final int width  = iFrame.getWidth();
         final int height = iFrame.getHeight() ;
@@ -84,6 +84,7 @@ public class FrameProcessor {
             } 
     }
         
+    
     public void rotate(final double anAngle) {               
         int roiX = 0;
         int roiY = 0;

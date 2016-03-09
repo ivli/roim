@@ -77,5 +77,5 @@ public class ImageProcessor {
             
     public void rotate(final double anAngle) {
         rotate(anAngle, 0, iImage.getNumFrames());
-    }
+    }           
 }

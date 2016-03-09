@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.core;
 
+import com.ivli.roim.algorithm.FrameProcessor;
 import com.ivli.roim.algorithm.ImageProcessor;
 
 public class MultiframeImage extends IMultiframeImage implements Cloneable, java.io.Serializable  {
@@ -205,7 +206,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable, java
         
         ImageFrame sum = iFrames.get(frameFrom).duplicate();
         
-        com.ivli.roim.algorithm.FrameProcessor fp = new com.ivli.roim.algorithm.FrameProcessor(sum);
+        FrameProcessor fp = new FrameProcessor(sum);
         
         for (int n = frameFrom + 1; n < frameTo; ++n)            
             fp.add(iFrames.get(n));
