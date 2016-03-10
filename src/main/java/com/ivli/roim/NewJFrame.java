@@ -523,6 +523,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                     
                     
             mi = new MultiframeImage(ip);
+            //mi.processor().flipVert();
         }
         
         /**/

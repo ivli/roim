@@ -45,7 +45,7 @@ import com.ivli.roim.core.Window;
 import com.ivli.roim.events.*;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
-import java.awt.Color;
+import java.io.IOException;
 
 
 public class ImageView extends JComponent implements IWLManager {     
@@ -79,7 +79,21 @@ public class ImageView extends JComponent implements IWLManager {
         iOrigin = new Point(0, 0); 
         iInterpolation = InterpolationMethod.get(Settings.get(Settings.KEY_INTERPOLATION_METHOD, InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR));
         iVLUT = new VOILut(iModel.get(iCurrent));
-        iPLUT = new PresentationLut(null);        
+        iPLUT = new PresentationLut();
+        
+        String lut = Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[1]);
+        
+        try {
+            iPLUT.open(lut);
+        } catch (IOException ex) {
+            try {
+                iPLUT.open(lut = LutLoader.BUILTIN_LUTS[1]);
+                
+            } catch (IOException ex1) {
+                System.exit(-1);
+            }
+        }
+        Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, lut);
         iROIMgr = new ROIManager(this);         
         iListeners = new EventListenerList();
         
@@ -322,7 +336,12 @@ public class ImageView extends JComponent implements IWLManager {
         
         @Override
         public void openLUT(String aL) {
-            iPLUT.open(aL);
+            try {
+                iPLUT.open(aL);
+                Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, aL);
+            } catch (IOException ex) {
+               logger.error("Unable to open LUT file {}", ex);
+            }
             invalidateBuffer();  
             repaint();
         }

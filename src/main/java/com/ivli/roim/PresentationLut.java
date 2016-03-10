@@ -28,29 +28,12 @@ import java.io.IOException;
  * @author likhachev
  */
 public final class PresentationLut implements com.ivli.roim.core.Transformation {    
-    protected IndexColorModel iLUT;
-    
-    public PresentationLut(String aName) {
-        try {
-        open(aName);
-        } catch (IOException ex) {
-            System.exit(-1);
-        }
+    protected IndexColorModel iModel;
+             
+    public void open(String aName) throws IOException { 
+        iModel = LutLoader.open(aName);          
     }
-          
-    public void open(String aName) throws IOException {
-        String name = (null == aName ? Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[1]):aName);
-       
-        try {
-            iLUT = LutLoader.open(name);
-        } 
-        catch (IOException ex) {             
-            iLUT = LutLoader.open(name = LutLoader.BUILTIN_LUTS[1]);         
-        }
-        
-        Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, name);        
-    }
-    
+           
     @Override
     public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {        
         if (null == aDst)
@@ -63,7 +46,7 @@ public final class PresentationLut implements com.ivli.roim.core.Transformation 
         for (int y=0; y < aDst.getHeight(); y++) {
             for (int x=0; x < aDst.getWidth(); x++) {
                final int ndx=rs.getSample(x, y, 0);
-               final int sample=iLUT.getRGB(ndx); 
+               final int sample = iModel.getRGB(ndx); 
                final int[] rgb = new int[]{(sample&0x00ff0000)>>16, (sample&0x0000ff00)>>8, sample&0x000000ff};
 
                wr.setPixel(x, y, rgb);

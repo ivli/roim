@@ -79,8 +79,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable, java
         
         iFrames = new java.util.ArrayList<>(iNumFrames);
         for (int n=0; n < iNumFrames; ++n)
-            iFrames.add(n, new ImageFrame(iWidth, iHeight));  
-  
+            iFrames.add(n, new ImageFrame(iWidth, iHeight));    
     }
         
     protected void computeStatistics() {        

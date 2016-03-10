@@ -30,7 +30,7 @@ public class MIPProjector extends ProgressNotifier implements IProgressor {
     private final double DEPTH_FACTOR = .1; //must fit into range [0 - 1]
    
     private final IMultiframeImage iImage;
-    private IMultiframeImage iMIP;
+    private final IMultiframeImage iMIP;
     private int iProjections;
         
     
@@ -38,10 +38,9 @@ public class MIPProjector extends ProgressNotifier implements IProgressor {
         return this;
     }
     
-    public MIPProjector(IMultiframeImage aSrc) {
+    public MIPProjector(IMultiframeImage aSrc, int aProjections) {
         iImage = aSrc; 
-        iMIP = iImage.createCompatibleImage(iProjections);     
-        iProjections = 128;
+        iMIP = iImage.createCompatibleImage(iProjections = aProjections);             
     }
      
     public MIPProjector(IMultiframeImage aSrc, IMultiframeImage aDst) {

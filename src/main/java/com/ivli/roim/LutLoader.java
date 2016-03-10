@@ -210,8 +210,10 @@ public final class LutLoader {
                     size = openBinaryLut(fi, true, reds, greens, blues); // otherwise read raw LUT
                 if (size == 0 && length>768L)
                     size = openTextLut(fi, reds, greens, blues);
-                if (size == 0)
+                if (size == 0) {
                     logger.error(String.format("Unsupported LUT format"));
+                    throw new IOException("Unsupported LUT format");
+                }
             } catch (IOException e) {                        
                 logger.error("Error reading LUT file {}", e);
                 throw e;

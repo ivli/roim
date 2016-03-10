@@ -17,17 +17,17 @@
  */
 package com.ivli.roim.provider;
 
+import java.io.IOException;
+import java.io.File;
 
 import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.core.ImageDataType;
-import java.io.IOException;
-
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.SliceSpacing;
 import com.ivli.roim.core.TimeSliceVector;
-import java.io.File;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,11 +109,11 @@ public class DCMImageProvider implements IImageProvider {
         return iTimeSliceVector;
     }
     
+    @Override
     public ImageFrame get(int anIndex) throws IndexOutOfBoundsException/*, IOException*/ {
         try {
-            java.awt.image.Raster r = iLoader.readRaster(anIndex);            
-            int [] buf = new int[iWidth*iHeight];
-            return new ImageFrame(iWidth, iHeight, r.getSamples(0, 0, iWidth, iHeight, 0, buf));
+            java.awt.image.Raster r = iLoader.readRaster(anIndex);                       
+            return new ImageFrame(iWidth, iHeight, r.getSamples(0, 0, iWidth, iHeight, 0, new int[iWidth*iHeight]));
         } catch (IOException e) {
             throw new IndexOutOfBoundsException();
         }
