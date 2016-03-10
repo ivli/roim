@@ -21,28 +21,38 @@ import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.IOException;
 
 /**
  *
  * @author likhachev
  */
-public final class PresentationLut implements com.ivli.roim.core.Transformation {
-    protected String          iName;
+public final class PresentationLut implements com.ivli.roim.core.Transformation {    
     protected IndexColorModel iLUT;
     
     public PresentationLut(String aName) {
+        try {
         open(aName);
+        } catch (IOException ex) {
+            System.exit(-1);
+        }
     }
           
-    public void open(String aName) {
-        iName = (null == aName ? Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[1]):aName);
-        Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, iName);
-        iLUT = LutLoader.open(iName);
+    public void open(String aName) throws IOException {
+        String name = (null == aName ? Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[1]):aName);
+       
+        try {
+            iLUT = LutLoader.open(name);
+        } 
+        catch (IOException ex) {             
+            iLUT = LutLoader.open(name = LutLoader.BUILTIN_LUTS[1]);         
+        }
+        
+        Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, name);        
     }
     
     @Override
-    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {
-        
+    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {        
         if (null == aDst)
             aDst = new BufferedImage(aSrc.getWidth(), aSrc.getHeight(), BufferedImage.TYPE_INT_RGB);
         
@@ -54,7 +64,7 @@ public final class PresentationLut implements com.ivli.roim.core.Transformation 
             for (int x=0; x < aDst.getWidth(); x++) {
                final int ndx=rs.getSample(x, y, 0);
                final int sample=iLUT.getRGB(ndx); 
-               final int[] rgb=new int[]{(sample&0x00ff0000)>>16, (sample&0x0000ff00)>>8, sample&0x000000ff};
+               final int[] rgb = new int[]{(sample&0x00ff0000)>>16, (sample&0x0000ff00)>>8, sample&0x000000ff};
 
                wr.setPixel(x, y, rgb);
             }

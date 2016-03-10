@@ -59,6 +59,12 @@
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-imageio</artifactId>
             <version>3.3.7</version>
+            
+        </dependency>
+        <dependency>
+            <groupId>com.amd</groupId>
+            <artifactId>aparapi</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
     
