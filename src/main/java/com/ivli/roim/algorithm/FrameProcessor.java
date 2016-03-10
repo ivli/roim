@@ -61,14 +61,14 @@ public class FrameProcessor {
     public void flipVert() {
         final int width  = iFrame.getWidth();
         final int height = iFrame.getHeight() ;
-        final int [] buf = iFrame.getPixelData();
-        
+        final int [] buf = iFrame.getPixelData();     
+       
         for (int i=0; i < height/2; ++i)
             for(int j=0; j< width; ++j) {
                 final int temp = buf[width*i+j];
                 buf[width*i+j] = buf[width*(width-i-1)+j];
-                buf[width*(width-i-1)+j] = temp;
-            }
+                buf[width*(width-i-1)+j] = temp;                
+            }       
     }
     
     public void flipHorz() {
@@ -80,7 +80,7 @@ public class FrameProcessor {
             for(int j=0; j< width/2; ++j) {
                 final int temp = buf[width*i+j];                
                 buf[width*i+j] = buf[width*(i+1) - j-1];
-               buf[width*(i+1) - j -1] = temp;
+                buf[width*(i+1) - j -1] = temp;
             } 
     }
         

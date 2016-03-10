@@ -77,11 +77,11 @@ public interface IImageProvider {
      *
      * @return minimal pixel value either loaded from dicom or calculated at loading time
      */
-    public abstract double getMin();  
+    double getMin();  
 
     /**
      *
      * @return maximal pixel value either loaded from dicom or calculated at loading time
      */
-    public abstract double getMax();
+    double getMax();
 }

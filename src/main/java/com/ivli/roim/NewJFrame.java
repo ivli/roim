@@ -18,7 +18,8 @@
 package com.ivli.roim;
 
 
-import com.ivli.roim.algorithm.FrameProcessor;
+import com.amd.aparapi.Kernel;
+import com.amd.aparapi.Range;
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.MultiframeImage;
 import com.ivli.roim.provider.DCMImageProvider;
@@ -32,8 +33,12 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.UIManager;
 
 import com.ivli.roim.controls.*;
+import com.ivli.roim.core.ImageDataType;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
+import com.ivli.roim.core.PixelSpacing;
+import com.ivli.roim.core.SliceSpacing;
+import com.ivli.roim.core.TimeSliceVector;
 import com.ivli.roim.events.*;
 import java.io.File;
 import java.util.Locale;
@@ -472,17 +477,52 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         IMultiframeImage mi2 = new MultiframeImage(iProvider);       
         IMultiframeImage mi;
         
+        
+        
         if (mi2.getImageType() != ImageType.VOLUME) {
             mi = mi2;
-          
+        
         } else {        
+            /*
             MIPProjector mp = new MIPProjector(mi2);            
             JDialog dialog = ProgressDialog.getPprogressDialog(this, mp, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_BUILDING_MIP"));//JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);            
-            //Thread t = new Thread(mp);            
+            Thread t = new Thread(mp);            
             (new Thread(mp)).start();
+           // mp.projectA();
             dialog.setVisible(true);
             mi = mp.getResult();
             //repaint();
+            */
+            IImageProvider ip = new IImageProvider() {                
+                IMultiframeImage iImage = mi2.createCompatibleImage(128);
+                MIPProjector prj = new MIPProjector(mi2, iImage);
+                boolean []b = new boolean[iImage.getNumFrames()];
+                public int getWidth() {return iImage.getWidth();}  
+                public int getHeight() {return iImage.getHeight();}   
+                public int getNumFrames() {return iImage.getNumFrames();}      
+                public ImageDataType getImageDataType(){return iImage.getImageDataType();}
+                public ImageType getImageType(){return iImage.getImageType();}
+                public PixelSpacing getPixelSpacing(){return iImage.getPixelSpacing();}
+                public SliceSpacing getSliceSpacing(){return iImage.getSliceSpacing();}
+                public TimeSliceVector getTimeSliceVector(){return iImage.getTimeSliceVector();}
+                public ImageFrame get(int anIndex) throws IndexOutOfBoundsException{
+                    
+                    if (false != b[anIndex]) {
+                        return iImage.get(anIndex);                        
+                    } else {
+                        b[anIndex] = true;
+                        return prj.makeProjection(anIndex);
+                    }
+                }
+
+                public double getMin() {return iImage.getMin();}
+
+                public double getMax() {return iImage.getMax();}                                
+            };
+                    
+                    
+                    
+            mi = new MultiframeImage(ip);
         }
         
         /**/

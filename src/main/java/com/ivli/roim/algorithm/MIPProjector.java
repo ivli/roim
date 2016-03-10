@@ -21,9 +21,6 @@ import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.events.IProgressor;
 import com.ivli.roim.events.ProgressNotifier;
-import com.amd.aparapi.Kernel;
-import com.amd.aparapi.ProfileInfo;
-import com.amd.aparapi.Range;
 
 /**
  *
@@ -35,8 +32,7 @@ public class MIPProjector extends ProgressNotifier implements IProgressor {
     private final IMultiframeImage iImage;
     private IMultiframeImage iMIP;
     private int iProjections;
-    double iMaxVol;
-    
+        
     
     public ProgressNotifier getNotifier() {
         return this;
@@ -44,17 +40,23 @@ public class MIPProjector extends ProgressNotifier implements IProgressor {
     
     public MIPProjector(IMultiframeImage aSrc) {
         iImage = aSrc; 
-        iMIP = null;     
+        iMIP = iImage.createCompatibleImage(iProjections);     
         iProjections = 128;
     }
      
+    public MIPProjector(IMultiframeImage aSrc, IMultiframeImage aDst) {
+        iImage = aSrc; 
+        iMIP = aDst;     
+        iProjections = aDst.getNumFrames();
+    }
+    
     public void project() {
         final int nSlices = iImage.getNumFrames();		                
         final int width   = iImage.getWidth();
         final int height  = iImage.getHeight();
 
         //double minVol = iImage.getMin();
-        iMaxVol = iImage.getMax();
+        final double maxVol = iImage.getMax();
 
         //IMultiframeImage mip = iImage.createCompatibleImage(iProjections);
 	
@@ -82,65 +84,54 @@ public class MIPProjector extends ProgressNotifier implements IProgressor {
                     for (int y = 0; y < height; ++y)                        				                         				                    
                         pixMax = Math.max(pixMax, (cur.get(x, y) / weights[y]));							                                
 
-                    frm.set(width-x-1, z, (int)((pixMax / iMaxVol) * 32767.));
+                    frm.set(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
                 }
-            }			
+            }
+            //makeProjection(currProj);
         }
         
         iMIP.processor().flipVert();        
     }
          
-    class Projector extends Kernel /**/{
-        public void run() {
-            int currProj = getGlobalId() ;
-            final int width = iImage.getWidth();
-            final int height = iImage.getHeight();
-            final int nSlices = iImage.getNumFrames();
-            final double angStep = 360./ iProjections;
+    public ImageFrame makeProjection(int currProj) {    
+        final ImageFrame frm = iMIP.get(currProj);            
+        final int nSlices = iImage.getNumFrames();
+        final int width = iImage.getWidth();
+        final int height = iImage.getHeight();
+        final double maxVol = iImage.getMax();
+        
+        final double angStep = 360./iMIP.getNumFrames();
+        
+        final double weights[] = new double[height]; 
+        
+        for (int i=0; i < weights.length; ++i)
+            weights[i] = (i + 1) * DEPTH_FACTOR;
+        
+        IMultiframeImage temp = iImage.duplicate();
+        temp.processor().rotate(angStep*currProj);
 
-            final double weights[] = new double[height]; 
+        for (int z = 0; z < nSlices; ++z) {
+            final ImageFrame cur = temp.get(z);
 
-            for (int i=0; i < weights.length; ++i)
-                weights[i] = (i + 1) * DEPTH_FACTOR;
+            for (int x = 0; x < width; ++x) {                               
+                double pixMax = .0;		
 
-            final ImageFrame frm  = iMIP.get(currProj);            
-            IMultiframeImage temp = iImage.duplicate();
+                for (int y = 0; y < height; ++y)                        				                         				                    
+                    pixMax = Math.max(pixMax, (cur.get(x, y) / weights[y]));							                                
 
-            temp.processor().rotate(angStep*currProj);
-
-            for (int z = 0; z < nSlices; ++z) {
-                final ImageFrame cur = temp.get(z);
-
-                for (int x = 0; x < width; ++x) {                               
-                    double pixMax = .0;		
-
-                    for (int y = 0; y < height; ++y)                        				                         				                    
-                        pixMax = Math.max(pixMax, (cur.get(x, y) / weights[y]));							                                
-
-                    frm.set(width-x-1, z, (int)((pixMax / iMaxVol) * 32767.));
-                }
-            }	
+                frm.set(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
+            }
         }
-    }
-    
-    private void projectA() {
-        final Range range = Range.create(iProjections);
-        iMIP = iImage.createCompatibleImage(iProjections);
-        Projector p=new Projector();
-        p.execute(range);        
+        return frm;
     }
     
     public IMultiframeImage getResult() {
         return iMIP;
-    }
+    }        
     
     @Override
-    public void run() {  
-        iMIP = iImage.createCompatibleImage(iProjections);
+    public void run() {         
         project();  
-
-       /// projectA();
         notifyProgressChanged(100);      
     }    
-
 }
