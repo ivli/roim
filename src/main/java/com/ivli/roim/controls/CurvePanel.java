@@ -36,7 +36,7 @@ public class CurvePanel extends ChartPanel {
         getChart().getXYPlot().addDomainMarker(aM, Layer.FOREGROUND);
         ValueMarker vm = new ValueMarker(.0);
         getChart().getXYPlot().addRangeMarker(vm, Layer.FOREGROUND);
-       // aM.setLinkedMarker(vm);        
+        aM.setLinkedMarker(vm);        
     }
     
     private ChartEntity findEntity(MouseEvent event) {              

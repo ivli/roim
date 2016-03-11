@@ -21,6 +21,8 @@ public class DomainMarker extends ValueMarker {
 
     private ValueMarker iLink;
     
+    private static final String LABEL_FORMAT = "%.2f4 %.2f"; //NOI18N
+    
     public DomainMarker(XYSeries aSet) {
         this((aSet.getMaxX() - aSet.getMinX()) / 2., aSet);
     }
@@ -28,10 +30,9 @@ public class DomainMarker extends ValueMarker {
     public DomainMarker(double aValue, XYSeries aSet) {
         super(aValue);                        
         iSet = aSet;
-        int ndx = iSet.indexOf(aValue);
-        if (ndx >= 0 && ndx < iSet.getItemCount())
-            setLabel(String.format("%f, %f", //NOI18N
-                                       aValue, (Double)iSet.getY(ndx)));
+       
+            setLabel(String.format(LABEL_FORMAT, 
+                                       aValue, getNearestY(aValue)));
         this.setLabelAnchor(RectangleAnchor.CENTER);
         this.setLabelOffset(RectangleInsets.ZERO_INSETS);
         this.setPaint(Color.RED);
@@ -40,27 +41,35 @@ public class DomainMarker extends ValueMarker {
     
     public void setLinkedMarker(ValueMarker aM) {
         iLink = aM;
-        iLink.setValue((Double)iSet.getY((int)getValue()));
+        iLink.setValue(getNearestY(getValue()));
     }
     
     public void setValue(double aVal) {
         super.setValue(aVal);
         
         if (null != iSet) { 
-            final int ndx = (int)aVal;
+            final Double newY = getNearestY(aVal);
+            if (null != iLink)
+                iLink.setValue(newY);
             
-           /// if(index >= 0 && index < iSet.getItemCount()) {
-             
-                //if (null != iLink)
-                //    iLink.setValue((Double)iSet.getY(iSet.getIndex((int)getValue())));
-            if (ndx >= 0 && ndx < iSet.getItemCount())
-                setLabel(String.format("%f, %f", //NOI18N
-                                       aVal, (Double)iSet.getY(ndx)));//(Double)iSet.getY((int)getValue())));
-           // }
+            setLabel(String.format(LABEL_FORMAT, aVal, newY));    
         } else {
            //super.setValue(aVal);
            setLabel(String.format("%f", aVal)); //NOI18N
         }
+        
+    }
+    
+    Double getNearestY(Double aX) {
+        for (int i = 0; i < iSet.getItemCount() - 1; ++i) {
+            Double i1 = (Double)iSet.getX(i);
+            Double i2 = (Double)iSet.getX(i+1);
+            if (aX >=i1 && aX < i2) {
+                return (Double)((Double)iSet.getY(i) + (Double)iSet.getY(i+1))/2.;
+            }
+        }
+        return Double.NaN;
+        
         
     }
 }
