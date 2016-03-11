@@ -43,7 +43,7 @@ public class ChartView extends javax.swing.JPanel
                         
     private XYPlot     iPlot;
     private JFreeChart iJfc;    
-    private ChartPanel iChart;  
+    private CurvePanel iChart;  
     
     
     public void initChart () {
@@ -58,7 +58,7 @@ public class ChartView extends javax.swing.JPanel
             iPlot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
 
             iJfc   = new JFreeChart(iPlot); 
-            iChart = new ChartPanel(iJfc);           
+            iChart = new CurvePanel(iJfc);           
            
             iPlot.setDataset(new XYSeriesCollection());
 
@@ -68,6 +68,7 @@ public class ChartView extends javax.swing.JPanel
             
             this.add(iChart);            
         }
+        iChart.setMouseZoomable(false);
     }
     
     @Override
@@ -103,7 +104,9 @@ public class ChartView extends javax.swing.JPanel
                 
 
                 ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   
-                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getObject().getName()), ((ROI)aE.getObject()).getColor());              
+                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getObject().getName()), ((ROI)aE.getObject()).getColor());  
+                
+                iChart.addMarker(new DomainMarker(s));
             } break;
             
             case ChangedColor: {
