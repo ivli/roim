@@ -22,15 +22,16 @@ public class DomainMarker extends ValueMarker {
     private ValueMarker iLink;
     
     public DomainMarker(XYSeries aSet) {
-        this((Double)aSet.getY(0), aSet);
+        this((aSet.getMaxX() - aSet.getMinX()) / 2., aSet);
     }
     
     public DomainMarker(double aValue, XYSeries aSet) {
         super(aValue);                        
         iSet = aSet;
         int ndx = iSet.indexOf(aValue);
-        setLabel(String.format("%f, %d", //NOI18N
-                                   aValue, ndx));
+        if (ndx >= 0 && ndx < iSet.getItemCount())
+            setLabel(String.format("%f, %f", //NOI18N
+                                       aValue, (Double)iSet.getY(ndx)));
         this.setLabelAnchor(RectangleAnchor.CENTER);
         this.setLabelOffset(RectangleInsets.ZERO_INSETS);
         this.setPaint(Color.RED);
@@ -46,15 +47,15 @@ public class DomainMarker extends ValueMarker {
         super.setValue(aVal);
         
         if (null != iSet) { 
-            final int index = (int)aVal;
+            final int ndx = (int)aVal;
             
            /// if(index >= 0 && index < iSet.getItemCount()) {
              
                 //if (null != iLink)
                 //    iLink.setValue((Double)iSet.getY(iSet.getIndex((int)getValue())));
-            
-                setLabel(String.format("%f, %d", //NOI18N
-                                       aVal, index));//(Double)iSet.getY((int)getValue())));
+            if (ndx >= 0 && ndx < iSet.getItemCount())
+                setLabel(String.format("%f, %f", //NOI18N
+                                       aVal, (Double)iSet.getY(ndx)));//(Double)iSet.getY((int)getValue())));
            // }
         } else {
            //super.setValue(aVal);
