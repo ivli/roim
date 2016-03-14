@@ -21,7 +21,7 @@ public class DomainMarker extends ValueMarker {
 
     private ValueMarker iLink;
     
-    private static final String LABEL_FORMAT = "%.2f4 %.2f"; //NOI18N
+    private static final String LABEL_FORMAT = "%.2f"; //NOI18N
     
     public DomainMarker(XYSeries aSet) {
         this((aSet.getMaxX() - aSet.getMinX()) / 2., aSet);
@@ -29,19 +29,19 @@ public class DomainMarker extends ValueMarker {
     
     public DomainMarker(double aValue, XYSeries aSet) {
         super(aValue);                        
-        iSet = aSet;
-       
-            setLabel(String.format(LABEL_FORMAT, 
-                                       aValue, getNearestY(aValue)));
-        this.setLabelAnchor(RectangleAnchor.CENTER);
-        this.setLabelOffset(RectangleInsets.ZERO_INSETS);
-        this.setPaint(Color.RED);
-        this.setAlpha(1.f);        
+        iSet = aSet;       
+        setLabel(String.format(LABEL_FORMAT, aValue));
+        setLabelAnchor(RectangleAnchor.CENTER);
+        setLabelOffset(RectangleInsets.ZERO_INSETS);
+        setPaint(Color.RED);
+        setAlpha(1.f);        
     }
     
     public void setLinkedMarker(ValueMarker aM) {
         iLink = aM;
         iLink.setValue(getNearestY(getValue()));
+        iLink.setLabelAnchor(RectangleAnchor.BOTTOM);
+        iLink.setLabelOffset(RectangleInsets.ZERO_INSETS);
     }
     
     public void setValue(double aVal) {
@@ -49,10 +49,11 @@ public class DomainMarker extends ValueMarker {
         
         if (null != iSet) { 
             final Double newY = getNearestY(aVal);
-            if (null != iLink)
+            if (null != iLink) {
                 iLink.setValue(newY);
-            
-            setLabel(String.format(LABEL_FORMAT, aVal, newY));    
+                iLink.setLabel(String.format(LABEL_FORMAT, newY));
+            }
+            setLabel(String.format(LABEL_FORMAT, aVal));    
         } else {
            //super.setValue(aVal);
            setLabel(String.format("%f", aVal)); //NOI18N
@@ -60,17 +61,22 @@ public class DomainMarker extends ValueMarker {
         
     }
     
-    Double getNearestY(Double aX) {
-        for (int i = 0; i < iSet.getItemCount() - 1; ++i) {
+    double getNearestY(Double aX) {        
+        int i = iSet.getItemCount();
+        do{ // bisection
+            i = i/2;
+        } while(i > 0 && (Double)iSet.getX(i) > aX);
+        
+        for (; i < iSet.getItemCount() - 1; ++i) { //linear fit
             Double i1 = (Double)iSet.getX(i);
             Double i2 = (Double)iSet.getX(i+1);
             if (aX >=i1 && aX < i2) {
-                return (Double)((Double)iSet.getY(i) + (Double)iSet.getY(i+1))/2.;
+                final double x0 = (double)iSet.getX(i);
+                final double y0 = (double)iSet.getY(i);                    
+                return y0 + (aX - x0) * ((double)iSet.getY(i+1) - y0) / ((double)iSet.getX(i+1) - x0);
             }
         }
         return Double.NaN;
-        
-        
     }
 }
 
