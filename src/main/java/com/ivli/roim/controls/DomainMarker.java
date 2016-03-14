@@ -63,14 +63,15 @@ public class DomainMarker extends ValueMarker {
     
     double getNearestY(Double aX) {        
         int i = iSet.getItemCount();
+        
         do{ // bisection
             i = i/2;
         } while(i > 0 && (Double)iSet.getX(i) > aX);
         
-        for (; i < iSet.getItemCount() - 1; ++i) { //linear fit
+        for (; i < iSet.getItemCount() - 1; ++i) { 
             Double i1 = (Double)iSet.getX(i);
             Double i2 = (Double)iSet.getX(i+1);
-            if (aX >=i1 && aX < i2) {
+            if (aX >=i1 && aX < i2) { //linear fit
                 final double x0 = (double)iSet.getX(i);
                 final double y0 = (double)iSet.getY(i);                    
                 return y0 + (aX - x0) * ((double)iSet.getY(i+1) - y0) / ((double)iSet.getX(i+1) - x0);
