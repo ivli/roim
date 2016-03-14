@@ -106,10 +106,10 @@ public class CurvePanel extends ChartPanel {
         ChartEntity entity = findEntity(event);
 
         if (entity instanceof XYItemEntity) {
-            selectXYItem(entity);
-            setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+            selectItem(entity);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
         } else if (null != (mr = findMarker(event))) {
-            setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));                    
+            setCursor(new Cursor(Cursor.HAND_CURSOR));                    
         } 
     }
 
@@ -144,7 +144,7 @@ public class CurvePanel extends ChartPanel {
     private XYDataItem  xy  = null;
     private ValueMarker mr = null;
    
-    protected void selectXYItem(ChartEntity anEntity) {
+    protected void selectItem(ChartEntity anEntity) {
         sel = anEntity;
         ts = ((XYSeriesCollection)((XYItemEntity)sel).getDataset()).getSeries(((XYItemEntity)sel).getSeriesIndex());        
         xy = ts.getDataItem(((XYItemEntity)sel).getItem());  
