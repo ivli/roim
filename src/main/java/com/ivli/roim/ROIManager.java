@@ -126,17 +126,14 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         newRoi.addROIChangeListener(this);
     }
             
-    public void createRuler(Point aS, Point aF) {
-        Rectangle2D s = new Rectangle2D.Double(aS.x, aS.y, aF.x-aS.x, aF.y-aS.y);
+    public void createRuler(Rectangle2D aF) {
+        //Rectangle2D s = new Rectangle2D.Double(aS.x, aS.y, aS.x + (aF.x - aS.x), Math.abs(aF.y-aS.y));        
+        Rectangle2D r = iView.screenToVirtual().createTransformedShape(aF).getBounds();     
         
-        Rectangle2D r = iView.screenToVirtual().createTransformedShape(s).getBounds();
-     
-        
-        Ruler newRoi = new Ruler(new Point2D.Double(r.getX(), r.getY()), new Point2D.Double(r.getWidth() - r.getX(), r.getHeight() - r.getY()), this);     
-        
-        
-        iOverlays.add(newRoi);   
-        newRoi.addROIChangeListener(this);
+        Ruler ruler = new Ruler(r, this);     
+                
+        iOverlays.add(ruler);   
+        ruler.addROIChangeListener(this);
     }
     
     public void createAnnotation(BinaryOp anOp) {    
@@ -146,8 +143,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     public void createAnnotation(ROI aROI) {    
         iOverlays.add(new Annotation.Static(aROI, this));      
     }
-    
-    
+        
     protected void internalCreateROI(ROI aS) {
         ROI newRoi = new ROI(iUid.getNext(), aS.getShape(), this, aS.getColor());       
   

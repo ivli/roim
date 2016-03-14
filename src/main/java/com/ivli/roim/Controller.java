@@ -422,7 +422,10 @@ class Controller implements ActionListener,  KeyListener,
                     }
                     
                     public boolean DoRelease(int aX, int aY) {
-                        iControlled.getROIMgr().createRuler(start, finish);
+                        Rectangle2D.Double r = new Rectangle2D.Double(Math.min(start.x, finish.x), Math.min(start.y, finish.y),
+                                                                      Math.abs(start.x - finish.x), Math.abs(start.y - finish.y));
+                                
+                        iControlled.getROIMgr().createRuler(r);
                         iControlled.repaint();
                         return false;
                     }
