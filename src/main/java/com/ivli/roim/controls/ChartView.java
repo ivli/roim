@@ -83,14 +83,17 @@ public class ChartView extends javax.swing.JPanel
             } break;    
             case Moved: //fall-through
             case Changed: {                
-                int ndx = col.indexOf(aE.getObject().getName());               
-                Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
-                XYSeries s = col.getSeries(ndx); 
-                s.clear();
-                
-                for (int n = 0; n < c.getNumFrames(); ++n) {
-                    long dur = aE.getObject().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000;
-                    s.add(dur, c.get(n));
+                if (aE.getObject() instanceof ROI) {
+                    int ndx = col.indexOf(aE.getObject().getName());    
+
+                    Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
+                    XYSeries s = col.getSeries(ndx); 
+                    s.clear();
+
+                    for (int n = 0; n < c.getNumFrames(); ++n) {
+                        long dur = aE.getObject().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000;
+                        s.add(dur, c.get(n));
+                    }
                 }
             } break;
                 

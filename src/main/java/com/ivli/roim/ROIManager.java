@@ -43,6 +43,7 @@ import com.ivli.roim.events.ROIChangeListener;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.FrameOffsetVector;
 import com.ivli.roim.calc.BinaryOp;
+import java.awt.geom.Path2D;
 
 /**
  *
@@ -126,9 +127,9 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         newRoi.addROIChangeListener(this);
     }
             
-    public void createRuler(Rectangle2D aF) {
+    public void createRuler(Path2D.Double aF) {
         //Rectangle2D s = new Rectangle2D.Double(aS.x, aS.y, aS.x + (aF.x - aS.x), Math.abs(aF.y-aS.y));        
-        Rectangle2D r = iView.screenToVirtual().createTransformedShape(aF).getBounds();     
+        Shape r = iView.screenToVirtual().createTransformedShape(aF);     
         
         Ruler ruler = new Ruler(r, this);     
                 
