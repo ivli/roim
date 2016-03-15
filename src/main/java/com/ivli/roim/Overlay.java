@@ -55,7 +55,7 @@ public abstract class Overlay implements java.io.Serializable {
     protected Overlay(String aName, Shape aShape, ROIManager aMgr) {
         iMgr   = aMgr;
         iShape = aShape;         
-        iName = (null != aName)? aName : new String(aName);                      
+        iName = (null != aName)? aName : ""; //NOI18N                  
         iListeners = new EventListenerList();   
     }
     
@@ -64,8 +64,8 @@ public abstract class Overlay implements java.io.Serializable {
     }    
     
     public boolean canMove(double adX, double adY) {           
-        Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());        
-        return bounds.contains(AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(getShape()).getBounds());
+        final Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());        
+        return bounds.contains(AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(getShape()).getBounds2D());
     }
     
     public String getName() {
@@ -117,7 +117,7 @@ public abstract class Overlay implements java.io.Serializable {
             if (bounds.contains(temp.getBounds())) {            
                 iShape = temp;                    
                 update();
-                notifyROIChanged(ROIChangeEvent.CHG.Moved, new double[]{adX, adY});
+                notifyROIChanged(ROIChangeEvent.ROIMOVED, new double[]{adX, adY});
             }
         }
     } 
@@ -146,7 +146,7 @@ public abstract class Overlay implements java.io.Serializable {
         iListeners.remove(ROIChangeListener.class, aL);
     }
     
-    protected void notifyROIChanged(ROIChangeEvent.CHG aS, Object aEx) {        
+    protected void notifyROIChanged(int aS, Object aEx) {        
         ROIChangeEvent evt = new ROIChangeEvent(this, aS, this, aEx);
 
         ROIChangeListener arr[] = iListeners.getListeners(ROIChangeListener.class);

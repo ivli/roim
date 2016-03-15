@@ -29,13 +29,18 @@ public enum Filter {
                 Measurement.DENSITY),
        
         AREAINPIXELS((ROI aR) -> aR.getAreaInPixels(),
-                Measurement.AREAINPIXELS),
+                     Measurement.AREAINPIXELS),
         
         MINPIXEL((ROI aR) -> aR.getMinPixel(),
-                Measurement.MINPIXEL),
+                 Measurement.MINPIXEL),
         
         MAXPIXEL((ROI aR) -> aR.getMaxPixel(),
-                Measurement.MAXPIXEL);
+                 Measurement.MAXPIXEL),
+        
+        AREAINLOCALUNITS((ROI aR) -> (aR.getMaxPixel() * aR.getManager().getImage().getPixelSpacing().getX()),
+                         Measurement.AREAINLOCALUNITS);
+        
+        
         /*
          * to be continued
          */

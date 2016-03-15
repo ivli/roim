@@ -77,12 +77,12 @@ public class ChartView extends javax.swing.JPanel
         XYSeriesCollection col = ((XYSeriesCollection)iPlot.getDataset());
         
         switch (aE.getChange()) {
-            case Cleared: {                
+            case ROIChangeEvent.ROIDELETED: {                
                 int ndx = col.indexOf(aE.getObject().getName());
                 col.removeSeries(ndx);                
             } break;    
-            case Moved: //fall-through
-            case Changed: {                
+            case ROIChangeEvent.ROIMOVED: //fall-through
+            case ROIChangeEvent.ROICHANGED: {                
                 if (aE.getObject() instanceof ROI) {
                     int ndx = col.indexOf(aE.getObject().getName());    
 
@@ -97,7 +97,7 @@ public class ChartView extends javax.swing.JPanel
                 }
             } break;
                 
-            case Created: {                
+            case ROIChangeEvent.ROICREATED: {                
                 final XYSeries s = new XYSeries(aE.getObject().getName(), false, false);
                 final Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                
@@ -115,21 +115,21 @@ public class ChartView extends javax.swing.JPanel
                 iChart.addMarker(new DomainMarker(s));
             } break;
             
-            case ChangedColor: {
+            case ROIChangeEvent.ROICHANGEDCOLOR: {
                 assert (aE.getExtra() instanceof java.awt.Color);
                 final int ndx = col.indexOf(aE.getObject().getName());
                 if (ndx >=0)
                     iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)aE.getObject()).getColor());                                 
             } break;
                         
-            case ChangedName: {
+            case ROIChangeEvent.ROICHANGEDNAME: {
                 assert (aE.getExtra() instanceof String);
                 final int ndx = col.indexOf((String)aE.getExtra());  
                 XYSeries s = col.getSeries(ndx); 
                 s.setKey(aE.getObject().getName());
             } break;    
             
-            case Emptied: {
+            case ROIChangeEvent.ROIDELTEDALL: {
                 ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); 
             } break;     
             default: 

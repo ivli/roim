@@ -99,7 +99,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
             
     public void clear() {
         iOverlays.clear();
-        notifyROIChanged(null, ROIChangeEvent.CHG.Emptied, null);      
+        notifyROIChanged(null, ROIChangeEvent.ROIDELTEDALL, null);      
     }
     
     public void update() {
@@ -159,7 +159,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         newRoi.addROIChangeListener(this);
         
         newRoi.update();
-        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, null);
+        notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, null);
     
     }
     
@@ -176,7 +176,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         newRoi.addROIChangeListener(this);
         
         newRoi.update();
-        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, null);
+        notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, null);
     }
     
     public ROI cloneRoi(ROI aR) {       
@@ -190,7 +190,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         newRoi.addROIChangeListener(this);
         
         newRoi.update();
-        notifyROIChanged(newRoi, ROIChangeEvent.CHG.Created, aR); 
+        notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, aR); 
         return newRoi;
     }
     
@@ -217,7 +217,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
                 it.remove();
         } 
                 
-        notifyROIChanged(aR, ROIChangeEvent.CHG.Cleared, null);
+        notifyROIChanged(aR, ROIChangeEvent.ROIDELETED, null);
         
         return iOverlays.remove(aR);   
     }  
@@ -283,7 +283,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         iList.remove(ROIChangeListener.class, aL);
     }
     
-    void notifyROIChanged(Overlay aR, ROIChangeEvent.CHG aS, Object aEx) {
+    void notifyROIChanged(Overlay aR, int aS, Object aEx) {
         final ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR, aEx);
 
         ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);

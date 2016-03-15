@@ -25,28 +25,28 @@ import com.ivli.roim.Overlay;
  */
 public final class ROIChangeEvent extends java.util.EventObject { 
     private final Overlay iObj;
-    private final CHG     iChange;
+    private final int     iChange;
     private final Object  iExtra; //depending on change it carries old name, old colour or ... 
     
      //TODO: rename logicaly
-    public enum CHG {    
-        Created,  
-        Cleared, 
-        Changed, 
-        Moved,
-        ChangedColor,
-        ChangedName,
-        Emptied   
-    }
+    //public enum CHG {    
+    public final static int ROICREATED = 1;  
+    public final static int ROIDELETED = 2; 
+    public final static int ROICHANGED = 3; 
+    public final static int ROIMOVED = 4; // a ROI has been moved
+    public final static int ROICHANGEDCOLOR = 5; // a ROI's colour has been changed
+    public final static int ROICHANGEDNAME = 6; // a ROI's name has been changed
+    public final static int ROIDELTEDALL = 7;   // all ROI have been removed
+    //}
     
-    public ROIChangeEvent(Object aO, CHG aC, Overlay aR, Object aExtra) {
+    public ROIChangeEvent(Object aO, int aC, Overlay aR, Object aExtra) {
         super (aO);
         iObj = aR;
         iChange = aC;
         iExtra = aExtra;
     }
         
-    public CHG getChange() {
+    public int getChange() {
         return iChange;
     }
     

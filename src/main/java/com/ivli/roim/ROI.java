@@ -93,14 +93,14 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     public void setColor(Color aC) {
         Color old = iColor;
         iColor = aC;
-        notifyROIChanged(ROIChangeEvent.CHG.ChangedColor, old);
+        notifyROIChanged(ROIChangeEvent.ROICHANGEDCOLOR, old);
     }
     
     @Override
     public void setName(String aName) {
        String old = getName();
        super.setName(aName);
-       notifyROIChanged(ROIChangeEvent.CHG.ChangedName, old);         
+       notifyROIChanged(ROIChangeEvent.ROICHANGEDNAME, old);         
     }
    
     void drawProfiles(Graphics2D aGC, AffineTransform aTrans) {        

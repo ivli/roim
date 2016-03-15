@@ -66,7 +66,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
                 
         public void setFilters(Filter[] aF) {
             iFilters = aF;
-            notifyROIChanged(ROIChangeEvent.CHG.Changed, null);
+            notifyROIChanged(ROIChangeEvent.ROICHANGED, null);
         }  
                       
         public Overlay getRoi() {return iRoi;}
@@ -77,7 +77,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
 
         public void setMultiline(boolean aM) {
             iMultiline = aM;
-            notifyROIChanged(ROIChangeEvent.CHG.Changed, null);
+            notifyROIChanged(ROIChangeEvent.ROICHANGED, null);
         }
 
         public boolean isMultiline() {
@@ -130,17 +130,17 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
         @Override
         public void ROIChanged(ROIChangeEvent anEvt) {               
             switch (anEvt.getChange()) {
-                case Cleared: 
+                case ROIChangeEvent.ROIDELETED: 
                     //commit suicide 
                     getManager().deleteOverlay(this);
                     break;
-                case Moved: {//if not pinned move the same dX and dY
+                case ROIChangeEvent.ROIMOVED: {//if not pinned move the same dX and dY
                     final double[] deltas = (double[])anEvt.getExtra();
                     ///logger.info(String.format("%f, %f",deltas[0], deltas[1]));
                     move(deltas[0], deltas[1]);
                     update();
                 } break;
-                case Changed:   
+                case ROIChangeEvent.ROICHANGED:   
                 default: //fall-through
                     update(); break;
             }        
@@ -197,7 +197,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             
             final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
             
-            final double scaleX = getManager().getView().screenToVirtual().getScaleX();
+           /// final double scaleX = getManager().getView().screenToVirtual().getScaleX();
             double posX = .0, posY = .0;
            
             if (null != iOverlay) {
@@ -205,19 +205,20 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
                 posX = r.x;
                 posY = r.y + bnds.getHeight();
             }
-            iShape = new Rectangle2D.Double(posX * scaleX , posY * scaleX, bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);            
+            
+            iShape = getManager().getView().screenToVirtual().createTransformedShape(new Rectangle2D.Double(posX, posY, bnds.getWidth(), bnds.getHeight()));            
         }   
         
         @Override
         public void ROIChanged(ROIChangeEvent anEvt) {              
             switch (anEvt.getChange()) {
-                case Cleared: 
+                case ROIChangeEvent.ROIDELETED: 
                    break;
-                case Moved: {
+                case ROIChangeEvent.ROIMOVED: {
                 
                 
                 } break;            
-                case Changed:   
+                case ROIChangeEvent.ROICHANGED:   
                 default: //fall-through
                     update();                                
                     break;
@@ -226,23 +227,41 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
 
         @Override
         void paint(Graphics2D aGC, AffineTransform aTrans) {
-            final Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();     
+            
+            final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
+            
+           /// final double scaleX = getManager().getView().screenToVirtual().getScaleX();
+           /* double posX = .0, posY = .0;
+           
+            if (null != iOverlay) {
+                Rectangle r = iOverlay.getShape().getBounds();
+                posX = r.x;
+                posY = r.y + bnds.getHeight();
+            }
+            */
+           
+                   
+          
+            final Rectangle2D tmp = iShape.getBounds();     
+           // iShape = new Rectangle2D.Double(tmp.getX(), tmp.getY(), bnds.getWidth(), bnds.getHeight());     
+            
             aGC.setColor(iColor);
 
-            aGC.drawString(iOp.getCompleteString(), (int)temp.getX(), (int)(temp.getY() + temp.getHeight() - 4));       
-            aGC.draw(temp);                 
+            aGC.drawString(iOp.getCompleteString(), (int)tmp.getX(), (int)(tmp.getY() + bnds.getHeight() - 4));       
+            aGC.draw(bnds);        
         }
         
         @Override
         public void update() {      
             iAnnotation = iOp.getCompleteString();
-
+/*
             final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
             
-            final double scaleX =  getManager().getView().screenToVirtual().getScaleX();    
-            
-            iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), getShape().getBounds2D().getY(),                                                                                        
-                                            bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                    
+            //final double scaleX = getManager().getView().screenToVirtual().getScaleX();    
+            Rectangle2D temp = getShape().getBounds2D();
+            temp.setFrame(temp.getX(), temp.getY(), bnds.getWidth(), bnds.getHeight());
+            iShape = getManager().getView().screenToVirtual().createTransformedShape(temp);                   
+*/
         }
     }  
         

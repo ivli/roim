@@ -33,8 +33,11 @@ public enum Measurement {
              "%d"), // NOI18N
     MAXPIXEL(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.MAXPIXEL"), 
              java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.PIXELS"), 
-             "%d"); // NOI18N 
+             "%d"), // NOI18N 
    
+    AREAINLOCALUNITS("MEASUREMENT.AREAINLOCALUNITS", 
+                     "MEASUREMENT.MILLIMETERS",
+                     "%d"); // NOI18N   
     
     final String iName;
     final String iUnits;
