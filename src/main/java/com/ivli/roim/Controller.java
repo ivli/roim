@@ -422,12 +422,8 @@ class Controller implements ActionListener,  KeyListener,
                     }
                     
                     public boolean DoRelease(int aX, int aY) {
-                        Path2D.Double r = new Path2D.Double();
-                        //r.moveTo(Math.min(start.x, finish.x), Math.min(start.y, finish.y));
-                        //r.lineTo(Math.max(start.x, finish.x), Math.max(start.y, finish.y));
-                        r.moveTo(start.x, start.y);//), Math.min(start.y, finish.y));
-                        r.lineTo(aX, aY);                                
-                        iControlled.getROIMgr().createRuler(r);
+                        //
+                        iControlled.getROIMgr().createRuler(start, new Point(aX, aY));
                         iControlled.repaint();
                         return false;
                     }

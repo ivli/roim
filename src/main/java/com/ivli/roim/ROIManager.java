@@ -29,9 +29,7 @@ import java.io.FileOutputStream;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
-import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import javax.swing.event.EventListenerList;
 
@@ -127,18 +125,23 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         newRoi.addROIChangeListener(this);
     }
             
-    public void createRuler(Path2D.Double aF) {
+    public void createRuler(Point aFrom, Point aTo) {
         //Rectangle2D s = new Rectangle2D.Double(aS.x, aS.y, aS.x + (aF.x - aS.x), Math.abs(aF.y-aS.y));        
-        Shape r = iView.screenToVirtual().createTransformedShape(aF);     
+        Path2D.Double r = new Path2D.Double();         
+        r.moveTo(aFrom.x, aFrom.y);
+        r.lineTo(aTo.x, aTo.y);                                
+        Shape s = iView.screenToVirtual().createTransformedShape(r);     
         
-        Ruler ruler = new Ruler(r, this);     
+        Ruler ruler = new Ruler(s, this);     
                 
         iOverlays.add(ruler);   
         ruler.addROIChangeListener(this);
+   
+        iOverlays.add(new Annotation.Active(ruler.getOperation(), ruler, this));
     }
     
     public void createAnnotation(BinaryOp anOp) {    
-        iOverlays.add(new Annotation.Active(anOp, this));      
+        iOverlays.add(new Annotation.Active(anOp, null, this));      
     }
     
     public void createAnnotation(ROI aROI) {    

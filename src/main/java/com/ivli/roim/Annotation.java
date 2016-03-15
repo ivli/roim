@@ -27,6 +27,7 @@ import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.core.Filter;
+import java.awt.Rectangle;
 
 /**
  *
@@ -56,19 +57,19 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             iRoi = aRoi;     
             /* */
             for (Filter f : iFilters)
-                iAnnotation.add(f.getMeasurement().format(f.filter(iRoi)));        
+                iAnnotation.add(f.getMeasurement().format(f.filter(aRoi)));        
 
             computeShape(true);
 
             aRoi.addROIChangeListener(this);
         }
-
+                
         public void setFilters(Filter[] aF) {
             iFilters = aF;
             notifyROIChanged(ROIChangeEvent.CHG.Changed, null);
         }  
                       
-        public ROI getRoi() {return iRoi;}
+        public Overlay getRoi() {return iRoi;}
 
         public Filter[] getFilters() {
             return iFilters;
@@ -117,10 +118,11 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
         @Override
         public void update() {     
             iAnnotation.clear();
-
+            
+            //if (iRoi instanceof ROI) {
             for (Filter f : iFilters)
                 iAnnotation.add(f.getMeasurement().format(f.filter(iRoi)));     
-
+            //}
             computeShape(false);   
         }
 
@@ -182,18 +184,28 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
      */
     public static class Active extends Annotation {
         private Color iColor = Color.RED;
-        private String iAnnotation;
+        private String iAnnotation;        
+        private Overlay iOverlay;
         private IOperation iOp;
-    
-        Active(IOperation aOp, ROIManager aRM) {
+        
+        Active(IOperation aOp, Overlay anO, ROIManager aRM) {
             super("ANNOTATION.ACTIVE", null, aRM);        
+            iOverlay = anO;
             iOp = aOp;     
+            
             iAnnotation = iOp.getCompleteString();
+            
             final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
-            /**/
-
-            iShape = new Rectangle2D.Double(0, 0, bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
-                                            bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());   
+            
+            final double scaleX = getManager().getView().screenToVirtual().getScaleX();
+            double posX = .0, posY = .0;
+           
+            if (null != iOverlay) {
+                Rectangle r = anO.getShape().getBounds();
+                posX = r.x;
+                posY = r.y + bnds.getHeight();
+            }
+            iShape = new Rectangle2D.Double(posX * scaleX , posY * scaleX, bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);            
         }   
         
         @Override
@@ -201,7 +213,10 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             switch (anEvt.getChange()) {
                 case Cleared: 
                    break;
-                case Moved:                  
+                case Moved: {
+                
+                
+                } break;            
                 case Changed:   
                 default: //fall-through
                     update();                                
@@ -219,14 +234,16 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
         }
         
         @Override
-        public void update() {        
+        public void update() {      
             iAnnotation = iOp.getCompleteString();
 
             final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
-            /**/
-            final double scaleX =  getManager().getView().screenToVirtual().getScaleX();       
+            
+            final double scaleX =  getManager().getView().screenToVirtual().getScaleX();    
+            
             iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), getShape().getBounds2D().getY(),                                                                                        
-                                            bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);
+                                            bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                    
         }
     }  
+        
 }
