@@ -36,21 +36,42 @@
         <span class="blc"></span><span class="trc"></span>
         </div>
         <article class="markdown-body">
-          <h3>
-<a id="welcome-to-roi-master-github-pages" class="anchor" href="#welcome-to-roi-master-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to ROI-master GitHub Pages.</h3>
+        <h3>
+		<a id="welcome-to-roi-master-github-pages" class="anchor" href="#welcome-to-roi-master-github-pages" aria-hidden="true">
+		<span class="octicon octicon-link"></span>
+		</a>Welcome to ROI-master GitHub Pages.
+		</h3>
 
-<p>Roim is an advanced image tool to extarct information out of medical images. 
-The main goal of the project is to provide nuclear medicine specialist (both technologists and doctors)
-with versatile but simple instrument to prepare and process results of studies.  
-It could be especially helpful for the case when due to some technological or physiological peculiarity 
-acquired data are far from expected, thus "standard" clinical applications cannot be used.<br>
-Currently it supports images in DICOM format with raw or uncompressed JPEG data only. <br>
-The programm does not make any difference of image modality as long as photometric interpretation is MONOCHROME or MONOCHROME2 
-and pixel data are shhorter 16 bits.
-Static and dynamic (multiframe) images can be processed.                           
-All the processing is built around drawing ROI: elliptic, rectangular and free form ROI are implemented.  
-Then it is possible to dispaly curvers and perform simple arithmetic manipulation on them.
-The programm is written in Java (tm) it is tested to run on Windows and Linux.</p>
+<p>The Roim is an advanced image viewer of biomedical images of different modalities.
+It is designed to be vendor and modality neutral. 
+The main goal of the project is to provide as simple as powerful instrument to process nuclear medicine (hereinafter NM) images.  
+Nuclear medicine differs from other modalities it is capable of visualizing a function of organs and tissues.
+NM images, when appropriate radio-pharmacy, equipment and process are employed can reveal the process of interest.
+Hence, images are 3 or 4 dimensional where third dimension of any 3D image can be either temporal or spatial characterisation of the process.
+Flat (2D) images are usually provide information on one or another metabolic process.
+Most commonly NM images have rather low resolution, number of pixel being compared to say CT or DXR is relatively.
+Despite, having pixel values untouched is of highest importance (it gives a possibility to extract characteristics of recorded process)
+it should not affect visual representation of the images thus smoothing and colour representation of greyscale images comes to the scene. 
+There are standardized guidelines on how to record and process NM images (http://www.eanm.org/publications/guidelines/index.php?navId=37). 
+These guidelines work fine for most of the cases but it could fall (be unable to handle data or show meaningless results).                 
+In such cases this application would be most helpful.<br>
+This development was inspired by success of ImageJ (http://imagej.net/) image processing program.
+          
+The latest release supports images in DICOM format with raw or uncompressed JPEG data only. <br>
+The program does not make any difference of image modality as long as photometric interpretation is MONOCHROME or MONOCHROME2 
+and pixel data are 8-16 bits.
+STATIC/DYNAMIC/WHOLE BODY/TOMO/TOMO RECON.       
+
+The application has tabbed design. There are three tabs: image viewer, curve viewer and multi-image viewer. 
+Here image viewer tab is central element it is responsible for displaying image, applying LUT, controlling W\L              
+The processing unit is built around ROI model - elliptic, rectangular and free form ROI are implemented.  
+
+Out of ROI it is possible to visualize densities, areas, min/max/avg pixel values. Curves can be built for dynamic images.
+Curve one can   is possible to dispaly curvers and perform simple arithmetic manipulation on them.
+
+The program is written in Java (tm) it is tested to run on both Windows and Linux.</p>
+ 
+ 
  
         </article>
       </div>
