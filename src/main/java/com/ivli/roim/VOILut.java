@@ -179,7 +179,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     
     private void makeLUT() {   
         
-        logger.info((isLinear() ? "linear, ":"logarithmic, ") + (isInverted() ? "inverted, ":"direct, ") + "level=" + iWin.getLevel() + ", width=" + iWin.getWidth()); //NOI18N
+       // logger.info((isLinear() ? "linear, ":"logarithmic, ") + (isInverted() ? "inverted, ":"direct, ") + "level=" + iWin.getLevel() + ", width=" + iWin.getWidth()); //NOI18N
         
         if (isLinear())
             doMakeLUT(new functor() { 
