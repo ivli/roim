@@ -11,8 +11,8 @@
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script type="text/javascript" src="javascripts/script.js"></script>
 
-  <title>ROI-master</title>
-  <meta name="description" content="Image Calculator for Nuclear Medicine">
+  <title>Roim - A Nuclear Medicine Image Viewer</title>
+  <meta name="description" content="A Nuclear Medicine Image Viewer">
 
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
@@ -25,13 +25,14 @@
       <h1 class="title">ROI-master</h1>
     </header>
     <div id="container">
-      <p class="tagline">Image Calculator for Nuclear Medicine</p>
+      <p class="tagline">A Nuclear Medicine Image Viewer</p>
       <div id="main" role="main">
         <div class="download-bar">
         <div class="inner">
-          <a href="https://github.com/ivli/roim/tarball/master" class="download-button tar"><span>Download</span></a>
+          <!--a href="https://github.com/ivli/roim/tarball/master" class="download-button tar"><span>Download</span></a-->
           <a href="https://github.com/ivli/roim/zipball/master" class="download-button zip"><span>Download</span></a>
           <a href="https://github.com/ivli/roim" class="code">View ROI-master on GitHub</a>
+		  <a href="https://github.com/ivli/roim/releases/latest" class="code">Get latest release</a>
         </div>
         <span class="blc"></span><span class="trc"></span>
         </div>
@@ -51,25 +52,27 @@ Hence, images are 3 or 4 dimensional where third dimension of any 3D image can b
 Flat (2D) images are usually provide information on one or another metabolic process.
 Most commonly NM images have rather low resolution, number of pixel being compared to say CT or DXR is relatively.
 Despite, having pixel values untouched is of highest importance (it gives a possibility to extract characteristics of recorded process)
-it should not affect visual representation of the images thus smoothing and colour representation of greyscale images comes to the scene. 
-There are standardized guidelines on how to record and process NM images (http://www.eanm.org/publications/guidelines/index.php?navId=37). 
-These guidelines work fine for most of the cases but it could fall (be unable to handle data or show meaningless results).                 
-In such cases this application would be most helpful.<br>
-This development was inspired by success of ImageJ (http://imagej.net/) image processing program.
+it should not affect visual representation of the images thus smoothing and colourization of greyscale images comes to the scene. 
+The program implements several pixel interpolation algorithms including bicubic and is capable of reading standard LUT palettes in 768 bit NIH format (there is a number of buit in LUTs).  
+There is a standardized framework of <a href="http://www.eanm.org/publications/guidelines/index.php?navId=37">guidelines</a> how to record and process NM images. 
+Algorithms described in these guidelines work fine for the most of the cases but rarely it could fall being unable to handle data or bring meaningless results. 
+Discussing possible causes is clearly out of the scope but it shall be mentioned in many cases the study still can be processed.                     
+Such a cases when the application might be helpful the most.<br>
+This development was inspired by success of  <a href="http://imagej.net/">ImageJ</a> image processing program.
           
 The latest release supports images in DICOM format with raw or uncompressed JPEG data only. <br>
 The program does not make any difference of image modality as long as photometric interpretation is MONOCHROME or MONOCHROME2 
 and pixel data are 8-16 bits.
-STATIC/DYNAMIC/WHOLE BODY/TOMO/TOMO RECON.       
-
+Supported image types are <span>STATIC/DYNAMIC/WHOLE BODY/TOMO/TOMO RECON</span>.       
+To display reconstructed images MIP algorithm is employed.
 The application has tabbed design. There are three tabs: image viewer, curve viewer and multi-image viewer. 
 Here image viewer tab is central element it is responsible for displaying image, applying LUT, controlling W\L              
 The processing unit is built around ROI model - elliptic, rectangular and free form ROI are implemented.  
 
-Out of ROI it is possible to visualize densities, areas, min/max/avg pixel values. Curves can be built for dynamic images.
-Curve one can   is possible to dispaly curvers and perform simple arithmetic manipulation on them.
+It is possible to extract some statistical values out of ROIs: integral density, area, min/max/avg pixel values and perform simple arithmetic manipulation on them.
+For dynamic images (aka <b>multiframe</b>) it is possible to build curves of aforementioned values. You are free to select frame to draw ROI on, it will be populated to all frames.
 
-The program is written in Java (tm) it is tested to run on both Windows and Linux.</p>
+The program is written in Java (tm) and run on both Windows and Linux.</p>
  
  
  
