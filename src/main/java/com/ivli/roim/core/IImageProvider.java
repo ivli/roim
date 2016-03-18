@@ -21,7 +21,7 @@ package com.ivli.roim.core;
  *  
  * @author likhachev
  */
-public interface IImageProvider extends IFrameProvider {                  
+public interface IImageProvider {                  
     /**
      *
      * @return image width in pixels
@@ -36,7 +36,13 @@ public interface IImageProvider extends IFrameProvider {
      *
      * @return a number of frames
      */
-    int getNumFrames();      
+    int getNumFrames();   
+    /**
+     *
+     * @param anIndex
+     * @return a frame of the image specified by parameter anIndex 
+     */
+    ImageFrame get(int anIndex) throws IndexOutOfBoundsException; 
     
     /**
      * it always returs GRAYS32
@@ -61,13 +67,12 @@ public interface IImageProvider extends IFrameProvider {
      *
      * @return for TOMO RECON images - physical slice thickness 
      */
-    SliceSpacing getSliceSpacing();
+    SliceSpacing getSliceSpacing();    
     /**
      *
      * @return for DYNAMIC images - temporal characteristics of multiframe image 
      */
-    TimeSliceVector getTimeSliceVector();      
-      
+    TimeSliceVector getTimeSliceVector();            
     /**
      *
      * @return minimal pixel value either loaded from dicom or calculated at loading time
@@ -79,5 +84,7 @@ public interface IImageProvider extends IFrameProvider {
      * @return maximal pixel value either loaded from dicom or calculated at loading time
      */
     double getMax();
-    public PValueTransform getRescaleTransform();
+    
+    public PValueTransform getRescaleTransform();        
+    
 }

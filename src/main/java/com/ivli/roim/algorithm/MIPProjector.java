@@ -26,7 +26,7 @@ import com.ivli.roim.events.ProgressNotifier;
  *
  * @author likhachev
  */
-public class MIPProjector extends ProgressNotifier implements IProgressor {   
+public class MIPProjector extends ProgressNotifier implements Runnable {//implements IProgressor {   
     private final double DEPTH_FACTOR = .1; //must fit into range [0 - 1]
    
     private final IMultiframeImage iImage;

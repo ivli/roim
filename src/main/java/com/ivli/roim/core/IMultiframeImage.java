@@ -26,7 +26,7 @@ import com.ivli.roim.algorithm.ImageProcessor;
  * note: this is just an iterator/accessor actual frames are stored in descendants  
  * 
  */
-public abstract class IMultiframeImage implements Iterable<ImageFrame>, IImageProvider {          
+public abstract class IMultiframeImage implements Iterable<ImageFrame>, IImageProvider, Cloneable, java.io.Serializable {          
   
     public abstract ImageProcessor processor();
     /**
@@ -46,7 +46,7 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, IImagePr
     public abstract IMultiframeImage createCompatibleImage(int aNoOfFrames); 
     
     /**
-     * Creates a deep coopy of original image    
+     * Returns a deep copy of original image    
      * @return - a multiframe image   
      */
     public abstract IMultiframeImage duplicate(); 

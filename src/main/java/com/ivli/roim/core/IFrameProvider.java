@@ -22,10 +22,5 @@ package com.ivli.roim.core;
  * @author likhachev
  */
 public interface IFrameProvider {
-    /**
-     *
-     * @param anIndex
-     * @return a frame of the image specified by parameter anIndex 
-     */
-    ImageFrame get(int anIndex) throws IndexOutOfBoundsException; 
+    
 }

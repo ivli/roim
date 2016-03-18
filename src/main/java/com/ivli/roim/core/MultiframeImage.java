@@ -20,7 +20,7 @@ package com.ivli.roim.core;
 import com.ivli.roim.algorithm.FrameProcessor;
 import com.ivli.roim.algorithm.ImageProcessor;
 
-public class MultiframeImage extends IMultiframeImage implements Cloneable, java.io.Serializable  {
+public class MultiframeImage extends IMultiframeImage   {
     protected final IImageProvider iProvider;
      //read from ImageProvider
     protected int iWidth;
@@ -69,16 +69,15 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable, java
     
     private MultiframeImage(IMultiframeImage aM, int anImages) {        
         iProvider = null;
-        iNumFrames = anImages;
-        
+        iNumFrames = anImages;        
         iWidth = aM.getWidth();
-        iHeight = aM.getHeight();
-        
+        iHeight = aM.getHeight();        
         iPixelSpacing = aM.getPixelSpacing();
         iSliceSpacing = aM.getSliceSpacing();
         iTimeSliceVector = aM.getTimeSliceVector();
         iPVT = aM.getRescaleTransform();
         iFrames = new java.util.ArrayList<>(iNumFrames);
+        
         for (int n=0; n < iNumFrames; ++n)
             iFrames.add(n, new ImageFrame(iWidth, iHeight));    
     }
