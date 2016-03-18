@@ -17,8 +17,6 @@
  */
 package com.ivli.roim;
 
-
-
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -42,9 +40,14 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.IWLManager;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
-import com.ivli.roim.events.*;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
+import com.ivli.roim.events.FrameChangeEvent;
+import com.ivli.roim.events.FrameChangeListener;
+import com.ivli.roim.events.WindowChangeEvent;
+import com.ivli.roim.events.WindowChangeListener;
+import com.ivli.roim.events.ZoomChangeEvent;
+import com.ivli.roim.events.ZoomChangeListener;
 import java.io.IOException;
 
 
@@ -71,14 +74,12 @@ public class ImageView extends JComponent implements IWLManager {
        
     ImageView(IMultiframeImage anImage) {  
         iModel = anImage;
-        iCurrent = 0;       
-        
-        iController = new Controller(this);
-        
-        iZoom   = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
+        iCurrent = 0;               
+        iController = new Controller(this);        
+        iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
         iOrigin = new Point(0, 0); 
         iInterpolation = InterpolationMethod.get(Settings.get(Settings.KEY_INTERPOLATION_METHOD, InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR));
-        iVLUT = new VOILut(iModel.get(iCurrent));
+        iVLUT = new VOILut(this);
         iPLUT = new PresentationLut();
         
         String lut = Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[1]);
@@ -118,7 +119,7 @@ public class ImageView extends JComponent implements IWLManager {
     }
     
     public ImageFrame getImage() {
-        return iModel.get(getCurrent());
+        return iModel.get(getFrameNumber());
     }
     
     public ROIManager getROIMgr() {
@@ -172,11 +173,11 @@ public class ImageView extends JComponent implements IWLManager {
         if (iModel.getImageType() == ImageType.DYNAMIC)
             aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),                                                            
                                                         this.getRange(),                                                
-                                                        iModel.getTimeSliceVector().getSlice(getCurrent()))); 
+                                                        iModel.getTimeSliceVector().getSlice(getFrameNumber()))); 
         else
             aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),                                                            
                                                         this.getRange(),                                                
-                                                        iModel.getTimeSliceVector().getSlice(getCurrent()))); 
+                                                        iModel.getTimeSliceVector().getSlice(getFrameNumber()))); 
     }
     
     public void removeFrameChangeListener(FrameChangeListener aL) {
@@ -184,10 +185,10 @@ public class ImageView extends JComponent implements IWLManager {
     } 
     
     protected void notifyFrameChanged() {
-        final FrameChangeEvent evt = new FrameChangeEvent(this, getCurrent(), iModel.getNumFrames(),
+        final FrameChangeEvent evt = new FrameChangeEvent(this, getFrameNumber(), iModel.getNumFrames(),
                                                             //new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()),
                                                             this.getRange(),
-                                                            iModel.getTimeSliceVector().getSlice(getCurrent()));                
+                                                            iModel.getTimeSliceVector().getSlice(getFrameNumber()));                
       
         for (FrameChangeListener l : iListeners.getListeners(FrameChangeListener.class))
             l.frameChanged(evt);       
@@ -227,7 +228,7 @@ public class ImageView extends JComponent implements IWLManager {
         return ret;
     }
    
-    public int getCurrent() {
+    public int getFrameNumber() {
         return iCurrent;
     }  
            

@@ -166,7 +166,7 @@ public class GridImageView extends ImageView {
                        
         BufferedImage tmp = new BufferedImage(getVisualWidth(), 
                                                  getVisualHeight(), 
-                                                    BufferedImage.TYPE_INT_RGB);//getImage().get(getCurrent()).getBufferedImage().getType());
+                                                    BufferedImage.TYPE_INT_RGB);//getImage().get(getFrameNumber()).getBufferedImage().getType());
         Graphics2D gc = tmp.createGraphics(); 
        
         if (isInverted()) { 
@@ -183,7 +183,7 @@ public class GridImageView extends ImageView {
             int posx = GAPX; 
             
             for (int i = 0; i < iCols; ++i) {
-                final int ndx = getCurrent() + j*iCols + i;
+                final int ndx = getFrameNumber() + j*iCols + i;
                               
                 if (iModel.hasAt(ndx)) {                    
                     BufferedImage img = iModel.get(ndx).getBufferedImage();

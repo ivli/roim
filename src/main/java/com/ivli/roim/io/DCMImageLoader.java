@@ -15,9 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.provider;
+package com.ivli.roim.io;
 
 import com.ivli.roim.core.ImageType;
+import com.ivli.roim.core.PValueTransform;
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.Raster;
@@ -134,6 +135,13 @@ public class DCMImageLoader {
         return iReader.getNumImages(false);
     }
 
+    public PValueTransform getRescaleTransform() { 
+        double  s = iDataSet.getDouble(Tag.RescaleSlope, 1.);   
+        double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);            
+        logger.info (String.format("Slope=%f; Intercept=%f", s, i));
+        return new PValueTransform(s, i);           
+    }
+    
     static final private String DICOM_KEYWORD_STATIC = "STATIC";
     static final private String DICOM_KEYWORD_DYNAMIC = "DYNAMIC";   
     static final private String DICOM_KEYWORD_WB = "WHOLE BODY";
@@ -150,15 +158,14 @@ public class DCMImageLoader {
                    
             if(s.contains(DICOM_KEYWORD_STATIC))
                 ret = ImageType.STATIC;            
-            else if (s.contains("DYNAMIC"))
+            else if (s.contains(DICOM_KEYWORD_DYNAMIC))
                 ret = ImageType.DYNAMIC;
             else if (s.contains(DICOM_KEYWORD_WB))
                 ret = ImageType.WHOLEBODY;    
             else if (s.contains(DICOM_KEYWORD_VOLUME)) //SIC:order is important
                 ret = ImageType.VOLUME;
             else if (s.contains(DICOM_KEYWORD_TOMO))
-                ret = ImageType.TOMO;    
-                                    
+                ret = ImageType.TOMO;                                        
         }
 
         return ret;

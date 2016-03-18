@@ -43,7 +43,7 @@ public class OffsetImageView extends ImageView {
     public void pan(int adX, int adY) {
         iOrigin.x += adX;
         iOrigin.y += adY;      
-        iOff.put(getCurrent(), new FrameOffset(iOrigin.x, iOrigin.y));      
+        iOff.put(getFrameNumber(), new FrameOffset(iOrigin.x, iOrigin.y));      
     }
      
     public boolean loadFrame(int aN) {

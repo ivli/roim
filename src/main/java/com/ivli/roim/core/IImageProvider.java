@@ -84,4 +84,5 @@ public interface IImageProvider {
      * @return maximal pixel value either loaded from dicom or calculated at loading time
      */
     double getMax();
+    public PValueTransform getRescaleTransform();
 }

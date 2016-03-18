@@ -68,17 +68,17 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     
     public double getDensity() {
         boildSeriesIfNeeded();
-        return getSeries(Measurement.DENSITY).get(getManager().getView().getCurrent());
+        return getSeries(Measurement.DENSITY).get(getManager().getView().getFrameNumber());
     }
     
     public double getMinPixel() {
         boildSeriesIfNeeded();
-        return getSeries(Measurement.MINPIXEL).get(getManager().getView().getCurrent());
+        return getSeries(Measurement.MINPIXEL).get(getManager().getView().getFrameNumber());
     }
     
     public double getMaxPixel() {
         boildSeriesIfNeeded();
-        return getSeries(Measurement.MAXPIXEL).get(getManager().getView().getCurrent());
+        return getSeries(Measurement.MAXPIXEL).get(getManager().getView().getFrameNumber());
     }
     
     public Series getSeries(Measurement anId) {  

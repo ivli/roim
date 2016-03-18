@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.provider;
+package com.ivli.roim.io;
 
 import java.io.IOException;
 import java.io.File;
@@ -24,6 +24,7 @@ import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.core.ImageDataType;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
+import com.ivli.roim.core.PValueTransform;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.SliceSpacing;
 import com.ivli.roim.core.TimeSliceVector;
@@ -119,6 +120,10 @@ public class DCMImageProvider implements IImageProvider {
         }
     }
 
+    public PValueTransform getRescaleTransform() {
+        return iLoader.getRescaleTransform();
+    }
+            
     public double getMin() {
         return iLoader.getMin();
     } 

@@ -22,7 +22,7 @@ import com.amd.aparapi.Kernel;
 import com.amd.aparapi.Range;
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.MultiframeImage;
-import com.ivli.roim.provider.DCMImageProvider;
+import com.ivli.roim.io.DCMImageProvider;
 import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.core.IMultiframeImage;
 import java.awt.*;
@@ -36,6 +36,7 @@ import com.ivli.roim.controls.*;
 import com.ivli.roim.core.ImageDataType;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
+import com.ivli.roim.core.PValueTransform;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.SliceSpacing;
 import com.ivli.roim.core.TimeSliceVector;
@@ -475,9 +476,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel4.repaint();
         
         IMultiframeImage mi2 = new MultiframeImage(iProvider);       
-        IMultiframeImage mi;
-        
-        
+        IMultiframeImage mi;                
         
         if (mi2.getImageType() != ImageType.VOLUME) {
             mi = mi2;
@@ -514,10 +513,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                         return prj.makeProjection(anIndex);
                     }
                 }
-
+                
                 public double getMin() {return iImage.getMin();}
-
-                public double getMax() {return iImage.getMax();}                                
+                public double getMax() {return iImage.getMax();}
+                public PValueTransform getRescaleTransform() {return iImage.getRescaleTransform();}
             };
                     
                     

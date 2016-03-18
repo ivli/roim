@@ -30,6 +30,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable, java
     protected PixelSpacing iPixelSpacing;
     protected SliceSpacing iSliceSpacing;
     protected TimeSliceVector iTimeSliceVector; 
+    protected PValueTransform iPVT; 
      //computed
     protected Double iMin = Double.NaN;
     protected Double iMax = Double.NaN;
@@ -44,7 +45,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable, java
         iImageType = aP.getImageType();
         iPixelSpacing = aP.getPixelSpacing();
         iTimeSliceVector = aP.getTimeSliceVector(); 
-       
+        iPVT = aP.getRescaleTransform();
         iFrames = new java.util.ArrayList<>(iNumFrames);
         
         for (int n=0; n < iNumFrames; ++n)
@@ -105,22 +106,22 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable, java
         return iImageType;
     }
     
-     @Override
+    @Override
     public int getWidth() {
         return iWidth;
     }
     
-     @Override
+    @Override
     public int getHeight() {
         return iHeight;
     }  
     
-     @Override
+    @Override
     public int getNumFrames() {       
         return iNumFrames;    
     }
     
-     @Override
+    @Override
     public PixelSpacing getPixelSpacing() {
         return iPixelSpacing;
     }
@@ -129,12 +130,14 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable, java
         return iSliceSpacing;
     }
      
-     @Override
+    @Override
     public TimeSliceVector getTimeSliceVector() {
         return iTimeSliceVector;
     }
     
-     @Override
+    @Override
+    public PValueTransform getRescaleTransform() {return iPVT;}
+    @Override
     public boolean hasAt(int aFrameNumber) {               
         return (aFrameNumber >=0 && aFrameNumber < iNumFrames);          
     }
