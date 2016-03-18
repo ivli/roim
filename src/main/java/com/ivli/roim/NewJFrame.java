@@ -512,15 +512,12 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                         b[anIndex] = true;
                         return prj.makeProjection(anIndex);
                     }
-                }
-                
+                }                
                 public double getMin() {return iImage.getMin();}
                 public double getMax() {return iImage.getMax();}
                 public PValueTransform getRescaleTransform() {return iImage.getRescaleTransform();}
             };
-                    
-                    
-                    
+                                                            
             mi = new MultiframeImage(ip);
             //mi.processor().flipVert();
         }

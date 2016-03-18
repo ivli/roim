@@ -60,7 +60,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable, java
         
         iPixelSpacing = PixelSpacing.UNITY_PIXEL_SPACING;
         iTimeSliceVector = TimeSliceVector.ONESHOT; 
-       
+        iPVT = new PValueTransform();
         iFrames = new java.util.ArrayList<>(iNumFrames);
         
         for (int n=0; n < iNumFrames; ++n)
@@ -77,7 +77,7 @@ public class MultiframeImage extends IMultiframeImage implements Cloneable, java
         iPixelSpacing = aM.getPixelSpacing();
         iSliceSpacing = aM.getSliceSpacing();
         iTimeSliceVector = aM.getTimeSliceVector();
-        
+        iPVT = aM.getRescaleTransform();
         iFrames = new java.util.ArrayList<>(iNumFrames);
         for (int n=0; n < iNumFrames; ++n)
             iFrames.add(n, new ImageFrame(iWidth, iHeight));    

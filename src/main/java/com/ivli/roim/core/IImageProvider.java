@@ -21,7 +21,7 @@ package com.ivli.roim.core;
  *  
  * @author likhachev
  */
-public interface IImageProvider {                  
+public interface IImageProvider extends IFrameProvider {                  
     /**
      *
      * @return image width in pixels
@@ -67,12 +67,7 @@ public interface IImageProvider {
      * @return for DYNAMIC images - temporal characteristics of multiframe image 
      */
     TimeSliceVector getTimeSliceVector();      
-    /**
-     *
-     * @param anIndex
-     * @return a frame of the image specified by parameter anIndex 
-     */
-    ImageFrame get(int anIndex) throws IndexOutOfBoundsException;   
+      
     /**
      *
      * @return minimal pixel value either loaded from dicom or calculated at loading time
