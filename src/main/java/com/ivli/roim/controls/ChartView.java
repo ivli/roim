@@ -68,7 +68,7 @@ public class ChartView extends javax.swing.JPanel
             
             this.add(iChart);            
         }
-        iChart.setMouseZoomable(true);
+        iChart.setMouseZoomable(false);
         iChart.setMouseWheelEnabled(true);
     }
     

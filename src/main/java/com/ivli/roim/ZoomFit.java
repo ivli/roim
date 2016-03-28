@@ -21,7 +21,7 @@ package com.ivli.roim;
  *
  * @author likhachev
  */
-public class Fit {
+public class ZoomFit {
     /*
      * no fit - zooming used
      */

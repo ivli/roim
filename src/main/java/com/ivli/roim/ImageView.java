@@ -56,7 +56,7 @@ public class ImageView extends JComponent implements IWLManager {
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
     
-    protected int iFit = Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, Fit.ONE_TO_ONE);     
+    protected int iFit = Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.ONE_TO_ONE);     
     protected final IMultiframeImage iModel;                     
     protected       Controller iController;    
     protected final AffineTransform iZoom;
@@ -248,7 +248,7 @@ public class ImageView extends JComponent implements IWLManager {
     }
     
     public void zoom(double aFactor) {
-        iFit = Fit.NONE;        
+        iFit = ZoomFit.NONE;        
         iZoom.setToScale(Math.max(iZoom.getScaleX() + aFactor, MIN_SCALE), Math.max(iZoom.getScaleY() + aFactor, MIN_SCALE));               
         invalidateBuffer();             
     }
@@ -263,7 +263,7 @@ public class ImageView extends JComponent implements IWLManager {
         iROIMgr.clear();
         iOrigin.x = iOrigin.y = 0;
         iZoom.setToScale(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
-        iFit = Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, Fit.ONE_TO_ONE);
+        iFit = Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.ONE_TO_ONE);
         invalidateBuffer();
     }    
     
@@ -285,14 +285,14 @@ public class ImageView extends JComponent implements IWLManager {
         double scale;
         
         switch (iFit) {
-            case Fit.ONE_TO_ONE: scale = 1.0; break;
-            case Fit.VISIBLE:
+            case ZoomFit.ONE_TO_ONE: scale = 1.0; break;
+            case ZoomFit.VISIBLE:
                 final double scaleX = (double)getWidth() / (double)getVisualWidth(); 
                 final double scaleY = (double)getHeight() / (double)getVisualHeight(); 
                 scale = Math.min(scaleX, scaleY); break;                
-            case Fit.HEIGHT: scale = (double)getHeight() / (double)getVisualHeight(); break;
-            case Fit.WIDTH:  scale = (double)getWidth() / (double)getVisualWidth(); break;
-            case Fit.NONE: //falltrough to default
+            case ZoomFit.HEIGHT: scale = (double)getHeight() / (double)getVisualHeight(); break;
+            case ZoomFit.WIDTH:  scale = (double)getWidth() / (double)getVisualWidth(); break;
+            case ZoomFit.NONE: //falltrough to default
             default: 
                 return;                            
         } 

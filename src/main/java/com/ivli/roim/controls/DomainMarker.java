@@ -17,7 +17,7 @@ import org.jfree.ui.RectangleInsets;
  * @author likhachev
  */
 public class DomainMarker extends ValueMarker {        
-    private final XYSeries iSet;
+    private final XYSeries iSeries;
 
     private ValueMarker iLink;
     
@@ -27,14 +27,18 @@ public class DomainMarker extends ValueMarker {
         this((aSet.getMaxX() - aSet.getMinX()) / 2., aSet);
     }
     
-    public DomainMarker(double aValue, XYSeries aSet) {
-        super(aValue);                        
-        iSet = aSet;       
-        setLabel(String.format(LABEL_FORMAT, aValue));
+    public DomainMarker(double aV, XYSeries aS) {
+        super(aV);                        
+        iSeries = aS;       
+        setLabel(String.format(LABEL_FORMAT, aV));
         setLabelAnchor(RectangleAnchor.CENTER);
         setLabelOffset(RectangleInsets.ZERO_INSETS);
         setPaint(Color.RED);
         setAlpha(1.f);        
+    }
+    
+    public XYSeries getXYSeries() {
+        return iSeries;
     }
     
     public void setLinkedMarker(ValueMarker aM) {
@@ -44,10 +48,11 @@ public class DomainMarker extends ValueMarker {
         iLink.setLabelOffset(RectangleInsets.ZERO_INSETS);
     }
     
+    @Override
     public void setValue(double aVal) {
         super.setValue(aVal);
         
-        if (null != iSet) { 
+        if (null != iSeries) { 
             final Double newY = getNearestY(aVal);
             if (null != iLink) {
                 iLink.setValue(newY);
@@ -62,19 +67,19 @@ public class DomainMarker extends ValueMarker {
     }
     
     double getNearestY(Double aX) {        
-        int i = iSet.getItemCount();
+        int i = iSeries.getItemCount();
         
         do{ // bisection
             i = i/2;
-        } while(i > 0 && (Double)iSet.getX(i) > aX);
+        } while(i > 0 && (Double)iSeries.getX(i) > aX);
         
-        for (; i < iSet.getItemCount() - 1; ++i) { 
-            Double i1 = (Double)iSet.getX(i);
-            Double i2 = (Double)iSet.getX(i+1);
+        for (; i < iSeries.getItemCount() - 1; ++i) { 
+            Double i1 = (Double)iSeries.getX(i);
+            Double i2 = (Double)iSeries.getX(i+1);
             if (aX >=i1 && aX < i2) { //linear fit
-                final double x0 = (double)iSet.getX(i);
-                final double y0 = (double)iSet.getY(i);                    
-                return y0 + (aX - x0) * ((double)iSet.getY(i+1) - y0) / ((double)iSet.getX(i+1) - x0);
+                final double x0 = (double)iSeries.getX(i);
+                final double y0 = (double)iSeries.getY(i);                    
+                return y0 + (aX - x0) * ((double)iSeries.getY(i+1) - y0) / ((double)iSeries.getX(i+1) - x0);
             }
         }
         return Double.NaN;
