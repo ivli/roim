@@ -129,7 +129,7 @@ public class ChartView extends javax.swing.JPanel
                 s.setKey(aE.getObject().getName());
             } break;    
             
-            case ROIChangeEvent.ROIDELTEDALL: {
+            case ROIChangeEvent.ROIALLDELETED: {
                 ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); 
             } break;     
             default: 

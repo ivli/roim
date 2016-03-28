@@ -99,7 +99,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
             
     public void clear() {
         iOverlays.clear();
-        notifyROIChanged(null, ROIChangeEvent.ROIDELTEDALL, null);      
+        notifyROIChanged(null, ROIChangeEvent.ROIALLDELETED, null);      
     }
     
     public void update() {

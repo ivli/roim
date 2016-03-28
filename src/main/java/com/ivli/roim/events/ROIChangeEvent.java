@@ -36,7 +36,7 @@ public final class ROIChangeEvent extends java.util.EventObject {
     public final static int ROIMOVED = 4; // a ROI has been moved
     public final static int ROICHANGEDCOLOR = 5; // a ROI's colour has been changed
     public final static int ROICHANGEDNAME = 6; // a ROI's name has been changed
-    public final static int ROIDELTEDALL = 7;   // all ROI have been removed
+    public final static int ROIALLDELETED = 7;   // all ROI have been removed
     //}
     
     public ROIChangeEvent(Object aO, int aC, Overlay aR, Object aExtra) {
