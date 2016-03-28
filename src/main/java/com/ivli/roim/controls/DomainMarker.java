@@ -5,9 +5,9 @@
  */
 package com.ivli.roim.controls;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import org.jfree.chart.plot.ValueMarker;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleInsets;
@@ -33,8 +33,13 @@ public class DomainMarker extends ValueMarker {
         setLabel(String.format(LABEL_FORMAT, aV));
         setLabelAnchor(RectangleAnchor.CENTER);
         setLabelOffset(RectangleInsets.ZERO_INSETS);
-        setPaint(Color.RED);
-        setAlpha(1.f);        
+        
+        setAlpha(1.0f);     
+        setPaint(Color.BLACK);        
+        setStroke(new BasicStroke(1.0f));
+        
+        setOutlinePaint(Color.CYAN);
+        setOutlineStroke(new BasicStroke(.0f));           
     }
     
     public XYSeries getXYSeries() {

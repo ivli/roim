@@ -31,14 +31,14 @@ import org.jfree.ui.Layer;
  */
 public class CurvePanel extends ChartPanel {
 
-    private final static String KCommandMarkerAdd      = "MARKER_CMD_MARKER_ADD";
-    private final static String KCommandMarkerDelete   = "MARKER_CMD_MARKER_DELETE";
-    private final static String KCommandMarkerValueOn  = "MARKER_CMD_TURN_VALUE_MARKER_ON";
-    private final static String KCommandMarkerValueOff = "MARKER_CMD_TURN_VALUE_MARKER_OFF";
-    private final static String KCommandMarkerLabelOn  = "MARKER_CMD_TURN_LABEL_ON";
-    private final static String KCommandMarkerLabelOff = "MARKER_CMD_TURN_LABEL_OFF";
-    private final static String KCommandMarkerMoveMax  = "MARKER_CMD_MOVE_TO_MAX";
-    private final static String KCommandMarkerMoveMin  = "MARKER_CMD_MOVE_TO_MIN";
+    private final static String KCommandMarkerAdd      = "MARKER_CMD_MARKER_ADD"; //NOI18N
+    private final static String KCommandMarkerDelete   = "MARKER_CMD_MARKER_DELETE"; //NOI18N
+    private final static String KCommandMarkerValueOn  = "MARKER_CMD_TURN_VALUE_MARKER_ON";//NOI18N
+    private final static String KCommandMarkerValueOff = "MARKER_CMD_TURN_VALUE_MARKER_OFF";//NOI18N
+    private final static String KCommandMarkerLabelOn  = "MARKER_CMD_TURN_LABEL_ON";//NOI18N
+    private final static String KCommandMarkerLabelOff = "MARKER_CMD_TURN_LABEL_OFF";//NOI18N
+    private final static String KCommandMarkerMoveToMax  = "MARKER_CMD_MOVE_TO_MAX";//NOI18N
+    private final static String KCommandMarkerMoveToMin  = "MARKER_CMD_MOVE_TO_MIN";//NOI18N
     
     public CurvePanel(JFreeChart aChart) {
         super(aChart);
@@ -68,12 +68,13 @@ public class CurvePanel extends ChartPanel {
     }
             
     private ValueMarker findMarker(MouseEvent e) {
-        XYPlot plot = getChart().getXYPlot();
+        final XYPlot plot = getChart().getXYPlot();
         
         final double domainX = plot.getDomainAxis().java2DToValue(e.getX(), 
                                                                   getChartRenderingInfo().getPlotInfo().getDataArea(),                             
                                                                   plot.getDomainAxisEdge());
-        final double EPSILON = 10.5;
+        
+        final double Epsilon = plot.getDataRange(plot.getDomainAxis()).getLength() * .01d;
 
         java.util.Collection mark = plot.getDomainMarkers(Layer.FOREGROUND);
         if (null == mark || mark.isEmpty())
@@ -83,7 +84,7 @@ public class CurvePanel extends ChartPanel {
             if (o instanceof DomainMarker) {           
                 //DomainMarker m = (DomainMarker)o;
                 double val = ((DomainMarker)o).getValue();
-                if (val >= domainX - EPSILON && val <= domainX + EPSILON) {
+                if (val >= domainX - Epsilon && val <= domainX + Epsilon) {
                     //getContentPane().setCursor(new Cursor(Cursor.HAND_CURSOR)); 
                     return (ValueMarker)o;
                 }
@@ -92,24 +93,63 @@ public class CurvePanel extends ChartPanel {
         return null;
     }
        
+    double getDomainValueOfMinimum(XYSeries aS) {
+        final double [][] v = aS.toArray();
+        double valY = Double.MAX_VALUE;
+        double valX = Double.NaN;
+        
+        for (int i=0; i < v[0].length; ++i) {
+            if (v[1][i] < valY) {
+                valY = v[1][i];
+                valX = v[0][i];
+            }            
+        }
+  
+        return valX;
+    }
+    
+    double getDomainValueOfMaximum(XYSeries aS) {
+        final double [][] v = aS.toArray();
+        double valY = Double.MIN_VALUE;
+        double valX = Double.NaN;
+        
+       for (int i=0; i < v[0].length; ++i) {
+            if (v[1][i] > valY) {
+                valY = v[1][i];
+                valX = v[0][i];
+            }            
+        }
+  
+        return valX;
+    }
+    
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
+        final XYPlot plot = getChart().getXYPlot();
         
-        if (e.getActionCommand().equals(KCommandMarkerAdd)) {
-            if (null != mr && mr instanceof DomainMarker) {
-                DomainMarker m = (DomainMarker)mr;
-                DomainMarker m2 = new DomainMarker(m.getXYSeries());
-                addMarker(m2);           
-                
-            } else if (null != ts && ts instanceof XYSeries) {
-                addMarker ( new DomainMarker(ts));
-            }
-        
+        switch (e.getActionCommand()) {
+            case KCommandMarkerAdd:
+                if (null != mr && mr instanceof DomainMarker) {
+                    DomainMarker m = (DomainMarker)mr;
+                    DomainMarker m2 = new DomainMarker(m.getXYSeries());
+                    addMarker(m2);
+                } else if (null != ts && ts instanceof XYSeries) {
+                    addMarker(new DomainMarker(ts));
+                }   break;
+            case KCommandMarkerMoveToMax: {               
+                DomainMarker dm =(DomainMarker)mr;              
+                dm.setValue(getDomainValueOfMaximum(dm.getXYSeries()));                    
+            } break;
+            case KCommandMarkerMoveToMin: {                
+                DomainMarker dm =(DomainMarker)mr;              
+                dm.setValue(getDomainValueOfMinimum(dm.getXYSeries()));
+            } break;                
+            default:
+                break;
         }
         
-        sel = null;
-        mr = null;
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        dropSelection();
+        
     }
     
     public void mouseMoved(MouseEvent e) {
@@ -149,25 +189,38 @@ public class CurvePanel extends ChartPanel {
     @Override
     public void mouseReleased(MouseEvent e) {
         
-        if (SwingUtilities.isRightMouseButton(e) && ( mr instanceof DomainMarker || ts instanceof XYSeries)) {
-            JPopupMenu mnu = new JPopupMenu("MNU_MARKER_OPERATIONS"); 
-            JMenuItem mi11 = new JMenuItem("MARKER_COMMAND.ADD_MARKER");
+        if (SwingUtilities.isRightMouseButton(e) && (mr instanceof DomainMarker || ts instanceof XYSeries)) {
+            JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MNU_MARKER_OPERATIONS")); 
+            {
+            JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.ADD_MARKER"));
             mi11.addActionListener(this);
             mi11.setActionCommand(KCommandMarkerAdd);
             mnu.add(mi11);
+            }
+            if (mr instanceof DomainMarker)  {
+                { //KCommandMarkerMoveToMax  = "MARKER_CMD_MOVE_TO_MAX
+                JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MIN"));
+                mi11.addActionListener(this);
+                mi11.setActionCommand(KCommandMarkerMoveToMin);
+                mnu.add(mi11);            
+                }{
+                JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX"));
+                mi11.addActionListener(this);
+                mi11.setActionCommand(KCommandMarkerMoveToMax);
+                mnu.add(mi11);            
+                }
+            }
             mnu.show(this, e.getX(), e.getY());
         } else {
             super.mouseReleased(e);
-            sel = null;
-            mr = null;
-            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            dropSelection();
         }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         super.mouseDragged(e);
-        XYPlot plot = getChart().getXYPlot();
+        final XYPlot plot = getChart().getXYPlot();
         
         if (null != sel) {                   
             moveTo(plot.getRangeAxis().java2DToValue(e.getY(), 
@@ -175,12 +228,20 @@ public class CurvePanel extends ChartPanel {
                         plot.getRangeAxisEdge()));
         }  else if (null != mr) {
             final double val = plot.getDomainAxis().java2DToValue(e.getX(), getChartRenderingInfo().getPlotInfo().getDataArea(),                                                                                                                 
-                                                             plot.getDomainAxisEdge());
+                                                                      plot.getDomainAxisEdge());
             mr.setValue(val);
             //mr.setLabel(String.format("%.3f", mr.getValue()));
         }
     }
   
+    void dropSelection() {
+        sel = null;
+        ts = null;
+        xy = null;
+        mr = null;  
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    }
+    
     private ChartEntity sel = null;
     private XYSeries    ts  = null;
     private XYDataItem  xy  = null;

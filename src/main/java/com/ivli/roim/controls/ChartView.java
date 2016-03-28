@@ -98,14 +98,14 @@ public class ChartView extends javax.swing.JPanel
             } break;
                 
             case ROIChangeEvent.ROICREATED: {                
-                final XYSeries s = new XYSeries(aE.getObject().getName(), false, false);
+                final XYSeries s = new XYSeries(aE.getObject().getName(), true, false);
                 final Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                
                 assert(c.getNumFrames() == aE.getObject().getManager().getImage().getTimeSliceVector().getNumFrames());
                 
                 for (int n = 0; n < c.getNumFrames(); ++n)   {                  
-                    Double x = aE.getObject().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000.;
-                    Double y = c.get(n);
+                    double x = aE.getObject().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000.;
+                    double y = c.get(n);
                     s.add(x, y);
                 }
 

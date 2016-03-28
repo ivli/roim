@@ -81,10 +81,10 @@ public class Histogram {
      * @return
      */
     protected XYSeries convert(final String aName, HashMap<Integer, Integer> aMap){            
-        XYSeries ret = new XYSeries(aName);
+        XYSeries ret = new XYSeries(aName, true, false);
         
         aMap.entrySet().stream().forEach((entry) -> { 
-            ret.add(entry.getKey(), entry.getValue());
+            ret.add((double)entry.getKey(), (double)entry.getValue());
         });
                         
         return ret;

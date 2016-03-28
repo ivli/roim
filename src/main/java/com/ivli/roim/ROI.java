@@ -55,7 +55,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iSeries = null;//new SeriesCollection();//CurveExtractor.extract(getManager().getImage(), this, getManager().getOffsetVector());
     }
         
-    private void boildSeriesIfNeeded() {
+    private void buildSeriesIfNeeded() {
         if (null == iSeries)
             iSeries = CurveExtractor.extract(getManager().getImage(), this, getManager().getOffsetVector());
     }
@@ -67,22 +67,22 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }
     
     public double getDensity() {
-        boildSeriesIfNeeded();
+        buildSeriesIfNeeded();
         return getSeries(Measurement.DENSITY).get(getManager().getView().getFrameNumber());
     }
     
     public double getMinPixel() {
-        boildSeriesIfNeeded();
+        buildSeriesIfNeeded();
         return getSeries(Measurement.MINPIXEL).get(getManager().getView().getFrameNumber());
     }
     
     public double getMaxPixel() {
-        boildSeriesIfNeeded();
+        buildSeriesIfNeeded();
         return getSeries(Measurement.MAXPIXEL).get(getManager().getView().getFrameNumber());
     }
     
     public Series getSeries(Measurement anId) {  
-        boildSeriesIfNeeded();
+        buildSeriesIfNeeded();
         return iSeries.get(anId);
     }
     
