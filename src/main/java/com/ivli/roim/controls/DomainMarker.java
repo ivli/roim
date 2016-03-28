@@ -53,6 +53,14 @@ public class DomainMarker extends ValueMarker {
         iLink.setLabelOffset(RectangleInsets.ZERO_INSETS);
     }
     
+    public void moveToMaximum() {
+        setValue(getDomainValueOfMaximum(iSeries));
+    }
+    
+    public void moveToMinimum() {
+        setValue(getDomainValueOfMinimum(iSeries));
+    }
+        
     @Override
     public void setValue(double aVal) {
         super.setValue(aVal);
@@ -69,6 +77,37 @@ public class DomainMarker extends ValueMarker {
            setLabel(String.format("%f", aVal)); //NOI18N
         }
         
+    }
+    
+    
+    double getDomainValueOfMinimum(XYSeries aS) {
+        final double [][] v = aS.toArray();
+        double valY = Double.MAX_VALUE;
+        double valX = Double.NaN;
+        
+        for (int i=0; i < v[0].length; ++i) {
+            if (v[1][i] < valY) {
+                valY = v[1][i];
+                valX = v[0][i];
+            }            
+        }
+  
+        return valX;
+    }
+    
+    double getDomainValueOfMaximum(XYSeries aS) {
+        final double [][] v = aS.toArray();
+        double valY = Double.MIN_VALUE;
+        double valX = Double.NaN;
+        
+       for (int i=0; i < v[0].length; ++i) {
+            if (v[1][i] > valY) {
+                valY = v[1][i];
+                valX = v[0][i];
+            }            
+        }
+  
+        return valX;
     }
     
     double getNearestY(Double aX) {        

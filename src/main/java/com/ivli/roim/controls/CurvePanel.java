@@ -91,37 +91,7 @@ public class CurvePanel extends ChartPanel {
             }
         }
         return null;
-    }
-       
-    double getDomainValueOfMinimum(XYSeries aS) {
-        final double [][] v = aS.toArray();
-        double valY = Double.MAX_VALUE;
-        double valX = Double.NaN;
-        
-        for (int i=0; i < v[0].length; ++i) {
-            if (v[1][i] < valY) {
-                valY = v[1][i];
-                valX = v[0][i];
-            }            
-        }
-  
-        return valX;
-    }
-    
-    double getDomainValueOfMaximum(XYSeries aS) {
-        final double [][] v = aS.toArray();
-        double valY = Double.MIN_VALUE;
-        double valX = Double.NaN;
-        
-       for (int i=0; i < v[0].length; ++i) {
-            if (v[1][i] > valY) {
-                valY = v[1][i];
-                valX = v[0][i];
-            }            
-        }
-  
-        return valX;
-    }
+    }  
     
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
@@ -134,16 +104,20 @@ public class CurvePanel extends ChartPanel {
                     DomainMarker m2 = new DomainMarker(m.getXYSeries());
                     addMarker(m2);
                 } else if (null != ts && ts instanceof XYSeries) {
-                    addMarker(new DomainMarker(ts));
+                    DomainMarker nm = new DomainMarker(ts);
+                    addMarker(nm);
+                    //final XYPlot plot = getChart().getXYPlot();        
+                    ///final double domainX = ;
+                    nm.setValue(xy.getXValue());//plot.getDomainAxis().java2DToValue(sel.,//e.getX(), 
+                                  //                                getChartRenderingInfo().getPlotInfo().getDataArea(),                             
+                                  //                                plot.getDomainAxisEdge()));
                 }   break;
-            case KCommandMarkerMoveToMax: {               
-                DomainMarker dm =(DomainMarker)mr;              
-                dm.setValue(getDomainValueOfMaximum(dm.getXYSeries()));                    
-            } break;
-            case KCommandMarkerMoveToMin: {                
-                DomainMarker dm =(DomainMarker)mr;              
-                dm.setValue(getDomainValueOfMinimum(dm.getXYSeries()));
-            } break;                
+            case KCommandMarkerMoveToMax:                                              
+                ((DomainMarker)mr).moveToMaximum();                    
+            break;
+            case KCommandMarkerMoveToMin:                 
+                ((DomainMarker)mr).moveToMinimum(); 
+            break;                
             default:
                 break;
         }
@@ -186,6 +160,8 @@ public class CurvePanel extends ChartPanel {
         super.mousePressed(e);
     }
 
+    int temp = 0;
+    
     @Override
     public void mouseReleased(MouseEvent e) {
         
