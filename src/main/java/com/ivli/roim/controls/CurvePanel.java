@@ -103,27 +103,23 @@ public class CurvePanel extends ChartPanel {
                     DomainMarker m = (DomainMarker)mr;
                     DomainMarker m2 = new DomainMarker(m.getXYSeries());
                     addMarker(m2);
-                } else if (null != ts && ts instanceof XYSeries) {
-                    DomainMarker nm = new DomainMarker(ts);
-                    addMarker(nm);
-                    //final XYPlot plot = getChart().getXYPlot();        
-                    ///final double domainX = ;
-                    nm.setValue(xy.getXValue());//plot.getDomainAxis().java2DToValue(sel.,//e.getX(), 
-                                  //                                getChartRenderingInfo().getPlotInfo().getDataArea(),                             
-                                  //                                plot.getDomainAxisEdge()));
+                } else if (null != ts && ts instanceof XYSeries) {                    
+                    addMarker(new DomainMarker(xy.getXValue(), ts));                                                  
                 }   break;
             case KCommandMarkerMoveToMax:                                              
                 ((DomainMarker)mr).moveToMaximum();                    
             break;
             case KCommandMarkerMoveToMin:                 
                 ((DomainMarker)mr).moveToMinimum(); 
-            break;                
+            break;  
+            case KCommandMarkerDelete:
+                
+                break;
             default:
                 break;
         }
         
-        dropSelection();
-        
+        dropSelection();        
     }
     
     public void mouseMoved(MouseEvent e) {
@@ -159,8 +155,6 @@ public class CurvePanel extends ChartPanel {
         } else
         super.mousePressed(e);
     }
-
-    int temp = 0;
     
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -176,16 +170,22 @@ public class CurvePanel extends ChartPanel {
             if (mr instanceof DomainMarker)  {
                 { //KCommandMarkerMoveToMax  = "MARKER_CMD_MOVE_TO_MAX
                 JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MIN"));
-                mi11.addActionListener(this);
                 mi11.setActionCommand(KCommandMarkerMoveToMin);
+                mi11.addActionListener(this);               
                 mnu.add(mi11);            
                 }{
                 JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX"));
-                mi11.addActionListener(this);
                 mi11.setActionCommand(KCommandMarkerMoveToMax);
+                mi11.addActionListener(this);               
                 mnu.add(mi11);            
-                }
+                }{
+                JMenuItem mi11 = new JMenuItem("MARKER_COMMAND.MARKER_DELETE");
+                mi11.setActionCommand(KCommandMarkerDelete);
+                mi11.addActionListener(this);               
+                mnu.add(mi11);   
+                }                
             }
+            
             mnu.show(this, e.getX(), e.getY());
         } else {
             super.mouseReleased(e);
