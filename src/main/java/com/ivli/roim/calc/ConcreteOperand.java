@@ -39,6 +39,8 @@ public class ConcreteOperand  implements IOperand, ROIChangeListener, AutoClosea
         this(aRoi, Filter.DENSITY);
     }
     
+    public ROI getROI() {return iRoi;}
+    
     public double value() {
         return iF.filter(iRoi);
     }

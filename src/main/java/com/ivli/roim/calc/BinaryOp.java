@@ -32,6 +32,10 @@ public class BinaryOp implements IOperation {
         iOp  = MathOp.fromString(anOperation);
     }
     
+    public IOperand getLhs() {return iLhs;}
+    
+    public IOperand getRhs() {return iRhs;}
+    
     public IOperand value() {
         return iOp.product(iLhs, iRhs);
     }

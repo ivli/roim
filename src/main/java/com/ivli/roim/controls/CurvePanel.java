@@ -175,7 +175,7 @@ public class CurvePanel extends ChartPanel {
             mi11.setActionCommand(KCommandMarkerAdd);
             mnu.add(mi11);
             }{
-            JMenuItem mi11 = new JMenuItem("MARKER_COMMAND.DELETE_ALL_MARKERS");
+            JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.DELETE_ALL_MARKERS"));
             mi11.setActionCommand(KCommandMarkerDeleteAll);
             mi11.addActionListener(this);            
             mnu.add(mi11);            
@@ -192,7 +192,7 @@ public class CurvePanel extends ChartPanel {
                 mi11.addActionListener(this);               
                 mnu.add(mi11);            
                 }{
-                JMenuItem mi11 = new JMenuItem("MARKER_COMMAND.MARKER_DELETE");
+                JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MARKER_DELETE"));
                 mi11.setActionCommand(KCommandMarkerDelete);
                 mi11.addActionListener(this);               
                 mnu.add(mi11);   

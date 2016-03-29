@@ -141,7 +141,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     public void createAnnotation(BinaryOp anOp) {    
-        iOverlays.add(new Annotation.Active(anOp, null, this));      
+        iOverlays.add(new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI(), this));      
     }
     
     public void createAnnotation(ROI aROI) {    

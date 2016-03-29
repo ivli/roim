@@ -41,15 +41,7 @@ public class DomainMarker extends ValueMarker {
         setOutlinePaint(Color.CYAN);
         setOutlineStroke(new BasicStroke(.0f));           
     }
-    
-    static DomainMarker createMarkerAtMinimum(XYSeries aS) {
-        return new DomainMarker(XYSeriesUtilities.getDomainValueOfMinimum(aS), aS);
-    }
-    
-    static DomainMarker createMarkerAtMaximum(XYSeries aS) {
-        return new DomainMarker(XYSeriesUtilities.getDomainValueOfMaximum(aS), aS);
-    }
-    
+   
     public XYSeries getXYSeries() {
         return iSeries;
     }

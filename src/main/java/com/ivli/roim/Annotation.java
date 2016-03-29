@@ -184,39 +184,48 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
      */
     public static class Active extends Annotation {
         private Color iColor = Color.RED;
-        private String iAnnotation;        
+        //private String iAnnotation;        
         private Overlay iOverlay;
         private IOperation iOp;
         
         Active(IOperation aOp, Overlay anO, ROIManager aRM) {
             super("ANNOTATION.ACTIVE", null, aRM);        
-            iOverlay = anO;
-            iOp = aOp;     
             
-            iAnnotation = iOp.getCompleteString();
-            
-            final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
-            
-           /// final double scaleX = getManager().getView().screenToVirtual().getScaleX();
+            iOp = aOp;                 
+                        
+            final ImageView w = getManager().getView();
+            final Rectangle2D bnds = w.getFontMetrics(w.getFont()).getStringBounds(aOp.getCompleteString(), w.getGraphics());        
+                       
             double posX = .0, posY = .0;
            
-            if (null != iOverlay) {
-                Rectangle r = anO.getShape().getBounds();
-                posX = r.x;
-                posY = r.y + bnds.getHeight();
+            if (null != anO) {
+                iOverlay = anO;  
+                Rectangle2D r = w.virtualToScreen().createTransformedShape(anO.getShape()).getBounds2D();
+                posX = r.getX();
+                posY = r.getY();
+                
+                if (anO instanceof Ruler) {
+                    
+                } else {
+      
+                    posY += bnds.getHeight();
+                }
+                anO.addROIChangeListener(this);
             }
             
-            iShape = getManager().getView().screenToVirtual().createTransformedShape(new Rectangle2D.Double(posX, posY, bnds.getWidth(), bnds.getHeight()));            
+            iShape = w.screenToVirtual().createTransformedShape(new Rectangle2D.Double(posX, posY, bnds.getWidth(), bnds.getHeight()));            
+            
         }   
         
         @Override
         public void ROIChanged(ROIChangeEvent anEvt) {              
             switch (anEvt.getChange()) {
                 case ROIChangeEvent.ROIDELETED: 
-                   break;
-                case ROIChangeEvent.ROIMOVED: {
-                
-                
+                    break;
+                case ROIChangeEvent.ROIMOVED: {  
+                    final double[] deltas = (double[])anEvt.getExtra();                    
+                    move(deltas[0], deltas[1]);
+                    update();
                 } break;            
                 case ROIChangeEvent.ROICHANGED:   
                 default: //fall-through
@@ -226,34 +235,17 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
         }
 
         @Override
-        void paint(Graphics2D aGC, AffineTransform aTrans) {
-            
-            final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
-            
-           /// final double scaleX = getManager().getView().screenToVirtual().getScaleX();
-           /* double posX = .0, posY = .0;
-           
-            if (null != iOverlay) {
-                Rectangle r = iOverlay.getShape().getBounds();
-                posX = r.x;
-                posY = r.y + bnds.getHeight();
-            }
-            */
-           
-                   
-          
-            final Rectangle2D tmp = iShape.getBounds();     
-           // iShape = new Rectangle2D.Double(tmp.getX(), tmp.getY(), bnds.getWidth(), bnds.getHeight());     
-            
+        void paint(Graphics2D aGC, AffineTransform aTrans) {     
+            Rectangle2D tmp = aTrans.createTransformedShape(iShape).getBounds2D();            
             aGC.setColor(iColor);
 
-            aGC.drawString(iOp.getCompleteString(), (int)tmp.getX(), (int)(tmp.getY() + bnds.getHeight() - 4));       
-            aGC.draw(bnds);        
+            aGC.drawString(iOp.getCompleteString(), (int)tmp.getMinX(), (int)tmp.getMaxY());       
+            //aGC.draw(tmp);        
         }
         
         @Override
         public void update() {      
-            iAnnotation = iOp.getCompleteString();
+            //iAnnotation = iOp.getCompleteString();
 /*
             final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
             

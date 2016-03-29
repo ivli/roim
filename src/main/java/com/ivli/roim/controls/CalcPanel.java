@@ -69,8 +69,7 @@ public class CalcPanel extends javax.swing.JPanel {
         
         jTable2.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             jButton1.setEnabled(rebuildOp());
-        }); 
-        
+        });         
     }
 
     private boolean rebuildOp() {
@@ -82,9 +81,9 @@ public class CalcPanel extends javax.swing.JPanel {
             final ROI iLhs = (ROI)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
             final ROI iRhs = (ROI)jTable2.getValueAt(jTable2.getSelectedRow(), 0);                
             iF = Filter.getFilter((String)jComboBox2.getSelectedItem());
-            iOp = new com.ivli.roim.calc.BinaryOp(new ConcreteOperand(iLhs, iF), 
-                                                  new ConcreteOperand(iRhs, iF), 
-                                                  (String)jComboBox1.getSelectedItem());
+            iOp = new BinaryOp(new ConcreteOperand(iLhs, iF), 
+                                new ConcreteOperand(iRhs, iF), 
+                                    (String)jComboBox1.getSelectedItem());
             
             jTextField2.setText(iOp.getCompleteString());   
             
