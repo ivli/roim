@@ -42,13 +42,21 @@ public class DomainMarker extends ValueMarker {
         setOutlineStroke(new BasicStroke(.0f));           
     }
     
+    static DomainMarker createMarkerAtMinimum(XYSeries aS) {
+        return new DomainMarker(XYSeriesUtilities.getDomainValueOfMinimum(aS), aS);
+    }
+    
+    static DomainMarker createMarkerAtMaximum(XYSeries aS) {
+        return new DomainMarker(XYSeriesUtilities.getDomainValueOfMaximum(aS), aS);
+    }
+    
     public XYSeries getXYSeries() {
         return iSeries;
     }
     
     public void setLinkedMarker(ValueMarker aM) {
         iLink = aM;
-        iLink.setValue(getNearestY(getValue()));
+        iLink.setValue(XYSeriesUtilities.getNearestY(getValue(), iSeries));
         iLink.setLabelAnchor(RectangleAnchor.BOTTOM);
         iLink.setLabelOffset(RectangleInsets.ZERO_INSETS);
     }
@@ -58,11 +66,11 @@ public class DomainMarker extends ValueMarker {
     }
     
     public void moveToMaximum() {
-        setValue(getDomainValueOfMaximum(iSeries));
+        setValue(XYSeriesUtilities.getDomainValueOfMaximum(iSeries));
     }
     
     public void moveToMinimum() {
-        setValue(getDomainValueOfMinimum(iSeries));
+        setValue(XYSeriesUtilities.getDomainValueOfMinimum(iSeries));
     }
         
     @Override
@@ -70,7 +78,7 @@ public class DomainMarker extends ValueMarker {
         super.setValue(aVal);
         
         if (null != iSeries) { 
-            final Double newY = getNearestY(aVal);
+            final Double newY = XYSeriesUtilities.getNearestY(aVal, iSeries);
             if (null != iLink) {
                 iLink.setValue(newY);
                 iLink.setLabel(String.format(LABEL_FORMAT, newY));
@@ -79,59 +87,10 @@ public class DomainMarker extends ValueMarker {
         } else {
            //super.setValue(aVal);
            setLabel(String.format("%f", aVal)); //NOI18N
-        }
-        
-    }
+        }        
+    }  
     
     
-    double getDomainValueOfMinimum(XYSeries aS) {
-        final double [][] v = aS.toArray();
-        double valY = Double.MAX_VALUE;
-        double valX = Double.NaN;
-        
-        for (int i=0; i < v[0].length; ++i) {
-            if (v[1][i] < valY) {
-                valY = v[1][i];
-                valX = v[0][i];
-            }            
-        }
-  
-        return valX;
-    }
-    
-    double getDomainValueOfMaximum(XYSeries aS) {
-        final double [][] v = aS.toArray();
-        double valY = Double.MIN_VALUE;
-        double valX = Double.NaN;
-        
-       for (int i=0; i < v[0].length; ++i) {
-            if (v[1][i] > valY) {
-                valY = v[1][i];
-                valX = v[0][i];
-            }            
-        }
-  
-        return valX;
-    }
-    
-    double getNearestY(Double aX) {        
-        int i = iSeries.getItemCount();
-        
-        do{ // bisection
-            i = i/2;
-        } while(i > 0 && (Double)iSeries.getX(i) > aX);
-        
-        for (; i < iSeries.getItemCount() - 1; ++i) { 
-            Double i1 = (Double)iSeries.getX(i);
-            Double i2 = (Double)iSeries.getX(i+1);
-            if (aX >=i1 && aX < i2) { //linear fit
-                final double x0 = (double)iSeries.getX(i);
-                final double y0 = (double)iSeries.getY(i);                    
-                return y0 + (aX - x0) * ((double)iSeries.getY(i+1) - y0) / ((double)iSeries.getX(i+1) - x0);
-            }
-        }
-        return Double.NaN;
-    }
 }
 
 
