@@ -35,10 +35,11 @@ public class CurvePanel extends ChartPanel {
     private final static String KCommandMarkerDelete   = "MARKER_CMD_MARKER_DELETE"; //NOI18N
     private final static String KCommandMarkerValueOn  = "MARKER_CMD_TURN_VALUE_MARKER_ON";//NOI18N
     private final static String KCommandMarkerValueOff = "MARKER_CMD_TURN_VALUE_MARKER_OFF";//NOI18N
-    private final static String KCommandMarkerLabelOn  = "MARKER_CMD_TURN_LABEL_ON";//NOI18N
-    private final static String KCommandMarkerLabelOff = "MARKER_CMD_TURN_LABEL_OFF";//NOI18N
+    private final static String KCommandMarkerLabelOn    = "MARKER_CMD_TURN_LABEL_ON";//NOI18N
+    private final static String KCommandMarkerLabelOff   = "MARKER_CMD_TURN_LABEL_OFF";//NOI18N
     private final static String KCommandMarkerMoveToMax  = "MARKER_CMD_MOVE_TO_MAX";//NOI18N
     private final static String KCommandMarkerMoveToMin  = "MARKER_CMD_MOVE_TO_MIN";//NOI18N
+    private final static String KCommandMarkerDeleteAll  = "MARKER_CMD_DELETE_ALL";//NOI18N
     
     public CurvePanel(JFreeChart aChart) {
         super(aChart);
@@ -51,6 +52,11 @@ public class CurvePanel extends ChartPanel {
         aM.setLinkedMarker(vm);        
     }
     
+    public void removeMarker(DomainMarker aM) {
+        getChart().getXYPlot().removeRangeMarker(aM.getLinkedMarker(), Layer.FOREGROUND);
+        getChart().getXYPlot().removeDomainMarker(aM, Layer.FOREGROUND);                 
+    }
+            
     private ChartEntity findEntity(MouseEvent e) {              
         if (null != getChart()) {
             final Insets insets = getInsets();
@@ -99,21 +105,23 @@ public class CurvePanel extends ChartPanel {
         
         switch (e.getActionCommand()) {
             case KCommandMarkerAdd:
-                if (null != mr && mr instanceof DomainMarker) {
-                    DomainMarker m = (DomainMarker)mr;
+                if (null != iMarker && iMarker instanceof DomainMarker) {
+                    DomainMarker m = (DomainMarker)iMarker;
                     DomainMarker m2 = new DomainMarker(m.getXYSeries());
                     addMarker(m2);
-                } else if (null != ts && ts instanceof XYSeries) {                    
-                    addMarker(new DomainMarker(xy.getXValue(), ts));                                                  
+                } else if (null != iSeries && iSeries instanceof XYSeries) {                    
+                    addMarker(new DomainMarker(iDataItem.getXValue(), iSeries));                                                  
                 }   break;
             case KCommandMarkerMoveToMax:                                              
-                ((DomainMarker)mr).moveToMaximum();                    
+                ((DomainMarker)iMarker).moveToMaximum();                    
             break;
             case KCommandMarkerMoveToMin:                 
-                ((DomainMarker)mr).moveToMinimum(); 
+                ((DomainMarker)iMarker).moveToMinimum(); 
             break;  
             case KCommandMarkerDelete:
-                
+                removeMarker((DomainMarker)iMarker);
+                break;
+            case KCommandMarkerDeleteAll:
                 break;
             default:
                 break;
@@ -125,18 +133,18 @@ public class CurvePanel extends ChartPanel {
     public void mouseMoved(MouseEvent e) {
         super.mouseMoved(e);
 
-        if (null == sel && null == mr) {                    
+        if (null == iEntity && null == iMarker) {                    
             ChartEntity entity = findEntity(e);
             if (entity instanceof XYItemEntity) {
-                setCursor(new Cursor(Cursor.HAND_CURSOR));                 
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));                 
             } else if (entity instanceof PlotEntity) {
 
                 if (null != findMarker(e))
-                    setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 else
-                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    setCursor(Cursor.getDefaultCursor());
             } else {
-                setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                setCursor(Cursor.getDefaultCursor());
             }
         }
     }              
@@ -147,10 +155,10 @@ public class CurvePanel extends ChartPanel {
 
         if (entity instanceof XYItemEntity) {
             selectItem(entity);
-            setCursor(new Cursor(Cursor.HAND_CURSOR));
-        } else if (null != (mr = findMarker(e))) {                
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        } else if (null != (iMarker = findMarker(e))) {                
             if (SwingUtilities.isLeftMouseButton(e))                 
-                setCursor(new Cursor(Cursor.HAND_CURSOR));                    
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));                    
        
         } else
         super.mousePressed(e);
@@ -159,15 +167,20 @@ public class CurvePanel extends ChartPanel {
     @Override
     public void mouseReleased(MouseEvent e) {
         
-        if (SwingUtilities.isRightMouseButton(e) && (mr instanceof DomainMarker || ts instanceof XYSeries)) {
+        if (SwingUtilities.isRightMouseButton(e) && (iMarker instanceof DomainMarker || iSeries instanceof XYSeries)) {
             JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MNU_MARKER_OPERATIONS")); 
             {
             JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.ADD_MARKER"));
             mi11.addActionListener(this);
             mi11.setActionCommand(KCommandMarkerAdd);
             mnu.add(mi11);
+            }{
+            JMenuItem mi11 = new JMenuItem("MARKER_COMMAND.DELETE_ALL_MARKERS");
+            mi11.setActionCommand(KCommandMarkerDeleteAll);
+            mi11.addActionListener(this);            
+            mnu.add(mi11);            
             }
-            if (mr instanceof DomainMarker)  {
+            if (iMarker instanceof DomainMarker)  {
                 { //KCommandMarkerMoveToMax  = "MARKER_CMD_MOVE_TO_MAX
                 JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MIN"));
                 mi11.setActionCommand(KCommandMarkerMoveToMin);
@@ -194,45 +207,45 @@ public class CurvePanel extends ChartPanel {
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
-        super.mouseDragged(e);
+    public void mouseDragged(MouseEvent e) {        
         final XYPlot plot = getChart().getXYPlot();
         
-        if (null != sel) {                   
+        if (null != iEntity) {                   
             moveTo(plot.getRangeAxis().java2DToValue(e.getY(), 
-                      getChartRenderingInfo().getPlotInfo().getDataArea(),                             
+                    getChartRenderingInfo().getPlotInfo().getDataArea(),                             
                         plot.getRangeAxisEdge()));
-        }  else if (null != mr) {
-            final double val = plot.getDomainAxis().java2DToValue(e.getX(), getChartRenderingInfo().getPlotInfo().getDataArea(),                                                                                                                 
-                                                                      plot.getDomainAxisEdge());
-            mr.setValue(val);
-            //mr.setLabel(String.format("%.3f", mr.getValue()));
+        }  
+        if (null != iMarker) {
+            iMarker.setValue(plot.getDomainAxis().java2DToValue(e.getX(), 
+                            getChartRenderingInfo().getPlotInfo().getDataArea(),                                                                                                                 
+                                plot.getDomainAxisEdge()));      
         }
+        else
+            super.mouseDragged(e);
     }
   
     void dropSelection() {
-        sel = null;
-        ts = null;
-        xy = null;
-        mr = null;  
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        iEntity = null;
+        iSeries = null;
+        iDataItem = null;
+        iMarker = null;  
+        setCursor(Cursor.getDefaultCursor());
     }
     
-    private ChartEntity sel = null;
-    private XYSeries    ts  = null;
-    private XYDataItem  xy  = null;
-    private ValueMarker mr = null;
+    private ChartEntity iEntity = null;
+    private XYSeries    iSeries  = null;
+    private XYDataItem  iDataItem  = null;
+    private ValueMarker iMarker  = null;
    
     protected void selectItem(ChartEntity anEntity) {
-        sel = anEntity;
-        ts = ((XYSeriesCollection)((XYItemEntity)sel).getDataset()).getSeries(((XYItemEntity)sel).getSeriesIndex());        
-        xy = ts.getDataItem(((XYItemEntity)sel).getItem());  
+        iEntity = anEntity;
+        iSeries = ((XYSeriesCollection)((XYItemEntity)iEntity).getDataset()).getSeries(((XYItemEntity)iEntity).getSeriesIndex());        
+        iDataItem = iSeries.getDataItem(((XYItemEntity)iEntity).getItem());  
     }
             
     protected void moveTo(double aNewY) {        
-        xy.setY(aNewY);
-        ts.delete(ts.indexOf(xy.getX()), ts.indexOf(xy.getX()));
-        ts.add(xy);         
-    }
-   
+        iDataItem.setY(aNewY);
+        iSeries.delete(iSeries.indexOf(iDataItem.getX()), iSeries.indexOf(iDataItem.getX()));
+        iSeries.add(iDataItem);         
+    }   
 }

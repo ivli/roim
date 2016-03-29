@@ -53,6 +53,10 @@ public class DomainMarker extends ValueMarker {
         iLink.setLabelOffset(RectangleInsets.ZERO_INSETS);
     }
     
+    public ValueMarker getLinkedMarker()  {
+        return iLink;
+    }
+    
     public void moveToMaximum() {
         setValue(getDomainValueOfMaximum(iSeries));
     }
