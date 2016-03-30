@@ -46,10 +46,12 @@ import javax.swing.event.AncestorListener;
 import javax.swing.event.EventListenerList;
 
 import com.ivli.roim.ActionItem;
+import com.ivli.roim.ImageView;
 import com.ivli.roim.LutLoader;
 import com.ivli.roim.Settings;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.IWLManager;
+import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
@@ -59,7 +61,8 @@ import com.ivli.roim.events.WindowChangeListener;
  *
  * @author likhachev
  */
-public class LUTControl extends JComponent implements  WindowChangeListener, FrameChangeListener, ActionListener {    
+public class LUTControl extends JComponent implements  WindowChangeListener, FrameChangeListener, ActionListener, 
+                                                          MouseMotionListener, MouseListener, MouseWheelListener {    
     private static final boolean MARKERS_DISPLAY_WL_VALUES = false;
     private static final boolean MARKERS_DISPLAY_PERCENT   = false;
     private static final boolean WEDGE_EXTEND_WHEN_FOCUSED = false;      
@@ -78,22 +81,54 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private static final int WINDOW_CURSOR = Cursor.N_RESIZE_CURSOR;                           
    
     protected final EventListenerList iList;
-    private IWLManager     iWLM;      
+      
     private Range          iRange;
     private final Marker   iTop;
     private final Marker   iBottom;
     private ActionItem     iAction;
-    private BufferedImage  iBuf;
-    private LUTControl     iParent = null;
     
-    private final MouseHandler iCtrl = new MouseHandler();
-     /* 
+    private BufferedImage  iBuf;
+    
+    //private LUTControl     iParent;
+    private boolean iCanShowDialog;
+    private ImageView iWLM; 
+    
+    public ImageView getView() {
+        return iWLM;
+    }
+    /* 
+    public LUTControl(IWLManager aW) { 
+        this();
+        construct(aW);
+    }
+     
       * passive mode constructor, only to display W/L not to control 
       */
-    public LUTControl(LUTControl aParent) {                   
-        this(aParent.iWLM);
-        iParent = aParent;
+    public void attach(ImageView aParent) {
+       construct(aParent); 
+       aParent.addFrameChangeListener(this);
+       aParent.addWindowChangeListener(this);
+       /*
+       super.addAncestorListener(new AncestorListener() {
+            public void ancestorAdded(AncestorEvent event) {}
+
+            public void ancestorRemoved(AncestorEvent event){        
+                logger.info("Deregistered");
+                aParent.removeWindowChangeListener(LUTControl.this);            
+            }
+
+            public void ancestorMoved(AncestorEvent event){}         
+            });
+       */
+    }
+    
+    public void attach(LUTControl aParent) {                          
+        construct(aParent.iWLM);
+        
+        iCanShowDialog = false;
+        
         aParent.addWindowChangeListener(this);
+        
         super.addAncestorListener(new AncestorListener() {
             public void ancestorAdded(AncestorEvent event) {}
 
@@ -105,20 +140,26 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             public void ancestorMoved(AncestorEvent event){}         
             });
     } 
-
-    /* 
-     * complete object constructor
-     */    
-    public LUTControl(IWLManager aW) {           
-        iWLM    = aW;  
-        iList   = new EventListenerList();
-        iRange  = new Range(iWLM.getRange());
-        iTop    = new Marker(true);  
-        iBottom = new Marker(false); 
+    
+    public void detach() {
         
+    }
+    
+    public LUTControl() { 
+        iTop    = new Marker(true);  
+        iBottom = new Marker(false);  
+        iList   = new EventListenerList();
         TOP_GAP    = iTop.getMarkerHeight()/2;
-        BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used        
-         
+        BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used 
+        iRange  = null;
+        iCanShowDialog = true;        
+    }
+    
+    private void construct(ImageView aW) {    
+        iWLM    = aW;         
+        iRange  = new Range(iWLM.getRange());
+   
+                 
         /* use feedback loop to addjust marker positions when size changed */
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {                
@@ -142,10 +183,11 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             }                    
         });
               
-        addMouseMotionListener(iCtrl);
-        addMouseListener(iCtrl);  
-        addMouseWheelListener(iCtrl);   
+        addMouseMotionListener(this);
+        addMouseListener(this);  
+        addMouseWheelListener(this);   
     }
+  
     /*  */    
     public com.ivli.roim.core.Curve getCurve() {
         return iWLM.getCurve();
@@ -194,7 +236,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         }                          
     }   
     
-    private class MouseHandler implements MouseMotionListener, MouseListener, MouseWheelListener {
+    //private class MouseHandler  {
    
         @Override
         public void mouseDragged(MouseEvent e) {
@@ -318,7 +360,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)                                            
                 directNotifyWindowChange(new Window(iRange));         
         }
-    } 
+    
     
     private void updateBufferedImage() {
         final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
@@ -512,7 +554,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 break;
             case KCommandShowDialog:    /**    TODO: refactor the dialog     **/     
                 
-                VOILUTPanel panel = new VOILUTPanel(this, iWLM.getView().getImage());
+                VOILUTPanel panel = new VOILUTPanel(this);//, iWLM.getView().getImage());
                 
                 javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
                 dialog.setContentPane(panel);
@@ -560,7 +602,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         mi12.setState(iWLM.isInverted());
         mnu.add(mi12);
         
-        if (null == iParent) {
+        if (iCanShowDialog) {
             JMenuItem mi13 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.SHOW_DIALOG"));
             mi13.addActionListener(this);
             mi13.setActionCommand(KCommandShowDialog); 

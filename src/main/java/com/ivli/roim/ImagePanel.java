@@ -25,11 +25,8 @@ import java.awt.Dialog;
 import javax.swing.JDialog;
 import com.ivli.roim.controls.VOILUTPanel;
 import com.ivli.roim.controls.LUTControl;
-import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.events.*;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 
 public class ImagePanel extends JPanel {      
@@ -38,11 +35,9 @@ public class ImagePanel extends JPanel {
                   
     public ImagePanel(ImageView aView) {       
         iView = aView;
-        iLut  = new LUTControl(iView);                                     
+        iLut  = new LUTControl();                                     
+        iLut.attach(aView);
         
-        iView.addWindowChangeListener(iLut); 
-        iView.addFrameChangeListener(iLut);
-                
         setLayout(new BorderLayout());                         
         add(iView);           
         add(iLut, BorderLayout.LINE_END);  
@@ -92,7 +87,7 @@ public class ImagePanel extends JPanel {
     }
         
     public void showLUTDialog() {
-        VOILUTPanel panel = new VOILUTPanel(iLut, iView.getImage());
+        VOILUTPanel panel = new VOILUTPanel(iLut);//, iView.getImage());
         JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
 
         dialog.setContentPane(panel);
@@ -104,7 +99,5 @@ public class ImagePanel extends JPanel {
     
     public Iterator<Overlay> getOverlaysList() {        
         return iView.getROIMgr().getOverlaysList();
-    }
-        
-    private static final Logger logger = LogManager.getLogger(ImagePanel.class);   
+    }   
 }

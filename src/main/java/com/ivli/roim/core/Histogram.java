@@ -101,7 +101,7 @@ public class Histogram {
         final int binSize = Math.max(1, (iMax - 0) / aNoOfBins);
      
         HashMap<Integer, Integer> reb = new HashMap<>();
-                
+             
         for (int i=0; i < aNoOfBins; ++i) {
             final Integer key = i * binSize; 
             Integer val = get(key);
@@ -109,5 +109,6 @@ public class Histogram {
         }
         
         return convert(aName, reb); 
+       
     }
 }

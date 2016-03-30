@@ -40,8 +40,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class VOILUTPanel extends JPanel implements WindowChangeListener {    
     private final LUTControl iLUT;
-    private boolean iShowHistogram = true;        
-    private final ImageFrame iFrame;    
+    private boolean iShowHistogram;        
+    //private final ImageFrame iFrame;    
     private final ChartPanel iPanel;
     private final String iCurveName;
     private Histogram iHist;
@@ -53,7 +53,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private XYSeries makeHistogram(int aWidth) {  
         if (null == iHist) {
             HistogramExtractor iHEx = new HistogramExtractor(null);
-            iFrame.extract(iHEx);
+            iLUT.getView().getImage().extract(iHEx);
             iHist = iHEx.iHist;
         }
         
@@ -67,17 +67,20 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         iPanel.getChart().getXYPlot().setDataset(0, updateLUTCurve(jPanel1.getWidth()));
     }   
     
-    public VOILUTPanel(LUTControl aP, ImageFrame aF) {
+    public VOILUTPanel(LUTControl aP) {//, ImageFrame aF) {
         iCurveName = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT");
-        iLUT = new LUTControl(aP);
-        
+        iLUT = new LUTControl();
+        iLUT.attach(aP);
+
         initComponents();
-                                
-        if (null != (iFrame = aF)) {
+        
+        /*                        
+        if(null != (iFrame = aF)) 
             iShowHistogram = true;       
-        } else             
+        else             
             iShowHistogram = false;
-    
+        */
+        
         XYPlot plot = new XYPlot();
    
         plot.setDataset(0, updateLUTCurve(jPanel1.getPreferredSize().width));
@@ -86,7 +89,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
         plot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_VOI_CURVE")));                
         
-        if (iShowHistogram) {             
+        //if (iShowHistogram) {             
             XYSeriesCollection col2 = new XYSeriesCollection();
             col2.addSeries(makeHistogram(jPanel1.getPreferredSize().width));
             
@@ -94,7 +97,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
             plot.setRenderer(1, new XYBarRenderer());
             plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_IMAGE_SPACE")));
             plot.mapDatasetToRangeAxis(1, 1);
-        }
+       // }
         
         plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_IMAGE_HISTOGRAM")));                
         plot.setRangeGridlinesVisible(true);

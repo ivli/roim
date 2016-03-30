@@ -57,31 +57,52 @@ public class ImageView extends JComponent implements IWLManager {
     private static final double MIN_SCALE = .01;
     
     protected int iFit = Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.ONE_TO_ONE);     
-    protected final IMultiframeImage iModel;                     
+    protected       IMultiframeImage iModel;                     
     protected       Controller iController;    
     protected final AffineTransform iZoom;
     protected final Point iOrigin;    
     protected       Object iInterpolation;
-    
-    //protected final IWLManager iLUTMgr;        
-    protected final ROIManager iROIMgr;
+           
+    protected  ROIManager iROIMgr;
     protected final EventListenerList iListeners;
     
     protected BufferedImage iBuf; 
-    private VOILut          iVLUT;
-    private PresentationLut iPLUT;
+    private   VOILut iVLUT;
+    private   PresentationLut iPLUT;
+    
+    
     protected int iCurrent;
        
-    public ImageView(IMultiframeImage anImage) {  
-        iModel = anImage;
-        iCurrent = 0;               
-        iController = new Controller(this);        
+    public ImageView() {      
+        iCurrent = 0; 
+                
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
-        iOrigin = new Point(0, 0); 
-        iInterpolation = InterpolationMethod.get(Settings.get(Settings.KEY_INTERPOLATION_METHOD, InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR));
-        iVLUT = new VOILut(this);
-        iPLUT = new PresentationLut();
+        iOrigin = new Point(0, 0);  
+        iListeners = new EventListenerList(); 
+        iInterpolation =  InterpolationMethod.get(InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR);        
+        iController = new Controller(this);
+    
+        addComponentListener(new ComponentListener() {    
+            public void componentResized(ComponentEvent e) {
+                invalidateBuffer();
+                notifyZoomChanged();
+                iZoomStep = Math.min(getImage().getWidth(), getImage().getHeight()) / Settings.get(Settings.KEY_ZOOM_STEP_FACTOR, 10.);
+            }                                               
+            public void componentHidden(ComponentEvent e) {}
+            public void componentMoved(ComponentEvent e) {}
+            public void componentShown(ComponentEvent e) {}                    
+        });        
         
+    }  
+    
+    public ImageView(IMultiframeImage anImage) {  
+        this();        
+        iModel = anImage;     
+        iVLUT = new VOILut(this);        
+        iPLUT = new PresentationLut();        
+        iROIMgr = new ROIManager(this);    
+        
+        /*     */   
         String lut = Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[1]);
         
         try {
@@ -94,20 +115,8 @@ public class ImageView extends JComponent implements IWLManager {
                 System.exit(-1);
             }
         }
-        Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, lut);
-        iROIMgr = new ROIManager(this);         
-        iListeners = new EventListenerList();
-        
-        
-        addComponentListener(new ComponentListener() {    
-            public void componentResized(ComponentEvent e) {
-                invalidateBuffer();
-                notifyZoomChanged();
-            }                                               
-            public void componentHidden(ComponentEvent e) {}
-            public void componentMoved(ComponentEvent e) {}
-            public void componentShown(ComponentEvent e) {}                    
-        });        
+ 
+        Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, lut);               
     }
                  
     public AffineTransform getZoom() {
@@ -247,9 +256,11 @@ public class ImageView extends JComponent implements IWLManager {
         return true;
     }
     
+    double iZoomStep;// = Math.min(aC.getImage().getWidth(), aC.getImage().getHeight()) / Settings.get(Settings.KEY_ZOOM_STEP_FACTOR, 10.);
+    
     public void zoom(double aFactor) {
         iFit = ZoomFit.NONE;        
-        iZoom.setToScale(Math.max(iZoom.getScaleX() + aFactor, MIN_SCALE), Math.max(iZoom.getScaleY() + aFactor, MIN_SCALE));               
+        iZoom.setToScale(Math.max(iZoom.getScaleX() + aFactor/iZoomStep, MIN_SCALE), Math.max(iZoom.getScaleY() + aFactor/iZoomStep, MIN_SCALE));               
         invalidateBuffer();             
     }
      
@@ -409,11 +420,7 @@ public class ImageView extends JComponent implements IWLManager {
             return iPLUT.transform(iVLUT.transform(aSrc, aDst), null);
         }
     
-        @Override
-        public ImageView getView() {
-            return this;
-        }
-    
+        
     private static final Logger logger = LogManager.getLogger(ImageView.class);
 }
 

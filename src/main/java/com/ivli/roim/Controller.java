@@ -51,8 +51,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */        
-class Controller implements ActionListener,  KeyListener,
-        MouseListener, MouseMotionListener, MouseWheelListener {
+class Controller implements ActionListener,  KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {                  
     public static final int MOUSE_ACTION_NONE   =  00;
     public static final int MOUSE_ACTION_SELECT =  01;
     public static final int MOUSE_ACTION_ZOOM   =  02;
@@ -71,7 +70,7 @@ class Controller implements ActionListener,  KeyListener,
     protected int iRightAction  = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_RIGHT, Controller.MOUSE_ACTION_WINDOW);
     protected int iWheelAction  = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_WHEEL, Controller.MOUSE_ACTION_LIST);
 
-    private  final double iZoomStep;// = Settings.get(Settings.ZOOM_STEP_FACTOR, 10.);
+    ////private double iZoomStep;// = Settings.get(Settings.ZOOM_STEP_FACTOR, 10.);
     
     abstract class BaseActionItem extends ActionItem {
         BaseActionItem(int aX, int aY) {
@@ -79,7 +78,7 @@ class Controller implements ActionListener,  KeyListener,
         }
        
         protected boolean DoWheel(int aX) {
-            iControlled.zoom(-aX/iZoomStep);
+            iControlled.zoom(-aX);
             iControlled.repaint();
             return true;
         }
@@ -129,7 +128,7 @@ class Controller implements ActionListener,  KeyListener,
                  }}; 
             case MOUSE_ACTION_ZOOM: return new BaseActionItem(aX, aY) {
                                         public void DoAction(int aX, int aY) {
-                                            iControlled.zoom((aX-iX)/iZoomStep);
+                                            iControlled.zoom((aX-iX));
                                             iControlled.repaint();
                 }};  
             case MOUSE_ACTION_PAN: 
@@ -157,14 +156,14 @@ class Controller implements ActionListener,  KeyListener,
         }        
     }  
     
-    private final ImageView iControlled;
+    private ImageView iControlled;    
     private ActionItem iAction;   
-    private Overlay  iSelected;
-    private final ActionItem iWheel;
+    private Overlay iSelected;
+    private ActionItem iWheel;
     
-    public Controller(ImageView aC) {
+    public Controller(ImageView aC) {       
         iControlled = aC;
-        iZoomStep = Math.min(aC.getImage().getWidth(), aC.getImage().getHeight()) / Settings.get(Settings.KEY_ZOOM_STEP_FACTOR, 10.);
+        
         iWheel = NewAction(iWheelAction, 0, 0);        
         iControlled.addMouseListener(this);
         iControlled.addMouseMotionListener(this);
