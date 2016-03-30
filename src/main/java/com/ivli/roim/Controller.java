@@ -69,8 +69,6 @@ class Controller implements ActionListener,  KeyListener, MouseListener, MouseMo
                        ;
     protected int iRightAction  = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_RIGHT, Controller.MOUSE_ACTION_WINDOW);
     protected int iWheelAction  = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_WHEEL, Controller.MOUSE_ACTION_LIST);
-
-    ////private double iZoomStep;// = Settings.get(Settings.ZOOM_STEP_FACTOR, 10.);
     
     abstract class BaseActionItem extends ActionItem {
         BaseActionItem(int aX, int aY) {

@@ -37,7 +37,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.core.IMultiframeImage;
-import com.ivli.roim.core.IWLManager;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
@@ -51,7 +50,7 @@ import com.ivli.roim.events.ZoomChangeListener;
 import java.io.IOException;
 
 
-public class ImageView extends JComponent implements IWLManager {     
+public class ImageView extends JComponent {//implements IWLManager {     
     private static final double DEFAULT_SCALE_X = 1.0;
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
@@ -65,17 +64,15 @@ public class ImageView extends JComponent implements IWLManager {
            
     protected  ROIManager iROIMgr;
     protected final EventListenerList iListeners;
-    
-    protected BufferedImage iBuf; 
+        
     private   VOILut iVLUT;
     private   PresentationLut iPLUT;
-    
-    
+        
     protected int iCurrent;
-       
+    protected BufferedImage iBuf; 
+    
     public ImageView() {      
-        iCurrent = 0; 
-                
+        iCurrent = 0;                 
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
         iOrigin = new Point(0, 0);  
         iListeners = new EventListenerList(); 
@@ -134,6 +131,10 @@ public class ImageView extends JComponent implements IWLManager {
     public ROIManager getROIMgr() {
         return iROIMgr;
     }    
+    
+    public VOILut getLUTMgr() {
+        return iVLUT;
+    }
     
     public void setFit(int aFit) {               
         iFit = aFit; 
@@ -330,95 +331,70 @@ public class ImageView extends JComponent implements IWLManager {
         iROIMgr.paint((Graphics2D)g, virtualToScreen());                         
         iController.paint((Graphics2D)g); //must reside last in the paint chain   
     }
-           
-    //public class WLManager implements IWLManager {    
-        
-        
-        private boolean iLockRange  = false;
-        private boolean iLockWindow = false;
-        
-                    
-        public void lockRange(boolean aLock) {
-            iLockRange = aLock;
+              
+    public void openLUT(String aL) {
+        try {
+            iPLUT.open(aL);
+            Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, aL);
+        } catch (IOException ex) {
+           logger.error("Unable to open LUT file {}", ex);
         }
-        
-        public void lockWindow(boolean aLock) {
-            iLockWindow = aLock;
-        }
-        
-        @Override
-        public void openLUT(String aL) {
-            try {
-                iPLUT.open(aL);
-                Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, aL);
-            } catch (IOException ex) {
-               logger.error("Unable to open LUT file {}", ex);
-            }
-            invalidateBuffer();  
+        invalidateBuffer();  
+        repaint();
+    }
+
+    public void setWindow(Window aW) {
+        if (!iVLUT.getWindow().equals(aW) && iVLUT.getRange().contains(aW)) {            
+            iVLUT.setWindow(aW);               
+            invalidateBuffer();
+            notifyWindowChanged();
+            repaint();
+        }       
+    }
+    
+    public Window getWindow() {
+        return new Window(iVLUT.getWindow());
+    }
+
+    public void setRange(Range aR) {            
+        iVLUT.setRange(aR);                    
+    }
+
+
+    public Range getRange() {
+        return new Range(iVLUT.getRange());
+    }
+
+
+    public void setInverted(boolean aI) {
+        if (aI != isInverted()) {    
+            iVLUT.setInverted(aI);
+            invalidateBuffer();
+            notifyWindowChanged();
+            repaint();
+        }        
+    }
+
+    public boolean isInverted() {
+        return iVLUT.isInverted();
+    }
+
+    public void setLinear(boolean aI) {
+        if (aI != isLinear()) {
+            iVLUT.setLinear(aI);
+            invalidateBuffer();
+            notifyWindowChanged();  
             repaint();
         }
-        
-        @Override
-        public void setWindow(Window aW) {
-            if (!iLockWindow && !iVLUT.getWindow().equals(aW) && iVLUT.getRange().contains(aW)) {            
-                iVLUT.setWindow(aW);               
-                invalidateBuffer();
-                notifyWindowChanged();
-                repaint();
-            }       
-        }
+    }
 
-        @Override
-        public Window getWindow() {
-            return new Window(iVLUT.getWindow());
-        }
-        
-        @Override
-        public void setRange(Range aR) {
-            if (!iLockRange)
-                iVLUT.setRange(aR);                    
-        }
-        
-        @Override
-        public Range getRange() {
-            return new Range(iVLUT.getRange());
-        }
+    public boolean isLinear() {
+        return iVLUT.isLinear();
+    }
 
-        @Override
-        public void setInverted(boolean aI) {
-            if (aI != isInverted()) {    
-                iVLUT.setInverted(aI);
-                invalidateBuffer();
-                notifyWindowChanged();
-                repaint();
-            }        
-        }
-
-        public boolean isInverted() {
-            return iVLUT.isInverted();
-        }
-
-        public void setLinear(boolean aI) {
-            if (aI != isLinear()) {
-                iVLUT.setLinear(aI);
-                invalidateBuffer();
-                notifyWindowChanged();  
-                repaint();
-            }
-        }
-
-        public boolean isLinear() {
-            return iVLUT.isLinear();
-        }
-
-        public com.ivli.roim.core.Curve getCurve() {
-            return iVLUT.makeXYSeries();
-        }
-
-        @Override
-        public java.awt.image.BufferedImage transform (java.awt.image.BufferedImage aSrc, java.awt.image.BufferedImage aDst) {
-            return iPLUT.transform(iVLUT.transform(aSrc, aDst), null);
-        }
+    public BufferedImage transform (BufferedImage aSrc, BufferedImage aDst) {
+        return iPLUT.transform(iVLUT.transform(aSrc, aDst), null);
+    }
     
         
     private static final Logger logger = LogManager.getLogger(ImageView.class);

@@ -49,9 +49,8 @@ import com.ivli.roim.ActionItem;
 import com.ivli.roim.ImageView;
 import com.ivli.roim.LutLoader;
 import com.ivli.roim.Settings;
+import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.Window;
-import com.ivli.roim.core.IWLManager;
-import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
@@ -86,24 +85,15 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private final Marker   iTop;
     private final Marker   iBottom;
     private ActionItem     iAction;
-    
     private BufferedImage  iBuf;
-    
-    //private LUTControl     iParent;
+      
     private boolean iCanShowDialog;
     private ImageView iWLM; 
     
     public ImageView getView() {
         return iWLM;
     }
-    /* 
-    public LUTControl(IWLManager aW) { 
-        this();
-        construct(aW);
-    }
-     
-      * passive mode constructor, only to display W/L not to control 
-      */
+   
     public void attach(ImageView aParent) {
        construct(aParent); 
        aParent.addFrameChangeListener(this);
@@ -189,8 +179,8 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     }
   
     /*  */    
-    public com.ivli.roim.core.Curve getCurve() {
-        return iWLM.getCurve();
+    public Curve getCurve() {
+        return iWLM.getLUTMgr().getCurve();
     }   
        
     public void addWindowChangeListener(WindowChangeListener aL) {        

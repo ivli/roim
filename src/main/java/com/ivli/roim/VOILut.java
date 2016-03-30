@@ -97,7 +97,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         return iLook.filter(aSrc, aDst);	
     }
     
-    public Curve makeXYSeries() {
+    public Curve getCurve() {
         final int minval = (int)getRange().getMin();
         final int maxval = (int)getRange().getMax();
         
