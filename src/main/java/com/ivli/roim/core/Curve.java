@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.core;
 
+import java.util.HashMap;
 import org.jfree.data.xy.XYSeries;
 
 /**
@@ -24,32 +25,23 @@ import org.jfree.data.xy.XYSeries;
  * @author likhachev
  */
 public class Curve extends Histogram {
-     
-   // ArrayList<Integer> iList;
-    
-    
-    public XYSeries getSeriesRebinned(final String aName, final int aNoOfBins) {               
-        Integer min = Integer.MIN_VALUE;
-        Integer max = Integer.MAX_VALUE;
-               
-        for (Integer r : iMap.keySet()) {
-            if (r < min)
-                min = r;
-            else if (r>max)
-                max = r;        
-        }
+     /*   */
+    @Override
+    public XYSeries getSeriesRebinned(final String aName, final int aNoOfBins) {     
         
-        final int binSize = Math.max(1, (Math.abs(max) - Math.abs(min)) / aNoOfBins);
-     
-        XYSeries ret = new XYSeries(aName);//, true, false);
         
+        
+        final int binSize = Math.max(1, (iMax - 0) / aNoOfBins);
+     
+        HashMap<Integer, Integer> reb = new HashMap<>();
+                
         for (int i=0; i < aNoOfBins; ++i) {
             final Integer key = i * binSize; 
             Integer val = get(key);
-            ret.add((Number)key, null != val ? val : 0);           
+            reb.put(key, val);           
         }
-        
-        return ret;
+                
+        return convert(aName, reb); 
     }
 
 }
