@@ -37,7 +37,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class DCMImageProvider implements IImageProvider {    
+class DCMImageProvider implements IImageProvider {    
     private final DCMImageLoader iLoader;    
     
     int iWidth;

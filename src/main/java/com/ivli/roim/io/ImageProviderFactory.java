@@ -26,13 +26,13 @@ import java.io.IOException;
  * @author likhachev
  */
 public class ImageProviderFactory {
-    static IImageProvider getProvider(File aFullPath) {
+    public static IImageProvider getProvider(String aFullPath) throws IOException {
         IImageProvider ret = null;
-        try {
-            ret = new DCMImageProvider(aFullPath);
-        } catch (IOException e) {
-            
-        }
+        //try {
+            ret = new DCMImageProvider(new File(aFullPath));
+        //} catch (IOException e) {
+        //    throw e;
+        //}
         return ret;
     }
 }

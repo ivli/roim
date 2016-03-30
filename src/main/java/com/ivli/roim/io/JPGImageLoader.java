@@ -39,8 +39,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class JPGImageLoader {
-    
+class JPGImageLoader {    
     static {   
         ImageIO.scanForPlugins(); 
     }

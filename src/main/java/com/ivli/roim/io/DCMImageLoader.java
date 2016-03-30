@@ -56,7 +56,7 @@ import org.apache.logging.log4j.Logger;
 /*
  * This class incapsulates dcm4che access to DICOM file entities 
  */
-public class DCMImageLoader {
+class DCMImageLoader {
 
     static {
         ImageIO.scanForPlugins();

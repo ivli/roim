@@ -22,7 +22,7 @@ import com.amd.aparapi.Kernel;
 import com.amd.aparapi.Range;
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.MultiframeImage;
-import com.ivli.roim.io.DCMImageProvider;
+//import com.ivli.roim.io.DCMImageProvider;
 import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.core.IMultiframeImage;
 import java.awt.*;
@@ -41,6 +41,7 @@ import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.SliceSpacing;
 import com.ivli.roim.core.TimeSliceVector;
 import com.ivli.roim.events.*;
+import com.ivli.roim.io.ImageProviderFactory;
 import java.io.File;
 import java.util.Locale;
 //import java.io.FileFilter;
@@ -455,7 +456,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         /* ENDIF */
         
         try {                           
-            iProvider = new DCMImageProvider(new File(dicomFileName));
+            iProvider = ImageProviderFactory.getProvider(dicomFileName);
             logger.info("opened file: " + dicomFileName);            
         } catch (IOException ex) {            
             logger.info("Unable to open file: " + dicomFileName); //NOI18N            
