@@ -55,7 +55,13 @@ class XYSeriesUtilities {
         return valX;
     }
     
-    static double getNearestY(Double aX, XYSeries aS) {        
+    /*
+     * computes Y = F(X) where X := [X0, X1, ... Xi, Xi+1 ... Xn] 
+     * for the case actual 'x' value lies between samples say Xi and Xi+1     
+     * for that neighbouring samples found using bisection method
+     * linear fit used to obtain 'y'    
+     */
+    static double getNearestY(final double aX, final XYSeries aS) {        
         int i = aS.getItemCount();
         
         do{ // bisection

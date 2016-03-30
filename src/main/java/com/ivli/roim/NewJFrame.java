@@ -385,7 +385,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         dispose();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
      
-    private void openImage(String aF) /*throws IOException*/ {   
+    private void openImage(String aF) {   
         String dicomFileName;
         
         /* NOT_USE_SWING_DIALOG 

@@ -72,7 +72,7 @@ public class ImageView extends JComponent implements IWLManager {
     private PresentationLut iPLUT;
     protected int iCurrent;
        
-    ImageView(IMultiframeImage anImage) {  
+    public ImageView(IMultiframeImage anImage) {  
         iModel = anImage;
         iCurrent = 0;               
         iController = new Controller(this);        
