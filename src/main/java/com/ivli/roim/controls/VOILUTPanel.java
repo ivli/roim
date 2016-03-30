@@ -40,13 +40,12 @@ import org.apache.logging.log4j.Logger;
  */
 public class VOILUTPanel extends JPanel implements WindowChangeListener {    
     private final LUTControl iLUT;
-    private boolean iShowHistogram = true;
-    //private HistogramExtractor iHEx = null;
-    
+    private boolean iShowHistogram = true;        
     private final ImageFrame iFrame;    
     private final ChartPanel iPanel;
     private final String iCurveName;
     private Histogram iHist;
+    
     private XYSeriesCollection updateLUTCurve(int aWidth) {      
         return new XYSeriesCollection(iLUT.getCurve().getSeriesRebinned(iCurveName, 256));
     }

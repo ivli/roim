@@ -26,6 +26,8 @@ import java.io.IOException;
  * @author likhachev
  */
 public class ImageProviderFactory {
+    
+    //TODO: implement here a logic of finding a provider according to image file type (file extension???) 
     public static IImageProvider getProvider(String aFullPath) throws IOException {
         IImageProvider ret = null;
         //try {

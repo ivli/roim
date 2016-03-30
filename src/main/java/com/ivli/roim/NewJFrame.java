@@ -603,9 +603,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         switch(jTabbedPane1.getSelectedIndex()) {
             case 0:
-                iImage.showLUTDialog(); break;
+                if (null != iImage) 
+                    iImage.showLUTDialog(); 
+                break;
             case 2:
-                iOff.showLUTDialog(); break;
+                if (null != iOff) 
+                    iOff.showLUTDialog(); 
+                break;
             default: break;    
         }
     }//GEN-LAST:event_jMenuItem3ActionPerformed

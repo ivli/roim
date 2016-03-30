@@ -25,10 +25,7 @@ import org.jfree.data.xy.XYSeries;
  * @author likhachev
  */
 public class Histogram {    
-    HashMap<Integer, Integer> iMap = new HashMap<>();
-   
-    int iMin = Integer.MAX_VALUE;
-    int iMax = Integer.MIN_VALUE;
+    protected final HashMap<Integer, Integer> iMap = new HashMap<>();
     
     /**
      *
@@ -65,12 +62,7 @@ public class Histogram {
      * @param aKey
      * @param aVal
      */
-    public void put(final Integer aKey, final Integer aVal) {
-        if (aKey > iMax)
-            iMax = aKey;
-        else if (aKey < iMin)
-            iMin = aKey;
-        
+    public void put(final Integer aKey, final Integer aVal) {       
         iMap.put(aKey, aVal);
     }
  
@@ -83,8 +75,8 @@ public class Histogram {
     protected XYSeries convert(final String aName, HashMap<Integer, Integer> aMap){            
         XYSeries ret = new XYSeries(aName, true, false);
         
-        aMap.entrySet().stream().forEach((entry) -> { 
-            ret.add((double)entry.getKey(), (double)entry.getValue());
+        aMap.entrySet().stream().forEach((entry) -> {     
+            ret.add((Number)entry.getKey(), (Number)entry.getValue());
         });
                         
         return ret;
@@ -96,18 +88,27 @@ public class Histogram {
      * @param aNoOfBins
      * @return
      */
-    public XYSeries getSeriesRebinned(final String aName, final int aNoOfBins) {
-              
-        final int binSize = Math.max(1, (iMax - 0) / aNoOfBins);
+    public XYSeries getSeriesRebinned(String aName, int aNoOfBins) {        
+        Integer min = Integer.MIN_VALUE;
+        Integer max = Integer.MAX_VALUE;
+               
+        for (Integer r : iMap.keySet()) {
+            if (r < min)
+                min = r;
+            else if (r>max)
+                max = r;        
+        }
+        
+        final int binSize = Math.max(1, (Math.abs(max) - Math.abs(min)) / aNoOfBins);
      
-        HashMap<Integer, Integer> reb = new HashMap<>();
-                
+        XYSeries ret = new XYSeries(aName, true, false);
+        
         for (int i=0; i < aNoOfBins; ++i) {
             final Integer key = i * binSize; 
             Integer val = get(key);
-            reb.put(key, val);           
+            ret.add((Number)key, null != val ? val : 0);           
         }
         
-        return convert(aName, reb); 
+        return ret;
     }
 }
