@@ -41,7 +41,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     private Color iColor;          
     private int iAreaInPixels;   
     
-    private transient SeriesCollection iSeries;               
+    transient SeriesCollection iSeries;               
     
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU|PINNABLE;}
@@ -55,7 +55,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iSeries = null;//new SeriesCollection();//CurveExtractor.extract(getManager().getFrame(), this, getManager().getOffsetVector());
     }
         
-    private void buildSeriesIfNeeded() {
+    void buildSeriesIfNeeded() {
         if (null == iSeries)
             iSeries = CurveExtractor.extract(getManager().getImage(), this, getManager().getOffsetVector());
     }
@@ -138,7 +138,6 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         double scale = Math.min(iShape.getBounds().getY() / (range), getManager().getHeight() / (4*range));
 
         Path2D.Double xpath = new Path2D.Double();
-
 
         xpath.moveTo(iShape.getBounds().getX(), iShape.getBounds().getY() - profileX[0] * scale);
 

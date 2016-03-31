@@ -40,7 +40,12 @@ import com.ivli.roim.events.ROIChangeListener;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.FrameOffsetVector;
 import com.ivli.roim.calc.BinaryOp;
-import com.ivli.roim.core.IImageView;
+import com.ivli.roim.calc.ConcreteOperand;
+import com.ivli.roim.calc.IOperand;
+import com.ivli.roim.core.Filter;
+import com.ivli.roim.core.Measurement;
+import com.ivli.roim.core.Series;
+import java.awt.Color;
 import java.awt.geom.Path2D;
 
 /**
@@ -116,7 +121,8 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     
     public void paint(Graphics2D aGC, AffineTransform aT) {
         iOverlays.stream().forEach((o) -> {
-            o.paint(aGC, aT);
+            if(o.isVisible()) 
+                o.paint(aGC, aT);
         });
     }            
     /*
@@ -150,13 +156,59 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     public void createAnnotation(BinaryOp anOp) {    
-        iOverlays.add(new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI(), this));      
+        Annotation a = new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI(), this);
+        iOverlays.add(a);  
+        createSurrogateROI(anOp);
     }
     
     public void createAnnotation(ROI aROI) {    
         iOverlays.add(new Annotation.Static(aROI, this));      
     }
-        
+    
+
+    final class SO implements IOperand {
+            double iV; 
+           
+            SO(double aV ) {
+                iV = aV;
+            } 
+            public double value() {return iV;}
+            public String getString() { return "";}
+    }
+    
+    void createSurrogateROI(BinaryOp anOp) {           
+        final String ln = ((ConcreteOperand)anOp.getLhs()).getROI().getName();
+        final String rn = ((ConcreteOperand)anOp.getRhs()).getROI().getName();
+        final String on = anOp.getOp().getOperationChar();
+                
+        //String name  = 
+        ROI surrogate = new ROI(ln + on + rn, ((ConcreteOperand)anOp.getLhs()).getROI().getShape(), this, Color.YELLOW){//((ConcreteOperand)anOp.getLhs()).getROI().getColor()) {
+            void buildSeriesIfNeeded() {               
+                final Measurement f1 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();                
+                final Measurement f2 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();
+                
+                final Series aLhs = ((ConcreteOperand)anOp.getLhs()).getROI().getSeries(f1);
+                final Series aRhs = ((ConcreteOperand)anOp.getRhs()).getROI().getSeries(f2);
+                                
+                Series density = new Series(f1);
+                              
+                for (int i = 0; i < aLhs.size(); ++i) {                    
+                    double r = anOp.getOp().product(new SO(aLhs.get(i)), new SO(aRhs.get(i))).value();
+                    density.add(r);
+                } 
+                
+                iSeries = new SeriesCollection();
+                iSeries.addSeries(density);
+            }  
+        };  
+                        
+        surrogate.setVisible(false);
+        iOverlays.add(surrogate);
+        surrogate.update();
+        notifyROIChanged(surrogate, ROIChangeEvent.ROICREATED, null);  
+        surrogate.addROIChangeListener(this);
+    }
+    
     protected void internalCreateROI(ROI aS) {
         ROI newRoi = new ROI(iUid.getNext(), aS.getShape(), this, aS.getColor());       
   

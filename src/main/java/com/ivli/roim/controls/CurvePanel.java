@@ -105,11 +105,12 @@ public class CurvePanel extends ChartPanel {
         
         switch (e.getActionCommand()) {
             case KCommandMarkerAdd:
-                if (null != iMarker && iMarker instanceof DomainMarker) {
-                    DomainMarker m = (DomainMarker)iMarker;
-                    DomainMarker m2 = new DomainMarker(m.getXYSeries());
-                    addMarker(m2);
-                } else if (null != iSeries && iSeries instanceof XYSeries) {                    
+                //if (null != iMarker && iMarker instanceof DomainMarker) {
+                //    DomainMarker m = (DomainMarker)iMarker;
+                //    DomainMarker m2 = new DomainMarker(m.getXYSeries());
+                //    addMarker(m2);
+                //} else 
+                if (null != iSeries && iSeries instanceof XYSeries) {                    
                     addMarker(new DomainMarker(iDataItem.getXValue(), iSeries));                                                  
                 }   break;
             case KCommandMarkerMoveToMax:                                              
@@ -169,19 +170,22 @@ public class CurvePanel extends ChartPanel {
         
         if (SwingUtilities.isRightMouseButton(e) && (iMarker instanceof DomainMarker || iSeries instanceof XYSeries)) {
             JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MNU_MARKER_OPERATIONS")); 
-            {
-            JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.ADD_MARKER"));
-            mi11.addActionListener(this);
-            mi11.setActionCommand(KCommandMarkerAdd);
-            mnu.add(mi11);
-            }{
-            JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.DELETE_ALL_MARKERS"));
-            mi11.setActionCommand(KCommandMarkerDeleteAll);
-            mi11.addActionListener(this);            
-            mnu.add(mi11);            
+            if (iSeries instanceof XYSeries) {
+                {
+                JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.ADD_MARKER"));
+                mi11.addActionListener(this);
+                mi11.setActionCommand(KCommandMarkerAdd);
+                mnu.add(mi11);
+                }
+                {
+                JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.DELETE_ALL_MARKERS"));
+                mi11.setActionCommand(KCommandMarkerDeleteAll);
+                mi11.addActionListener(this);            
+                mnu.add(mi11);            
+                }
             }
             if (iMarker instanceof DomainMarker)  {
-                { //KCommandMarkerMoveToMax  = "MARKER_CMD_MOVE_TO_MAX
+                { 
                 JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MIN"));
                 mi11.setActionCommand(KCommandMarkerMoveToMin);
                 mi11.addActionListener(this);               

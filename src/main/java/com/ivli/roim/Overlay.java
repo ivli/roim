@@ -32,7 +32,8 @@ import com.ivli.roim.events.ROIChangeListener;
 public abstract class Overlay implements java.io.Serializable {  
     private static final long serialVersionUID = 42L;
     
-    static final int SELECTABLE = 0x1;    
+    //static final int VISIBLE = 0x1;
+    static final int SELECTABLE = 0x1;      
     static final int MOVEABLE   = SELECTABLE << 0x1;
     static final int PERMANENT  = MOVEABLE  << 0x1;
     static final int CLONEABLE  = PERMANENT << 0x1;
@@ -49,6 +50,7 @@ public abstract class Overlay implements java.io.Serializable {
     protected String iName;
     protected boolean iEmphasized = false;
     protected boolean iPinned = false;
+    protected boolean iVisible = true;
     
     private final EventListenerList iListeners;    
     
@@ -90,6 +92,14 @@ public abstract class Overlay implements java.io.Serializable {
     
     public boolean isEmphasized() {
         return iEmphasized;
+    }
+    
+    public boolean isVisible() {
+        return iVisible;
+    }
+    
+    public void setVisible(boolean aV) {
+        iVisible = aV;
     }
     
     boolean isSelectable() {return 0 != (getCaps() & SELECTABLE);}

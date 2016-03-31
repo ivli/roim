@@ -25,7 +25,7 @@ import com.ivli.roim.events.ROIChangeListener;
  *
  * @author likhachev
  */
-public class ConcreteOperand  implements IOperand, ROIChangeListener, AutoCloseable {   
+public class ConcreteOperand implements IOperand, ROIChangeListener, AutoCloseable {   
     private Filter iF; 
     private ROI iRoi;
        
@@ -40,6 +40,8 @@ public class ConcreteOperand  implements IOperand, ROIChangeListener, AutoClosea
     }
     
     public ROI getROI() {return iRoi;}
+    public Filter getFilter() {return iF;}
+    
     
     public double value() {
         return iF.filter(iRoi);
