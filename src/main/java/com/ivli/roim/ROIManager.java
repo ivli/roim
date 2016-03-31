@@ -52,7 +52,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     private static final boolean ROI_HAS_ANNOTATIONS  = true;
     private static final boolean CLONE_INHERIT_COLOUR = false;
 
-    transient private ImageView iView;     
+    transient private ImageView iView; //TODO: shall be interface IImageView Annotations do not let make this transition since they do use methods of JComponent for drawing
     
     private final HashSet<Overlay> iOverlays;          
     private final EventListenerList iList;
@@ -117,7 +117,10 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
             o.paint(aGC, aT);
         });
     }            
-
+    /*
+     * creates profile curve whole image width
+     * aS - shape <b><i> in screen coordinates </i></b>  
+    */
     public void createProfile(Shape aS) {               
         Rectangle r = iView.screenToVirtual().createTransformedShape(aS).getBounds();
         
