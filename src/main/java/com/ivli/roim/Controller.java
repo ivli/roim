@@ -78,7 +78,7 @@ class Controller implements ActionListener, KeyListener, MouseListener, MouseMot
        
         protected boolean DoWheel(int aX) {
             iControlled.zoom(-aX);
-            iControlled.repaint();
+            //iControlled.repaint();
             return true;
         }
     }
@@ -155,7 +155,7 @@ class Controller implements ActionListener, KeyListener, MouseListener, MouseMot
         }        
     }  
     
-    private ImageView iControlled;    
+    private IImageView iControlled;    
     private ActionItem iAction;   
     private Overlay iSelected;
     private ActionItem iWheel;
@@ -163,11 +163,13 @@ class Controller implements ActionListener, KeyListener, MouseListener, MouseMot
     public Controller(ImageView aC) {       
         iControlled = aC;
         
-        iWheel = NewAction(iWheelAction, 0, 0);        
+        iWheel = NewAction(iWheelAction, 0, 0); 
+        /*
         iControlled.addMouseListener(this);
         iControlled.addMouseMotionListener(this);
         iControlled.addMouseWheelListener(this);
         iControlled.addKeyListener(this);
+        */
     }
 
     public void paint(Graphics2D gc) {
@@ -204,7 +206,7 @@ class Controller implements ActionListener, KeyListener, MouseListener, MouseMot
     }
 
     public void mouseEntered(MouseEvent e) {
-        iControlled.requestFocusInWindow(); //gain focus
+        e.getComponent().requestFocusInWindow(); //gain focus
     }
 
     public void mouseExited(MouseEvent e) {
@@ -227,11 +229,11 @@ class Controller implements ActionListener, KeyListener, MouseListener, MouseMot
                 addSelection(tmp);
 
                 if (iSelected.hasMenu() && !blockObjectSpecificPopupMenu()) {
-                    buildObjectSpecificPopupMenu(iSelected).show(iControlled, e.getX(), e.getY());
+                    buildObjectSpecificPopupMenu(iSelected).show(e.getComponent(), e.getX(), e.getY());
                    // mnu.;
                 }
             } else 
-                buildContextPopupMenu().show(iControlled, e.getX(), e.getY());
+                buildContextPopupMenu().show(e.getComponent(), e.getX(), e.getY());
 
         }
     }
@@ -286,9 +288,9 @@ class Controller implements ActionListener, KeyListener, MouseListener, MouseMot
 
         if (null != r ) { 
             if (r.isMovable())            
-                iControlled.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));                
+                e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));                
         } else {               
-            iControlled.setCursor(Cursor.getDefaultCursor());
+            e.getComponent().setCursor(Cursor.getDefaultCursor());
         }                
     }
 
@@ -397,9 +399,10 @@ class Controller implements ActionListener, KeyListener, MouseListener, MouseMot
                         return false;
                     }
                     public void DoPaint(Graphics2D gc) {                       
-                           final java.awt.Rectangle bn = iShape.getBounds();                           
-                           gc.drawLine(0, bn.y, iControlled.getWidth(), bn.y);                           
-                           gc.drawLine(0, bn.y+bn.height, iControlled.getWidth(), bn.y + bn.height);                       
+                           final java.awt.Rectangle bn = iShape.getBounds();  
+                           final int w = gc.getClipBounds().width;
+                           gc.drawLine(0, bn.y, w, bn.y);                           
+                           gc.drawLine(0, bn.y+bn.height, w, bn.y + bn.height);                       
                     }
                 }; break;
                             

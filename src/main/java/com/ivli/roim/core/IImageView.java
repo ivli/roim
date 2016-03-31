@@ -17,21 +17,21 @@
  */
 package com.ivli.roim.core;
 
+import com.ivli.roim.ROIManager;
+
 
 /**
  *
  * @author likhachev
  */
 public interface IImageView {
-    public void setImage(IMultiframeImage anImage);
-    public boolean loadFrame(int aN);
+    void setImage(IMultiframeImage anImage);
+    boolean loadFrame(int aN);
     void pan(int aX, int aY);
     void zoom(double aStep);
     void setWindow(Window aW);
     Window getWindow();
     void repaint();
-    ///ROIManager
-    //protected int getVisualWidth();    
-  
-    //protected int getVisualHeight();
+    ROIManager getROIMgr();
+    public void reset();    
 }

@@ -42,26 +42,10 @@ public class GridImageView extends ImageView {
     private static final String KCommandShowFrameNumbers = "MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS"; // NOI18N
     private static final String KCommandOptimalLayout = "MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL"; // NOI18N
     
-    public GridImageView(int aRows, int aColunmns) {
-        super();      
+    public GridImageView(int aRows, int aColunmns) {            
         iRows = aRows;
         iCols = aColunmns;
-    }
-    
-    void checkGrid() {
-        final int n = this.iModel.getNumFrames();
-        if (n < 2) {
-            iRows = iCols = 1;
-        } else if (n < iRows*iCols) {
-            
-        }  
-    }
-    
-    public void setImage(IMultiframeImage anImage) {
-        super.setImage(anImage);
-        checkGrid();
-        
-         //GRID CONTROLLER
+        //GRID CONTROLLER
         iController = new Controller(this) {                        
             @Override
             JPopupMenu buildContextPopupMenu() {
@@ -118,7 +102,23 @@ public class GridImageView extends ImageView {
                 }
                 return false;
             }
-        };
+        };   
+        
+        doRegisterListeners();
+    }
+    
+    void checkGrid() {
+        final int n = this.iModel.getNumFrames();
+        if (n < 2) {
+            iRows = iCols = 1;
+        } else if (n < iRows*iCols) {
+            
+        }  
+    }
+    
+    public void setImage(IMultiframeImage anImage) {
+        super.setImage(anImage);
+        checkGrid();   
     }
         
     public void setGrid(int aRows, int aColunmns) {

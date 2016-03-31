@@ -57,29 +57,36 @@ public class ImageView  extends JComponent implements IImageView {//implements I
     private static final double MIN_SCALE = .01;
     
     protected int iFit = Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.ONE_TO_ONE);     
-    protected       IMultiframeImage iModel;                     
-    protected       Controller iController;    
-    protected final AffineTransform iZoom;
-    protected final Point iOrigin;    
-    protected       Object iInterpolation;
-           
+       
+        
+    protected Object iInterpolation=  InterpolationMethod.get(InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR);    
+    protected Point iOrigin = new Point(0, 0);              
+    protected AffineTransform iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);;
+    
+    
+    
     protected  ROIManager iROIMgr;
-    protected final EventListenerList iListeners;
+    protected final EventListenerList iListeners = new EventListenerList();
         
-    private   VOILut iVLUT;
-    private   PresentationLut iPLUT;
+    private VOILut iVLUT;
+    private PresentationLut iPLUT;
         
-    protected int iCurrent;
-    protected BufferedImage iBuf; 
+    protected int iCurrent = 0;
+    protected IMultiframeImage iModel;                     
+    protected Controller iController; 
+    protected BufferedImage iBuf=null; 
     
     public ImageView() {      
-        iCurrent = 0;                 
-        iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);
-        iOrigin = new Point(0, 0);  
-        iListeners = new EventListenerList(); 
-        iInterpolation =  InterpolationMethod.get(InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR);        
-        iController = new Controller(this);
+        iController = new Controller(this);   
+        doRegisterListeners();
+    }  
     
+    final void doRegisterListeners() {        
+        addMouseListener(iController);
+        addMouseMotionListener(iController);
+        addMouseWheelListener(iController);
+        addKeyListener(iController);
+        
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {
                 invalidateBuffer();
@@ -89,12 +96,11 @@ public class ImageView  extends JComponent implements IImageView {//implements I
             public void componentHidden(ComponentEvent e) {}
             public void componentMoved(ComponentEvent e) {}
             public void componentShown(ComponentEvent e) {}                    
-        });        
-        
-    }  
+        });                
+    }
     
     public void setImage(IMultiframeImage anImage) {  
-        //this();        
+        doRegisterListeners();        
         iModel = anImage;     
         iVLUT = new VOILut(this);        
         iPLUT = new PresentationLut();        
@@ -361,11 +367,9 @@ public class ImageView  extends JComponent implements IImageView {//implements I
         iVLUT.setRange(aR);                    
     }
 
-
     public Range getRange() {
         return new Range(iVLUT.getRange());
     }
-
 
     public void setInverted(boolean aI) {
         if (aI != isInverted()) {    
