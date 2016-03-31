@@ -91,7 +91,7 @@ public class Profile extends Overlay {
     private void makeHistogram() {
         final Rectangle bounds = iShape.getBounds();
 
-        getManager().getView().getImage().extract(new com.ivli.roim.core.Extractor() {
+        getManager().getView().getFrame().extract(new com.ivli.roim.core.Extractor() {
             
         public void apply(com.ivli.roim.core.ImageFrame aR) {
                 
@@ -115,8 +115,8 @@ public class Profile extends Overlay {
             max = Math.max(max, d);
         }
         
-        double maxV = getManager().getView().getImage().getMax();
-        double minV = getManager().getView().getImage().getMin();
+        double maxV = getManager().getView().getFrame().getMax();
+        double minV = getManager().getView().getFrame().getMin();
         final double range =  maxV - minV; 
         
         Rectangle bounds = new Rectangle(0, 0, getManager().getWidth(), getManager().getHeight());

@@ -39,10 +39,10 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     public VOILut(ImageView aI) {
         iInverted = false;
         iLinear = true;
-        iPVt = aI.getModel().getRescaleTransform();// new PValueTransform();
+        iPVt = aI.getImage().getRescaleTransform();// new PValueTransform();
         iBuffer = new byte[BUFFER_SIZE];
         iLook = null;
-        reset(new Range(aI.getImage().getMin(), aI.getImage().getMax()));
+        reset(new Range(aI.getFrame().getMin(), aI.getFrame().getMax()));
     }  
     
     public void setRange(Range aR) {

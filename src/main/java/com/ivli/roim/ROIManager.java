@@ -76,11 +76,11 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     public int getWidth() {
-        return iView.getModel().getWidth();
+        return iView.getImage().getWidth();
     }
     
     public int getHeight() {
-        return iView.getModel().getHeight();
+        return iView.getImage().getHeight();
     }    
         
     public ImageView getView() {
@@ -88,7 +88,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     } 
             
     public IMultiframeImage getImage() {
-        return iView.getModel();
+        return iView.getImage();
     }
     
     FrameOffsetVector getOffsetVector() {

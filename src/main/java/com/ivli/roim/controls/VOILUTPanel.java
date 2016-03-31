@@ -53,7 +53,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private XYSeries makeHistogram(int aWidth) {  
         if (null == iHist) {
             HistogramExtractor iHEx = new HistogramExtractor(null);
-            iLUT.getView().getImage().extract(iHEx);
+            iLUT.getView().getFrame().extract(iHEx);
             iHist = iHEx.iHist;
         }
         

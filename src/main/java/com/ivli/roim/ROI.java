@@ -52,7 +52,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);
           
         iAreaInPixels = -1;///calculateAreaInPixels();
-        iSeries = null;//new SeriesCollection();//CurveExtractor.extract(getManager().getImage(), this, getManager().getOffsetVector());
+        iSeries = null;//new SeriesCollection();//CurveExtractor.extract(getManager().getFrame(), this, getManager().getOffsetVector());
     }
         
     private void buildSeriesIfNeeded() {
@@ -109,7 +109,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         final int profileX[] = new int[bounds.width];;
         final int profileY[] = new int[bounds.height];;
         
-        getManager().getView().getImage().extract(new com.ivli.roim.core.Extractor(){            
+        getManager().getView().getFrame().extract(new com.ivli.roim.core.Extractor(){            
             public void apply(com.ivli.roim.core.ImageFrame aR){
             //double temp[] = new double [aR.getNumBands()];
             

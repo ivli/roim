@@ -17,7 +17,6 @@
  */
 package com.ivli.roim;
 
-
 import com.ivli.roim.core.IImageView;
 import com.ivli.roim.core.Window;
 import java.awt.Graphics2D;
@@ -39,12 +38,10 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JCheckBoxMenuItem;
-
 import javax.swing.SwingUtilities;
 import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;        
-
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,7 +49,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */        
-class Controller implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {                  
+class Controller implements IController {                  
     public static final int MOUSE_ACTION_NONE   =  00;
     public static final int MOUSE_ACTION_SELECT =  01;
     public static final int MOUSE_ACTION_ZOOM   =  02;
@@ -66,8 +63,7 @@ class Controller implements ActionListener, KeyListener, MouseListener, MouseMot
     public static final int MOUSE_ACTION_ROI    = 500;
     
     protected int iLeftAction = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_LEFT, Controller.MOUSE_ACTION_ZOOM);
-    protected int iMiddleAction = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_MIDDLE, Controller.MOUSE_ACTION_PAN);
-                       ;
+    protected int iMiddleAction = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_MIDDLE, Controller.MOUSE_ACTION_PAN);                       
     protected int iRightAction = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_RIGHT, Controller.MOUSE_ACTION_WINDOW);
     protected int iWheelAction = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_WHEEL, Controller.MOUSE_ACTION_LIST);
     
@@ -84,7 +80,6 @@ class Controller implements ActionListener, KeyListener, MouseListener, MouseMot
     }
     
     class RectangularRoiCreator extends BaseActionItem {
-
         final RectangularShape iShape;
         boolean first = true;
         
@@ -120,15 +115,16 @@ class Controller implements ActionListener, KeyListener, MouseListener, MouseMot
     ActionItem NewAction(int aType, int aX, int aY) {
         switch (aType){   
             case MOUSE_ACTION_WINDOW: 
-                 return new BaseActionItem(aX, aY) {
-                     public void DoAction(int aX, int aY) {                        
-                        iControlled.setWindow(new Window(iControlled.getWindow().getLevel() + iY - aY, iControlled.getWindow().getWidth() + aX - iX));
+                return new BaseActionItem(aX, aY) {
+                    public void DoAction(int aX, int aY) {                        
+                       iControlled.setWindow(new Window(iControlled.getWindow().getLevel() + iY - aY, iControlled.getWindow().getWidth() + aX - iX));
+                       iControlled.repaint();
+                }}; 
+            case MOUSE_ACTION_ZOOM: 
+                return new BaseActionItem(aX, aY) {
+                    public void DoAction(int aX, int aY) {
+                        iControlled.zoom((aX-iX));
                         iControlled.repaint();
-                 }}; 
-            case MOUSE_ACTION_ZOOM: return new BaseActionItem(aX, aY) {
-                                        public void DoAction(int aX, int aY) {
-                                            iControlled.zoom((aX-iX));
-                                            iControlled.repaint();
                 }};  
             case MOUSE_ACTION_PAN: 
                 return new BaseActionItem(aX, aY) {
@@ -137,15 +133,15 @@ class Controller implements ActionListener, KeyListener, MouseListener, MouseMot
                         iControlled.repaint();
                 }};                 
             case MOUSE_ACTION_LIST: return new BaseActionItem(aX, aY) {
-                    public void DoAction(int aX, int aY) {
-                        try {                            
-                            if (iControlled.loadFrame(iX + aX)) {
-                                iX += aX; 
-                                iControlled.repaint();
-                            }
-                        }catch (IndexOutOfBoundsException ex) {
-                            logger.info(ex);
+                public void DoAction(int aX, int aY) {
+                    try {                            
+                        if (iControlled.loadFrame(iX + aX)) {
+                            iX += aX; 
+                            iControlled.repaint();
                         }
+                    }catch (IndexOutOfBoundsException ex) {
+                        logger.info(ex);
+                    }
                 }}; 
             case MOUSE_ACTION_WHEEL: 
             case MOUSE_ACTION_ROI: 

@@ -57,29 +57,27 @@ public class ImageView  extends JComponent implements IImageView {//implements I
     private static final double MIN_SCALE = .01;
     
     protected int iFit = Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.ONE_TO_ONE);     
-       
-        
+               
     protected Object iInterpolation=  InterpolationMethod.get(InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR);    
+    
     protected Point iOrigin = new Point(0, 0);              
-    protected AffineTransform iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);;
-    
-    
-    
-    protected  ROIManager iROIMgr;
+    protected AffineTransform iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);;    
+        
     protected final EventListenerList iListeners = new EventListenerList();
         
+    protected ROIManager iROIMgr;
     private VOILut iVLUT;
     private PresentationLut iPLUT;
         
     protected int iCurrent = 0;
     protected IMultiframeImage iModel;                     
-    protected Controller iController; 
+    protected IController iController; 
     protected BufferedImage iBuf=null; 
     
-    public ImageView() {      
-        iController = new Controller(this);   
+    public ImageView() {
+        iController = new Controller(this);
         doRegisterListeners();
-    }  
+    }
     
     final void doRegisterListeners() {        
         addMouseListener(iController);
@@ -91,7 +89,7 @@ public class ImageView  extends JComponent implements IImageView {//implements I
             public void componentResized(ComponentEvent e) {
                 invalidateBuffer();
                 notifyZoomChanged();
-                iZoomStep = Math.min(getImage().getWidth(), getImage().getHeight()) / Settings.get(Settings.KEY_ZOOM_STEP_FACTOR, 10.);
+                iZoomStep = Math.min(getFrame().getWidth(), getFrame().getHeight()) / Settings.get(Settings.KEY_ZOOM_STEP_FACTOR, 10.);
             }                                               
             public void componentHidden(ComponentEvent e) {}
             public void componentMoved(ComponentEvent e) {}
@@ -127,11 +125,11 @@ public class ImageView  extends JComponent implements IImageView {//implements I
         return iZoom;
     }    
     
-    public IMultiframeImage getModel() {
+    public IMultiframeImage getImage() {
         return iModel;
     }
     
-    public ImageFrame getImage() {
+    public ImageFrame getFrame() {
         return iModel.get(getFrameNumber());
     }
     
@@ -264,7 +262,7 @@ public class ImageView  extends JComponent implements IImageView {//implements I
         return true;
     }
     
-    double iZoomStep;// = Math.min(aC.getImage().getWidth(), aC.getImage().getHeight()) / Settings.get(Settings.KEY_ZOOM_STEP_FACTOR, 10.);
+    double iZoomStep;// = Math.min(aC.getFrame().getWidth(), aC.getFrame().getHeight()) / Settings.get(Settings.KEY_ZOOM_STEP_FACTOR, 10.);
     
     public void zoom(double aFactor) {
         iFit = ZoomFit.NONE;        
