@@ -17,7 +17,6 @@
  */
 package com.ivli.roim;
 
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.io.IOException;
@@ -41,6 +40,7 @@ import com.ivli.roim.events.ROIChangeListener;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.FrameOffsetVector;
 import com.ivli.roim.calc.BinaryOp;
+import com.ivli.roim.core.IImageView;
 import java.awt.geom.Path2D;
 
 /**
@@ -52,9 +52,10 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     private static final boolean ROI_HAS_ANNOTATIONS  = true;
     private static final boolean CLONE_INHERIT_COLOUR = false;
 
-    transient private final ImageView iView;     
-    private HashSet<Overlay> iOverlays;          
-    private EventListenerList iList;
+    transient private ImageView iView;     
+    
+    private final HashSet<Overlay> iOverlays;          
+    private final EventListenerList iList;
     
     final class TUid {
         int iUid;
@@ -69,12 +70,19 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     
     private final TUid iUid = new TUid(0);
     
-    ROIManager(ImageView aV) { 
-        iView = aV;
+    public ROIManager() {        
         iOverlays = new HashSet(); 
         iList = new EventListenerList();
     }
     
+    public void setView(ImageView aV) {
+         iView = aV;
+    }
+        
+    public ImageView getView() {
+        return iView;
+    } 
+        
     public int getWidth() {
         return iView.getImage().getWidth();
     }
@@ -82,11 +90,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     public int getHeight() {
         return iView.getImage().getHeight();
     }    
-        
-    public ImageView getView() {
-        return iView;
-    } 
-            
+                        
     public IMultiframeImage getImage() {
         return iView.getImage();
     }
@@ -159,8 +163,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         newRoi.addROIChangeListener(this);
         
         newRoi.update();
-        notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, null);
-    
+        notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, null);    
     }
     
     public void createRoiFromShape(Shape aS) {                 
@@ -195,7 +198,8 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     public void moveRoi(Overlay aO, double adX, double adY) {                         
-        aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));            
+        //aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));            
+        aO.move(adX, adY);            
     }
     
     public Overlay findOverlay(Point aP) {      

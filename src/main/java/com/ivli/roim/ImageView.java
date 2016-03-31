@@ -72,7 +72,7 @@ public class ImageView  extends JComponent implements IImageView {//implements I
     protected int iCurrent = 0;
     protected IMultiframeImage iModel;                     
     protected IController iController; 
-    protected BufferedImage iBuf=null; 
+    protected BufferedImage iBuf = null; 
     
     public ImageView() {
         iController = new Controller(this);
@@ -102,7 +102,8 @@ public class ImageView  extends JComponent implements IImageView {//implements I
         iModel = anImage;     
         iVLUT = new VOILut(this);        
         iPLUT = new PresentationLut();        
-        iROIMgr = new ROIManager(this);    
+        iROIMgr = new ROIManager();
+        iROIMgr.setView(this);
         
         /*     */   
         String lut = Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[1]);

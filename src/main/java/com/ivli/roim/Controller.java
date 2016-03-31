@@ -29,13 +29,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.SwingUtilities;
@@ -156,16 +151,10 @@ class Controller implements IController {
     private Overlay iSelected;
     private ActionItem iWheel;
     
-    public Controller(ImageView aC) {       
+    public Controller(IImageView aC) {       
         iControlled = aC;
         
-        iWheel = NewAction(iWheelAction, 0, 0); 
-        /*
-        iControlled.addMouseListener(this);
-        iControlled.addMouseMotionListener(this);
-        iControlled.addMouseWheelListener(this);
-        iControlled.addKeyListener(this);
-        */
+        iWheel = NewAction(iWheelAction, 0, 0);       
     }
 
     public void paint(Graphics2D gc) {
@@ -174,10 +163,10 @@ class Controller implements IController {
     }
      
     protected Overlay findActionTarget(Point aP) {
-       Overlay ret = iControlled.getROIMgr().findOverlay(aP);
-       if (null != ret && true == ret.isSelectable())
-           return ret;
-       return null;
+        Overlay ret = iControlled.getROIMgr().findOverlay(aP);
+        if (null != ret && true == ret.isSelectable())
+            return ret;
+        return null;
     }
     
     protected void addSelection(Overlay aO) {
@@ -247,7 +236,8 @@ class Controller implements IController {
             addSelection(tmp);
             iAction = new BaseActionItem(e.getX(), e.getY()) {
                 protected void DoAction(int aX, int aY) {
-                    iControlled.getROIMgr().moveRoi(iSelected, aX-iX, aY-iY);
+                    //iControlled.getROIMgr().moveRoi(iSelected, aX-iX, aY-iY);
+                    iControlled.getROIMgr().moveRoi(iSelected, (aX-iX)/iControlled.getZoom().getScaleX(), (aY-iY)/iControlled.getZoom().getScaleY());
                     iControlled.repaint();//old.createIntersection(iSelected.iShape.getBounds2D())); 
                 }    
                 protected boolean DoRelease(int aX, int aY) {    
