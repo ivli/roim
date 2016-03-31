@@ -35,8 +35,12 @@ public class OffsetImageView extends ImageView {
     
     FrameOffsetVector iOff;
     
-    OffsetImageView(IMultiframeImage anImage) {
-        super (anImage);
+    public OffsetImageView() {
+        super();
+    }
+    
+    public void setImage(IMultiframeImage anImage) {
+        super.setImage(anImage);
         iOff = new FrameOffsetVector(anImage.getNumFrames());        
     }
        

@@ -18,6 +18,7 @@
 package com.ivli.roim;
 
 
+import com.ivli.roim.core.IImageView;
 import com.ivli.roim.core.Window;
 import java.awt.Graphics2D;
 import java.awt.Cursor;
@@ -51,7 +52,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */        
-class Controller implements ActionListener,  KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {                  
+class Controller implements ActionListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {                  
     public static final int MOUSE_ACTION_NONE   =  00;
     public static final int MOUSE_ACTION_SELECT =  01;
     public static final int MOUSE_ACTION_ZOOM   =  02;
@@ -64,11 +65,11 @@ class Controller implements ActionListener,  KeyListener, MouseListener, MouseMo
     public static final int MOUSE_ACTION_MENU   = 200;
     public static final int MOUSE_ACTION_ROI    = 500;
     
-    protected int iLeftAction   = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_LEFT, Controller.MOUSE_ACTION_ZOOM);
+    protected int iLeftAction = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_LEFT, Controller.MOUSE_ACTION_ZOOM);
     protected int iMiddleAction = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_MIDDLE, Controller.MOUSE_ACTION_PAN);
                        ;
-    protected int iRightAction  = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_RIGHT, Controller.MOUSE_ACTION_WINDOW);
-    protected int iWheelAction  = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_WHEEL, Controller.MOUSE_ACTION_LIST);
+    protected int iRightAction = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_RIGHT, Controller.MOUSE_ACTION_WINDOW);
+    protected int iWheelAction = Settings.get(Settings.KEY_MOUSE_DEFAULT_ACTION_WHEEL, Controller.MOUSE_ACTION_LIST);
     
     abstract class BaseActionItem extends ActionItem {
         BaseActionItem(int aX, int aY) {
@@ -150,7 +151,7 @@ class Controller implements ActionListener,  KeyListener, MouseListener, MouseMo
             case MOUSE_ACTION_ROI: 
             case MOUSE_ACTION_MENU:
             case MOUSE_ACTION_NONE: 
-            default: throw new UnsupportedOperationException();//return new BaseActionItem(aX, aY);      
+            default: throw new UnsupportedOperationException();
         }        
     }  
     
@@ -201,7 +202,6 @@ class Controller implements ActionListener,  KeyListener, MouseListener, MouseMo
     boolean blockObjectSpecificPopupMenu() {
         return false;
     }
-
 
     public void mouseEntered(MouseEvent e) {
         iControlled.requestFocusInWindow(); //gain focus

@@ -17,6 +17,7 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.core.IImageView;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -50,7 +51,7 @@ import com.ivli.roim.events.ZoomChangeListener;
 import java.io.IOException;
 
 
-public class ImageView extends JComponent {//implements IWLManager {     
+public class ImageView  extends JComponent implements IImageView {//implements IWLManager {     
     private static final double DEFAULT_SCALE_X = 1.0;
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
@@ -92,8 +93,8 @@ public class ImageView extends JComponent {//implements IWLManager {
         
     }  
     
-    public ImageView(IMultiframeImage anImage) {  
-        this();        
+    public void setImage(IMultiframeImage anImage) {  
+        //this();        
         iModel = anImage;     
         iVLUT = new VOILut(this);        
         iPLUT = new PresentationLut();        

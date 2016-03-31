@@ -40,13 +40,13 @@ import org.apache.logging.log4j.Logger;
  */
 public class VOILUTPanel extends JPanel implements WindowChangeListener {    
     private final LUTControl iLUT;
-    private boolean iShowHistogram;        
-    //private final ImageFrame iFrame;    
+    
+    private boolean iShowHistogram;            
     private final ChartPanel iPanel;
     private final String iCurveName;
     private Histogram iHist;
     
-    private XYSeriesCollection updateLUTCurve(int aWidth) {      
+    private XYSeriesCollection makeLUTCurve(int aWidth) {      
         return new XYSeriesCollection(iLUT.getCurve().getSeriesRebinned(iCurveName, 256));
     }
     
@@ -64,26 +64,19 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     
     @Override
     public void windowChanged(WindowChangeEvent anEvt) {            
-        iPanel.getChart().getXYPlot().setDataset(0, updateLUTCurve(jPanel1.getWidth()));
+        iPanel.getChart().getXYPlot().setDataset(0, makeLUTCurve(jPanel1.getWidth()));
     }   
     
-    public VOILUTPanel(LUTControl aP) {//, ImageFrame aF) {
+    public VOILUTPanel(LUTControl aP) {
         iCurveName = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT");
         iLUT = new LUTControl();
         iLUT.attach(aP);
 
         initComponents();
-        
-        /*                        
-        if(null != (iFrame = aF)) 
-            iShowHistogram = true;       
-        else             
-            iShowHistogram = false;
-        */
-        
+               
         XYPlot plot = new XYPlot();
    
-        plot.setDataset(0, updateLUTCurve(jPanel1.getPreferredSize().width));
+        plot.setDataset(0, makeLUTCurve(jPanel1.getPreferredSize().width));
         plot.setRenderer(0, new XYSplineRenderer());  
         
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);

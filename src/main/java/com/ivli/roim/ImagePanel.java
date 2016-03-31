@@ -30,10 +30,10 @@ import com.ivli.roim.events.*;
 
 
 public class ImagePanel extends JPanel {      
-    private final ImageView iView;    
-    private final LUTControl iLut;
+    private ImageView iView;    
+    private LUTControl iLut;
                   
-    public ImagePanel(ImageView aView) {       
+    public void setView(ImageView aView) {       
         iView = aView;
         iLut  = new LUTControl();                                     
         iLut.attach(aView);
@@ -42,6 +42,10 @@ public class ImagePanel extends JPanel {
         add(iView);           
         add(iLut, BorderLayout.LINE_END);  
     } 
+    
+    public void ImagePanel() {
+        
+    }
     
     public ImageView getView() {
         return iView;

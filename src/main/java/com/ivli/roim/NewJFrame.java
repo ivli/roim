@@ -525,7 +525,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         
         /**/
          //IMAGE
-        iImage = new ImagePanel(new ImageView(mi));                 
+        iImage = new ImagePanel(); 
+        ImageView iv = new ImageView();
+        iv.setImage(mi);
+        iImage.setView(iv);
         iImage.setPreferredSize(jPanel1.getSize());
         iImage.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         jPanel1.setLayout(new BorderLayout());
@@ -542,8 +545,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             iImage.addROIChangeListener(iChart);
         }
         
-        if (mi.getImageType() != ImageType.STATIC) {        
-            iGrid = new ImagePanel(new GridImageView(mi2, 4, 4));       
+        if (mi.getImageType() != ImageType.STATIC) {     
+            ImageView iv1 = new GridImageView(4, 4) ;
+            iv1.setImage(mi);
+            iGrid = new ImagePanel(); 
+            iGrid.setView(iv1);
             iGrid.setPreferredSize(jPanel4.getSize());
             ///iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));        
             jPanel4.setLayout(new BorderLayout());     
