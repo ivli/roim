@@ -52,8 +52,10 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     private static final boolean ROI_HAS_ANNOTATIONS  = true;
     private static final boolean CLONE_INHERIT_COLOUR = false;
 
-    transient private ImageView iView; //TODO: shall be interface IImageView Annotations do not let make this transition since they do use methods of JComponent for drawing
-    
+    transient private ImageView iView; /*TODO: shall be interface - IImageView Annotations do not let make this transition since they do use methods of JComponent for drawing
+                                        * hold Annotations, Ruler and perhaps all the rest classes in another container in view leave here only ROI
+                                        * SIC: what 'bout the plan to display curves of Active annotations???    
+                                        */
     private final HashSet<Overlay> iOverlays;          
     private final EventListenerList iList;
     
