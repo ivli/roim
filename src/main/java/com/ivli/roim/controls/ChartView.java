@@ -113,9 +113,8 @@ public class ChartView extends javax.swing.JPanel
                 iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getObject().getName()), ((ROI)aE.getObject()).getColor());  
                 /*
                  * the place to create default markers if needed
-                 */
-                
                 ////iChart.addMarker(new DomainMarker(s));
+                 */
             } break;
             
             case ROIChangeEvent.ROICHANGEDCOLOR: {

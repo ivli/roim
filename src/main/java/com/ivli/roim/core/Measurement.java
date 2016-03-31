@@ -35,8 +35,8 @@ public enum Measurement {
              java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.PIXELS"), 
              "%d"), // NOI18N 
    
-    AREAINLOCALUNITS("MEASUREMENT.AREAINLOCALUNITS", 
-                     "MEASUREMENT.MILLIMETERS",
+    AREAINLOCALUNITS(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.AREAINLOCALUNITS"), 
+                     java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.MILLIMETERS"),
                      "%d"); // NOI18N   
     
     final String iName;

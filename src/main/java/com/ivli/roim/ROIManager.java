@@ -166,22 +166,23 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
 
-    final class SO implements IOperand {
-            double iV; 
-           
-            SO(double aV ) {
-                iV = aV;
-            } 
-            public double value() {return iV;}
-            public String getString() { return "";}
-    }
+   
     
     void createSurrogateROI(BinaryOp anOp) {           
         final String ln = ((ConcreteOperand)anOp.getLhs()).getROI().getName();
         final String rn = ((ConcreteOperand)anOp.getRhs()).getROI().getName();
         final String on = anOp.getOp().getOperationChar();
-                
-        //String name  = 
+        
+        final class SO implements IOperand {
+            double iV; 
+
+            SO(double aV ) {
+                iV = aV;
+            } 
+            public double value() {return iV;}
+            public String getString() { return "";}
+        } 
+        
         ROI surrogate = new ROI(ln + on + rn, ((ConcreteOperand)anOp.getLhs()).getROI().getShape(), this, Color.YELLOW){//((ConcreteOperand)anOp.getLhs()).getROI().getColor()) {
             void buildSeriesIfNeeded() {               
                 final Measurement f1 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();                
@@ -189,17 +190,19 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
                 
                 final Series aLhs = ((ConcreteOperand)anOp.getLhs()).getROI().getSeries(f1);
                 final Series aRhs = ((ConcreteOperand)anOp.getRhs()).getROI().getSeries(f2);
-                                
-                Series density = new Series(f1);
-                              
-                for (int i = 0; i < aLhs.size(); ++i) {                    
-                    double r = anOp.getOp().product(new SO(aLhs.get(i)), new SO(aRhs.get(i))).value();
-                    density.add(r);
-                } 
-                
-                iSeries = new SeriesCollection();
-                iSeries.addSeries(density);
-            }  
+                     
+                if (null != aLhs && null != aRhs) {
+                    Series density = new Series(f1);
+
+                    for (int i = 0; i < aLhs.size(); ++i) {                    
+                        double r = anOp.getOp().product(new SO(aLhs.get(i)), new SO(aRhs.get(i))).value();
+                        density.add(r);
+                    } 
+
+                    iSeries = new SeriesCollection();
+                    iSeries.addSeries(density);
+                }  
+            }
         };  
                         
         surrogate.setVisible(false);
