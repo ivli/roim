@@ -260,13 +260,17 @@ public class ImageView  extends JComponent implements IImageView {
             return false;
         } else {                
             final double or = iModel.get(iCurrent).getMax() - iModel.get(iCurrent).getMin(); 
+            //final double ow = getWindow().getWidth();
+            //final double ol = getWindow().getLevel();
+            
             iCurrent = aN;         
-            final double w = iModel.get(iCurrent).getMax() - iModel.get(iCurrent).getMin();
-            final double l = iModel.get(iCurrent).getMin() + w / 2.0;
-            Window nw = new Window(l, w);
-            Range nr = new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax());
+            
+            //final double w = iModel.get(iCurrent).getMax() - iModel.get(iCurrent).getMin();
+            //final double l = iModel.get(iCurrent).getMin() + w / 2.0;
+            Window nw = getWindow();
+            double nr = iModel.get(iCurrent).getMax() - iModel.get(iCurrent).getMin();
            
-            nw.scale(nr.range() / or);
+            nw.scale(nr / or);
            
             iVLUT.setWindow(nw);
             
