@@ -28,14 +28,23 @@ import java.io.IOException;
  * @author likhachev
  */
 public final class PresentationLut implements com.ivli.roim.core.Transformation {    
-    protected IndexColorModel iModel;
-             
-    public void open(String aName) throws IOException { 
-        iModel = LutLoader.open(aName);          
+    protected final IndexColorModel iModel;
+      
+    public static PresentationLut open(String aName) {         
+        try {
+            return new PresentationLut(LutLoader.open(aName));          
+        } catch (IOException ex) {
+            return new PresentationLut(LutLoader.defaultLUT());
+        }
+    }  
+         
+    protected PresentationLut(IndexColorModel aModel) {
+        iModel = aModel;
     }
-           
+    
     @Override
     public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {        
+        
         if (null == aDst)
             aDst = new BufferedImage(aSrc.getWidth(), aSrc.getHeight(), BufferedImage.TYPE_INT_RGB);
         

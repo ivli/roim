@@ -10,7 +10,7 @@ package com.ivli.roim.core;
 public class Window implements java.io.Serializable {      
     private static final long serialVersionUID = 42L;
     private static final double MINIMAL_WINDOW_WIDTH = 1.;
-    
+    public static final Window DEFAULT_WINDOW = new Window(.5, MINIMAL_WINDOW_WIDTH);
     /**
      * 
      */
@@ -21,14 +21,7 @@ public class Window implements java.io.Serializable {
      */
     protected double iWidth;
 
-    /**
-     * 
-     */
-    public Window() {
-        iLevel = .5;
-        iWidth = MINIMAL_WINDOW_WIDTH;
-    }
-    
+   
     /**
      * 
      * @param aW
@@ -36,17 +29,8 @@ public class Window implements java.io.Serializable {
     public Window(Window aW) {
         iLevel = aW.iLevel; 
         iWidth = aW.iWidth;
-    }
-    
-    /**
-     *
-     * @param aR
-     */
-    public Window(Range aR) {
-        iLevel = aR.range() / 2.0; 
-        iWidth = aR.range();
-    }
-    
+    }       
+            
     /**
      *
      * @param aL
@@ -56,7 +40,12 @@ public class Window implements java.io.Serializable {
         iLevel = aL; 
         iWidth = Math.max(MINIMAL_WINDOW_WIDTH, aW);   
     }
-
+       
+    public Window(Range aR) {    
+        iWidth = aR.range() ;
+        iLevel = aR.getMin() + iWidth / 2.0;                
+    }
+    
     /**
      *
      * @return
@@ -173,6 +162,12 @@ public class Window implements java.io.Serializable {
         return  aW.getTop() <= this.getTop() && aW.getBottom() >= this.getBottom();
     }
 
+    public void scale(double aFactor) {
+        //double bot = getBottom();
+        iWidth *= aFactor;
+        iLevel *= aFactor;
+    }
+    
     @Override
     public String toString(){return String.format("[%.1f, %.1f]", getLevel(), getWidth());} //NOI18N
 }

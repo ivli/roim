@@ -29,6 +29,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Range;
+import com.ivli.roim.core.Window;
 
 /**
  *
@@ -144,7 +145,7 @@ public class GridImageView extends ImageView {
                 max = Math.max(max, iModel.get(iCurrent + n).getMax());
             } 
             
-            setRange(new Range(min, max)); // frameChanged();
+            iVLUT.setWindow(new Window(new Range(min, max))); // frameChanged();
 
             iROIMgr.update();   
 

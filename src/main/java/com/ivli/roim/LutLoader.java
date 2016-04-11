@@ -33,8 +33,8 @@ import org.apache.logging.log4j.Logger;
 public final class LutLoader {
     
     static final String BUILTIN_LUTS[] = {
-    /*0*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_FIRE"),        
-    /*1*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_GRAYS"),
+    /*0*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_GRAYS"),
+    /*1*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_FIRE"),                
     /*2*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_ICE"),
     /*3*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_SPECTRUM"),
     /*4*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_3-3-2_RGB"),
@@ -50,7 +50,18 @@ public final class LutLoader {
     public static String[] getInstalledLUT() {
         return BUILTIN_LUTS;
     } 
-	        	
+	
+    static final public IndexColorModel defaultLUT() {
+        final int lutSize = 256;        
+        byte [] reds = new byte[lutSize]; 
+        byte [] greens = new byte[lutSize]; 
+        byte [] blues = new byte[lutSize];
+
+        int nColors = grays(reds, greens, blues);
+        
+        return new IndexColorModel(8, nColors, reds, greens, blues);
+    } 
+    
     static final public IndexColorModel open(String arg) throws IOException {        
         final int lutSize = 256;
         int nColors;
@@ -59,9 +70,9 @@ public final class LutLoader {
         byte [] blues = new byte[lutSize];
 
         if (arg.equals(BUILTIN_LUTS[0]))
-            nColors = fire(reds, greens, blues);
+            nColors = grays(reds, greens, blues);
         else if (arg.equals(BUILTIN_LUTS[1]))
-                nColors = grays(reds, greens, blues);
+                nColors = fire(reds, greens, blues);
         else if (arg.equals(BUILTIN_LUTS[2]))
                 nColors = ice(reds, greens, blues);
         else if (arg.equals(BUILTIN_LUTS[3]))
@@ -85,7 +96,7 @@ public final class LutLoader {
         else            
                 nColors = openLut(new File(arg), false, reds, greens, blues);
         
-        if (nColors>0) {
+        if (nColors > 0) {
             if (nColors<256)
                 nColors = extrapolate(reds, greens, blues, nColors);
 

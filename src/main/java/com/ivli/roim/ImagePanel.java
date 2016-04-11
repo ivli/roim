@@ -68,7 +68,7 @@ public class ImagePanel extends JPanel {
     }
     
     void setLUT(String aName) {
-        iView.openLUT(aName);        
+        iView.setPresentationLUT(PresentationLut.open(aName));        
     }
     
     void reset() {    

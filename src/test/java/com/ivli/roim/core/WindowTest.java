@@ -158,7 +158,7 @@ public class WindowTest {
         double aW = 256;
         double aL = aW / 2.0;
         
-        Window instance = new Window();
+        Window instance = new Window(Window.DEFAULT_WINDOW);
         instance.setWindow(aL, aW);
         // TODO review the generated test code and remove the default call to fail.
         assertEquals(aW, instance.getWidth(), 0.0);
@@ -184,8 +184,8 @@ public class WindowTest {
     @Test
     public void testCompare() {
         System.out.println("compare");
-        Window aW = new Window();
-        Window instance = new Window();
+        Window aW = new Window(Window.DEFAULT_WINDOW);
+        Window instance = new Window(Window.DEFAULT_WINDOW);
         boolean expResult = true;
         boolean result = instance.compare(aW);
         assertEquals(expResult, result);
@@ -197,7 +197,7 @@ public class WindowTest {
     @Test
     public void testContains() {
         System.out.println("contains");
-        Window aW = new Window();
+        Window aW = new Window(Window.DEFAULT_WINDOW);
         Window instance = new Window(2, 1);
         boolean expResult = false;
         boolean result = instance.contains(aW);
@@ -213,7 +213,7 @@ public class WindowTest {
     @Test
     public void testToString() {
         System.out.println("toString");
-        Window instance = new Window();
+        Window instance = new Window(Window.DEFAULT_WINDOW);
         String expResult = String.format("[%.1f, %.1f]", 0.5, 1.0);
         String result = instance.toString();
         assertEquals(expResult, result);

@@ -48,6 +48,7 @@ import javax.swing.event.EventListenerList;
 import com.ivli.roim.ActionItem;
 import com.ivli.roim.ImageView;
 import com.ivli.roim.LutLoader;
+import com.ivli.roim.PresentationLut;
 import com.ivli.roim.Settings;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.Window;
@@ -562,14 +563,14 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 if (null != fd.getFile()) {
                     final String lutFile = fd.getDirectory() + fd.getFile();
                     Settings.set(Settings.KEY_LASTFILE_LUT, lutFile);
-                    iWLM.openLUT(lutFile);
+                    iWLM.setPresentationLUT(PresentationLut.open(lutFile));
                     invalidateBuffer();                  
                     repaint();
                 } 
                 break;          
             default: 
                 //setLUT(e.getActionCommand());
-                iWLM.openLUT(e.getActionCommand());
+                iWLM.setPresentationLUT(PresentationLut.open(e.getActionCommand()));
                 invalidateBuffer();
                // iView.repaint();
                 repaint();

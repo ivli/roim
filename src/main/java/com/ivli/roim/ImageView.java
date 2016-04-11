@@ -43,13 +43,13 @@ import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
+import com.ivli.roim.core.Transformation;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
 import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
 import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
-import java.io.IOException;
 
 
 public class ImageView  extends JComponent implements IImageView {
@@ -67,8 +67,8 @@ public class ImageView  extends JComponent implements IImageView {
     private final EventListenerList iListeners = new EventListenerList();
         
     protected ROIManager iROIMgr;
-    private VOILut iVLUT;
-    private PresentationLut iPLUT;
+    protected VOILut iVLUT;
+    protected PresentationLut iPLUT;
         
     protected int iCurrent = 0;
     protected IMultiframeImage iModel;                     
@@ -98,15 +98,20 @@ public class ImageView  extends JComponent implements IImageView {
         });                
     }
     
+    public void setPresentationLUT(PresentationLut aLUT) {
+        iPLUT = aLUT;
+        invalidateBuffer();
+    }
+    
     public void setImage(IMultiframeImage anImage) {  
         doRegisterListeners();        
         iModel = anImage;     
-        iVLUT = new VOILut(iModel.getRescaleTransform(), new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));        
-        iPLUT = new PresentationLut();        
+        iVLUT = new VOILut(iModel.getRescaleTransform());
+  //      iPLUT = PresentationLut();        
         iROIMgr = new ROIManager();
         iROIMgr.setView(this);
         
-        /*     */   
+/*        
         String lut = Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[1]);
         
         try {
@@ -120,7 +125,8 @@ public class ImageView  extends JComponent implements IImageView {
             }
         }
  
-        Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, lut);               
+        Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, lut);    
+*/        
     }
                  
     public AffineTransform getZoom() {
@@ -170,7 +176,7 @@ public class ImageView  extends JComponent implements IImageView {
     public void addWindowChangeListener(WindowChangeListener aL) {
         logger.info("-> addWindowChangeListener {}", aL); //NOI18N
         iListeners.add(WindowChangeListener.class, aL);
-        aL.windowChanged(new WindowChangeEvent(this, this.getWindow()));
+        aL.windowChanged(new WindowChangeEvent(this, getWindow()));
     }
    
     public void removeWindowChangeListener(WindowChangeListener aL) {
@@ -178,7 +184,7 @@ public class ImageView  extends JComponent implements IImageView {
     }
             
     protected void notifyWindowChanged() {
-        final WindowChangeEvent evt = new WindowChangeEvent(this, this.getWindow());
+        final WindowChangeEvent evt = new WindowChangeEvent(this, getWindow());
                 
         for (WindowChangeListener l : iListeners.getListeners(WindowChangeListener.class)) {
             l.windowChanged(evt);     
@@ -252,9 +258,18 @@ public class ImageView  extends JComponent implements IImageView {
     public boolean loadFrame(int aN) {                                
         if (!iModel.hasAt(aN)) {            
             return false;
-        } else {        
+        } else {                
+            final double or = iModel.get(iCurrent).getMax() - iModel.get(iCurrent).getMin(); 
             iCurrent = aN;         
-            setRange(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));
+            final double w = iModel.get(iCurrent).getMax() - iModel.get(iCurrent).getMin();
+            final double l = iModel.get(iCurrent).getMin() + w / 2.0;
+            Window nw = new Window(l, w);
+            Range nr = new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax());
+           
+            nw.scale(nr.range() / or);
+           
+            iVLUT.setWindow(nw);
+            
             iROIMgr.update();   
             notifyFrameChanged();
             notifyWindowChanged();
@@ -338,7 +353,7 @@ public class ImageView  extends JComponent implements IImageView {
         iROIMgr.paint((Graphics2D)g, virtualToScreen());                         
         iController.paint((Graphics2D)g); //must reside last in the paint chain   
     }
-              
+/*              
     public void openLUT(String aL) {
         try {
             iPLUT.open(aL);
@@ -349,26 +364,28 @@ public class ImageView  extends JComponent implements IImageView {
         invalidateBuffer();  
         repaint();
     }
-
+*/
     public void setWindow(Window aW) {
-        if (!iVLUT.getWindow().equals(aW) && iVLUT.getRange().contains(aW)) {            
-            iVLUT.setWindow(aW);               
-            invalidateBuffer();
-            notifyWindowChanged();
-            repaint();
-        }       
+        //if (!iVLUT.getWindow().equals(aW) && iVLUT.getRange().contains(aW)) {            
+        iVLUT.setWindow(aW);               
+        invalidateBuffer();
+        notifyWindowChanged();
+        repaint();
+        //}       
     }
     
     public Window getWindow() {
-        return new Window(iVLUT.getWindow());
+        return iVLUT.getWindow();
     }
 
+    /*
     public void setRange(Range aR) {            
         iVLUT.setRange(aR);                    
     }
-
+*/
+    
     public Range getRange() {
-        return new Range(iVLUT.getRange());
+        return new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax());
     }
 
     public void setInverted(boolean aI) {

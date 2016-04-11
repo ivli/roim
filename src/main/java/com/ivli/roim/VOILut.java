@@ -23,33 +23,35 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     
     private final PValueTransform iPVt;
     private Window iWin;
-    private Range  iRange; 
+    //private Range  iRange; 
         
     private final byte[] iBuffer;        
     private LookupOp iLook; 
         
-    public VOILut(PValueTransform aPVT, Range aR) {
+    public VOILut(PValueTransform aPVT) {//, Range aR) {
         iInverted = false;
         iLinear = true;
         iPVt = aPVT;
         iBuffer = new byte[BUFFER_SIZE];
         iLook = null;
-        reset(aR);
+     //   reset(aR);
     }  
     
-    public void setRange(Range aR) {
-        reset(aR);
-    }
+   // public void setRange(Range aR) {
+   //     reset(aR);
+   // }
     
-    public Range getRange() {
-        return iRange;
-    }
+   // public Range getRange() {
+   //     return iRange;
+   // }
             
     public void setWindow(Window aW) {           
-        if (iRange.contains(aW)) {
-            iWin.setWindow(aW);
+        //if (null != iWin) 
+        iWin = aW;
+        //else 
+         //   iWin = new Window
             updateLUT();
-        }
+     //   }
     }
     
     public Window getWindow() {
@@ -124,29 +126,28 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         
         iLook = new LookupOp(new ByteLookupTable(0, iBuffer), null);        
     }
-  
+    
+    /*
     private void reset(Range aR) {            
-        if(null != iWin && null != iRange) {                    
-            final double scale = aR.range() / iRange.range();           
-            final double bottom = iWin.getBottom() * scale;
-            final double range  = (iWin.getTop() - iWin.getBottom()) * scale; 
+        if(null != iWin && null != iRange) {      
+            double scale  = aR.range() / iRange.range();
+            iWin.scale(scale);
             iRange = aR;            
-            iWin = new Window(bottom + range / 2.0, range);                        
         } else {
-            iRange = aR;
             iWin = new Window(aR);
-        }
-        
+            iRange = aR;                        
+        }        
         updateLUT();                  
     }
-        
+    */
+    
     public Curve getCurve() {
-        final int minval = (int)getRange().getMin();
-        final int maxval = (int)getRange().getMax();
+        //final int minval = (int)aR.getMin();
+        //final int maxval = (int)aR.getMax();
         
         Curve ret = new Curve();        
          
-        for (int i = minval; i < maxval; ++i)
+        for (int i = 0; i < iBuffer.length; ++i)
             ret.put(i, (iBuffer[i] & 0xFF));
                 
         return ret;
