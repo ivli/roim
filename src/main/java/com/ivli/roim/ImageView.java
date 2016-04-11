@@ -101,7 +101,7 @@ public class ImageView  extends JComponent implements IImageView {
     public void setImage(IMultiframeImage anImage) {  
         doRegisterListeners();        
         iModel = anImage;     
-        iVLUT = new VOILut(iModel.getRescaleTransform(), new Range(anImage.getMin(), anImage.getMax()));        
+        iVLUT = new VOILut(iModel.getRescaleTransform(), new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));        
         iPLUT = new PresentationLut();        
         iROIMgr = new ROIManager();
         iROIMgr.setView(this);
@@ -254,7 +254,7 @@ public class ImageView  extends JComponent implements IImageView {
             return false;
         } else {        
             iCurrent = aN;         
-            this.setRange(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));
+            setRange(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));
             iROIMgr.update();   
             notifyFrameChanged();
             notifyWindowChanged();
