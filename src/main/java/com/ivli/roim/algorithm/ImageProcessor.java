@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.algorithm;
 
-import com.ivli.roim.InterpolationMethod;
+import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.IMultiframeImage;
 
 /**

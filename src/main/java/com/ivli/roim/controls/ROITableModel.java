@@ -51,20 +51,23 @@ public class ROITableModel extends DefaultTableModel {
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.NAME"), 
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.PIXELS"), 
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.DENSITY"), 
-                                java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.COLOUR") 
+                                java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.COLOUR"),
+                                "Show Curve"
                                };
 
         iClasses = new Class [] {java.lang.Object.class,  // a reference to ROI object - hidden
                                  java.lang.String.class,  // name - can be editable
                                  java.lang.Integer.class, // area in pixels
                                  java.lang.Integer.class, // density
-                                 java.awt.Color.class     // colour - can be editable
+                                 java.awt.Color.class,     // colour - can be editable
+                                 java.lang.Boolean.class   // add to a curve list
                                 };
 
         iEditable = new boolean [] {false, 
                                     aCanEdit, 
                                     false, 
                                     false, 
+                                    aCanEdit,
                                     aCanEdit
                                    };
        
@@ -93,7 +96,7 @@ public class ROITableModel extends DefaultTableModel {
                 if (col == 1) {
                     r.setName((String)model.getValueAt(row, 1));
                     
-                }else if (col == 4) {
+                } else if (col == 4) {
                     r.setColor((Color)model.getValueAt(row, 4));        
                 }                                
             }

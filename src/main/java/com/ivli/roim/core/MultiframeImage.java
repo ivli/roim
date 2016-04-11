@@ -67,9 +67,9 @@ public class MultiframeImage extends IMultiframeImage   {
             iFrames.add(n, null);      
     }
     
-    private MultiframeImage(IMultiframeImage aM, int anImages) {        
+    private MultiframeImage(IMultiframeImage aM, int aFrames) {        
         iProvider = null;
-        iNumFrames = anImages;        
+        iNumFrames = aFrames;        
         iWidth = aM.getWidth();
         iHeight = aM.getHeight();        
         iPixelSpacing = aM.getPixelSpacing();
@@ -90,7 +90,7 @@ public class MultiframeImage extends IMultiframeImage   {
             ImageFrame f = get(i);
             if (f.getMin() < iMin)
                 iMin = f.getMin();
-            else if (f.getMax() > iMax)
+            if (f.getMax() > iMax) //keep if - if, if else if will fail in th ecase single frame image  
                 iMax = f.getMax();
         }               
     }

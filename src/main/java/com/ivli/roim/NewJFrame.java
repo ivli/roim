@@ -92,7 +92,12 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             UIManager.put("FileChooser.desktopAccessibleName", "Рабочий стол");
             UIManager.put("FileChooser.desktopToolTipText",    "Рабочий стол");
             
-            UIManager.put("FileChooser.readOnly", Boolean.TRUE);               
+            UIManager.put("FileChooser.readOnly", Boolean.TRUE);       
+            
+            UIManager.put("ColorChooser.okText", "Выбрать");
+            UIManager.put("ColorChooser.cancelText", "Отменить");
+            UIManager.put("ColorChooser.resetText", "Сброс");
+            
         }
     }
     

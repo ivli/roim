@@ -17,6 +17,7 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.IImageView;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -100,7 +101,7 @@ public class ImageView  extends JComponent implements IImageView {
     public void setImage(IMultiframeImage anImage) {  
         doRegisterListeners();        
         iModel = anImage;     
-        iVLUT = new VOILut(this);        
+        iVLUT = new VOILut(iModel.getRescaleTransform(), new Range(anImage.getMin(), anImage.getMax()));        
         iPLUT = new PresentationLut();        
         iROIMgr = new ROIManager();
         iROIMgr.setView(this);

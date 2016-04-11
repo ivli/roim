@@ -3,10 +3,7 @@
  */
 package com.ivli.roim.core;
 
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
-import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
-
-import org.apache.commons.math3.fitting.leastsquares.*;
+import java.util.ArrayList;
         
 /**
  *
@@ -14,10 +11,11 @@ import org.apache.commons.math3.fitting.leastsquares.*;
  */
 public class Series {     
     private final Measurement iId; 
-    private java.util.ArrayList<Double> iData;
+    private final ArrayList<Double> iData;
     
     public Series(Measurement anId) {        
-        iId = anId;        
+        iId = anId; 
+        iData = new ArrayList<> ();
     }
     
     public Measurement getId() {
@@ -35,16 +33,7 @@ public class Series {
     public void add(double aV) {
         iData.add(aV);
     }
-    /*
-    public void add(int anI, double aV) {
-        iData.add(anI, aV);
-    }
-        
-    
-    public int getNumFrames() {
-        return iData.size();
-    }
-    */
+   
     /*
     public Series fit() {
         SplineInterpolator ipo = new SplineInterpolator();
