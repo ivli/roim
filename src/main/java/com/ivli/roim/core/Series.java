@@ -12,11 +12,12 @@ import org.apache.commons.math3.fitting.leastsquares.*;
  *
  * @author likhachev
  */
-public class Series extends java.util.ArrayList<Double>{     
+public class Series {     
     private final Measurement iId; 
-        
+    private java.util.ArrayList<Double> iData;
+    
     public Series(Measurement anId) {        
-        iId   = anId;        
+        iId = anId;        
     }
     
     public Measurement getId() {
@@ -24,9 +25,27 @@ public class Series extends java.util.ArrayList<Double>{
     }
     
     public int getNumFrames() {
-        return size();
+        return iData.size();
     }
     
+    public double get(int anI) {
+        return iData.get(anI);
+    }
+    
+    public void add(double aV) {
+        iData.add(aV);
+    }
+    /*
+    public void add(int anI, double aV) {
+        iData.add(anI, aV);
+    }
+        
+    
+    public int getNumFrames() {
+        return iData.size();
+    }
+    */
+    /*
     public Series fit() {
         SplineInterpolator ipo = new SplineInterpolator();
 
@@ -48,7 +67,7 @@ public class Series extends java.util.ArrayList<Double>{
         return ret;
     }
     
-    /*
+    
     public Series fit2() {
         
         org.apache.commons.math3.linear.LinearProblem problem;// = new LeastSquaresProblem();

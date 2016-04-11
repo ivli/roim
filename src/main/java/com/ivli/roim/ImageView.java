@@ -51,7 +51,7 @@ import com.ivli.roim.events.ZoomChangeListener;
 import java.io.IOException;
 
 
-public class ImageView  extends JComponent implements IImageView {//implements IWLManager {     
+public class ImageView  extends JComponent implements IImageView {
     private static final double DEFAULT_SCALE_X = 1.0;
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
@@ -63,7 +63,7 @@ public class ImageView  extends JComponent implements IImageView {//implements I
     protected Point iOrigin = new Point(0, 0);              
     protected AffineTransform iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);;    
         
-    protected final EventListenerList iListeners = new EventListenerList();
+    private final EventListenerList iListeners = new EventListenerList();
         
     protected ROIManager iROIMgr;
     private VOILut iVLUT;

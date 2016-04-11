@@ -126,7 +126,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         });
     }            
     /*
-     * creates profile curve whole image width
+     * creates profile curve for whole width of the image
      * aS - shape <b><i> in screen coordinates </i></b>  
     */
     public void createProfile(Shape aS) {               
@@ -163,10 +163,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     
     public void createAnnotation(ROI aROI) {    
         iOverlays.add(new Annotation.Static(aROI, this));      
-    }
-    
-
-   
+    }    
     
     void createSurrogateROI(BinaryOp anOp) {           
         final String ln = ((ConcreteOperand)anOp.getLhs()).getROI().getName();
@@ -194,7 +191,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
                 if (null != aLhs && null != aRhs) {
                     Series density = new Series(f1);
 
-                    for (int i = 0; i < aLhs.size(); ++i) {                    
+                    for (int i = 0; i < aLhs.getNumFrames(); ++i) {                    
                         double r = anOp.getOp().product(new SO(aLhs.get(i)), new SO(aRhs.get(i))).value();
                         density.add(r);
                     } 
