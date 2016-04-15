@@ -20,7 +20,6 @@ package com.ivli.roim.io;
 import java.io.IOException;
 import java.io.File;
 
-import com.ivli.roim.core.IImageProvider;
 import com.ivli.roim.core.ImageDataType;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;

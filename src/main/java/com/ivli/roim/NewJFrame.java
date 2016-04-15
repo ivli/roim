@@ -18,12 +18,11 @@
 package com.ivli.roim;
 
 
-import com.amd.aparapi.Kernel;
-import com.amd.aparapi.Range;
+
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.MultiframeImage;
 //import com.ivli.roim.io.DCMImageProvider;
-import com.ivli.roim.core.IImageProvider;
+import com.ivli.roim.io.IImageProvider;
 import com.ivli.roim.core.IMultiframeImage;
 import java.awt.*;
 import java.io.IOException;
@@ -33,17 +32,13 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.UIManager;
 
 import com.ivli.roim.controls.*;
-import com.ivli.roim.core.ImageDataType;
-import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
-import com.ivli.roim.core.PValueTransform;
-import com.ivli.roim.core.PixelSpacing;
-import com.ivli.roim.core.SliceSpacing;
-import com.ivli.roim.core.TimeSliceVector;
 import com.ivli.roim.events.*;
 import com.ivli.roim.io.ImageProviderFactory;
+import com.ivli.roim.io.MIPImageProvider;
 import java.io.File;
 import java.util.Locale;
+import javax.swing.ImageIcon;
 //import java.io.FileFilter;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -104,6 +99,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
         //iPanel = new ImagePanel();
+        ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("images/brain32x32.jpg"));
+        setIconImage(img.getImage());
         initComponents();    
     }
     	
@@ -394,7 +391,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private void openImage(String aF) {   
         String dicomFileName;
         
-        /* NOT_USE_SWING_DIALOG 
+        /* USE_SYSTEM_FILE_DIALOG 
         if (null != aF) {
             dicomFileName = aF;
         } else {
@@ -485,47 +482,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         IMultiframeImage mi;                
         
         if (mi2.getImageType() != ImageType.VOLUME) {
-            mi = mi2;
-        
+            mi = mi2;        
         } else {        
-            /*
-            MIPProjector mp = new MIPProjector(mi2);            
-            JDialog dialog = ProgressDialog.getPprogressDialog(this, mp, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_BUILDING_MIP"));//JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);            
-            Thread t = new Thread(mp);            
-            (new Thread(mp)).start();
-           // mp.projectA();
-            dialog.setVisible(true);
-            mi = mp.getResult();
-            //repaint();
-            */
-            IImageProvider ip = new IImageProvider() {                
-                IMultiframeImage iImage = mi2.createCompatibleImage(128);
-                MIPProjector prj = new MIPProjector(mi2, iImage);
-                boolean []b = new boolean[iImage.getNumFrames()];
-                public int getWidth() {return iImage.getWidth();}  
-                public int getHeight() {return iImage.getHeight();}   
-                public int getNumFrames() {return iImage.getNumFrames();}      
-                public ImageDataType getImageDataType(){return iImage.getImageDataType();}
-                public ImageType getImageType(){return iImage.getImageType();}
-                public PixelSpacing getPixelSpacing(){return iImage.getPixelSpacing();}
-                public SliceSpacing getSliceSpacing(){return iImage.getSliceSpacing();}
-                public TimeSliceVector getTimeSliceVector(){return iImage.getTimeSliceVector();}
-                public ImageFrame get(int anIndex) throws IndexOutOfBoundsException{
-                    
-                    if (false != b[anIndex]) {
-                        return iImage.get(anIndex);                        
-                    } else {
-                        b[anIndex] = true;
-                        return prj.makeProjection(anIndex);
-                    }
-                }                
-                public double getMin() {return iImage.getMin();}
-                public double getMax() {return iImage.getMax();}
-                public PValueTransform getRescaleTransform() {return iImage.getRescaleTransform();}
-            };
-                                                            
-            mi = new MultiframeImage(ip);
-            //mi.processor().flipVert();
+                              
+            mi = new MultiframeImage(new MIPImageProvider(mi2, 128));            
         }
         
         /**/
@@ -552,7 +512,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         
         if (mi.getImageType() != ImageType.STATIC) {     
             ImageView iv1 = new GridImageView(4, 4) ;
-            iv1.setImage(mi);
+            iv1.setImage(mi2);
             iGrid = new ImagePanel(); 
             iGrid.setView(iv1);
             iGrid.setPreferredSize(jPanel4.getSize());

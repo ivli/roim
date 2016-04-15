@@ -15,7 +15,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.core;
+package com.ivli.roim.io;
+
+import com.ivli.roim.core.ImageDataType;
+import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.ImageType;
+import com.ivli.roim.core.PValueTransform;
+import com.ivli.roim.core.PixelSpacing;
+import com.ivli.roim.core.SliceSpacing;
+import com.ivli.roim.core.TimeSliceVector;
 
 /**
  *  

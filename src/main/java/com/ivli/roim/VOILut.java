@@ -22,36 +22,23 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     private boolean iLinear;   
     
     private final PValueTransform iPVt;
-    private Window iWin;
-    //private Range  iRange; 
+    private Window iWin;    
         
     private final byte[] iBuffer;        
     private LookupOp iLook; 
         
-    public VOILut(PValueTransform aPVT) {//, Range aR) {
+    public VOILut(PValueTransform aPVT, Window aWin) {//, Range aR) {
         iInverted = false;
         iLinear = true;
         iPVt = aPVT;
         iBuffer = new byte[BUFFER_SIZE];
         iLook = null;
-     //   reset(aR);
+        iWin = aWin;
     }  
-    
-   // public void setRange(Range aR) {
-   //     reset(aR);
-   // }
-    
-   // public Range getRange() {
-   //     return iRange;
-   // }
-            
-    public void setWindow(Window aW) {           
-        //if (null != iWin) 
-        iWin = aW;
-        //else 
-         //   iWin = new Window
-            updateLUT();
-     //   }
+ 
+    public void setWindow(Window aW) {              
+        iWin = aW;    
+        updateLUT();
     }
     
     public Window getWindow() {

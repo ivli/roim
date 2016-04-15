@@ -15,15 +15,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.core;
+package com.ivli.roim.events;
 
-import com.ivli.roim.io.IImageProvider;
+import com.ivli.roim.core.Range;
+import com.ivli.roim.core.TimeSlice;
 
 /**
  *
  * @author likhachev
  */
-public interface IFrameProvider extends IImageProvider{
-   // public ImageFrame get(int currProj);
-   // public int getNumFrames();
+public class ImageChangeEvent extends java.util.EventObject {    
+    private final int iFrame;//a number of current frame  
+    private final int iTotal;//a number of frames in image
+    
+    private final Range iRange; //global range of the image
+    private final TimeSlice iTimeSlice; // valid only for DYNAMIC images
+    private final Double  iAngularStep;  // valid only for TOMO & TOMO_RECON images
+    
+    public ImageChangeEvent(Object aO, int aFrame, int aTotal, Range aRange, TimeSlice aTimeSlice) {
+        super(aO); 
+        iFrame = aFrame;
+        iTotal = aTotal;
+        iRange = aRange;
+        iTimeSlice = aTimeSlice;
+        iAngularStep = Double.NaN;
+    }      
 }

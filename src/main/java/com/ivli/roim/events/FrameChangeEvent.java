@@ -7,13 +7,13 @@ import com.ivli.roim.core.TimeSlice;
  *
  * @author likhachev
  */
-public final class FrameChangeEvent extends java.util.EventObject {
-    private final int iFrame; 
-    private final int iTotal;
+public final class FrameChangeEvent extends java.util.EventObject {    
+    private final int iFrame;//a number of current frame  
+    private final int iTotal;//a number of frames in image
     
-    private final Range iRange;
-    private final TimeSlice iTimeSlice;
-    private final Double iAngularStep;
+    private final Range iRange; //a range of the new image
+    private final TimeSlice iTimeSlice; // valid only for DYNAMIC images
+    private final Double iAngularStep;  // valid only for TOMO & TOMO_RECON images
     
     public FrameChangeEvent(Object aO, int aFrame, int aTotal, Range aRange, TimeSlice aTimeSlice) {
         super(aO); 

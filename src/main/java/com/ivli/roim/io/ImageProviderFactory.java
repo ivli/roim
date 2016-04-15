@@ -17,7 +17,6 @@
  */
 package com.ivli.roim.io;
 
-import com.ivli.roim.core.IImageProvider;
 import java.io.File;
 import java.io.IOException;
 

@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.core;
 
+import com.ivli.roim.io.IImageProvider;
 import com.ivli.roim.algorithm.ImageProcessor;
 
 /**

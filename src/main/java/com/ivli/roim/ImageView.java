@@ -103,30 +103,12 @@ public class ImageView  extends JComponent implements IImageView {
         invalidateBuffer();
     }
     
-    public void setImage(IMultiframeImage anImage) {  
-        doRegisterListeners();        
+    public void setImage(IMultiframeImage anImage) {                
         iModel = anImage;     
-        iVLUT = new VOILut(iModel.getRescaleTransform());
-  //      iPLUT = PresentationLut();        
+        iVLUT = new VOILut(iModel.getRescaleTransform(), new Window(new Range(anImage.getMin(), anImage.getMax())));     
         iROIMgr = new ROIManager();
         iROIMgr.setView(this);
-        
-/*        
-        String lut = Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[1]);
-        
-        try {
-            iPLUT.open(lut);
-        } catch (IOException ex) {
-            try {
-                iPLUT.open(lut = LutLoader.BUILTIN_LUTS[1]);
-                
-            } catch (IOException ex1) {
-                System.exit(-1);
-            }
-        }
- 
-        Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, lut);    
-*/        
+        notifyFrameChanged();        
     }
                  
     public AffineTransform getZoom() {
@@ -176,7 +158,7 @@ public class ImageView  extends JComponent implements IImageView {
     public void addWindowChangeListener(WindowChangeListener aL) {
         logger.info("-> addWindowChangeListener {}", aL); //NOI18N
         iListeners.add(WindowChangeListener.class, aL);
-        aL.windowChanged(new WindowChangeEvent(this, getWindow()));
+       // aL.windowChanged(new WindowChangeEvent(this, getWindow()));
     }
    
     public void removeWindowChangeListener(WindowChangeListener aL) {
@@ -193,6 +175,7 @@ public class ImageView  extends JComponent implements IImageView {
     
     public void addFrameChangeListener(FrameChangeListener aL) {
         iListeners.add(FrameChangeListener.class, aL);
+        /*
         if (iModel.getImageType() == ImageType.DYNAMIC)
             aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),                                                            
                                                         this.getRange(),                                                
@@ -201,6 +184,7 @@ public class ImageView  extends JComponent implements IImageView {
             aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),                                                            
                                                         this.getRange(),                                                
                                                         iModel.getTimeSliceVector().getSlice(getFrameNumber()))); 
+        */
     }
     
     public void removeFrameChangeListener(FrameChangeListener aL) {
@@ -219,7 +203,7 @@ public class ImageView  extends JComponent implements IImageView {
     
     public void addZoomChangeListener(ZoomChangeListener aL) {
         iListeners.add(ZoomChangeListener.class, aL);
-        aL.zoomChanged(new ZoomChangeEvent(this, iZoom.getScaleX(), iZoom.getScaleY()));
+        //aL.zoomChanged(new ZoomChangeEvent(this, iZoom.getScaleX(), iZoom.getScaleY()));
     }
     
     public void removeZoomChangeListener(ZoomChangeListener aL) {
@@ -258,23 +242,11 @@ public class ImageView  extends JComponent implements IImageView {
     public boolean loadFrame(int aN) {                                
         if (!iModel.hasAt(aN)) {            
             return false;
-        } else {                
-            final double or = iModel.get(iCurrent).getMax() - iModel.get(iCurrent).getMin(); 
-            //final double ow = getWindow().getWidth();
-            //final double ol = getWindow().getLevel();
-            
-            iCurrent = aN;         
-            
-            //final double w = iModel.get(iCurrent).getMax() - iModel.get(iCurrent).getMin();
-            //final double l = iModel.get(iCurrent).getMin() + w / 2.0;
-            Window nw = getWindow();
-            double nr = iModel.get(iCurrent).getMax() - iModel.get(iCurrent).getMin();
-           
-            nw.scale(nr / or);
-           
-            iVLUT.setWindow(nw);
-            
+        } else {             
+            iCurrent = aN;   
+            iVLUT.setWindow(new Window(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax())));
             iROIMgr.update();   
+            
             notifyFrameChanged();
             notifyWindowChanged();
             invalidateBuffer();
@@ -357,18 +329,7 @@ public class ImageView  extends JComponent implements IImageView {
         iROIMgr.paint((Graphics2D)g, virtualToScreen());                         
         iController.paint((Graphics2D)g); //must reside last in the paint chain   
     }
-/*              
-    public void openLUT(String aL) {
-        try {
-            iPLUT.open(aL);
-            Settings.set(Settings.KEY_DEFAULT_PRESENTATION_LUT, aL);
-        } catch (IOException ex) {
-           logger.error("Unable to open LUT file {}", ex);
-        }
-        invalidateBuffer();  
-        repaint();
-    }
-*/
+
     public void setWindow(Window aW) {
         //if (!iVLUT.getWindow().equals(aW) && iVLUT.getRange().contains(aW)) {            
         iVLUT.setWindow(aW);               
@@ -382,12 +343,6 @@ public class ImageView  extends JComponent implements IImageView {
         return iVLUT.getWindow();
     }
 
-    /*
-    public void setRange(Range aR) {            
-        iVLUT.setRange(aR);                    
-    }
-*/
-    
     public Range getRange() {
         return new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax());
     }

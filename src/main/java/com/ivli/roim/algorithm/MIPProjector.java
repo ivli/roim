@@ -19,36 +19,41 @@ package com.ivli.roim.algorithm;
 
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.IMultiframeImage;
-import com.ivli.roim.events.IProgressor;
-import com.ivli.roim.events.ProgressNotifier;
 
 /**
  *
  * @author likhachev
  */
-public class MIPProjector extends ProgressNotifier implements Runnable {//implements IProgressor {   
+public class MIPProjector {
     private final double DEPTH_FACTOR = .1; //must fit into range [0 - 1]
    
     private final IMultiframeImage iImage;
     private final IMultiframeImage iMIP;
-    private int iProjections;
-        
-    
-    public ProgressNotifier getNotifier() {
-        return this;
-    }
-    
+   // private int iProjections;
+                
     public MIPProjector(IMultiframeImage aSrc, int aProjections) {
         iImage = aSrc; 
-        iMIP = iImage.createCompatibleImage(iProjections = aProjections);             
+        //iProjections = aProjections;
+        iMIP = iImage.createCompatibleImage(aProjections);             
     }
      
+    /*
+     *
+     */
     public MIPProjector(IMultiframeImage aSrc, IMultiframeImage aDst) {
         iImage = aSrc; 
         iMIP = aDst;     
-        iProjections = aDst.getNumFrames();
+        //iProjections = aDst.getNumFrames();
     }
     
+    public IMultiframeImage getSrc() {return iImage;}
+    public IMultiframeImage getDst() {return iMIP;}
+    
+    public int getNumFrames() {
+        return iMIP.getNumFrames();
+    }
+    
+    /*
     public void project() {
         final int nSlices = iImage.getNumFrames();		                
         final int width   = iImage.getWidth();
@@ -67,7 +72,7 @@ public class MIPProjector extends ProgressNotifier implements Runnable {//implem
             weights[i] = (i + 1) * DEPTH_FACTOR;
         
         for (int currProj = 0; currProj < iProjections; ++currProj) {
-            notifyProgressChanged((int)(((angStep*currProj)/360.) * 100.));
+            //notifyProgressChanged((int)(((angStep*currProj)/360.) * 100.));
             
             final ImageFrame frm = iMIP.get(currProj);            
             IMultiframeImage temp = iImage.duplicate();
@@ -91,9 +96,10 @@ public class MIPProjector extends ProgressNotifier implements Runnable {//implem
         
         iMIP.processor().flipVert();        
     }
-         
-    public ImageFrame makeProjection(int currProj) {    
-        final ImageFrame frm = iMIP.get(currProj);            
+    */
+    
+    public ImageFrame get(int currProj) {    
+        final ImageFrame frm = iMIP.get(currProj);//.duplicate();            
         final int nSlices = iImage.getNumFrames();
         final int width = iImage.getWidth();
         final int height = iImage.getHeight();
@@ -124,13 +130,17 @@ public class MIPProjector extends ProgressNotifier implements Runnable {//implem
         return frm;
     }
     
+    
+    /*
     public IMultiframeImage getResult() {
         return iMIP;
-    }        
+    }
+    
     
     @Override
     public void run() {         
         project();  
         notifyProgressChanged(100);      
-    }    
+    } 
+    */
 }

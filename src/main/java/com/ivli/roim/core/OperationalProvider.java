@@ -17,6 +17,8 @@
  */
 package com.ivli.roim.core;
 
+import com.ivli.roim.io.IImageProvider;
+
 /**
  *
  * @author likhachev

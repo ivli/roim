@@ -37,6 +37,9 @@ public class ImagePanel extends JPanel {
         iView = aView;
         iLut  = new LUTControl();                                     
         iLut.attach(aView);
+       
+        //loadFrame(3);
+        
         iView.setPresentationLUT(PresentationLut.open(Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[0])));
         setLayout(new BorderLayout());                         
         add(iView);           
