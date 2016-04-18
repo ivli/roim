@@ -184,26 +184,31 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
        
     }
     
-    private void directNotifyWindowChange(Window aW) {         
+    private void directChangeWindow(Window aW) {           
+        iTop.setPosition((int) imageToScreen(aW.getTop()));
+        iBottom.setPosition((int) imageToScreen(aW.getBottom()));              
+        invalidateBuffer();
+        repaint();        
         iView.setWindow(aW);
+        notifyWindowChange();
     }
             
-    protected void notifyWindowChange(WindowChangeEvent anE) {
+    protected void notifyWindowChange() {
+        WindowChangeEvent evt = new WindowChangeEvent(this, iView.getWindow());
         for (WindowChangeListener l : iList.getListeners(WindowChangeListener.class))            
-            l.windowChanged(anE);            
+            l.windowChanged(evt);            
     }
            
     @Override
-    public void windowChanged(WindowChangeEvent anE) {   
+    public void windowChanged(WindowChangeEvent anE) {       
         if (null != iTop && null != iBottom ) { //theoretically we'd never get here in passive mode
             iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
             iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom()));                       
-            //updateWindow(anE.getWindow());
-            notifyWindowChange(anE);
             
             invalidateBuffer();
             repaint();     
-        }         
+        } 
+        
     }   
     
     @Override
@@ -243,7 +248,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 win.setLevel(win.getLevel() - e.getWheelRotation());                 
 
                 if (iRange.contains(win)) {
-                    directNotifyWindowChange(win);
+                    directChangeWindow(win);
                 }
             }            
         } 
@@ -289,7 +294,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                         }
 
                         if (iRange.contains(win)) 
-                            directNotifyWindowChange(win); 
+                            directChangeWindow(win); 
  
                     }   
                     
@@ -300,7 +305,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
 
                         if (iRange.contains(win)) {
                             if (null != iView) 
-                                directNotifyWindowChange(win);
+                                directChangeWindow(win);
                         }
 
                         return false;
@@ -345,7 +350,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             if (SwingUtilities.isRightMouseButton(e)) 
                 showPopupMenu(e.getX(), e.getY());
             else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)                                            
-                directNotifyWindowChange(new Window(iRange));         
+                directChangeWindow(new Window(iRange));         
         }
     
     
