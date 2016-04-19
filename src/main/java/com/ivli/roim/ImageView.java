@@ -389,7 +389,7 @@ public class ImageView  extends JComponent implements IImageView {
         return iVLUT.isLinear();
     }
 
-    /**/     
+    /* */     
     public BufferedImage transform (BufferedImage aSrc, BufferedImage aDst) {
         return iPLUT.transform(iVLUT.transform(aSrc, aDst), null);
     }

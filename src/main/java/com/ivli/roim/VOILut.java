@@ -37,7 +37,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
  
     public void setWindow(Window aW) {              
         iWin = aW;    
-        updateLUT();
+        invalidateLUT();
     }
     
     public Window getWindow() {
@@ -46,14 +46,14 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     
     public void setInverted(boolean aI) {       
         iInverted = aI;    
-        updateLUT();   
+        invalidateLUT();   
     }
     
     public boolean isInverted() {
         return iInverted;
     }
 
-    private void updateLUT() {
+    private void invalidateLUT() {
         iLook = null;
     }
     
@@ -74,7 +74,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
        
     public void setLinear(boolean aL) {
         iLinear = aL;                    
-        updateLUT();            
+        invalidateLUT();            
     }
 
     public boolean isLinear() {

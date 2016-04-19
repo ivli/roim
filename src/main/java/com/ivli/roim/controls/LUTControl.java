@@ -82,8 +82,8 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
    
     protected final EventListenerList iList;
       
-    private Range          iRange;
-    ///private Window         iWin;
+    private Range iRange;
+    private Window         iWin;
     private final Marker   iTop;
     private final Marker   iBottom;
     private ActionItem     iAction;
@@ -99,6 +99,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         TOP_GAP = iTop.getMarkerHeight()/2;
         BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used 
         iRange  = null;
+        
         iCanShowDialog = true;        
     }
        
@@ -168,8 +169,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     }   
        
     public void addWindowChangeListener(WindowChangeListener aL) {        
-        iList.add(WindowChangeListener.class, aL);
-    //    aL.windowChanged(new WindowChangeEvent(this, iView.getWindow()));
+        iList.add(WindowChangeListener.class, aL);    
     }
    
     public void removeWindowChangeListener(WindowChangeListener aL) {
