@@ -4,7 +4,6 @@ package com.ivli.roim;
 
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.PValueTransform;
-import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
 import java.awt.image.ByteLookupTable;
@@ -66,7 +65,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     }
    
     private byte makeLinear(double PV) {                
-        return (byte)(((PV - iWin.getLevel())/iWin.getWidth() + .5) * LUT_RANGE + LUT_MIN);
+        return (byte)(((PV - iWin.getLevel()) / iWin.getWidth() + .5) * LUT_RANGE + LUT_MIN);
     }  
     
     private byte makeLogarithmic(double PV) {               
@@ -112,26 +111,9 @@ public class VOILut implements com.ivli.roim.core.Transformation {
         }  
         
         iLook = new LookupOp(new ByteLookupTable(0, iBuffer), null);        
-    }
+    }       
     
-    /*
-    private void reset(Range aR) {            
-        if(null != iWin && null != iRange) {      
-            double scale  = aR.range() / iRange.range();
-            iWin.scale(scale);
-            iRange = aR;            
-        } else {
-            iWin = new Window(aR);
-            iRange = aR;                        
-        }        
-        updateLUT();                  
-    }
-    */
-    
-    public Curve getCurve() {
-        //final int minval = (int)aR.getMin();
-        //final int maxval = (int)aR.getMax();
-        
+    public Curve getCurve() {        
         Curve ret = new Curve();        
          
         for (int i = 0; i < iBuffer.length; ++i)

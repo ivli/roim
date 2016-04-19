@@ -107,8 +107,10 @@ public class ImageView  extends JComponent implements IImageView {
         iModel = anImage;     
         iVLUT = new VOILut(iModel.getRescaleTransform(), new Window(new Range(anImage.getMin(), anImage.getMax())));     
         iROIMgr = new ROIManager();
+        
         iROIMgr.setView(this);
-        notifyFrameChanged();        
+       // notifyFrameChanged();        
+        loadFrame(0);
     }
                  
     public AffineTransform getZoom() {
@@ -246,7 +248,7 @@ public class ImageView  extends JComponent implements IImageView {
             iCurrent = aN;   
             iVLUT.setWindow(new Window(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax())));
             iROIMgr.update();   
-            
+            iBufImage = iModel.get(iCurrent).getBufferedImage();
             notifyFrameChanged();
             notifyWindowChanged();
             invalidateBuffer();
@@ -308,16 +310,17 @@ public class ImageView  extends JComponent implements IImageView {
         } 
                   
         iZoom.setToScale(scale, scale);  
-    }                 
+    }                         
+    
+    BufferedImage iBufImage;// =  
     
     protected void updateBufferedImage() {                  
-        updateScale();        
-        notifyZoomChanged();
-        
+        updateScale();               
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
-        BufferedImage src = transform(iModel.get(iCurrent).getBufferedImage(), null);                
-        iBuf = z.filter(src, null); 
+        //BufferedImage src = transform(iModel.get(iCurrent).getBufferedImage(), null);   
+        //BufferedImage src = iPLUT.transform(iVLUT.transform(iBufImage, null), null);
+        iBuf = z.filter(transform(iBufImage, null), null); 
     }
     
     @Override
@@ -330,13 +333,11 @@ public class ImageView  extends JComponent implements IImageView {
         iController.paint((Graphics2D)g); //must reside last in the paint chain   
     }
 
-    public void setWindow(Window aW) {
-        //if (!iVLUT.getWindow().equals(aW) && iVLUT.getRange().contains(aW)) {            
+    public void setWindow(Window aW) {       
         iVLUT.setWindow(aW);               
         invalidateBuffer();
         notifyWindowChanged();
-        repaint();
-        //}       
+        repaint();     
     }
     
     public Window getWindow() {
@@ -373,10 +374,18 @@ public class ImageView  extends JComponent implements IImageView {
         return iVLUT.isLinear();
     }
 
+    /**/     
     public BufferedImage transform (BufferedImage aSrc, BufferedImage aDst) {
         return iPLUT.transform(iVLUT.transform(aSrc, aDst), null);
     }
-    
+   
+    public Transformation getTransformation () {
+        return new Transformation() {
+            public BufferedImage transform (BufferedImage aSrc, BufferedImage aDst) {
+                return iPLUT.transform(iVLUT.transform(aSrc, aDst), null);
+            }
+        };
+    }
         
     private static final Logger logger = LogManager.getLogger(ImageView.class);
 }

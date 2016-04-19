@@ -89,9 +89,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private BufferedImage  iBuf;
       
     private boolean iCanShowDialog;
-    private ImageView iView; 
-    
-   
+    private ImageView iView;        
     
     public ImageView getView() {
         return iView;
@@ -147,6 +145,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 iRange = iView.getRange();
                 iTop.setPosition((int) imageToScreen(iView.getWindow().getTop()));
                 iBottom.setPosition((int) imageToScreen(iView.getWindow().getBottom())); 
+                makeBuffer();
                 invalidateBuffer();
                 repaint();
             }                                               
@@ -159,6 +158,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 iRange = iView.getRange();
                 iTop.setPosition((int) imageToScreen(iView.getWindow().getTop()));
                 iBottom.setPosition((int) imageToScreen(iView.getWindow().getBottom())); 
+                makeBuffer();
                 invalidateBuffer();
                 repaint();
             }                    
@@ -270,8 +270,6 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             final int ypos = getHeight() - e.getPoint().y;
 
             if (iTop.contains(ypos) || iBottom.contains(ypos) || iTop.getPosition() + 4 > ypos && iBottom.getPosition() - 4 < ypos) {  
-
-
                 iAction = new ActionItem(e.getX(), e.getY()) {
 
                     boolean first = true;
@@ -353,8 +351,31 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 directChangeWindow(new Window(iRange));         
         }
     
+    WritableRaster iRaster;
     
-    private void updateBufferedImage() {
+    private void makeBuffer() {
+        final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
+        final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
+               
+        final int size = (width * height - 1);
+        DataBuffer data = new DataBufferUShort(width * height);
+        
+        final double ratio = iRange.range() / height;
+        
+        for (int i = 0; i < height; ++i) {                                   
+            final int lineNdx =  size - (i * width);
+            
+            for (int j = 0; j < width; ++j) {               
+                data.setElem(lineNdx - j, (short)((double)i * ratio));            
+            }                      
+        }
+       
+        iRaster = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
+                                                              data, new Point(0,0)
+                                                             );         
+    }
+        
+    private void updateBufferedImage() {/*
         final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
         final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
                
@@ -374,30 +395,21 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         final WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
                                                               data, new Point(0,0)
                                                              );        
-        
+        */
         iBuf = iView.transform(new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
                                                     new int[] {8},
                                                     false,		// has alpha
                                                     false,		// alpha premultipled
                                                     Transparency.OPAQUE,
-                                                    data.getDataType()),                                                                                                                                  
-                                                wr, true, null), null);
-        
-       // iBuf = iView.getPLut().transform(iBuf, null);     
+                                                    iRaster.getDataBuffer().getDataType()),                                                                                                                                  
+                                                iRaster, true, null), null);
+                
     }
             
-    public void paintComponent(Graphics g) {  
-        
-        if (null == iBuf) { 
+    public void paintComponent(Graphics g) {          
+        if (null == iBuf)  
             updateBufferedImage();
-            /*
-            if (null != iTop && null != iBottom) {
-                iTop.setPosition((int) imageToScreen(iView.getWindow().getTop()));              
-                iBottom.setPosition((int) imageToScreen(iView.getWindow().getBottom()));
-            }
-            */
-        }
-        
+           
         final Color clr = g.getColor();
         
         g.setColor(Color.LIGHT_GRAY);
