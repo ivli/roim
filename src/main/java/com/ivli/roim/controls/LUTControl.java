@@ -348,7 +348,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             directChangeWindow(new Window(iRange));         
     }
 
-    WritableRaster iRaster;
+    BufferedImage iBuffImage;
     
     private void makeBuffer() {
         final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
@@ -367,24 +367,25 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             }                      
         }
        
-        iRaster = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
+        WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
                                               data, new Point(0,0)
-                                             );         
-    }
+                                             );   
         
-    private void updateBufferedImage() {
-        iBuf = iView.transform(new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
+        iBuffImage = new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
                                                     new int[] {8},
                                                     false,		// has alpha
                                                     false,		// alpha premultipled
                                                     Transparency.OPAQUE,
-                                                    iRaster.getDataBuffer().getDataType()), 
-                                                iRaster, true, null), 
-                                null);                                                                                                                                                                                                 
+                                                    wr.getDataBuffer().getDataType()), wr, true, null);
     }
-            
+        
+    private void updateBufferedImage() {
+        iBuf = iView.transform(iBuffImage, null);                                                                                                                                                                                                 
+    }
+      
+
     public void paintComponent(Graphics g) {          
-        if (null == iBuf && null != iRaster)  
+        if (null == iBuf && null != iBuffImage)  
             updateBufferedImage();
            
         final Color clr = g.getColor();

@@ -111,8 +111,7 @@ public class ImageView  extends JComponent implements IImageView {
         iVLUT = new VOILut(iModel.getRescaleTransform(), new Window(new Range(anImage.getMin(), anImage.getMax())));     
         iROIMgr = new ROIManager();
         
-        iROIMgr.setView(this);
-       // notifyFrameChanged();        
+        iROIMgr.setView(this);            
         loadFrame(0);
     }
                  
