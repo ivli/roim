@@ -134,6 +134,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         return ImageDataType.GRAYS32;
     }
     
+    /*
     public BufferedImage getBufferedImage() {               
         WritableRaster wr = Raster.createBandedRaster(DataBuffer.TYPE_INT, iWidth, iHeight, 1, new java.awt.Point());
         wr.setDataElements(0, 0, iWidth, iHeight, iPixels);
@@ -146,7 +147,8 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
                                                          wr.getDataBuffer().getDataType()),                                                                                                                                                                                         
                                  wr, true, null);        
     }     
-                  
+    */
+    
     private void computeStatistics() throws IndexOutOfBoundsException { 
         iMin  = Double.MAX_VALUE; 
         iMax  = Double.MIN_VALUE; 

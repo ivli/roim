@@ -42,7 +42,6 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.Transformation;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
@@ -50,6 +49,10 @@ import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
 import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
 
 
 public class ImageView  extends JComponent implements IImageView {
@@ -241,6 +244,19 @@ public class ImageView  extends JComponent implements IImageView {
         return iCurrent;
     }  
            
+    protected BufferedImage createBufferedImage(ImageFrame aF) {               
+        WritableRaster wr = Raster.createBandedRaster(DataBuffer.TYPE_INT, aF.getWidth(), aF.getHeight(), 1, new java.awt.Point());        
+        wr.setDataElements(0, 0, aF.getWidth(), aF.getHeight(), aF.getPixelData());
+       
+        return new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
+                                                         new int[] {8},
+                                                         false,		// has alpha
+                                                         false,		// alpha premultipled
+                                                         Transparency.OPAQUE,
+                                                         wr.getDataBuffer().getDataType()),                                                                                                                                                                                         
+                                 wr, true, null);        
+    }   
+    
     public boolean loadFrame(int aN) {                                
         if (!iModel.hasAt(aN)) {            
             return false;
@@ -248,7 +264,7 @@ public class ImageView  extends JComponent implements IImageView {
             iCurrent = aN;   
             iVLUT.setWindow(new Window(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax())));
             iROIMgr.update();   
-            iBufImage = iModel.get(iCurrent).getBufferedImage();
+            iBufImage = createBufferedImage(iModel.get(iCurrent));
             notifyFrameChanged();
             notifyWindowChanged();
             invalidateBuffer();

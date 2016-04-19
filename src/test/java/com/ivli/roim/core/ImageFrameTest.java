@@ -305,19 +305,6 @@ public class ImageFrameTest {
     }
 
     /**
-     * Test of getBufferedImage method, of class ImageFrame.
-     */
-    @Test
-    public void testGetBufferedImage() {
-        System.out.println("getBufferedImage");
-        ImageFrame instance = new ImageFrame(1024, 1024);
-        
-        BufferedImage result = instance.getBufferedImage();
-        assertNotNull(result);
-       
-    }
-
-    /**
      * Test of getPixelData method, of class ImageFrame.
      */
     @Test

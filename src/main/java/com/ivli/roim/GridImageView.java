@@ -203,7 +203,7 @@ public class GridImageView extends ImageView {
                 final int ndx = getFrameNumber() + j*iCols + i;
                               
                 if (iModel.hasAt(ndx)) {                    
-                    BufferedImage img = iModel.get(ndx).getBufferedImage();
+                    BufferedImage img = createBufferedImage(iModel.get(ndx));//.getBufferedImage();
                     BufferedImage src = this.transform(img, null);
 
                     gc.drawImage(src, posx, posy, width, height, null);

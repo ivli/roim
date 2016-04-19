@@ -138,7 +138,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private void construct(ImageView aW) {    
         iView = aW;         
         iRange = new Range(iView.getFrame().getMin(), iView.getFrame().getMax());   
-                 
+          
         /* use feedback loop to addjust marker positions when size changed */
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {                
@@ -207,8 +207,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             
             invalidateBuffer();
             repaint();     
-        } 
-        
+        }         
     }   
     
     @Override
@@ -229,128 +228,126 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             repaint();      
         }         
     }   
-    
-    //private class MouseHandler  {
-   
-        @Override
-        public void mouseDragged(MouseEvent e) {
-            if (null != iAction) 
-                iAction.action(e.getX(), e.getY());
-        }
-    
-        @Override
-        public void mouseWheelMoved(MouseWheelEvent e) {
-            if (null != iAction)
-                iAction.wheel(e.getWheelRotation());
-            else {
-                final Window win = new Window(iView.getWindow());                     
 
-                win.setLevel(win.getLevel() - e.getWheelRotation());                 
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (null != iAction) 
+            iAction.action(e.getX(), e.getY());
+    }
 
-                if (iRange.contains(win)) {
-                    directChangeWindow(win);
-                }
-            }            
-        } 
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if (null != iAction)
+            iAction.wheel(e.getWheelRotation());
+        else {
+            final Window win = new Window(iView.getWindow());                     
+
+            win.setLevel(win.getLevel() - e.getWheelRotation());                 
+
+            if (iRange.contains(win)) {
+                directChangeWindow(win);
+            }
+        }            
+    } 
     
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            final int ypos = getHeight() - e.getPoint().y;
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        final int ypos = getHeight() - e.getPoint().y;
 
-            if (iTop.contains(ypos) || iBottom.contains(ypos))
-                setCursor(java.awt.Cursor.getPredefinedCursor(MARKER_CURSOR));
-            else if (ypos < iTop.getPosition() && ypos > iBottom.getPosition())
-                setCursor(java.awt.Cursor.getPredefinedCursor(WINDOW_CURSOR));
-            else 
-                setCursor(java.awt.Cursor.getDefaultCursor());                                     
-        }
+        if (iTop.contains(ypos) || iBottom.contains(ypos))
+            setCursor(java.awt.Cursor.getPredefinedCursor(MARKER_CURSOR));
+        else if (ypos < iTop.getPosition() && ypos > iBottom.getPosition())
+            setCursor(java.awt.Cursor.getPredefinedCursor(WINDOW_CURSOR));
+        else 
+            setCursor(java.awt.Cursor.getDefaultCursor());                                     
+    }
        
-        @Override
-        public void mousePressed(MouseEvent e) {        
-            final int ypos = getHeight() - e.getPoint().y;
+    @Override
+    public void mousePressed(MouseEvent e) {        
+        final int ypos = getHeight() - e.getPoint().y;
 
-            if (iTop.contains(ypos) || iBottom.contains(ypos) || iTop.getPosition() + 4 > ypos && iBottom.getPosition() - 4 < ypos) {  
-                iAction = new ActionItem(e.getX(), e.getY()) {
+        if (iTop.contains(ypos) || iBottom.contains(ypos) || iTop.getPosition() + 4 > ypos && iBottom.getPosition() - 4 < ypos) {  
+            iAction = new ActionItem(e.getX(), e.getY()) {
 
-                    boolean first = true;
-                    final boolean iMoveTop = iTop.contains(ypos);    
+                boolean first = true;
+                final boolean iMoveTop = iTop.contains(ypos);    
 
-                    final boolean iMoveBoth = !(iMoveTop || iBottom.contains(ypos)) && iTop.getPosition() > ypos && iBottom.getPosition() < ypos;  
+                final boolean iMoveBoth = !(iMoveTop || iBottom.contains(ypos)) && iTop.getPosition() > ypos && iBottom.getPosition() < ypos;  
 
-                    protected void DoAction(int aX, int aY) {
-                        final double delta = screenToImage(aY - iY);
-                        final Window win = new Window(iView.getWindow());                     
+                protected void DoAction(int aX, int aY) {
+                    final double delta = screenToImage(aY - iY);
+                    final Window win = new Window(iView.getWindow());                     
 
-                        if (iMoveTop) {               
-                           win.setTop(win.getTop() - delta);
-                          // iTop.move(iTop.getPosition() + aX - iX);
-                        } else if (iMoveBoth) {
-                            win.setLevel(win.getLevel() - delta);
-                        } else {   
-                          // iBottom.move(iBottom.getPosition() + aX - iX); 
-                           win.setBottom(win.getBottom() - delta);
-                        }
-
-                        if (iRange.contains(win)) 
-                            directChangeWindow(win); 
- 
-                    }   
-                    
-                    protected boolean DoWheel(int aX) {
-                        final Window win = new Window(iView.getWindow());                     
-
-                        win.setLevel(win.getLevel() - aX);                 
-
-                        if (iRange.contains(win)) {
-                            if (null != iView) 
-                                directChangeWindow(win);
-                        }
-
-                        return false;
+                    if (iMoveTop) {               
+                       win.setTop(win.getTop() - delta);
+                      // iTop.move(iTop.getPosition() + aX - iX);
+                    } else if (iMoveBoth) {
+                        win.setLevel(win.getLevel() - delta);
+                    } else {   
+                      // iBottom.move(iBottom.getPosition() + aX - iX); 
+                       win.setBottom(win.getBottom() - delta);
                     }
-                };                
-            } 
-            else if (SwingUtilities.isLeftMouseButton(e)) {
-                //iAction = NewAction(iLeftAction, e.getX(), e.getY());
-            }
-            else if (SwingUtilities.isMiddleMouseButton(e)) {
-                //iAction = NewAction(iMiddleAction, e.getX(), e.getY());
-            }
-            else if (SwingUtilities.isRightMouseButton(e)) {
-                //iRight.Activate(e.getX(), e.getY());
-                //iAction = NewAction(iRightAction, e.getX(), e.getY());
-            }                
-        }
 
-        public void mouseReleased(MouseEvent e) {                    
-            iAction = null;  
-            if (!getBounds().contains(e.getPoint())){
-               shrink(); 
-               //iActive = true;
-            }
-        }
-   
-        public void mouseEntered(MouseEvent e) {        
-            //iActive = true;
-            if (null == iAction) {
-                extend();
-            }
-        }
+                    if (iRange.contains(win)) 
+                        directChangeWindow(win); 
 
-        public void mouseExited(MouseEvent e) {
-            if (null == iAction) {
-                shrink();
-               // iActive = false;
-            }
-        }
+                }   
 
-        public void mouseClicked(MouseEvent e) {    
-            if (SwingUtilities.isRightMouseButton(e)) 
-                showPopupMenu(e.getX(), e.getY());
-            else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)                                            
-                directChangeWindow(new Window(iRange));         
+                protected boolean DoWheel(int aX) {
+                    final Window win = new Window(iView.getWindow());                     
+
+                    win.setLevel(win.getLevel() - aX);                 
+
+                    if (iRange.contains(win)) {
+                        if (null != iView) 
+                            directChangeWindow(win);
+                    }
+
+                    return false;
+                }
+            };                
+        } 
+        else if (SwingUtilities.isLeftMouseButton(e)) {
+            //iAction = NewAction(iLeftAction, e.getX(), e.getY());
         }
-    
+        else if (SwingUtilities.isMiddleMouseButton(e)) {
+            //iAction = NewAction(iMiddleAction, e.getX(), e.getY());
+        }
+        else if (SwingUtilities.isRightMouseButton(e)) {
+            //iRight.Activate(e.getX(), e.getY());
+            //iAction = NewAction(iRightAction, e.getX(), e.getY());
+        }                
+    }
+
+    public void mouseReleased(MouseEvent e) {                    
+        iAction = null;  
+        if (!getBounds().contains(e.getPoint())){
+           shrink(); 
+           //iActive = true;
+        }
+    }
+
+    public void mouseEntered(MouseEvent e) {        
+        //iActive = true;
+        if (null == iAction) {
+            extend();
+        }
+    }
+
+    public void mouseExited(MouseEvent e) {
+        if (null == iAction) {
+            shrink();
+           // iActive = false;
+        }
+    }
+
+    public void mouseClicked(MouseEvent e) {    
+        if (SwingUtilities.isRightMouseButton(e)) 
+            showPopupMenu(e.getX(), e.getY());
+        else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)                                            
+            directChangeWindow(new Window(iRange));         
+    }
+
     WritableRaster iRaster;
     
     private void makeBuffer() {
@@ -363,7 +360,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         final double ratio = iRange.range() / height;
         
         for (int i = 0; i < height; ++i) {                                   
-            final int lineNdx =  size - (i * width);
+            final int lineNdx = size - (i * width);
             
             for (int j = 0; j < width; ++j) {               
                 data.setElem(lineNdx - j, (short)((double)i * ratio));            
@@ -371,43 +368,23 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         }
        
         iRaster = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
-                                                              data, new Point(0,0)
-                                                             );         
+                                              data, new Point(0,0)
+                                             );         
     }
         
-    private void updateBufferedImage() {/*
-        final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
-        final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
-               
-        final int size = (width * height - 1);
-        DataBuffer data = new DataBufferUShort(width * height);
-        
-        final double ratio = iRange.range() / height;
-        
-        for (int i = 0; i < height; ++i) {                                   
-            final int lineNdx =  size - (i * width);
-            
-            for (int j = 0; j < width; ++j) {               
-                data.setElem(lineNdx - j, (short)((double)i * ratio));            
-            }                      
-        }
-       
-        final WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
-                                                              data, new Point(0,0)
-                                                             );        
-        */
+    private void updateBufferedImage() {
         iBuf = iView.transform(new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
                                                     new int[] {8},
                                                     false,		// has alpha
                                                     false,		// alpha premultipled
                                                     Transparency.OPAQUE,
-                                                    iRaster.getDataBuffer().getDataType()),                                                                                                                                  
-                                                iRaster, true, null), null);
-                
+                                                    iRaster.getDataBuffer().getDataType()), 
+                                                iRaster, true, null), 
+                                null);                                                                                                                                                                                                 
     }
             
     public void paintComponent(Graphics g) {          
-        if (null == iBuf)  
+        if (null == iBuf && null != iRaster)  
             updateBufferedImage();
            
         final Color clr = g.getColor();
