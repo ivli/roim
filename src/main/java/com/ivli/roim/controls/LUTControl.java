@@ -83,6 +83,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     protected final EventListenerList iList;
       
     private Range          iRange;
+    ///private Window         iWin;
     private final Marker   iTop;
     private final Marker   iBottom;
     private ActionItem     iAction;
@@ -91,10 +92,16 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private boolean iCanShowDialog;
     private ImageView iView;        
     
-    public ImageView getView() {
-        return iView;
+    public LUTControl() { 
+        iTop = new Marker(true);  
+        iBottom = new Marker(false);  
+        iList = new EventListenerList();
+        TOP_GAP = iTop.getMarkerHeight()/2;
+        BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used 
+        iRange  = null;
+        iCanShowDialog = true;        
     }
-   
+       
     public void attach(ImageView aParent) {
        construct(aParent); 
        
@@ -120,21 +127,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             public void ancestorMoved(AncestorEvent event){}         
             });
     } 
-    
-    public void detach() {
-        
-    }
-    
-    public LUTControl() { 
-        iTop    = new Marker(true);  
-        iBottom = new Marker(false);  
-        iList   = new EventListenerList();
-        TOP_GAP    = iTop.getMarkerHeight()/2;
-        BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used 
-        iRange  = null;
-        iCanShowDialog = true;        
-    }
-    
+      
     private void construct(ImageView aW) {    
         iView = aW;         
         iRange = new Range(iView.getFrame().getMin(), iView.getFrame().getMax());   
@@ -534,9 +527,8 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 ///iView.repaint();
                 repaint();
                 break;
-            case KCommandShowDialog:    /**    TODO: refactor the dialog     **/     
-                
-                VOILUTPanel panel = new VOILUTPanel(this);//, iView.getView().getFrame());
+            case KCommandShowDialog:    /**    TODO: refactor the dialog     **/                     
+                VOILUTPanel panel = new VOILUTPanel(this, this.iView);
                 
                 javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
                 dialog.setContentPane(panel);

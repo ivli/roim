@@ -45,6 +45,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private final ChartPanel iPanel;
     private final String iCurveName;
     private Histogram iHist;
+    private final ImageView iView;
     
     private XYSeriesCollection makeLUTCurve(int aWidth) {      
         return new XYSeriesCollection(iLUT.getCurve().getSeriesRebinned(iCurveName, 256));
@@ -53,7 +54,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private XYSeries makeHistogram(int aWidth) {  
         if (null == iHist) {
             HistogramExtractor iHEx = new HistogramExtractor(null);
-            iLUT.getView().getFrame().extract(iHEx);
+            iView.getFrame().extract(iHEx);
             iHist = iHEx.iHist;
         }
         
@@ -67,8 +68,12 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         iPanel.getChart().getXYPlot().setDataset(0, makeLUTCurve(jPanel1.getWidth()));
     }   
     
-    public VOILUTPanel(LUTControl aP) {
+    public VOILUTPanel(LUTControl aP, ImageView aView) {
+        
+        iView = aView;
         iCurveName = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT");
+        
+        
         iLUT = new LUTControl();
         iLUT.attach(aP);
 

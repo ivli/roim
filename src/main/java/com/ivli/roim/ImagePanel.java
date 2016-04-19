@@ -94,7 +94,7 @@ public class ImagePanel extends JPanel {
     }
         
     public void showLUTDialog() {
-        VOILUTPanel panel = new VOILUTPanel(iLut);
+        VOILUTPanel panel = new VOILUTPanel(iLut, iView);
         JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
 
         dialog.setContentPane(panel);
