@@ -79,7 +79,8 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private BufferedImage iBuf;
       
     private boolean iCanShowDialog;
-    private ImageView iView;        
+    private ImageView  iView;             
+    //private ImageFrame iFrame;
     
     public LUTControl() { 
         iTop = new Marker(true);  
@@ -119,9 +120,11 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     } 
       
     private void construct(ImageView aW) {    
-        iView = aW;         
-        iRange = new Range(iView.getFrame().getMin(), iView.getFrame().getMax());   
-          
+        iView = aW;    
+        if (null != iView.getImage())
+            iRange = new Range(iView.getFrame().getMin(), iView.getFrame().getMax());   
+       // else
+       //     iRange = new Range();
         /* use feedback loop to addjust marker positions when size changed */
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {                
@@ -307,22 +310,19 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     public void mouseReleased(MouseEvent e) {                    
         iAction = null;  
         if (!getBounds().contains(e.getPoint())){
-           shrink(); 
-           //iActive = true;
+           
         }
     }
 
     public void mouseEntered(MouseEvent e) {        
         //iActive = true;
         if (null == iAction) {
-            extend();
+           
         }
     }
 
     public void mouseExited(MouseEvent e) {
-        if (null == iAction) {
-            shrink();
-           // iActive = false;
+        if (null == iAction) {           
         }
     }
 
@@ -333,45 +333,33 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             directChangeWindow(new Window(iRange));         
     }
 
-    
-    ImageFrame iFrame;
+    private  ImageFrame iBackFrame;
     
     private void makeBuffer() {
         final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
         final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
-               
-        final int size = (width * height - 1);
         
-        //DataBuffer data = new DataBufferUShort(width * height);
-        iFrame = new ImageFrame(width, height);
+        if (width <=0 || height <=0) {
+           iBackFrame = null;
+           return;
+        }
+            
+        iBackFrame = new ImageFrame(width, height);
         final double ratio = iRange.range() / height;
         
-        for (int i = 0; i < width; ++i) {      
-            
+        for (int i = 0; i < width; ++i) {                  
             for (int j = 0; j < height; ++j) {                                     
-              iFrame.setPixel(i, j, (int)((height - j) * ratio));
+                iBackFrame.setPixel(i, j, (int)((height - j) * ratio));
             }                      
         }
-       
-/*        WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
-                                              data, new Point(0,0)
-                                             );   
-        
-        iBuffImage = new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
-                                                    new int[] {8},
-                                                    false,		// has alpha
-                                                    false,		// alpha premultipled
-                                                    Transparency.OPAQUE,
-                                                   wr.getDataBuffer().getDataType()), wr, true, null);
-        */ 
     }
         
     private void updateBufferedImage() {
-        iBuf = iView.transform(iFrame);                                                                                                                                                                                                 
+        iBuf = iView.transform(iBackFrame);                                                                                                                                                                                                 
     }
       
     public void paintComponent(Graphics g) {          
-        if (null == iBuf && null != iFrame)  
+        if (null == iBuf && null != iBackFrame)  
             updateBufferedImage();
            
         final Color clr = g.getColor();
@@ -379,9 +367,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         g.setColor(Color.LIGHT_GRAY);
         
         g.fillRect(0, 0, getWidth(), getHeight());
-        g.drawImage(iBuf, LEFT_GAP, TOP_GAP, getWidth() - (LEFT_GAP + RIGHT_GAP), getHeight() - (TOP_GAP + BOTTOM_GAP), null);
-        
-        //g.drawImage(iBuf, 0, TOP_GAP, getWidth(), getHeight() - (TOP_GAP), 0, 0, INACTIVE_BAR_WIDTH, 255, null);
+        g.drawImage(iBuf, LEFT_GAP, TOP_GAP, getWidth() - (LEFT_GAP + RIGHT_GAP), getHeight() - (TOP_GAP + BOTTOM_GAP), null);      
         
         g.draw3DRect(0, 0, getWidth(), getHeight(), true);       
         
@@ -395,28 +381,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
      
     private void invalidateBuffer() {        
         iBuf = null;
-    }    
-    
-    private void extend() {
-        if (WEDGE_EXTEND_WHEN_FOCUSED) {
-            setSize(ACTIVATED_BAR_WIDTH, getHeight());
-            setLocation(getLocation().x - (ACTIVATED_BAR_WIDTH - INACTIVE_BAR_WIDTH), getLocation().y);
-            getParent().setComponentZOrder(this, 0);
-
-            invalidateBuffer();
-            repaint();
-        }                
-    }
-    
-    private void shrink() {
-        if(WEDGE_EXTEND_WHEN_FOCUSED) {
-            setSize(INACTIVE_BAR_WIDTH, getHeight());
-            getParent().setComponentZOrder(this, 1);
-            invalidateBuffer();
-            //repaint(); 
-            getParent().revalidate();
-        }
-    }
+    }       
   
     private double imageToScreen(double aY) {              
         return aY * ((this.getHeight() - (TOP_GAP + BOTTOM_GAP)) / iRange.range());       
