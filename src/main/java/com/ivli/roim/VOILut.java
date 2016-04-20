@@ -3,13 +3,17 @@ package com.ivli.roim;
 
 
 import com.ivli.roim.core.Curve;
+import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
 import java.awt.image.ByteLookupTable;
+import java.awt.image.IndexColorModel;
 import java.awt.image.LookupOp;
+import java.awt.image.WritableRaster;
+import java.io.IOException;
 
-public class VOILut implements com.ivli.roim.core.Transformation {    
+public class VOILut /*implements com.ivli.roim.core.Transformation*/ {    
     private static final double LUT_MIN   = .0;
     private static final double LUT_MAX   = 255.;
     private static final double LUT_RANGE = 255.;    
@@ -24,17 +28,27 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     private Window iWin;    
         
     private final byte[] iBuffer;        
-    private LookupOp iLook; 
-        
-    public VOILut(PValueTransform aPVT, Window aWin) {//, Range aR) {
+    //private LookupOp iLook; // VOI LUT
+    protected IndexColorModel iModel; //presentation LUT
+
+    public VOILut(PValueTransform aPVT, Window aWin, IndexColorModel aLUTcanBeNull) {
         iInverted = false;
         iLinear = true;
         iPVt = aPVT;
         iBuffer = new byte[BUFFER_SIZE];
-        iLook = null;
-        iWin = aWin;
+//        iLook = null;
+        iWin = aWin;     
+        iModel = null != aLUTcanBeNull ? aLUTcanBeNull : LutLoader.defaultLUT();        
     }  
- 
+    
+    public void setLUT(String aName) { 
+    try {
+            iModel = LutLoader.open(aName);          
+        } catch (IOException ex) {
+            iModel = LutLoader.defaultLUT();
+        }
+    }
+        
     public void setWindow(Window aW) {              
         iWin = aW;    
         invalidateLUT();
@@ -54,14 +68,33 @@ public class VOILut implements com.ivli.roim.core.Transformation {
     }
 
     private void invalidateLUT() {
-        iLook = null;
+    //    iLook = null;
+        makeLUT();
     }
-    
-    @Override
-    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {
-        if (null == iLook)
-            makeLUT();
-        return iLook.filter(aSrc, aDst);	
+       
+//    @Override
+    public BufferedImage transform(ImageFrame aSrc) {//BufferedImage aSrc, BufferedImage aDst) {
+        //if (null == iLook)
+        //    makeLUT();
+       
+        final int width = aSrc.getWidth();
+        final int height = aSrc.getHeight();
+                
+        BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        final WritableRaster dst = ret.getRaster();        
+        //final Raster src = (iLook.filter(aSrc, aDst)).getRaster();        
+        
+        for (int y=0; y < height; ++y) {
+            for (int x=0; x < width; ++x) {
+               final int ndx = iBuffer[aSrc.getPixel(x, y)];
+               ///final int ndx = src.getSample(x, y, 0);
+               final int sample = iModel.getRGB(ndx); 
+               final int[] rgb = {(sample&0x00ff0000)>>16, (sample&0x0000ff00)>>8, sample&0x000000ff};
+
+               dst.setPixel(x, y, rgb);               
+            }
+        }
+        return ret;
     }
    
     private byte makeLinear(double PV) {                
@@ -110,7 +143,7 @@ public class VOILut implements com.ivli.roim.core.Transformation {
             }                        
         }  
         
-        iLook = new LookupOp(new ByteLookupTable(0, iBuffer), null);        
+//        iLook = new LookupOp(new ByteLookupTable(0, iBuffer), null);        
     }       
     
     public Curve getCurve() {        

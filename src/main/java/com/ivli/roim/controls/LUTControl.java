@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Transparency;
-
-import java.awt.Point;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Dialog;
@@ -24,7 +21,6 @@ import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.color.ColorSpace;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -35,12 +31,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.ComponentSampleModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferUShort;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.EventListenerList;
@@ -48,9 +38,9 @@ import javax.swing.event.EventListenerList;
 import com.ivli.roim.ActionItem;
 import com.ivli.roim.ImageView;
 import com.ivli.roim.LutLoader;
-import com.ivli.roim.PresentationLut;
 import com.ivli.roim.Settings;
 import com.ivli.roim.core.Curve;
+import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.events.FrameChangeEvent;
@@ -343,7 +333,8 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             directChangeWindow(new Window(iRange));         
     }
 
-    BufferedImage iBuffImage;
+    
+    ImageFrame iFrame;
     
     private void makeBuffer() {
         final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
@@ -351,19 +342,18 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                
         final int size = (width * height - 1);
         
-        DataBuffer data = new DataBufferUShort(width * height);
-        
+        //DataBuffer data = new DataBufferUShort(width * height);
+        iFrame = new ImageFrame(width, height);
         final double ratio = iRange.range() / height;
         
-        for (int i = 0; i < height; ++i) {                                   
-            final int lineNdx = size - (i * width);
+        for (int i = 0; i < width; ++i) {      
             
-            for (int j = 0; j < width; ++j) {               
-                data.setElem(lineNdx - j, (short)((double)i * ratio));            
+            for (int j = 0; j < height; ++j) {                                     
+              iFrame.setPixel(i, j, (int)((height - j) * ratio));
             }                      
         }
        
-        WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
+/*        WritableRaster wr = Raster.createWritableRaster(new ComponentSampleModel(data.getDataType(), width, height, 1, width, new int[] {0}),             
                                               data, new Point(0,0)
                                              );   
         
@@ -372,16 +362,16 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                                                     false,		// has alpha
                                                     false,		// alpha premultipled
                                                     Transparency.OPAQUE,
-                                                    wr.getDataBuffer().getDataType()), wr, true, null);
+                                                   wr.getDataBuffer().getDataType()), wr, true, null);
+        */ 
     }
         
     private void updateBufferedImage() {
-        iBuf = iView.transform(iBuffImage, null);                                                                                                                                                                                                 
+        iBuf = iView.transform(iFrame);                                                                                                                                                                                                 
     }
       
-
     public void paintComponent(Graphics g) {          
-        if (null == iBuf && null != iBuffImage)  
+        if (null == iBuf && null != iFrame)  
             updateBufferedImage();
            
         final Color clr = g.getColor();
@@ -549,16 +539,16 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 if (null != fd.getFile()) {
                     final String lutFile = fd.getDirectory() + fd.getFile();
                     Settings.set(Settings.KEY_LASTFILE_LUT, lutFile);
-                    iView.setPresentationLUT(PresentationLut.open(lutFile));
+                    iView.setPresentationLUT(lutFile);
                     invalidateBuffer();                  
                     repaint();
                 } 
                 break;          
             default: 
                 //setLUT(e.getActionCommand());
-                iView.setPresentationLUT(PresentationLut.open(e.getActionCommand()));
+                iView.setPresentationLUT(e.getActionCommand());
                 invalidateBuffer();
-               // iView.repaint();
+                iView.repaint();
                 repaint();
                 break;
          }

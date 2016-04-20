@@ -66,9 +66,9 @@ public class OffsetImageView extends ImageView {
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
-        BufferedImage src  = this.transform(iBufImage, null);
+        //BufferedImage src  = this.transform(iBufImage, null);
                 
-        iBuf = z.filter(src, null);                  
+       // iBuf = z.filter(src, null);                  
     }
     
     @Override

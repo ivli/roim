@@ -71,7 +71,7 @@ public class ImageView  extends JComponent implements IImageView {
         
     protected ROIManager iROIMgr;
     protected VOILut iVLUT;
-    protected PresentationLut iPLUT;
+    //protected PresentationLut iPLUT;
         
     protected int iCurrent = 0;
     protected IMultiframeImage iModel;                     
@@ -101,14 +101,17 @@ public class ImageView  extends JComponent implements IImageView {
         });                
     }
     
-    public void setPresentationLUT(PresentationLut aLUT) {
-        iPLUT = aLUT;
+    /**/
+    public void setPresentationLUT(String aLUT) {
+        //iPLUT = aLUT;
+        iVLUT.setLUT(aLUT);
         invalidateBuffer();
     }
     
+    
     public void setImage(IMultiframeImage anImage) {                
         iModel = anImage;     
-        iVLUT = new VOILut(iModel.getRescaleTransform(), new Window(new Range(anImage.getMin(), anImage.getMax())));     
+        iVLUT = new VOILut(iModel.getRescaleTransform(), new Window(new Range(anImage.getMin(), anImage.getMax())), null);     
         iROIMgr = new ROIManager();
         
         iROIMgr.setView(this);            
@@ -263,7 +266,7 @@ public class ImageView  extends JComponent implements IImageView {
             iCurrent = aN;   
             iVLUT.setWindow(new Window(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax())));
             iROIMgr.update();   
-            iBufImage = createBufferedImage(iModel.get(iCurrent));
+            //iBufImage = createBufferedImage(iModel.get(iCurrent));
             notifyFrameChanged();
             notifyWindowChanged();
             invalidateBuffer();
@@ -327,7 +330,7 @@ public class ImageView  extends JComponent implements IImageView {
         iZoom.setToScale(scale, scale);  
     }                         
     
-    BufferedImage iBufImage;// =  
+   /// BufferedImage iBufImage;// =  
     
     protected void updateBufferedImage() {                  
         updateScale();               
@@ -335,7 +338,7 @@ public class ImageView  extends JComponent implements IImageView {
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
         //BufferedImage src = transform(iModel.get(iCurrent).getBufferedImage(), null);   
         //BufferedImage src = iPLUT.transform(iVLUT.transform(iBufImage, null), null);
-        iBuf = z.filter(transform(iBufImage, null), null); 
+        iBuf = z.filter(iVLUT.transform(iModel.get(iCurrent)), null); 
     }
     
     @Override
@@ -388,19 +391,14 @@ public class ImageView  extends JComponent implements IImageView {
     public boolean isLinear() {
         return iVLUT.isLinear();
     }
-     
-    public BufferedImage transform (BufferedImage aSrc, BufferedImage aDst) {
-        return iPLUT.transform(iVLUT.transform(aSrc, aDst), null);
+    
+       
+    /* */
+    public BufferedImage transform (ImageFrame aSrc) {
+        return iVLUT.transform(aSrc);
     }
    
-    public Transformation getTransformation () {
-        return new Transformation() {
-            public BufferedImage transform (BufferedImage aSrc, BufferedImage aDst) {
-                return iPLUT.transform(iVLUT.transform(aSrc, aDst), null);
-            }
-        };
-    }
-        
+           
     private static final Logger logger = LogManager.getLogger(ImageView.class);
 }
 
