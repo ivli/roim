@@ -43,25 +43,24 @@ public final class PresentationLut implements com.ivli.roim.core.Transformation 
     }
     
     @Override
-    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {        
-        
+    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {                
         if (null == aDst)
             aDst = new BufferedImage(aSrc.getWidth(), aSrc.getHeight(), BufferedImage.TYPE_INT_RGB);
+                
+        final Raster src = aSrc.getRaster();
+        final WritableRaster dst = aDst.getRaster();
         
-        WritableRaster wr = aDst.getRaster();
-
-        Raster rs = aSrc.getRaster();
-
         for (int y=0; y < aDst.getHeight(); y++) {
             for (int x=0; x < aDst.getWidth(); x++) {
-               final int ndx = rs.getSample(x, y, 0);
+               final int ndx = src.getSample(x, y, 0);
                final int sample = iModel.getRGB(ndx); 
-               final int[] rgb = new int[]{(sample&0x00ff0000)>>16, (sample&0x0000ff00)>>8, sample&0x000000ff};
+               final int[] rgb = {(sample&0x00ff0000)>>16, (sample&0x0000ff00)>>8, sample&0x000000ff};
 
-               wr.setPixel(x, y, rgb);
+               dst.setPixel(x, y, rgb);               
             }
         }
         return aDst;
+    
+        //return iModel.convertToIntDiscrete(aSrc.getRaster(), false);
     }
-  
 }
