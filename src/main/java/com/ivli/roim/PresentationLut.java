@@ -54,7 +54,7 @@ public final class PresentationLut implements com.ivli.roim.core.Transformation 
 
         for (int y=0; y < aDst.getHeight(); y++) {
             for (int x=0; x < aDst.getWidth(); x++) {
-               final int ndx=rs.getSample(x, y, 0);
+               final int ndx = rs.getSample(x, y, 0);
                final int sample = iModel.getRGB(ndx); 
                final int[] rgb = new int[]{(sample&0x00ff0000)>>16, (sample&0x0000ff00)>>8, sample&0x000000ff};
 

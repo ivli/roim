@@ -82,12 +82,11 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
    
     protected final EventListenerList iList;
       
-    private Range iRange;
-    private Window         iWin;
-    private final Marker   iTop;
-    private final Marker   iBottom;
-    private ActionItem     iAction;
-    private BufferedImage  iBuf;
+    private Range iRange;    
+    private final Marker iTop;
+    private final Marker iBottom;
+    private ActionItem iAction;
+    private BufferedImage iBuf;
       
     private boolean iCanShowDialog;
     private ImageView iView;        
@@ -126,7 +125,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             }
 
             public void ancestorMoved(AncestorEvent event){}         
-            });
+        });
     } 
       
     private void construct(ImageView aW) {    
@@ -173,8 +172,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     }
    
     public void removeWindowChangeListener(WindowChangeListener aL) {
-        iList.remove(WindowChangeListener.class, aL);
-       
+        iList.remove(WindowChangeListener.class, aL);       
     }
     
     private void directChangeWindow(Window aW) {           
@@ -216,9 +214,14 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             final double nr = (iRange = anE.getRange()).range();
                        
             //nw.scale(nr / or);
-            */         
-            iView.setWindow(new Window(iRange = anE.getRange()));            
-            repaint();      
+            */  
+            
+            directChangeWindow(new Window(iRange = anE.getRange()));
+            makeBuffer();
+            
+            //iView.setWindow();   
+            //invalidateBuffer();
+            //repaint();      
         }         
     }   
 
@@ -348,6 +351,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
                
         final int size = (width * height - 1);
+        
         DataBuffer data = new DataBufferUShort(width * height);
         
         final double ratio = iRange.range() / height;
