@@ -99,7 +99,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     public NewJFrame() {         
         logger.info("-->Entering application."); // NOI18N
         //iPanel = new ImagePanel();
-        ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("images/brain32x32.jpg"));
+        ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("images/khibiny.png"));
         setIconImage(img.getImage());
         initComponents();    
     }
