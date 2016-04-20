@@ -42,7 +42,6 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.Transformation;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
 import com.ivli.roim.events.WindowChangeEvent;
@@ -71,8 +70,7 @@ public class ImageView  extends JComponent implements IImageView {
         
     protected ROIManager iROIMgr;
     protected VOILut iVLUT;
-    //protected PresentationLut iPLUT;
-        
+   
     protected int iCurrent = 0;
     protected IMultiframeImage iModel;                     
     protected IController iController; 
@@ -101,13 +99,10 @@ public class ImageView  extends JComponent implements IImageView {
         });                
     }
     
-    /**/
-    public void setPresentationLUT(String aLUT) {
-        //iPLUT = aLUT;
+    public void setLUT(String aLUT) {        
         iVLUT.setLUT(aLUT);
         invalidateBuffer();
-    }
-    
+    }    
     
     public void setImage(IMultiframeImage anImage) {                
         iModel = anImage;     
@@ -132,21 +127,21 @@ public class ImageView  extends JComponent implements IImageView {
     
     public ROIManager getROIMgr() {
         return iROIMgr;
-    }    
-    
+    } 
+        
     public VOILut getLUTMgr() {
         return iVLUT;
     }
     
     public void setFit(int aFit) {               
         iFit = aFit; 
-        Settings.set(Settings.KEY_DEFAULT_IMAGE_SCALE, aFit);
+        //Settings.set(Settings.KEY_DEFAULT_IMAGE_SCALE, aFit);
         invalidateBuffer();       
     }
            
     public void setInterpolationMethod(Object aMethod) {
         iInterpolation = aMethod;
-        Settings.set(Settings.KEY_INTERPOLATION_METHOD, InterpolationMethod.get(aMethod));
+       // Settings.set(Settings.KEY_INTERPOLATION_METHOD, InterpolationMethod.get(aMethod));
         invalidateBuffer();       
     }
     
@@ -164,8 +159,7 @@ public class ImageView  extends JComponent implements IImageView {
         
     public void addWindowChangeListener(WindowChangeListener aL) {
         logger.info("-> addWindowChangeListener {}", aL); //NOI18N
-        iListeners.add(WindowChangeListener.class, aL);
-       // aL.windowChanged(new WindowChangeEvent(this, getWindow()));
+        iListeners.add(WindowChangeListener.class, aL);       
     }
    
     public void removeWindowChangeListener(WindowChangeListener aL) {
@@ -181,17 +175,7 @@ public class ImageView  extends JComponent implements IImageView {
     }
     
     public void addFrameChangeListener(FrameChangeListener aL) {
-        iListeners.add(FrameChangeListener.class, aL);
-        /*
-        if (iModel.getImageType() == ImageType.DYNAMIC)
-            aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),                                                            
-                                                        this.getRange(),                                                
-                                                        iModel.getTimeSliceVector().getSlice(getFrameNumber()))); 
-        else
-            aL.frameChanged(new FrameChangeEvent(this, iCurrent, iModel.getNumFrames(),                                                            
-                                                        this.getRange(),                                                
-                                                        iModel.getTimeSliceVector().getSlice(getFrameNumber()))); 
-        */
+        iListeners.add(FrameChangeListener.class, aL);       
     }
     
     public void removeFrameChangeListener(FrameChangeListener aL) {
@@ -265,11 +249,10 @@ public class ImageView  extends JComponent implements IImageView {
         } else {             
             iCurrent = aN;   
             iVLUT.setWindow(new Window(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax())));
-            iROIMgr.update();   
-            //iBufImage = createBufferedImage(iModel.get(iCurrent));
-            notifyFrameChanged();
-            notifyWindowChanged();
+            iROIMgr.update();               
+                   
             invalidateBuffer();
+            notifyFrameChanged();     
         }
         
         return true;
@@ -293,7 +276,7 @@ public class ImageView  extends JComponent implements IImageView {
         iROIMgr.clear();
         iOrigin.x = iOrigin.y = 0;
         iZoom.setToScale(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
-        iFit = Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.ONE_TO_ONE);
+        iFit = ZoomFit.ONE_TO_ONE;//Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.ONE_TO_ONE);
         invalidateBuffer();
     }    
     
@@ -330,8 +313,6 @@ public class ImageView  extends JComponent implements IImageView {
         iZoom.setToScale(scale, scale);  
     }                         
     
-   /// BufferedImage iBufImage;// =  
-    
     protected void updateBufferedImage() {                  
         updateScale();               
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
@@ -351,11 +332,12 @@ public class ImageView  extends JComponent implements IImageView {
         iController.paint((Graphics2D)g); //must reside last in the paint chain   
     }
 
-    public void setWindow(Window aW) {       
-        iVLUT.setWindow(aW);               
-        invalidateBuffer();
-        notifyWindowChanged();
-        repaint();     
+    public void setWindow(Window aW) {    
+        if (new Range(getFrame().getMin(),getFrame().getMax()).contains(aW)) {
+            iVLUT.setWindow(aW);               
+            invalidateBuffer();
+            notifyWindowChanged();       
+        }
     }
     
     public Window getWindow() {
@@ -366,26 +348,20 @@ public class ImageView  extends JComponent implements IImageView {
         return new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax());
     }
 
-    public void setInverted(boolean aI) {
-        if (aI != isInverted()) {    
-            iVLUT.setInverted(aI);
-            invalidateBuffer();
-            notifyWindowChanged();
-            repaint();
-        }        
+    public void setInverted(boolean aI) {          
+        iVLUT.setInverted(aI);
+        invalidateBuffer();
+        notifyWindowChanged();  
     }
 
     public boolean isInverted() {
         return iVLUT.isInverted();
     }
 
-    public void setLinear(boolean aI) {
-        if (aI != isLinear()) {
-            iVLUT.setLinear(aI);
-            invalidateBuffer();
-            notifyWindowChanged();  
-            repaint();
-        }
+    public void setLinear(boolean aI) {      
+        iVLUT.setLinear(aI);
+        invalidateBuffer();
+        notifyWindowChanged();        
     }
 
     public boolean isLinear() {

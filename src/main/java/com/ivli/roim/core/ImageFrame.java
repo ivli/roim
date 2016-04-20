@@ -17,13 +17,6 @@
  */
 package com.ivli.roim.core;
 
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.image.BufferedImage;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
-import java.awt.image.DataBuffer;
 /**
  * 
  * @author likhachev
@@ -80,6 +73,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         return iHeight;
     }
      
+    
     public double getMin() {
         if (Double.isNaN(iMin))
             computeStatistics();
@@ -90,7 +84,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         if (Double.isNaN(iMax))
             computeStatistics();
         return iMax;
-    } 
+    }   
     
     public double getIden() {
         if (Double.isNaN(iIden))

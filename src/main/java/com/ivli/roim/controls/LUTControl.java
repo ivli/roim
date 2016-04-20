@@ -155,11 +155,11 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         addMouseWheelListener(this);   
     }
   
-    /*  */    
-    public Curve getCurve() {
+    /* */     
+    public Curve getCurve() {    
         return iView.getLUTMgr().getCurve();
     }   
-       
+        
     public void addWindowChangeListener(WindowChangeListener aL) {        
         iList.add(WindowChangeListener.class, aL);    
     }
@@ -172,9 +172,10 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         iTop.setPosition((int) imageToScreen(aW.getTop()));
         iBottom.setPosition((int) imageToScreen(aW.getBottom()));              
         invalidateBuffer();
-        repaint();        
-        iView.setWindow(aW);
+              
+        iView.setWindow(aW);        
         notifyWindowChange();
+        iView.getParent().repaint();
     }
             
     protected void notifyWindowChange() {
@@ -185,7 +186,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
            
     @Override
     public void windowChanged(WindowChangeEvent anE) {       
-        if (null != iTop && null != iBottom ) { //theoretically we'd never get here in passive mode
+        if (null != iTop && null != iBottom ) { 
             iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
             iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom()));                       
             
@@ -504,14 +505,14 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 if (null != fd.getFile()) {
                     final String lutFile = fd.getDirectory() + fd.getFile();
                     Settings.set(Settings.KEY_LASTFILE_LUT, lutFile);
-                    iView.setPresentationLUT(lutFile);
+                    iView.setLUT(lutFile);
                     invalidateBuffer();                  
                     repaint();
                 } 
                 break;          
             default: 
                 //setLUT(e.getActionCommand());
-                iView.setPresentationLUT(e.getActionCommand());
+                iView.setLUT(e.getActionCommand());
                 invalidateBuffer();
                 iView.repaint();
                 repaint();

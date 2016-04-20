@@ -40,7 +40,7 @@ public class ImagePanel extends JPanel {
        
         //loadFrame(3);
         
-        iView.setPresentationLUT(Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[0]));
+        iView.setLUT(Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[0]));
         setLayout(new BorderLayout());                         
         add(iView);           
         add(iLut, BorderLayout.LINE_END);  
@@ -71,7 +71,7 @@ public class ImagePanel extends JPanel {
     }
     
     public void setLUT(String aName) {
-        iView.setPresentationLUT(aName);        
+        iView.setLUT(aName);        
     }
     
     void reset() {    
