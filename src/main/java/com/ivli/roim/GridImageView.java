@@ -109,10 +109,10 @@ public class GridImageView extends ImageView {
     }
     
     void checkGrid() {
-        final int n = this.iModel.getNumFrames();
+        final int n = iModel.getNumFrames();
         if (n < 2) {
             iRows = iCols = 1;
-        } else if (n < iRows*iCols) {
+        } else if (n < iRows * iCols) {
             
         }  
     }
@@ -140,7 +140,7 @@ public class GridImageView extends ImageView {
             Double min = Double.MAX_VALUE;
             Double max = Double.MIN_VALUE;
             
-            for (int n = 0; n < iRows * iCols; ++n) {             
+            for (int n = 0; (iCurrent + n) < iModel.getNumFrames() && n < iRows * iCols; ++n) {             
                 min = Math.min(min, iModel.get(iCurrent + n).getMin()); 
                 max = Math.max(max, iModel.get(iCurrent + n).getMax());
             } 

@@ -179,7 +179,7 @@ public class WindowTest {
     }
 
     /**
-     * Test of compare method, of class Window.
+     * Test of equals method, of class Window.
      */
     @Test
     public void testCompare() {
@@ -187,7 +187,7 @@ public class WindowTest {
         Window aW = new Window(Window.DEFAULT_WINDOW);
         Window instance = new Window(Window.DEFAULT_WINDOW);
         boolean expResult = true;
-        boolean result = instance.compare(aW);
+        boolean result = instance.equals(aW);
         assertEquals(expResult, result);
     }
 

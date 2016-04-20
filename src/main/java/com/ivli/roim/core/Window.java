@@ -149,8 +149,8 @@ public class Window implements java.io.Serializable {
      * @param aW
      * @return
      */
-    public boolean compare(Window aW) {
-        return  aW.iLevel == this.iLevel && aW.iWidth == this.iWidth;
+    public boolean equals(Window aW) {
+        return  (this == aW) || (aW.iLevel == this.iLevel && aW.iWidth == this.iWidth);
     }
     
     /**

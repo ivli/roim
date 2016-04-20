@@ -204,24 +204,23 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     @Override
     public void frameChanged(FrameChangeEvent anE) {           
         if (null != iTop && null != iBottom) {   
-            /*
-            Window nw = new Window(iRange);
+            Window nw;
             
-            nw.setBottom(screenToImage(iBottom.getPosition()));
-            nw.setTop(screenToImage(iTop.getPosition()));
+            if (true) {
+                nw = new Window(iRange = anE.getRange());
+            } else {            
+                //nw = new Window(iView.getWindow());
+                nw = new Window(iRange);
+                nw.setBottom(screenToImage(iBottom.getPosition()));
+                nw.setTop(screenToImage(iTop.getPosition()));
+                               
+                final double or = iRange.range();           
+                final double nr = (iRange = anE.getRange()).range();       
+                nw.scale(nr / or);                
+            } 
             
-            final double or = iRange.range();           
-            final double nr = (iRange = anE.getRange()).range();
-                       
-            //nw.scale(nr / or);
-            */  
-            
-            directChangeWindow(new Window(iRange = anE.getRange()));
-            makeBuffer();
-            
-            //iView.setWindow();   
-            //invalidateBuffer();
-            //repaint();      
+            directChangeWindow(nw);
+            makeBuffer();     
         }         
     }   
 
