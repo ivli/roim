@@ -124,11 +124,15 @@ class DCMImageLoader {
     }
 
     public double getMin() {
-        return iDataSet.getDouble(Tag.SmallestImagePixelValue, Double.NaN);
+        double ret = iDataSet.getInt(Tag.SmallestImagePixelValue, 0);
+        //double ret2 = iDataSet.getInt(Tag.SmallestPixelValueInSeries, 0);
+        return ret;
     }
 
     public double getMax() {
-        return iDataSet.getDouble(Tag.LargestImagePixelValue, Double.NaN);
+        double ret = iDataSet.getInt(Tag.LargestImagePixelValue, Integer.MAX_VALUE);
+        //double ret2 = iDataSet.getInt(Tag.LargestPixelValueInSeries, Integer.MAX_VALUE);
+        return ret;
     }
 
     public int getNumImages() throws IOException {

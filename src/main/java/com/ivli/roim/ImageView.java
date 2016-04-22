@@ -333,7 +333,7 @@ public class ImageView  extends JComponent implements IImageView {
     }
 
     public void setWindow(Window aW) {    
-        if (new Range(getFrame().getMin(),getFrame().getMax()).contains(aW)) {
+        if (new Range(getFrame().getMin(), getFrame().getMax()).contains(aW)) {
             iVLUT.setWindow(aW);               
             invalidateBuffer();
             notifyWindowChanged();       
@@ -367,14 +367,11 @@ public class ImageView  extends JComponent implements IImageView {
     public boolean isLinear() {
         return iVLUT.isLinear();
     }
-    
        
-    /* */
     public BufferedImage transform (ImageFrame aSrc) {
         return iVLUT.transform(aSrc);
     }
-   
-           
+              
     private static final Logger logger = LogManager.getLogger(ImageView.class);
 }
 

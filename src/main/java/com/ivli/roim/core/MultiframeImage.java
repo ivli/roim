@@ -27,6 +27,7 @@ public class MultiframeImage extends IMultiframeImage   {
     protected int iWidth;
     protected int iHeight;
     protected int iNumFrames;   
+    
     protected ImageType iImageType;
     protected PixelSpacing iPixelSpacing;
     protected SliceSpacing iSliceSpacing;
@@ -83,7 +84,8 @@ public class MultiframeImage extends IMultiframeImage   {
             iFrames.add(n, new ImageFrame(iWidth, iHeight));    
     }
         
-    protected void computeStatistics() {        
+    protected void computeStatistics() {     
+        /*
         iMin = Double.MAX_VALUE;
         iMax = Double.MIN_VALUE;
         
@@ -93,7 +95,10 @@ public class MultiframeImage extends IMultiframeImage   {
                 iMin = f.getMin();
             if (f.getMax() > iMax) //keep if - if, if else if will fail in th ecase single frame image  
                 iMax = f.getMax();
-        }               
+        } 
+        */
+        iMin = iProvider.getMin();
+        iMax = iProvider.getMax();
     }
     
     public ImageDataType getImageDataType() {
@@ -197,7 +202,7 @@ public class MultiframeImage extends IMultiframeImage   {
         MultiframeImage ret = new MultiframeImage(this);
 
         for(int n = 0; n < getNumFrames(); ++n)
-           ret.iFrames.add(n, iFrames.get(n).duplicate());
+           ret.iFrames.add(n, get(n).duplicate());
        
         return ret;
     }
