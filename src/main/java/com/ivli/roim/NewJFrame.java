@@ -561,7 +561,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 
         if (null != pane) {
             ROIListPanel panel = new ROIListPanel(pane);
-            JDialog dialog = new JDialog(this, Dialog.ModalityType.APPLICATION_MODAL);
+            JDialog dialog = new JDialog(this, "ROI manager", Dialog.ModalityType.APPLICATION_MODAL);
             dialog.setContentPane(panel);
             dialog.validate();
             dialog.pack();

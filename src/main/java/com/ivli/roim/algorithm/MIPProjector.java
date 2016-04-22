@@ -42,12 +42,16 @@ public class MIPProjector {
      */
     public MIPProjector(IMultiframeImage aSrc, IMultiframeImage aDst) {
         iImage = aSrc; 
-        iMIP = aDst;     
-        //iProjections = aDst.getNumFrames();
+        iMIP = aDst;         
     }
     
-    public IMultiframeImage getSrc() {return iImage;}
-    public IMultiframeImage getDst() {return iMIP;}
+    public IMultiframeImage getSrc() {
+        return iImage;
+    }
+    
+    public IMultiframeImage getDst() {
+        return iMIP;
+    }
     
     public int getNumFrames() {
         return iMIP.getNumFrames();
@@ -99,7 +103,7 @@ public class MIPProjector {
     */
     
     public ImageFrame get(int currProj) {    
-        final ImageFrame frm = iMIP.get(currProj);//.duplicate();            
+        final ImageFrame frm = iMIP.get(currProj);
         final int nSlices = iImage.getNumFrames();
         final int width = iImage.getWidth();
         final int height = iImage.getHeight();

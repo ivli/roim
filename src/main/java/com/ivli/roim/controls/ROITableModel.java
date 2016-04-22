@@ -44,31 +44,39 @@ public class ROITableModel extends DefaultTableModel {
     protected final Class[]   iClasses;                                                   
     protected final String[]  iColumns;            
     protected final boolean[] iEditable;
-            
-    ROITableModel(Iterator<Overlay> aList, boolean aCanEdit) {     
-        
+              
+    public final static int TABLE_COLUMN_OBJECT = 0;
+    public final static int TABLE_COLUMN_CHECK  = 1;
+    public final static int TABLE_COLUMN_NAME   = 2;
+    public final static int TABLE_COLUMN_PIXELS = 3;
+    public final static int TABLE_COLUMN_COUNTS = 4;
+    public final static int TABLE_COLUMN_COLOR = 5;
+    
+    ROITableModel(Iterator<Overlay> aList, boolean canEdit) {     
+     
         iColumns = new String[]{"OBJ", // NOI18N - holds an object reference  
+                                " ",
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.NAME"), 
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.PIXELS"), 
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.DENSITY"), 
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.COLOUR"),
-                                "Show Curve"
+                               
                                };
 
         iClasses = new Class [] {java.lang.Object.class,  // a reference to ROI object - hidden
+                                 java.lang.Boolean.class,   // add to a curve list
                                  java.lang.String.class,  // name - can be editable
                                  java.lang.Integer.class, // area in pixels
                                  java.lang.Integer.class, // density
-                                 java.awt.Color.class,     // colour - can be editable
-                                 java.lang.Boolean.class   // add to a curve list
+                                 java.awt.Color.class     // colour - can be editable                                 
                                 };
 
         iEditable = new boolean [] {false, 
-                                    aCanEdit, 
+                                    canEdit, 
+                                    canEdit,
                                     false, 
                                     false, 
-                                    aCanEdit,
-                                    aCanEdit
+                                    canEdit                                    
                                    };
        
         
@@ -77,8 +85,8 @@ public class ROITableModel extends DefaultTableModel {
         while (aList.hasNext()) {
             Overlay o = aList.next();
             if (o instanceof ROI) {       
-                final ROI r = (ROI)o;                                
-                    addRow(new Object[]{r, r.getName(), r.getAreaInPixels(), r.getDensity(), r.getColor()});                                        
+                final ROI r = (ROI)o;                   
+                addRow(new Object[]{o, false, r.getName(), r.getAreaInPixels(), r.getDensity(), r.getColor()});                                        
             }
         }
          
@@ -86,18 +94,18 @@ public class ROITableModel extends DefaultTableModel {
             final int row = e.getFirstRow();
             final int col = e.getColumn();
             
-            if (col == 1 || col == 4) {
+            if (col == TABLE_COLUMN_NAME || col == TABLE_COLUMN_COLOR) {
                 final TableModel model = (TableModel)e.getSource();
                 
-                assert(model.getValueAt(row, 0) instanceof ROI);
+                assert(model.getValueAt(row, TABLE_COLUMN_OBJECT) instanceof ROI);
                 
-                final ROI r = (ROI)model.getValueAt(row, 0);
+                final ROI r = (ROI)model.getValueAt(row, TABLE_COLUMN_OBJECT);
                 
-                if (col == 1) {
-                    r.setName((String)model.getValueAt(row, 1));
+                if (col == TABLE_COLUMN_NAME) {
+                    r.setName((String)model.getValueAt(row, col));
                     
-                } else if (col == 4) {
-                    r.setColor((Color)model.getValueAt(row, 4));        
+                } else if (col == TABLE_COLUMN_COLOR) {
+                    r.setColor((Color)model.getValueAt(row, col));        
                 }                                
             }
         });
@@ -118,10 +126,21 @@ public class ROITableModel extends DefaultTableModel {
      * @param aTable - table to attach to SIC: you must set an instance of this class as a model to a given table      
      */
     public void attach(javax.swing.JTable aTable) {        
-        aTable.setModel(this);       
-        aTable.getColumnModel().getColumn(0).setMinWidth(0);
-        aTable.getColumnModel().getColumn(0).setPreferredWidth(0);
-        aTable.getColumnModel().getColumn(0).setMaxWidth(0);            
+        aTable.setModel(this); 
+        
+        //unconditionally make "OBJ" column invisible
+        aTable.getColumnModel().getColumn(TABLE_COLUMN_OBJECT).setMinWidth(0);
+        aTable.getColumnModel().getColumn(TABLE_COLUMN_OBJECT).setPreferredWidth(0);
+        aTable.getColumnModel().getColumn(TABLE_COLUMN_OBJECT).setMaxWidth(0);            
+        
+        if (!iEditable[1]) {
+            aTable.getColumnModel().getColumn(TABLE_COLUMN_CHECK).setMinWidth(0);
+            aTable.getColumnModel().getColumn(TABLE_COLUMN_CHECK).setPreferredWidth(0);
+            aTable.getColumnModel().getColumn(TABLE_COLUMN_CHECK).setMaxWidth(0);   
+        } else {
+            
+        }
+        
         aTable.setAutoCreateRowSorter(true);
         aTable.setDefaultEditor(Color.class, new ColorEditor());
         aTable.setDefaultRenderer(Color.class, new MyRenderer());    

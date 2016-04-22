@@ -18,19 +18,16 @@
 package com.ivli.roim.controls;
 
 
-
-import java.awt.Window;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import com.ivli.roim.ImagePanel;
 import com.ivli.roim.ROI;
 import com.ivli.roim.core.Filter;
 import com.ivli.roim.calc.*;
 
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  *
  * @author likhachev
@@ -55,11 +52,12 @@ public class CalcPanel extends javax.swing.JPanel {
         iLeftModel.attach(jTable1);
         iRightModel.attach(jTable2);
         
-        jTable1.removeColumn(jTable1.getColumnModel().getColumn(3));
-        jTable1.removeColumn(jTable1.getColumnModel().getColumn(2));
+        
+        jTable1.removeColumn(jTable1.getColumnModel().getColumn(ROITableModel.TABLE_COLUMN_COUNTS));
+        jTable1.removeColumn(jTable1.getColumnModel().getColumn(ROITableModel.TABLE_COLUMN_PIXELS));
                 
-        jTable2.removeColumn(jTable2.getColumnModel().getColumn(3));
-        jTable2.removeColumn(jTable2.getColumnModel().getColumn(2));
+        jTable2.removeColumn(jTable2.getColumnModel().getColumn(ROITableModel.TABLE_COLUMN_COUNTS));
+        jTable2.removeColumn(jTable2.getColumnModel().getColumn(ROITableModel.TABLE_COLUMN_PIXELS));
                 
         jTable1.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             ///iPanel.getView().getROIMgr().createAnnotation(op);

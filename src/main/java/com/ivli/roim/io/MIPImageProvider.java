@@ -32,48 +32,46 @@ import com.ivli.roim.core.TimeSliceVector;
  * @author likhachev
  */
 public class MIPImageProvider implements IImageProvider { 
-    protected MIPProjector iProvider;
+    protected MIPProjector iProjector;
     
     private final boolean []b;
     
-    public MIPImageProvider(IMultiframeImage aSrc, int aProjections) {
-        //iSrc = aSrc;
-        iProvider = new MIPProjector(aSrc, aProjections);
-         
+    public MIPImageProvider(IMultiframeImage aSrc, int aProjections) {        
+        iProjector = new MIPProjector(aSrc, aProjections);         
         b = new boolean[aProjections];
     }
     
     public synchronized ImageFrame get(int anIndex) throws IndexOutOfBoundsException {
-        if (anIndex < 0 || anIndex > iProvider.getNumFrames())
+        if (anIndex < 0 || anIndex > iProjector.getNumFrames())
             throw new IndexOutOfBoundsException();
         
         if (false != b[anIndex]) {
-            return iProvider.getDst().get(anIndex);                        
+            return iProjector.getDst().get(anIndex);                        
         } else {
-            ImageFrame ret = iProvider.get(anIndex);
+            ImageFrame ret = iProjector.get(anIndex);
             b[anIndex] = true;
             return ret;
         }
     }    
     
-    public int getWidth() {return iProvider.getDst().getWidth();}  
-    public int getHeight() {return iProvider.getDst().getHeight();}       
-    public int getNumFrames() {return iProvider.getDst().getNumFrames();}      
-    public PValueTransform getRescaleTransform() {return iProvider.getDst().getRescaleTransform();}
+    public int getWidth() {return iProjector.getDst().getWidth();}  
+    public int getHeight() {return iProjector.getDst().getHeight();}       
+    public int getNumFrames() {return iProjector.getDst().getNumFrames();}      
+    public PValueTransform getRescaleTransform() {return iProjector.getDst().getRescaleTransform();}
     
-    public ImageDataType getImageDataType(){return iProvider.getDst().getImageDataType();}
-    public ImageType getImageType(){return iProvider.getDst().getImageType();}
+    public ImageDataType getImageDataType(){return iProjector.getDst().getImageDataType();}
+    public ImageType getImageType(){return iProjector.getDst().getImageType();}
     
     //TODO: following needs to get checked
-    public PixelSpacing getPixelSpacing(){return iProvider.getDst().getPixelSpacing();}
-    public SliceSpacing getSliceSpacing(){return iProvider.getDst().getSliceSpacing();}
-    public TimeSliceVector getTimeSliceVector(){return iProvider.getDst().getTimeSliceVector();}
+    public PixelSpacing getPixelSpacing(){return iProjector.getDst().getPixelSpacing();}
+    public SliceSpacing getSliceSpacing(){return iProjector.getDst().getSliceSpacing();}
+    public TimeSliceVector getTimeSliceVector(){return iProjector.getDst().getTimeSliceVector();}
     
     public double getMin() {
-        return iProvider.getDst().getMin();
+        return iProjector.getDst().getMin();
     }
     
     public double getMax() {
-        return iProvider.getDst().getMax();
+        return iProjector.getDst().getMax();
     }        
 }
