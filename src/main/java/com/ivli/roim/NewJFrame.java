@@ -19,9 +19,9 @@ package com.ivli.roim;
 
 
 
-import com.ivli.roim.algorithm.MIPProjector;
+
 import com.ivli.roim.core.MultiframeImage;
-//import com.ivli.roim.io.DCMImageProvider;
+
 import com.ivli.roim.io.IImageProvider;
 import com.ivli.roim.core.IMultiframeImage;
 import java.awt.*;
@@ -39,7 +39,7 @@ import com.ivli.roim.io.MIPImageProvider;
 import java.io.File;
 import java.util.Locale;
 import javax.swing.ImageIcon;
-//import java.io.FileFilter;
+
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
