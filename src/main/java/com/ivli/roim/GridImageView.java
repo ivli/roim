@@ -204,7 +204,7 @@ public class GridImageView extends ImageView {
                               
                 if (iModel.hasAt(ndx)) {                    
                     ///BufferedImage img = createBufferedImage(iModel.get(ndx));//.getBufferedImage();
-                    BufferedImage src = iVLUT.transform(iModel.get(ndx));
+                    BufferedImage src = iVLUT.transform(iModel.get(ndx), null);
 
                     gc.drawImage(src, posx, posy, width, height, null);
                     

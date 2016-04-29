@@ -313,13 +313,16 @@ public class ImageView  extends JComponent implements IImageView {
         iZoom.setToScale(scale, scale);  
     }                         
     
+    private BufferedImage iBuf2;
+    
     protected void updateBufferedImage() {                  
         updateScale();               
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
         //BufferedImage src = transform(iModel.get(iCurrent).getBufferedImage(), null);   
         //BufferedImage src = iPLUT.transform(iVLUT.transform(iBufImage, null), null);
-        iBuf = z.filter(iVLUT.transform(iModel.get(iCurrent)), null); 
+        iBuf2 = iVLUT.transform(iModel.get(iCurrent), iBuf2);
+        iBuf = z.filter(iBuf2, iBuf); 
     }
     
     @Override
@@ -369,7 +372,7 @@ public class ImageView  extends JComponent implements IImageView {
     }
        
     public BufferedImage transform (ImageFrame aSrc) {
-        return iVLUT.transform(aSrc);
+        return iVLUT.transform(aSrc, null);
     }
               
     private static final Logger logger = LogManager.getLogger(ImageView.class);

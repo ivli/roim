@@ -28,25 +28,45 @@ public class VOILut /*implements com.ivli.roim.core.Transformation*/ {
     private final PValueTransform iPVt;
     private Window iWin;    
         
-    private final byte[] iBuffer;        
+    private final int[] iBuffer;        
     //private LookupOp iLook; // VOI LUT
-    protected IndexColorModel iModel; //presentation LUT
+    //protected IndexColorModel iModel; //presentation LUT
 
-    public VOILut(PValueTransform aPVT, Window aWin, IndexColorModel aLUTcanBeNull) {
+    private final int [][]lut = new int[256][3];
+   
+    
+    public VOILut(PValueTransform aPVT, Window aWin, String aLUTcanBeNull) {
         iInverted = false;
         iLinear = true;
         iPVt = aPVT;
-        iBuffer = new byte[BUFFER_SIZE];
-//        iLook = null;
+        iBuffer = new int[BUFFER_SIZE];
         iWin = aWin;     
-        iModel = null != aLUTcanBeNull ? aLUTcanBeNull : LutReader.defaultLUT();        
+        setLUT(aLUTcanBeNull);        
     }  
+       
+    public final void setLUT(String aName) { 
+        IndexColorModel mdl;
     
-    public void setLUT(String aName) { 
-    try {
-            iModel = LutReader.open(aName);          
+        try {
+            if (null != aName)
+                mdl = LutReader.open(aName);   
+            else
+                mdl = LutReader.defaultLUT();            
         } catch (IOException ex) {
-            iModel = LutReader.defaultLUT();
+            mdl = LutReader.defaultLUT();
+        }
+       
+        byte reds[] = new byte[256];
+        byte greens[] = new byte[256];
+        byte blues[] = new byte[256];
+        mdl.getReds(reds);
+        mdl.getGreens(greens);
+        mdl.getBlues(blues);    
+        
+        for (int i=0;i<256; ++i) {
+            lut[i][0] = (int)(reds[i]); 
+            lut[i][1] = (int)(greens[i]);
+            lut[i][2] = (int)(blues[i]);
         }
     }
         
@@ -68,34 +88,36 @@ public class VOILut /*implements com.ivli.roim.core.Transformation*/ {
         return iInverted;
     }
 
-    private void invalidateLUT() {
-    //    iLook = null;
+    private void invalidateLUT() {    
         makeLUT();
     }
        
-//    @Override
-    public BufferedImage transform(ImageFrame aSrc) {//BufferedImage aSrc, BufferedImage aDst) {
-        //if (null == iLook)
-        //    makeLUT();
-       
+    
+    public BufferedImage transform(ImageFrame aSrc, BufferedImage aDst) {//BufferedImage aSrc, BufferedImage aDst) {        
         final int width = aSrc.getWidth();
         final int height = aSrc.getHeight();
                 
-        BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        final WritableRaster dst = ret.getRaster();        
+        if (null == aDst || aDst.getWidth() != width || aDst.getHeight() != height) 
+            aDst = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        
+        final WritableRaster dst = aDst.getRaster();        
         //final Raster src = (iLook.filter(aSrc, aDst)).getRaster();        
         
         for (int y=0; y < height; ++y) {
             for (int x=0; x < width; ++x) {
-               final int ndx = iBuffer[aSrc.getPixel(x, y)];
-               ///final int ndx = src.getSample(x, y, 0);
+               final int ndx = 0x0ff & (iBuffer[aSrc.get(x, y)]);
+               /*
                final int sample = iModel.getRGB(ndx); 
                final int[] rgb = {(sample&0x00ff0000)>>16, (sample&0x0000ff00)>>8, sample&0x000000ff};
-
-               dst.setPixel(x, y, rgb);               
+               /* */
+               
+               ///final int[] rgb = ;//{(int)(reds[ndx]), (int)(greens[ndx]), (int)(blues[ndx])};
+               /* */
+               dst.setPixel(x, y, lut[ndx]);               
             }
         }
-        return ret;
+        
+        return aDst;
     }
    
     private byte makeLinear(double PV) {                
