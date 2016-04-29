@@ -8,38 +8,41 @@ import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
-import java.awt.image.ByteLookupTable;
 import java.awt.image.IndexColorModel;
-import java.awt.image.LookupOp;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 
-public class VOILut /*implements com.ivli.roim.core.Transformation*/ {    
+public class VOILut {    
+    
     private static final double LUT_MIN   = .0;
     private static final double LUT_MAX   = 255.;
-    private static final double LUT_RANGE = 255.;    
+    private static final double LUT_RANGE = LUT_MAX - LUT_MIN;    
     private static final byte GREYSCALES_MIN = (byte)0x0;
     private static final byte GREYSCALES_MAX = (byte)0xff;
-    private final static int BUFFER_SIZE = 65536;
+    private static final int  IMAGESPACE_SIZE = 65536;
+    private static final int  LUT_SIZE = 256;
     
-    private boolean iInverted;            
-    private boolean iLinear;   
+    
     
     private final PValueTransform iPVt;
     private Window iWin;    
-        
-    private final int[] iBuffer;        
-    //private LookupOp iLook; // VOI LUT
-    //protected IndexColorModel iModel; //presentation LUT
-
-    private final int [][]lut = new int[256][3];
-   
+    private boolean iInverted;            
+    private boolean iLinear; 
     
+     // lut table to convert image space values to greyscale 0-255
+    private final int []iBuffer;   
+     // lut table to convert greyscale 0-255 to RGB
+    private final int [][]iLutBuffer;
+    
+    /*
+     *
+     */
     public VOILut(PValueTransform aPVT, Window aWin, String aLUTcanBeNull) {
         iInverted = false;
         iLinear = true;
         iPVt = aPVT;
-        iBuffer = new int[BUFFER_SIZE];
+        iBuffer = new int[IMAGESPACE_SIZE];
+        iLutBuffer = new int[LUT_SIZE][3];
         iWin = aWin;     
         setLUT(aLUTcanBeNull);        
     }  
@@ -64,9 +67,9 @@ public class VOILut /*implements com.ivli.roim.core.Transformation*/ {
         mdl.getBlues(blues);    
         
         for (int i=0;i<256; ++i) {
-            lut[i][0] = (int)(reds[i]); 
-            lut[i][1] = (int)(greens[i]);
-            lut[i][2] = (int)(blues[i]);
+            iLutBuffer[i][0] = (int)(reds[i]); 
+            iLutBuffer[i][1] = (int)(greens[i]);
+            iLutBuffer[i][2] = (int)(blues[i]);
         }
     }
         
@@ -91,32 +94,22 @@ public class VOILut /*implements com.ivli.roim.core.Transformation*/ {
     private void invalidateLUT() {    
         makeLUT();
     }
-       
     
-    public BufferedImage transform(ImageFrame aSrc, BufferedImage aDst) {//BufferedImage aSrc, BufferedImage aDst) {        
+    public BufferedImage transform(ImageFrame aSrc, BufferedImage aDst) {
         final int width = aSrc.getWidth();
         final int height = aSrc.getHeight();
                 
-        if (null == aDst || aDst.getWidth() != width || aDst.getHeight() != height) 
+        
+        if (null == aDst || aDst.getWidth() != width || aDst.getHeight() != height || aDst.getType() != BufferedImage.TYPE_INT_RGB) 
             aDst = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         
         final WritableRaster dst = aDst.getRaster();        
-        //final Raster src = (iLook.filter(aSrc, aDst)).getRaster();        
+              
         
-        for (int y=0; y < height; ++y) {
-            for (int x=0; x < width; ++x) {
-               final int ndx = 0x0ff & (iBuffer[aSrc.get(x, y)]);
-               /*
-               final int sample = iModel.getRGB(ndx); 
-               final int[] rgb = {(sample&0x00ff0000)>>16, (sample&0x0000ff00)>>8, sample&0x000000ff};
-               /* */
-               
-               ///final int[] rgb = ;//{(int)(reds[ndx]), (int)(greens[ndx]), (int)(blues[ndx])};
-               /* */
-               dst.setPixel(x, y, lut[ndx]);               
-            }
-        }
-        
+        for (int y=0; y < height; ++y) 
+            for (int x=0; x < width; ++x)                          
+               dst.setPixel(x, y, iLutBuffer[0x0ff & (iBuffer[aSrc.get(x, y)])]);               
+                
         return aDst;
     }
    
