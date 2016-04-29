@@ -2,6 +2,7 @@
 package com.ivli.roim;
 
 
+import com.ivli.roim.io.LutReader;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
@@ -38,14 +39,14 @@ public class VOILut /*implements com.ivli.roim.core.Transformation*/ {
         iBuffer = new byte[BUFFER_SIZE];
 //        iLook = null;
         iWin = aWin;     
-        iModel = null != aLUTcanBeNull ? aLUTcanBeNull : LutLoader.defaultLUT();        
+        iModel = null != aLUTcanBeNull ? aLUTcanBeNull : LutReader.defaultLUT();        
     }  
     
     public void setLUT(String aName) { 
     try {
-            iModel = LutLoader.open(aName);          
+            iModel = LutReader.open(aName);          
         } catch (IOException ex) {
-            iModel = LutLoader.defaultLUT();
+            iModel = LutReader.defaultLUT();
         }
     }
         

@@ -37,7 +37,7 @@ import javax.swing.event.EventListenerList;
 
 import com.ivli.roim.ActionItem;
 import com.ivli.roim.ImageView;
-import com.ivli.roim.LutLoader;
+import com.ivli.roim.io.LutReader;
 import com.ivli.roim.Settings;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.ImageFrame;
@@ -544,7 +544,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         
         JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.OPEN_BUILTIN_LUT"));
                
-        for (String s : LutLoader.getInstalledLUT()) {
+        for (String s : LutReader.getInstalledLUT()) {
             JMenuItem mit = new JMenuItem(s);
             mit.addActionListener(this);
             mit.setActionCommand(s); 

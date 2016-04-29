@@ -17,7 +17,7 @@
  * The author, Wayne Rasband (wayne@codon.nih.gov), is at the Research Services Branch, 
  * National Institute of Mental Health, Bethesda, Maryland, USA.
  */
-package com.ivli.roim;
+package com.ivli.roim.io;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +30,9 @@ import java.awt.image.IndexColorModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public final class LutLoader {
+public final class LutReader {
     
-    static final String BUILTIN_LUTS[] = {
+    private static final String BUILTIN_LUTS[] = {
     /*0*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_GRAYS"),
     /*1*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_FIRE"),                
     /*2*/    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_ICE"),
@@ -47,11 +47,11 @@ public final class LutLoader {
     /*11*/   java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_REDGREEN")
     };
         
-    public static String[] getInstalledLUT() {
+    public static final String[] getInstalledLUT() {
         return BUILTIN_LUTS;
     } 
-	
-    static final public IndexColorModel defaultLUT() {
+	    
+    public static final IndexColorModel defaultLUT() {
         final int lutSize = 256;        
         byte [] reds = new byte[lutSize]; 
         byte [] greens = new byte[lutSize]; 
@@ -151,14 +151,14 @@ public final class LutLoader {
     }
 
     private static final int spectrum(byte[] reds, byte[] greens, byte[] blues) {
-        Color c;
-        for (int i=0; i<256; i++) {
-            c = Color.getHSBColor(i/255f, 1f, 1f);
+        final int sz = 256;
+        for (int i=0; i<sz; i++) {
+            Color c = Color.getHSBColor(i/255f, 1f, 1f);
             reds[i] = (byte)c.getRed();
             greens[i] = (byte)c.getGreen();
             blues[i] = (byte)c.getBlue();
         }
-        return 256;
+        return sz;
     }
 
     private static final int rgb332(byte[] reds, byte[] greens, byte[] blues) {
@@ -307,5 +307,5 @@ public final class LutLoader {
             return new IndexColorModel(8, 256, reds, greens, blues);
     }
 
-    private static final Logger logger = LogManager.getLogger(LutLoader.class);
+    private static final Logger logger = LogManager.getLogger(LutReader.class);
 }

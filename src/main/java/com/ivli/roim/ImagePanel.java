@@ -18,6 +18,7 @@
 package com.ivli.roim;
 
 
+import com.ivli.roim.io.LutReader;
 import java.util.Iterator;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
@@ -40,7 +41,7 @@ public class ImagePanel extends JPanel {
        
         //loadFrame(3);
         
-        iView.setLUT(Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutLoader.BUILTIN_LUTS[0]));
+        iView.setLUT(Settings.get(Settings.KEY_DEFAULT_PRESENTATION_LUT, LutReader.getInstalledLUT()[0]));
         setLayout(new BorderLayout());                         
         add(iView);           
         add(iLut, BorderLayout.LINE_END);  
