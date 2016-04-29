@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.jfree.data.xy.XYSeries;
 
@@ -24,24 +25,43 @@ import org.jfree.data.xy.XYSeries;
  *
  * @author likhachev
  */
-public class Curve extends Histogram {
-     /*   */
-    @Override
-    public XYSeries getSeriesRebinned(final String aName, final int aNoOfBins) {     
+public class Curve /*extends Histogram*/ {
+    
+    private ArrayList<Integer> iList = new ArrayList<>();
+    private int iMinX = Integer.MAX_VALUE;
+    private int iMaxX = Integer.MIN_VALUE;
+    private int iMinY = Integer.MAX_VALUE;
+    private int iMaxY = Integer.MIN_VALUE;
+    
+    public Integer get(final Integer aNdx) {
+        return iList.get(aNdx);
+    }
+    
+    public void put(final Integer aNdx, final Integer aVal) {
+        if (aNdx < iMinX)
+            iMinX = aNdx;
+        if (aNdx > iMaxX)
+            iMaxX = aNdx;
         
-        
-        
-        final int binSize = Math.max(1, (iMax - 0) / aNoOfBins);
+        if (aVal < iMinY)
+            iMinY = aNdx;
+        if (aVal > iMaxY)
+            iMaxY = aVal;
+        iList.add(aNdx, aVal);
+    }
+    
+    public XYSeries getSeriesRebinned(final String aName, int aNoOfBins, Range aR) {     
+  
+        Range r = null != aR ? aR: new Range(iMinX, iMaxX);                
+        final int binSize = Math.max(1, (int)r.range() / aNoOfBins);
      
-        HashMap<Integer, Integer> reb = new HashMap<>();
-                
-        for (int i=0; i < aNoOfBins; ++i) {
-            final Integer key = i * binSize; 
-            Integer val = get(key);
-            reb.put(key, val);           
+        XYSeries ret = new XYSeries(aName, true, false);
+        for (int i = (int)r.getMin(); i < r.getMax(); i += binSize) {    
+            Integer val = get(i);
+            ret.add(i, val);           
         }
-                
-        return convert(aName, reb); 
+        
+        return ret; 
     }
 
 }

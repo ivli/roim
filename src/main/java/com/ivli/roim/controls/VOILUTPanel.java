@@ -39,6 +39,8 @@ import org.apache.logging.log4j.Logger;
  * @author likhachev
  */
 public class VOILUTPanel extends JPanel implements WindowChangeListener {    
+    
+    private static final int NO_OF_BINS = 256;
     private final LUTControl iLUT;
     
     private boolean iShowHistogram;            
@@ -47,8 +49,8 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private Histogram iHist;
     private final ImageView iView;
     
-    private XYSeriesCollection makeLUTCurve(int aWidth) {      
-        return new XYSeriesCollection(iLUT.getCurve().getSeriesRebinned(iCurveName, 256));
+    private XYSeriesCollection makeLUTCurve(int aWidth) {                    
+        return new XYSeriesCollection(iLUT.getCurve().getSeriesRebinned(iCurveName, NO_OF_BINS, iView.getRange()));
     }
     
     private XYSeries makeHistogram(int aWidth) {  
@@ -59,20 +61,19 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         }
         
         final String name = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM");
-        XYSeries s = iHist.getSeriesRebinned(name, 256);
+        XYSeries s = iHist.getSeriesRebinned(name, NO_OF_BINS);
         return s;
     }
     
     @Override
     public void windowChanged(WindowChangeEvent anEvt) {            
         iPanel.getChart().getXYPlot().setDataset(0, makeLUTCurve(jPanel1.getWidth()));
+        iLUT.windowChanged(anEvt);
     }   
     
-    public VOILUTPanel(LUTControl aP, ImageView aView) {
-        
+    public VOILUTPanel(LUTControl aP, ImageView aView) {        
         iView = aView;
-        iCurveName = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT");
-        
+        iCurveName = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT");        
         
         iLUT = new LUTControl();
         iLUT.attach(aP);
@@ -86,16 +87,14 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
         plot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_VOI_CURVE")));                
-        
-        //if (iShowHistogram) {             
-            XYSeriesCollection col2 = new XYSeriesCollection();
-            col2.addSeries(makeHistogram(jPanel1.getPreferredSize().width));
-            
-            plot.setDataset(1, col2);
-            plot.setRenderer(1, new XYBarRenderer());
-            plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_IMAGE_SPACE")));
-            plot.mapDatasetToRangeAxis(1, 1);
-       // }
+                 
+        XYSeriesCollection col2 = new XYSeriesCollection();
+        col2.addSeries(makeHistogram(jPanel1.getPreferredSize().width));
+
+        plot.setDataset(1, col2);
+        plot.setRenderer(1, new XYBarRenderer());
+        plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_IMAGE_SPACE")));
+        plot.mapDatasetToRangeAxis(1, 1);      
         
         plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_IMAGE_HISTOGRAM")));                
         plot.setRangeGridlinesVisible(true);
