@@ -175,7 +175,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
               
         iView.setWindow(aW);        
         notifyWindowChange();
-        iView.getParent().repaint();
+        iView.repaint();
     }
             
     protected void notifyWindowChange() {
