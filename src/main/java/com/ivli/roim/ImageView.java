@@ -31,6 +31,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Kernel;
 import java.awt.image.Raster;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import javax.swing.event.EventListenerList;
@@ -48,10 +52,7 @@ import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
 import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
+
 
 
 public class ImageView  extends JComponent implements IImageView {
