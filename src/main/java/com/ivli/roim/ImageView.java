@@ -17,7 +17,6 @@
  */
 package com.ivli.roim;
 
-import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.IImageView;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -53,36 +52,40 @@ import com.ivli.roim.events.WindowChangeListener;
 import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
 
-
-
 public class ImageView  extends JComponent implements IImageView {
     private static final double DEFAULT_SCALE_X = 1.0;
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
     
-    protected int iFit = Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.ONE_TO_ONE);     
-               
-    protected Object iInterpolation=  InterpolationMethod.get(InterpolationMethod.INTERPOLATION_NEAREST_NEIGHBOR);    
+    protected int iFit;             
+    protected Object iInterpolation;   
     
-    protected Point iOrigin = new Point(0, 0);              
-    protected AffineTransform iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);;    
+    protected Point iOrigin;              
+    protected AffineTransform iZoom;    
         
-    private final EventListenerList iListeners = new EventListenerList();
+    private final EventListenerList iListeners;
         
     protected ROIManager iROIMgr;
     protected VOILut iVLUT;
    
-    protected int iCurrent = 0;
+    protected int iCurrent;
     protected IMultiframeImage iModel;                     
     protected IController iController; 
-    protected BufferedImage iBuf = null; 
-    
-    public ImageView() {
+    protected BufferedImage iBuf; //offscreen buffer 
+    protected BufferedImage iBuf2; //pre zoomed image 
+     
+    public ImageView() {    
+        iFit = ZoomFit.ONE_TO_ONE;                    
+        iInterpolation = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;        
+        iOrigin = new Point(0, 0);              
+        iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
+        iCurrent = 0;
         iController = new Controller(this);
-        doRegisterListeners();
+        iListeners = new EventListenerList();
+        registerListeners();    
     }
     
-    final void doRegisterListeners() {        
+    final void registerListeners() {        
         addMouseListener(iController);
         addMouseMotionListener(iController);
         addMouseWheelListener(iController);
@@ -135,14 +138,12 @@ public class ImageView  extends JComponent implements IImageView {
     }
     
     public void setFit(int aFit) {               
-        iFit = aFit; 
-        //Settings.set(Settings.KEY_DEFAULT_IMAGE_SCALE, aFit);
+        iFit = aFit;         
         invalidateBuffer();       
     }
            
     public void setInterpolationMethod(Object aMethod) {
-        iInterpolation = aMethod;
-       // Settings.set(Settings.KEY_INTERPOLATION_METHOD, InterpolationMethod.get(aMethod));
+        iInterpolation = aMethod;       
         invalidateBuffer();       
     }
     
@@ -259,7 +260,7 @@ public class ImageView  extends JComponent implements IImageView {
         return true;
     }
     
-    double iZoomStep;// = Math.min(aC.getFrame().getWidth(), aC.getFrame().getHeight()) / Settings.get(Settings.KEY_ZOOM_STEP_FACTOR, 10.);
+    double iZoomStep;
     
     public void zoom(double aFactor) {
         iFit = ZoomFit.NONE;        
@@ -314,7 +315,7 @@ public class ImageView  extends JComponent implements IImageView {
         iZoom.setToScale(scale, scale);  
     }                         
     
-    private BufferedImage iBuf2;
+   
     
     protected void updateBufferedImage() {                  
         updateScale();               

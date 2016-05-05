@@ -105,7 +105,7 @@ public class GridImageView extends ImageView {
             }
         };   
         
-        doRegisterListeners();
+        registerListeners();
     }
     
     void checkGrid() {
