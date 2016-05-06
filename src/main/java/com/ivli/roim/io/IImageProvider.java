@@ -83,13 +83,13 @@ public interface IImageProvider {
     TimeSliceVector getTimeSliceVector();            
     /**
      *
-     * @return minimal serie pixel value
+     * @return minimal pixel value in serie 
      */
     double getMin();  
 
     /**
      *
-     * @return maximal serie pixel value
+     * @return maximal pixel value in serie 
      */
     double getMax();
     
