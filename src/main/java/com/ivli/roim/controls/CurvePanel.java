@@ -86,8 +86,6 @@ public class CurvePanel extends ChartPanel {
                                                                   plot.getDomainAxisEdge());
         
         final double Epsilon = plot.getDataRange(plot.getDomainAxis()).getLength() * .01d;
-
-        
         
         for (Object o : mark) {
             if (o instanceof DomainMarker) {           
