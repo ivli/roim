@@ -62,7 +62,7 @@ public class MultiframeImage extends IMultiframeImage   {
         
         iPixelSpacing = PixelSpacing.UNITY_PIXEL_SPACING;
         iTimeSliceVector = TimeSliceVector.ONESHOT; 
-        iPVT = new PValueTransform();
+        iPVT = PValueTransform.DEFAULT_TRANSFORM;
         iFrames = new java.util.ArrayList<>(iNumFrames);
         
         for (int n=0; n < iNumFrames; ++n)

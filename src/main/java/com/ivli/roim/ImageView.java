@@ -57,7 +57,31 @@ public class ImageView  extends JComponent implements IImageView {
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
     
-    protected int iFit;             
+    
+    public enum ZoomFit {
+        /*
+         * no fit is applied
+         */
+        NONE,    
+        /*
+         * zoom to fit entire image into view
+         */
+        VISIBLE, 
+        /*
+         * width
+         */
+        WIDTH, 
+        /*
+         * height
+         */
+        HEIGHT, 
+        /*
+         * display image pixel to pixel no matter how big it is
+         */
+        PIXELS;    
+    }
+    
+    protected ZoomFit iFit;             
     protected Object iInterpolation;   
     
     protected Point iOrigin;              
@@ -74,17 +98,21 @@ public class ImageView  extends JComponent implements IImageView {
     protected BufferedImage iBuf; //offscreen buffer 
     protected BufferedImage iBuf2; //pre zoomed image 
      
-    public ImageView() {    
-        iFit = ZoomFit.ONE_TO_ONE;                    
-        iInterpolation = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;        
+    public ImageView() {           
+        this(ZoomFit.PIXELS, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, "");    
+    }
+    
+    public ImageView(ZoomFit aFit, Object aInterp, String aLut) {    
+        iFit = aFit;                    
+        iInterpolation = aInterp;//RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;        
         iOrigin = new Point(0, 0);              
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
         iCurrent = 0;
         iController = new Controller(this);
         iListeners = new EventListenerList();
-        registerListeners();    
+        registerListeners(); 
     }
-    
+        
     final void registerListeners() {        
         addMouseListener(iController);
         addMouseMotionListener(iController);
@@ -137,7 +165,7 @@ public class ImageView  extends JComponent implements IImageView {
         return iVLUT;
     }
     
-    public void setFit(int aFit) {               
+    public void setFit(ZoomFit aFit) {               
         iFit = aFit;         
         invalidateBuffer();       
     }
@@ -278,7 +306,7 @@ public class ImageView  extends JComponent implements IImageView {
         iROIMgr.clear();
         iOrigin.x = iOrigin.y = 0;
         iZoom.setToScale(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
-        iFit = ZoomFit.ONE_TO_ONE;//Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.ONE_TO_ONE);
+        iFit = ZoomFit.PIXELS;//Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.PIXELS);
         invalidateBuffer();
     }    
     
@@ -300,14 +328,14 @@ public class ImageView  extends JComponent implements IImageView {
         double scale;
         
         switch (iFit) {
-            case ZoomFit.ONE_TO_ONE: scale = 1.0; break;
-            case ZoomFit.VISIBLE:
+            case PIXELS: scale = 1.0; break;
+            case VISIBLE:
                 final double scaleX = (double)getWidth() / (double)getVisualWidth(); 
                 final double scaleY = (double)getHeight() / (double)getVisualHeight(); 
                 scale = Math.min(scaleX, scaleY); break;                
-            case ZoomFit.HEIGHT: scale = (double)getHeight() / (double)getVisualHeight(); break;
-            case ZoomFit.WIDTH:  scale = (double)getWidth() / (double)getVisualWidth(); break;
-            case ZoomFit.NONE: //falltrough to default
+            case HEIGHT: scale = (double)getHeight() / (double)getVisualHeight(); break;
+            case WIDTH:  scale = (double)getWidth() / (double)getVisualWidth(); break;
+            case NONE: //falltrough to default
             default: 
                 return;                            
         } 

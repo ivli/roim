@@ -598,15 +598,15 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        iImage.setFit(ZoomFit.HEIGHT);        
+        iImage.setFit(ImageView.ZoomFit.HEIGHT);        
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
     private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
-        iImage.setFit(ZoomFit.VISIBLE);
+        iImage.setFit(ImageView.ZoomFit.VISIBLE);
     }//GEN-LAST:event_jMenuItem15ActionPerformed
 
     private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem13ActionPerformed
-        iImage.setFit(ZoomFit.WIDTH);
+        iImage.setFit(ImageView.ZoomFit.WIDTH);
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
@@ -638,7 +638,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }//GEN-LAST:event_jTabbedPane1ComponentShown
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        iImage.setFit(ZoomFit.ONE_TO_ONE);
+        iImage.setFit(ImageView.ZoomFit.PIXELS);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed

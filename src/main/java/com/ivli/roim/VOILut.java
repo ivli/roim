@@ -24,7 +24,7 @@ public class VOILut {
     
     
     
-    private final PValueTransform iPVt;
+    private PValueTransform iPVt;
     private Window iWin;    
     private boolean iInverted;            
     private boolean iLinear; 
@@ -46,7 +46,24 @@ public class VOILut {
         iWin = aWin;     
         setLUT(aLUTcanBeNull);        
     }  
-       
+    
+    public VOILut(String aLUTcanBeNull) {
+        iInverted = false;
+        iLinear = true;
+        iPVt = PValueTransform.DEFAULT_TRANSFORM;        
+        iBuffer = new int[IMAGESPACE_SIZE];
+        iLutBuffer = new int[LUT_SIZE][3];
+        iWin = new Window(0, IMAGESPACE_SIZE);     
+        
+        setLUT(aLUTcanBeNull);        
+    }  
+    
+    public void setWindow(Window aW, PValueTransform aT) {
+        if (null != aT)
+            iPVt = aT;
+        setWindow(aW);
+    }
+    
     public final void setLUT(String aName) { 
         IndexColorModel mdl;
     
@@ -59,14 +76,14 @@ public class VOILut {
             mdl = LutReader.defaultLUT();
         }
        
-        byte reds[] = new byte[256];
-        byte greens[] = new byte[256];
-        byte blues[] = new byte[256];
+        byte reds[] = new byte[LUT_SIZE];
+        byte greens[] = new byte[LUT_SIZE];
+        byte blues[] = new byte[LUT_SIZE];
         mdl.getReds(reds);
         mdl.getGreens(greens);
         mdl.getBlues(blues);    
         
-        for (int i=0;i<256; ++i) {
+        for (int i = 0; i < LUT_SIZE; ++i) {
             iLutBuffer[i][0] = (int)(reds[i]); 
             iLutBuffer[i][1] = (int)(greens[i]);
             iLutBuffer[i][2] = (int)(blues[i]);
@@ -98,14 +115,12 @@ public class VOILut {
     public BufferedImage transform(ImageFrame aSrc, BufferedImage aDst) {
         final int width = aSrc.getWidth();
         final int height = aSrc.getHeight();
-                
-        
+                        
         if (null == aDst || aDst.getWidth() != width || aDst.getHeight() != height || aDst.getType() != BufferedImage.TYPE_INT_RGB) 
             aDst = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         
         final WritableRaster dst = aDst.getRaster();        
-              
-        
+                      
         for (int y=0; y < height; ++y) 
             for (int x=0; x < width; ++x)                          
                dst.setPixel(x, y, iLutBuffer[0x0ff & (iBuffer[aSrc.get(x, y)])]);               

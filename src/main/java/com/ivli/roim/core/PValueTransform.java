@@ -9,6 +9,7 @@ package com.ivli.roim.core;
 public class PValueTransform implements java.io.Serializable {
     private static final long serialVersionUID = 42L;
 
+    public static PValueTransform DEFAULT_TRANSFORM = new  PValueTransform(1.0, 0);
     private final double iSlope;
     private final double iIntercept;
 
@@ -16,12 +17,7 @@ public class PValueTransform implements java.io.Serializable {
         iSlope = aS; 
         iIntercept = aI;
     }
-    
-    public PValueTransform() {
-        iSlope = 1.0; 
-        iIntercept = .0;
-    }
-
+       
     public final double transform(double aV) {
         return iSlope * aV + iIntercept;
     }

@@ -89,8 +89,8 @@ public class ImagePanel extends JPanel {
         repaint();    
     }
     
-    public void setFit(int aFit) {   
-        iView.setFit(aFit);     
+    public void setFit(Object aFit) {   
+        iView.setFit((ImageView.ZoomFit)aFit);     
         repaint();   
     }
         
