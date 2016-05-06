@@ -66,8 +66,8 @@ public class MIPImageProvider implements IImageProvider {
         return iProjector.getDst().getNumFrames();
     }      
     
-    public PValueTransform getRescaleTransform() {
-        return iProjector.getDst().getRescaleTransform();
+    public PValueTransform getTransform() {
+        return iProjector.getDst().getTransform();
     }
     
     public ImageDataType getImageDataType() {

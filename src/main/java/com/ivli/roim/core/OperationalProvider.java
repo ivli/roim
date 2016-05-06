@@ -48,7 +48,7 @@ public abstract class OperationalProvider implements IImageProvider {
 */
     public double getMin() {return iImage.getMin();}
     public double getMax() {return iImage.getMax();}
-    public PValueTransform getRescaleTransform() {return iImage.getRescaleTransform();}
+    public PValueTransform getTransform() {return iImage.getTransform();}
 
 
 }

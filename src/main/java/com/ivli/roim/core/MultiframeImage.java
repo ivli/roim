@@ -47,7 +47,7 @@ public class MultiframeImage extends IMultiframeImage   {
         iImageType = aP.getImageType();
         iPixelSpacing = aP.getPixelSpacing();
         iTimeSliceVector = aP.getTimeSliceVector(); 
-        iPVT = aP.getRescaleTransform();
+        iPVT = aP.getTransform();
         iFrames = new java.util.ArrayList<>(iNumFrames);
         
         for (int n=0; n < iNumFrames; ++n)
@@ -77,7 +77,7 @@ public class MultiframeImage extends IMultiframeImage   {
         iPixelSpacing = aM.getPixelSpacing();
         iSliceSpacing = aM.getSliceSpacing();
         iTimeSliceVector = aM.getTimeSliceVector();
-        iPVT = aM.getRescaleTransform();
+        iPVT = aM.getTransform();
         iFrames = new java.util.ArrayList<>(iNumFrames);
         
         for (int n=0; n < iNumFrames; ++n)
@@ -141,7 +141,10 @@ public class MultiframeImage extends IMultiframeImage   {
     }
     
     @Override
-    public PValueTransform getRescaleTransform() {return iPVT;}
+    public PValueTransform getTransform() {
+        return iPVT;
+    }
+    
     @Override
     public boolean hasAt(int aFrameNumber) {               
         return (aFrameNumber >=0 && aFrameNumber < iNumFrames);          

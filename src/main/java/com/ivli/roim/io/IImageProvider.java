@@ -83,16 +83,16 @@ public interface IImageProvider {
     TimeSliceVector getTimeSliceVector();            
     /**
      *
-     * @return minimal pixel value either loaded from dicom or calculated at loading time
+     * @return minimal serie pixel value
      */
     double getMin();  
 
     /**
      *
-     * @return maximal pixel value either loaded from dicom or calculated at loading time
+     * @return maximal serie pixel value
      */
     double getMax();
     
-    public PValueTransform getRescaleTransform();        
+    public PValueTransform getTransform();        
     
 }

@@ -119,7 +119,7 @@ class DCMImageProvider implements IImageProvider {
         }
     }
 
-    public PValueTransform getRescaleTransform() {
+    public PValueTransform getTransform() {
         return iLoader.getRescaleTransform();
     }
             
