@@ -59,27 +59,12 @@ public class ImageView  extends JComponent implements IImageView {
     private static final double MIN_SCALE = .01;
     
     
-    public enum ZoomFit {
-        /*
-         * no fit is applied
-         */
-        NONE,    
-        /*
-         * zoom to fit entire image into view
-         */
-        VISIBLE, 
-        /*
-         * width
-         */
-        WIDTH, 
-        /*
-         * height
-         */
-        HEIGHT, 
-        /*
-         * display image pixel to pixel no matter how big it is
-         */
-        PIXELS;    
+    public enum ZoomFit {       
+        NONE,    //no fit        
+        VISIBLE, //fit entire image into view      
+        WIDTH,   //width      
+        HEIGHT,  //height      
+        PIXELS;  //fit to display image pixel to pixel no matter how big it is
     }
     
     protected ZoomFit iFit;             
@@ -100,12 +85,12 @@ public class ImageView  extends JComponent implements IImageView {
     protected BufferedImage iBuf2; //pre zoomed image 
      
     public ImageView() {           
-        this(ZoomFit.PIXELS, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, "");    
+        this(ZoomFit.PIXELS, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, null);    
     }
     
     public ImageView(ZoomFit aFit, Object aInterp, String aLut) {    
         iFit = aFit;                    
-        iInterpolation = aInterp;//RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;        
+        iInterpolation = aInterp;      
         iOrigin = new Point(0, 0);              
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
         iCurrent = 0;
@@ -140,8 +125,7 @@ public class ImageView  extends JComponent implements IImageView {
     }    
     
     public void setImage(IMultiframeImage anImage) {                
-        iModel = anImage;     
-        //iVLUT = new VOILut(iModel.getRescaleTransform(), new Window(new Range(anImage.getMin(), anImage.getMax())), null);     
+        iModel = anImage;             
         iVLUT.setWindow(new Window(new Range(anImage.getMin(), anImage.getMax())), iModel.getRescaleTransform());
         iROIMgr = new ROIManager();
         
