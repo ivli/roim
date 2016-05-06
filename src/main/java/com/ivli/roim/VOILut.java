@@ -6,6 +6,7 @@ import com.ivli.roim.io.LutReader;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
+import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;

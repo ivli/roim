@@ -45,6 +45,7 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.PValueTransform;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
 import com.ivli.roim.events.WindowChangeEvent;
@@ -108,8 +109,10 @@ public class ImageView  extends JComponent implements IImageView {
         iOrigin = new Point(0, 0);              
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
         iCurrent = 0;
+        iVLUT = new VOILut(aLut);
         iController = new Controller(this);
         iListeners = new EventListenerList();
+        
         registerListeners(); 
     }
         
@@ -131,14 +134,15 @@ public class ImageView  extends JComponent implements IImageView {
         });                
     }
     
-    public void setLUT(String aLUT) {        
+    public void setLUT(String aLUT) {         
         iVLUT.setLUT(aLUT);
         invalidateBuffer();
     }    
     
     public void setImage(IMultiframeImage anImage) {                
         iModel = anImage;     
-        iVLUT = new VOILut(iModel.getRescaleTransform(), new Window(new Range(anImage.getMin(), anImage.getMax())), null);     
+        //iVLUT = new VOILut(iModel.getRescaleTransform(), new Window(new Range(anImage.getMin(), anImage.getMax())), null);     
+        iVLUT.setWindow(new Window(new Range(anImage.getMin(), anImage.getMax())), iModel.getRescaleTransform());
         iROIMgr = new ROIManager();
         
         iROIMgr.setView(this);            

@@ -76,15 +76,18 @@ public class CurvePanel extends ChartPanel {
     private ValueMarker findMarker(MouseEvent e) {
         final XYPlot plot = getChart().getXYPlot();
         
+        java.util.Collection mark = plot.getDomainMarkers(Layer.FOREGROUND);
+        
+        if (null == mark || mark.isEmpty())
+            return null;
+        
         final double domainX = plot.getDomainAxis().java2DToValue(e.getX(), 
                                                                   getChartRenderingInfo().getPlotInfo().getDataArea(),                             
                                                                   plot.getDomainAxisEdge());
         
         final double Epsilon = plot.getDataRange(plot.getDomainAxis()).getLength() * .01d;
 
-        java.util.Collection mark = plot.getDomainMarkers(Layer.FOREGROUND);
-        if (null == mark || mark.isEmpty())
-            return null;
+        
         
         for (Object o : mark) {
             if (o instanceof DomainMarker) {           
