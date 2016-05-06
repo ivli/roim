@@ -6,24 +6,20 @@ import com.ivli.roim.io.LutReader;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
-import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 
-public class VOILut {    
-    
+public class VOILut {        
     private static final double LUT_MIN   = .0;
     private static final double LUT_MAX   = 255.;
     private static final double LUT_RANGE = LUT_MAX - LUT_MIN;    
     private static final byte GREYSCALES_MIN = (byte)0x0;
     private static final byte GREYSCALES_MAX = (byte)0xff;
     private static final int  IMAGESPACE_SIZE = 65536;
-    private static final int  LUT_SIZE = 256;
-    
-    
+    private static final int  LUT_SIZE = 256;        
     
     private PValueTransform iPVt;
     private Window iWin;    
@@ -34,10 +30,7 @@ public class VOILut {
     private final int []iBuffer;   
      // lut table to convert greyscale 0-255 to RGB
     private final int [][]iLutBuffer;
-    
-    /*
-     *
-     */
+   
     public VOILut(PValueTransform aPVT, Window aWin, String aLUTcanBeNull) {
         iInverted = false;
         iLinear = true;

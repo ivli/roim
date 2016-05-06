@@ -115,9 +115,9 @@ public class Profile extends Overlay {
             max = Math.max(max, d);
         }
         
-        double maxV = getManager().getView().getFrame().getMax();
-        double minV = getManager().getView().getFrame().getMin();
-        final double range =  maxV - minV; 
+        //double maxV = getManager().getView().getFrame().getMax();
+        //double minV = getManager().getView().getFrame().getMin();
+        final double range =  getManager().getView().getFrame().getRange().range();// maxV - minV; 
         
         Rectangle bounds = new Rectangle(0, 0, getManager().getWidth(), getManager().getHeight());
                        

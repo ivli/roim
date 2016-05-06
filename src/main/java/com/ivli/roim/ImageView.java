@@ -265,7 +265,7 @@ public class ImageView  extends JComponent implements IImageView {
             return false;
         } else {             
             iCurrent = aN;   
-            iVLUT.setWindow(new Window(new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax())));
+            iVLUT.setWindow(new Window(iModel.get(iCurrent).getRange()));
             iROIMgr.update();               
                    
             invalidateBuffer();
@@ -353,7 +353,7 @@ public class ImageView  extends JComponent implements IImageView {
     }
 
     public void setWindow(Window aW) {    
-        if (new Range(getFrame().getMin(), getFrame().getMax()).contains(aW)) {
+        if (getFrame().getRange().contains(aW)) {
             iVLUT.setWindow(aW);               
             invalidateBuffer();
             notifyWindowChanged();       
@@ -365,7 +365,7 @@ public class ImageView  extends JComponent implements IImageView {
     }
 
     public Range getRange() {
-        return new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax());
+        return iModel.get(iCurrent).getRange();
     }
 
     public void setInverted(boolean aI) {          

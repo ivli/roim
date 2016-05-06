@@ -79,8 +79,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private BufferedImage iBuf;
       
     private boolean iCanShowDialog;
-    private ImageView  iView;             
-    //private ImageFrame iFrame;
+    private ImageView  iView;                 
     
     public LUTControl() { 
         iTop = new Marker(true);  
@@ -88,8 +87,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         iList = new EventListenerList();
         TOP_GAP = iTop.getMarkerHeight()/2;
         BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used 
-        iRange  = null;
-        
+        iRange  = null;        
         iCanShowDialog = true;        
     }
        
@@ -99,7 +97,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
        aParent.addFrameChangeListener(this);
        aParent.addWindowChangeListener(this);       
     }
-    
+ 
     public void attach(LUTControl aParent) {                          
         construct(aParent.iView);
         
@@ -122,7 +120,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private void construct(ImageView aW) {    
         iView = aW;    
         if (null != iView.getImage())
-            iRange = new Range(iView.getFrame().getMin(), iView.getFrame().getMax());   
+            iRange = iView.getFrame().getRange();   
        // else
        //     iRange = new Range();
         /* use feedback loop to addjust marker positions when size changed */

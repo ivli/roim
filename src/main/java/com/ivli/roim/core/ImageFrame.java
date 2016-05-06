@@ -27,8 +27,9 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     private int iWidth;
     private int iHeight;
         
-    private double iMin = Double.NaN;
-    private double iMax = Double.NaN; 
+    //private double iMin = Double.NaN;
+    //private double iMax = Double.NaN; 
+    private Range iRange;
     private double iIden = Double.NaN;
     
     private int []iPixels;        
@@ -39,8 +40,9 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         iHeight = aI.getHeight();
         iPixels = new int[iWidth*iHeight];
         System.arraycopy(aI.getPixelData(), 0, iPixels, 0, iWidth*iHeight);
-        iMin = aI.iMin;
-        iMax = aI.iMax;
+        //iMin = aI.iMin;
+        //iMax = aI.iMax;
+        iRange = new Range(aI.iRange);
         iIden = aI.iIden;
     }
     
@@ -59,8 +61,9 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     public ImageFrame duplicate() {       
         ImageFrame ret = new ImageFrame(iWidth, iHeight); 
         System.arraycopy(getPixelData(), 0, ret.iPixels, 0, iWidth*iHeight);
-        ret.iMin = iMin;
-        ret.iMax = iMax;
+       // ret.iMin = iMin;
+       // ret.iMax = iMax;
+        ret.iRange = new Range(iRange);
         ret.iIden = iIden;
         return ret;
     }
@@ -73,7 +76,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         return iHeight;
     }
      
-    
+    /*
     public double getMin() {
         if (Double.isNaN(iMin))
             computeStatistics();
@@ -85,6 +88,13 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
             computeStatistics();
         return iMax;
     }   
+    */
+    
+    public Range getRange() {
+        if (null == iRange || Double.isNaN(iIden))
+            computeStatistics();
+        return iRange;
+    }
     
     public double getIden() {
         if (Double.isNaN(iIden))
@@ -144,20 +154,22 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     */
     
     private void computeStatistics() throws IndexOutOfBoundsException { 
-        iMin  = Double.MAX_VALUE; 
-        iMax  = Double.MIN_VALUE; 
+        double Min  = Double.MAX_VALUE; 
+        double Max  = Double.MIN_VALUE; 
         iIden = .0;
         
         for (int i = 0; i < iWidth; i++) {
             for (int j = 0; j < iHeight; j++) { 
                 final double temp = get(i, j);
-                if (temp > iMax) 
-                    iMax = temp;
-                if (temp < iMin) 
-                    iMin = temp;
+                if (temp > Max) 
+                    Max = temp;
+                if (temp < Min) 
+                    Min = temp;
                 iIden += temp;
             }
         }
+        
+        iRange = new Range(Min, Max);
     }
          
     public int[] getPixelData() {
@@ -168,8 +180,8 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         iWidth  = aWidth;
         iHeight = aHeight;
         iPixels = aPixels;   
-        iMin = Double.NaN;
-        iMax = Double.NaN; 
+        //iMin = Double.NaN;
+        //iMax = Double.NaN; 
         iIden = Double.NaN;
     }
     
