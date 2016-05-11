@@ -125,7 +125,7 @@ public class ImageView  extends JComponent implements IImageView {
     
     public void setImage(IMultiframeImage anImage) {                
         iModel = anImage;             
-        iVLUT.setWindow(new Window(new Range(anImage.getMin(), anImage.getMax())), iModel.getTransform());
+        iVLUT.setTransform(iModel.getTransform());
         iROIMgr = new ROIManager();
         
         iROIMgr.setView(this);            

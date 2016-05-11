@@ -52,10 +52,10 @@ public class VOILut {
         setLUT(aLUTcanBeNull);        
     }  
     
-    public void setWindow(Window aW, PValueTransform aT) {
+    public void setTransform(PValueTransform aT) {
         if (null != aT)
             iPVt = aT;
-        setWindow(aW);
+        invalidateLUT();
     }
     
     public final void setLUT(String aName) { 

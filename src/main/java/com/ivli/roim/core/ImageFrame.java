@@ -29,7 +29,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         
     //private double iMin = Double.NaN;
     //private double iMax = Double.NaN; 
-    private Range iRange;
+    private Range iRange = new Range(Double.NaN, Double.NaN);
     private double iIden = Double.NaN;
     
     private int []iPixels;        
@@ -61,8 +61,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     public ImageFrame duplicate() {       
         ImageFrame ret = new ImageFrame(iWidth, iHeight); 
         System.arraycopy(getPixelData(), 0, ret.iPixels, 0, iWidth*iHeight);
-       // ret.iMin = iMin;
-       // ret.iMax = iMax;
+       
         ret.iRange = new Range(iRange);
         ret.iIden = iIden;
         return ret;
