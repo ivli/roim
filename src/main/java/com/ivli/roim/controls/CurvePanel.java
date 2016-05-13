@@ -10,7 +10,10 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.JMenu;
@@ -119,15 +122,28 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
     private ValueMarker findMarker(MouseEvent e) {
         final XYPlot plot = getChart().getXYPlot();
         
-        java.util.Collection mark = plot.getDomainMarkers(Layer.FOREGROUND);
+        Collection mark = plot.getDomainMarkers(Layer.FOREGROUND);
         
         if (null == mark || mark.isEmpty())
             return null;
+        //{
         
+        Point2D p = translateScreenToJava2D(e.getPoint());
+        Rectangle2D plotArea = getScreenDataArea();
+        ///XYPlot plot = (XYPlot) chart.getPlot(); // your plot
+        double domainX = plot.getDomainAxis().java2DToValue(e.getX(), getScreenDataArea(), plot.getDomainAxisEdge());
+        
+        
+        //logger.info(String.format("domainX = %f, point(%f:%f), plotArea(%f:%f:%f:%f)", domainX, p.getX(), p.getY(), plotArea.getX(), plotArea.getY(), plotArea.getWidth(), plotArea.getHeight()  ));
+        double domainY = plot.getRangeAxis().java2DToValue(p.getY(), plotArea, plot.getRangeAxisEdge());
+        
+       // }
+        /*
         final double domainX = plot.getDomainAxis().java2DToValue(e.getX(), 
                                                                   getChartRenderingInfo().getPlotInfo().getDataArea(),                             
                                                                   plot.getDomainAxisEdge());
         
+         */       
         final double Epsilon = plot.getDataRange(plot.getDomainAxis()).getLength() * .01d;
         
         for (Object o : mark) {
@@ -237,14 +253,9 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
             fillIn();
             ((XYSeriesCollection)(getChart().getXYPlot().getDataset())).addSeries(iSrc);
             aLhs.addChangeListener(this);
-            aRhs.addChangeListener(this);
+            aRhs.addChangeListener(this);            
         }
-        
-        void update() {            
-            iSrc.clear();
-            fillIn();
-        }
-        
+               
         void fillIn() {
             iSrc.add(iLhs.getValue(), iLhs.getLinkedMarker().getValue());
             iSrc.add((iLhs.getValue() + iRhs.getValue())/2.0, (iLhs.getLinkedMarker().getValue() + iRhs.getLinkedMarker().getValue()) /2.0);
@@ -252,7 +263,8 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         }
         
         public void markerChanged(MarkerChangeEvent mce) {
-            update();
+            iSrc.clear();
+            fillIn();
         }
     }
             
@@ -331,9 +343,10 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
                         plot.getRangeAxisEdge()));
         }  
         if (null != iMarker) {
-            iMarker.setValue(plot.getDomainAxis().java2DToValue(e.getX(), 
-                            getChartRenderingInfo().getPlotInfo().getDataArea(),                                                                                                                 
-                                plot.getDomainAxisEdge()));      
+            double domainX = plot.getDomainAxis().java2DToValue(e.getX(), getScreenDataArea(), plot.getDomainAxisEdge());
+            iMarker.setValue(domainX);//plot.getDomainAxis().java2DToValue(e.getX(), 
+                            //getChartRenderingInfo().getPlotInfo().getDataArea(),                                                                                                                 
+                            //    plot.getDomainAxisEdge()));      
         }
         else
             super.mouseDragged(e);
