@@ -45,7 +45,7 @@ class XYSeriesUtilities {
         double valY = Double.MIN_VALUE;
         double valX = Double.NaN;
         
-       for (int i=0; i < v[0].length; ++i) {
+        for (int i=0; i < v[0].length; ++i) {
             if (v[1][i] > valY) {
                 valY = v[1][i];
                 valX = v[0][i];
@@ -54,6 +54,78 @@ class XYSeriesUtilities {
   
         return valX;
     }
+    
+    static int getDomainIndex(final double []aS, double aX) {        
+        for (int i = 0; i < aS.length - 1; ++i) {        
+            if (aX == aS[i] || aX > aS[i] && aX < aS[i+1]) //this is time axis so only values greater than [i] and less than [i+1] needs to get tested    
+                return i;          
+        }
+        return -1;
+    } 
+    
+    static double getDomainValueOfMaximum(XYSeries aS, double aX, boolean aLookLeft) {
+        final double [][] v = aS.toArray();
+        double valY = Double.MIN_VALUE;
+        double valX = Double.NaN;
+        
+         final int ndx = getDomainIndex(v[0], aX);
+        
+        if (ndx < 0 || ndx >  v[0].length)
+            return Double.NaN;
+        
+        int start;
+        int end;
+        
+        if (aLookLeft) {
+            start = 0;
+            end = ndx;
+        } else {
+            start = ndx;
+            end =  v[0].length;
+        }
+                    
+        for (int i=start; i < end; ++i) {
+            if (v[1][i] > valY) {
+                valY = v[1][i];
+                valX = v[0][i];
+            }            
+        }
+  
+        return valX;
+    }
+    
+    static double getDomainValueOfMinimum(XYSeries aS, double aX, boolean aLookLeft) {
+        final double [][] v = aS.toArray();
+        double valY = Double.MAX_VALUE;
+        double valX = Double.NaN;
+        
+        final int ndx = getDomainIndex(v[0], aX);
+        
+        if (ndx < 0 || ndx >  v[0].length)
+            return Double.NaN;
+        
+        int start;
+        int end;
+        
+        if (aLookLeft) {
+            start = 0;
+            end = ndx;
+        } else {
+            start = ndx;
+            end =  v[0].length;
+        }
+                    
+        for (int i=start; i < end; ++i) {
+            if (v[1][i] < valY) {
+                valY = v[1][i];
+                valX = v[0][i];
+            }            
+        }
+  
+        return valX;
+    }
+    
+   
     
     /*
      * computes Y = F(X) where X := [X0, X1, ... Xi, Xi+1 ... Xn] 

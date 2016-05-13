@@ -48,8 +48,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private ImagePanel  iImage;
     private ImagePanel  iGrid;    
     private ImagePanel  iOff;
-    private ChartView   iChart;
-    private ChartView   iChart2;
+    private ChartPanel   iChart;
+    private ChartPanel   iChart2;
     private IImageProvider iProvider;
     
     /**/
@@ -503,7 +503,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         //CHART
         
         if (mi.getImageType() == ImageType.DYNAMIC) {
-            iChart = new ChartView();        
+            iChart = new ChartPanel();        
             iChart.initChart();
             iChart.setPreferredSize(jPanel3.getPreferredSize());
             jPanel3.add(iChart);  

@@ -20,7 +20,6 @@ package com.ivli.roim.controls;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
@@ -34,18 +33,16 @@ import com.ivli.roim.core.Series;
 import com.ivli.roim.ROI;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
+import javax.swing.JPanel;
 /**
  *
  * @author likhachev
  */
-public class ChartView extends javax.swing.JPanel 
-                           implements ROIChangeListener { 
-                        
+public class ChartPanel extends JPanel implements ROIChangeListener {                   
     private XYPlot     iPlot;
     private JFreeChart iJfc;    
     private CurvePanel iChart;  
-    
-    
+  
     public void initChart () {
         if (null != iPlot) {
             ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries();
