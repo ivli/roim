@@ -41,7 +41,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         }
     }
     
-    static enum MENUS{
+    static enum MENUS {
         NOP(              "NOP",                          "NOP"),
         ADD(              "MARKER_CMD_MARKER_ADD",        java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MARKER_ADD")),
         DELETE(           "MARKER_CMD_MARKER_DELETE",     java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MARKER_DELETE")),
@@ -51,7 +51,9 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         MOVE_TO_MIN_RIGHT("MARKER_CMD_MOVE_TO_MIN_RIGHT", java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MIN_RIGHT")),
         MOVE_TO_MAX(      "MARKER_CMD_MOVE_TO_MAX",       java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX")),
         MOVE_TO_MAX_LEFT( "MARKER_CMD_MOVE_TO_MAX_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX_LEFT")),
-        MOVE_TO_MAX_RIGHT("MARKER_CMD_MOVE_TO_MAX_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX_RIGHT"));
+        MOVE_TO_MAX_RIGHT("MARKER_CMD_MOVE_TO_MAX_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX_RIGHT")),
+        FIT_LEFT(         "MARKER_CMD_FIT_LEFT",          java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.FIT_LEFT")),
+        FIT_RIGHT(        "MARKER_CMD_FIT_RIGHT",         java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.FIT_RIGHT"));
                         
         MENUS(String aC, String aT) {
             iCommand = aC;
@@ -75,8 +77,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
             return MENUS.NOP;
         }
     }
-        
-    
+            
     public CurvePanel(JFreeChart aChart) {
         super(aChart);
     }
@@ -142,12 +143,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         final XYPlot plot = getChart().getXYPlot();
                 
         switch (MENUS.translate(e.getActionCommand())) {
-            case ADD:
-                //if (null != iMarker && iMarker instanceof DomainMarker) {
-                //    DomainMarker m = (DomainMarker)iMarker;
-                //    DomainMarker m2 = new DomainMarker(m.getXYSeries());
-                //    addMarker(m2);
-                //} else 
+            case ADD:               
                 if (null != iSeries && iSeries instanceof XYSeries) {                    
                     addMarker(new DomainMarker(iDataItem.getXValue(), iSeries));                                                  
                 }   break;
@@ -168,6 +164,13 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
                 break;
             case DELETE_ALL:
                 break;
+                
+            case FIT_LEFT:                
+            case FIT_RIGHT:    {
+                
+                
+                
+            } break;                                
             default:
                 break;
         }
@@ -210,8 +213,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
     }
     
     @Override
-    public void mouseReleased(MouseEvent e) {
-        
+    public void mouseReleased(MouseEvent e) {        
         if (SwingUtilities.isRightMouseButton(e) && (iMarker instanceof DomainMarker || iSeries instanceof XYSeries)) {
             JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MNU_MARKER_OPERATIONS"));             
             if (iSeries instanceof XYSeries) {               
@@ -227,7 +229,12 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
                 mi2.add(MENUS.MOVE_TO_MAX.makeItem(this));
                 mi2.add(MENUS.MOVE_TO_MAX_LEFT.makeItem(this));
                 mi2.add(MENUS.MOVE_TO_MAX_RIGHT.makeItem(this));
-                mnu.add(mi2);                                     
+                mnu.add(mi2); 
+                JMenu mi3 = new JMenu("Fit left");                
+                mi3.add(MENUS.FIT_LEFT.makeItem(this));
+                mi3.add(MENUS.FIT_RIGHT.makeItem(this));
+                mnu.add(mi3); 
+                
                 mnu.add(MENUS.DELETE.makeItem(this));                             
             }
             
