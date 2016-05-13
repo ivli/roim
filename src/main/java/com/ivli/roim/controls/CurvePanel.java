@@ -37,8 +37,7 @@ import org.jfree.ui.Layer;
  *
  * @author likhachev
  */
-public class CurvePanel extends org.jfree.chart.ChartPanel {
-        
+public class CurvePanel extends org.jfree.chart.ChartPanel {        
     class MENUIITEM {
         final String iText;
         final String iCommand;
@@ -209,8 +208,9 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
                 
                 if (null != mark2) {
                     logger.info(String.format("Marker found: %f", mark2.getValue()));                
-                
-                    makeInterpolation((DomainMarker)iMarker, mark2);    
+                    if (null == iPol)
+                        iPol = new ArrayList<>();
+                    iPol.add(new Interpolation((DomainMarker)iMarker, mark2));    
                 } else
                     return;
    
@@ -222,15 +222,18 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         dropSelection();        
     }
     
+    List<Interpolation> iPol = null;
+    static int iId = 0;
+    
     final class Interpolation implements MarkerChangeListener {
         DomainMarker iLhs; 
         DomainMarker iRhs;
-        XYSeries   iSrc;
+        XYSeries   iSrc;        
         
         Interpolation(DomainMarker aLhs, DomainMarker aRhs) {
             iLhs = aLhs; 
             iRhs = aRhs;
-            iSrc = new XYSeries("");
+            iSrc = new XYSeries(String.format("INTERPOLATION%d", iId++));
             fillIn();
             ((XYSeriesCollection)(getChart().getXYPlot().getDataset())).addSeries(iSrc);
             aLhs.addChangeListener(this);
@@ -252,11 +255,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
             update();
         }
     }
-    
-    void makeInterpolation(DomainMarker m1, DomainMarker m2) {
-        new Interpolation(m1, m2);
-    }
-    
+            
     public void mouseMoved(MouseEvent e) {
         super.mouseMoved(e);
 
@@ -285,8 +284,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         } else if (null != (iMarker = findMarker(e))) {                
             if (SwingUtilities.isLeftMouseButton(e))                 
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));                    
-       
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));                           
         } else
             super.mousePressed(e);
     }
@@ -309,11 +307,10 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
                 mi2.add(MENUS.MOVE_TO_MAX_LEFT.makeItem(this));
                 mi2.add(MENUS.MOVE_TO_MAX_RIGHT.makeItem(this));
                 mnu.add(mi2); 
-                JMenu mi3 = new JMenu("Fit left");                
+                JMenu mi3 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.FIT"));                
                 mi3.add(MENUS.FIT_LEFT.makeItem(this));
                 mi3.add(MENUS.FIT_RIGHT.makeItem(this));
-                mnu.add(mi3); 
-                
+                mnu.add(mi3);                 
                 mnu.add(MENUS.DELETE.makeItem(this));                             
             }
             
