@@ -10,15 +10,22 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.EntityCollection;
 import org.jfree.chart.entity.PlotEntity;
 import org.jfree.chart.entity.XYItemEntity;
+import org.jfree.chart.event.MarkerChangeEvent;
+import org.jfree.chart.event.MarkerChangeListener;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataItem;
@@ -141,7 +148,9 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         final XYPlot plot = getChart().getXYPlot();
-                
+        
+        boolean fit_left = false;
+         
         switch (MENUS.translate(e.getActionCommand())) {
             case ADD:               
                 if (null != iSeries && iSeries instanceof XYSeries) {                    
@@ -163,19 +172,89 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
                 removeMarker((DomainMarker)iMarker);
                 break;
             case DELETE_ALL:
+                plot.getDomainMarkers(Layer.FOREGROUND).clear();
                 break;
                 
-            case FIT_LEFT:                
-            case FIT_RIGHT:    {
+            case FIT_LEFT:   
+                 fit_left = true;
+            case FIT_RIGHT: {                      
+                double x1 = iMarker.getValue();                
+                List<DomainMarker> list = new ArrayList<>( plot.getDomainMarkers(Layer.FOREGROUND) );
+
+                if (list.size() < 2) {
+                    //TODO: message box 2 markers are necessary
+                    return;                    
+                }    
                 
+                Collections.sort(list, (DomainMarker o1, DomainMarker o2) -> {
+                    if (o1.equals(o2))
+                        return 0;
+                    if (o1.getValue() > o2.getValue())
+                        return 1;
+                    else
+                        return -1;
+                });                
                 
+                DomainMarker mark2 = null;
                 
+                for(int i = 0; i < list.size(); ++i) {
+                    if (list.get(i) == iMarker) {   
+                        int ndx = fit_left ? i-1 : i+1;
+                        if (ndx >= 0 && ndx < list.size())                            
+                            mark2 = list.get(ndx);
+                        
+                        break;
+                    }                        
+                }
+                
+                if (null != mark2) {
+                    logger.info(String.format("Marker found: %f", mark2.getValue()));                
+                
+                    makeInterpolation((DomainMarker)iMarker, mark2);    
+                } else
+                    return;
+   
             } break;                                
             default:
                 break;
         }
         
         dropSelection();        
+    }
+    
+    final class Interpolation implements MarkerChangeListener {
+        DomainMarker iLhs; 
+        DomainMarker iRhs;
+        XYSeries   iSrc;
+        
+        Interpolation(DomainMarker aLhs, DomainMarker aRhs) {
+            iLhs = aLhs; 
+            iRhs = aRhs;
+            iSrc = new XYSeries("");
+            fillIn();
+            ((XYSeriesCollection)(getChart().getXYPlot().getDataset())).addSeries(iSrc);
+            aLhs.addChangeListener(this);
+            aRhs.addChangeListener(this);
+        }
+        
+        void update() {            
+            iSrc.clear();
+            fillIn();
+        }
+        
+        void fillIn() {
+            iSrc.add(iLhs.getValue(), iLhs.getLinkedMarker().getValue());
+            iSrc.add((iLhs.getValue() + iRhs.getValue())/2.0, (iLhs.getLinkedMarker().getValue() + iRhs.getLinkedMarker().getValue()) /2.0);
+            iSrc.add(iRhs.getValue(), iRhs.getLinkedMarker().getValue());
+        }
+        
+        public void markerChanged(MarkerChangeEvent mce) {
+            update();
+        }
+    }
+    
+    void makeInterpolation(DomainMarker m1, DomainMarker m2) {
+        new Interpolation(m1, m2);
     }
     
     public void mouseMoved(MouseEvent e) {
@@ -287,4 +366,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         iSeries.delete(iSeries.indexOf(iDataItem.getX()), iSeries.indexOf(iDataItem.getX()));
         iSeries.add(iDataItem);         
     }   
+    
+    
+    private static final Logger logger = LogManager.getLogger(CurvePanel.class);
 }
