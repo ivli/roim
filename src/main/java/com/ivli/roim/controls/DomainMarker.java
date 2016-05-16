@@ -54,7 +54,7 @@ public class DomainMarker extends ValueMarker {
     
     public void setLinkedMarker(ValueMarker aM) {
         iLink = aM;
-        iLink.setValue(XYSeriesUtilities.getNearestY(getValue(), iSeries));
+        iLink.setValue(XYSeriesUtilities.getNearestY(iSeries, getValue()));
         iLink.setLabelAnchor(RectangleAnchor.BOTTOM);
         iLink.setLabelOffset(RectangleInsets.ZERO_INSETS);
     }
@@ -103,7 +103,7 @@ public class DomainMarker extends ValueMarker {
         super.setValue(aVal);
         
         if (null != iSeries) { 
-            final Double newY = XYSeriesUtilities.getNearestY(aVal, iSeries);
+            final Double newY = XYSeriesUtilities.getNearestY(iSeries, aVal);
             if (null != iLink) {
                 iLink.setValue(newY);
                 iLink.setLabel(String.format(LABEL_FORMAT, newY));

@@ -125,7 +125,34 @@ class XYSeriesUtilities {
         return valX;
     }
     
-   
+    static double getDomainValueOfMinimum(XYSeries aS, double aFrom, double aTo) {
+        final double [][] v = aS.toArray();
+        double valY = Double.MAX_VALUE;
+        double valX = Double.NaN;
+        
+        final int ndx1 = getDomainIndex(v[0], aFrom);
+        final int ndx2 = getDomainIndex(v[0], aTo);
+        
+        if (ndx1 < 0 || ndx1 >  v[0].length)
+            return Double.NaN;
+        
+        if (ndx2 < 0|| ndx1 >  v[0].length)
+            return Double.NaN;
+        
+        int start;
+        int end;
+        
+                           
+        for (int i = ndx1; i < ndx2; ++i) {
+            if (v[1][i] < valY) {
+                valY = v[1][i];
+                valX = v[0][i];
+            }            
+        }
+  
+        return valX;
+    }
+    
     
     /*
      * computes Y = F(X) where X := [X0, X1, ... Xi, Xi+1 ... Xn] 
@@ -133,7 +160,7 @@ class XYSeriesUtilities {
      * for that neighbouring samples found using bisection method
      * linear fit used to obtain 'y'    
      */
-    static double getNearestY(final double aX, final XYSeries aS) {        
+    static double getNearestY(final XYSeries aS, final double aX) {        
         int i = aS.getItemCount();
         
         do{ // bisection
