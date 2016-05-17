@@ -184,7 +184,7 @@ class XYSeriesUtilities {
         }
         return Double.NaN;
     }
-    
+        
     /*
      * performs exponential fit of a given series aS through interval [aFrom, aTo)   
      * uses least squares formula to find intercept and slope
@@ -204,16 +204,17 @@ class XYSeriesUtilities {
         
         final int length = n2-n1;
 
-        double[] x = new double [n2-n1];
+        if (n1 < 0 || n2 < 0 || length < 0)
+            throw new IllegalArgumentException();
+               
         double[] y = new double [n2-n1];
 
         double sum1 = .0;
         double sum2 = .0;
 
-        for(int i=0; i<x.length; ++i) {  
-            x[i] = v[0][i+n1];
-            y[i] = Math.log(v[1][i+n1]);
-            sum1 += x[i];
+        for(int i=0; i<length; ++i) {              
+            y[i] = Math.log(v[1][i+n1]);                               
+            sum1 += v[0][i+n1];
             sum2 += y[i];
         } 
 
@@ -222,31 +223,22 @@ class XYSeriesUtilities {
 
         sum1 = sum2 = .0;
 
-        for(int i=0; i<x.length; ++i) { 
-           final double temp = x[i] - meanX;
+        for(int i=0; i<length; ++i) { 
+           final double temp = v[0][i+n1] - meanX;
            sum1 += temp * (y[i] - meanY);
            sum2 += temp * temp;
         }
 
-        final double slope = sum1 / sum2;
-        /*
-        sum1 = .0;
-        for(int i=0; i<x.length; ++i) {
-            sum1 += (y[i] - x[i] * slope);
-        } 
-
-        final double intercept = sum1 / (double)length;
-        */
-        
+        final double slope = sum1 / sum2;       
         final double intercept = meanY - slope*meanX;
         
-        for(int i=0; i<x.length; ++i) 
-            aRet.add(v[0][i+n1], Math.exp(slope*v[0][i+n1] + intercept)); 
+        for(int i=n1; i < length + n1; ++i) 
+            aRet.add(v[0][i], Math.exp(slope*v[0][i] + intercept)); 
 
         return aRet;
     }
 
-    public static XYSeries leastsquaresFit(XYSeries aS, double aFrom, double aTo, XYSeries aRet) {
+    public static XYSeries linearFit(XYSeries aS, double aFrom, double aTo, XYSeries aRet) {
         if (null == aS)
             throw new IllegalArgumentException();
         if (null == aRet)
@@ -257,11 +249,12 @@ class XYSeriesUtilities {
             slope = sum((x - mean(x)) * (y' - mean(y')) / sum((x - mean(x))^2)
             intercept = mean(y) - slope * mean(x)            
         */
-
         final int n1 = XYSeriesUtilities.getDomainIndex(v[0], Math.min(aFrom, aTo));
         final int n2 = XYSeriesUtilities.getDomainIndex(v[0], Math.max(aFrom, aTo));
         final int length = n2-n1;
 
+        if (n1 < 0 || n2 < 0 || length < 0)
+            throw new IllegalArgumentException();
         double sum1 = .0;
         double sum2 = .0;
 
@@ -272,7 +265,7 @@ class XYSeriesUtilities {
 
         final double meanX = sum1 / (double)length;            
         final double meanY = sum2 / (double)length;
-
+        sum1 = sum2 = .0;
         for(int i=n1; i<length+n1; ++i) {  
             final double temp = (v[0][i] - meanX);
             sum1 += temp * (v[1][i] - meanY) ;
@@ -280,14 +273,11 @@ class XYSeriesUtilities {
         }
 
         final double slope = sum1 / sum2;
-
         final double intercept = meanY - slope*meanX;
 
-
         for(int i = n1; i < length+n1; ++i) {
-            aRet.add(v[0][i], intercept + slope*v[0][i]);                        
+            aRet.add(v[0][i], slope*v[0][i] + intercept);                        
         }
-
         return aRet;
     }    
 }
