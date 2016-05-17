@@ -84,7 +84,7 @@ public class ImageView  extends JComponent implements IImageView {
     protected BufferedImage iBuf2; //pre zoomed image 
      
     public ImageView() {           
-        this(ZoomFit.PIXELS, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, null);    
+        this(ZoomFit.VISIBLE, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, null);    
     }
     
     public ImageView(ZoomFit aFit, Object aInterp, String aLut) {    

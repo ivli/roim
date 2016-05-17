@@ -272,11 +272,10 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
     final class Interpolation implements MarkerChangeListener, AutoCloseable {
         DomainMarker iLhs; 
         DomainMarker iRhs;
-        XYSeries     iSeries;        
-        
+        XYSeries     iSeries;                
               
         Interpolation(DomainMarker aLhs, boolean aGoWest) {
-            this(aLhs, new DomainMarker(aLhs.getXYSeries().getDataItem(aGoWest ? 0 : aLhs.getXYSeries().getItemCount() - 1).getYValue(), aLhs.getXYSeries()));
+            this(aLhs, new DomainMarker(aLhs.getXYSeries().getDataItem(aGoWest ? 0 : aLhs.getXYSeries().getItemCount() - 1).getXValue(), aLhs.getXYSeries()));
         }
                 
         Interpolation(DomainMarker aLhs, DomainMarker aRhs) {

@@ -54,15 +54,21 @@ class XYSeriesUtilities {
   
         return valX;
     }
-    
+    /*
+     * returns index of neares element of scale X   
+     */
     static int getDomainIndex(final double []aS, double aX) {        
         for (int i = 0; i < aS.length - 1; ++i) {        
             if (aX == aS[i] || aX > aS[i] && aX < aS[i+1]) //this is time axis so only values greater than [i] and less than [i+1] needs to get tested    
                 return i;          
         }
+        if (aX == aS[aS.length-1])
+            return aS.length-1;
         return -1;
     } 
-    
+    /*
+     * returns maximum Y value left or right of aX   
+     */
     static double getDomainValueOfMaximum(XYSeries aS, double aX, boolean aLookLeft) {
         final double [][] v = aS.toArray();
         double valY = Double.MIN_VALUE;
@@ -179,7 +185,10 @@ class XYSeriesUtilities {
         return Double.NaN;
     }
     
-        
+    /*
+     * performs exponential fit of a given series aS through interval [aFrom, aTo)   
+     * uses least squares formula to find intercept and slope
+     */        
     public static XYSeries exponentialFit(XYSeries aS, double aFrom, double aTo, XYSeries aRet) {            
         if (null == aS)
             throw new IllegalArgumentException();
@@ -190,8 +199,9 @@ class XYSeriesUtilities {
         //y' = log(y) = A - B * x;
         //slope = sum((x - mean(x)) * (y' - mean(y')) / sum((x - mean(x))^2) // -B
         //intercept = mean(y' - x * slope) // A
-        final int n1 = XYSeriesUtilities.getDomainIndex(v[0], Math.min(aFrom, aTo));
-        final int n2 = XYSeriesUtilities.getDomainIndex(v[0], Math.max(aFrom, aTo));
+        final int n1 = getDomainIndex(v[0], Math.min(aFrom, aTo));
+        final int n2 = getDomainIndex(v[0], Math.max(aFrom, aTo));
+        
         final int length = n2-n1;
 
         double[] x = new double [n2-n1];
