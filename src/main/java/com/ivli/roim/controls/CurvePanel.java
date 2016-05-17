@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -34,7 +35,6 @@ import org.jfree.chart.event.MarkerChangeEvent;
 import org.jfree.chart.event.MarkerChangeListener;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -44,16 +44,7 @@ import org.jfree.ui.Layer;
  *
  * @author likhachev
  */
-public class CurvePanel extends org.jfree.chart.ChartPanel {        
-    class MENUIITEM {
-        final String iText;
-        final String iCommand;
-        MENUIITEM(String aC, String aT) {
-            iCommand = aC;
-            iText = aT;
-        }
-    }
-    
+public class CurvePanel extends org.jfree.chart.ChartPanel {            
     static enum MENUS {
         NOP(              "NOP",                          "NOP"),
         ADD(              "MARKER_CMD_MARKER_ADD",        java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MARKER_ADD")),
@@ -104,6 +95,18 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
     }
     
     public void removeMarker(DomainMarker aM) {
+        
+        ListIterator<Interpolation> it = iInterpolations.listIterator();
+        
+        while(it.hasNext()) {
+            Interpolation i = it.next();
+            if(i.iLhs == aM || i.iRhs == aM) {                
+                it.remove();
+                i.close();               
+            }
+            
+        }
+                       
         getChart().getXYPlot().removeRangeMarker(aM.getLinkedMarker(), Layer.FOREGROUND);
         getChart().getXYPlot().removeDomainMarker(aM, Layer.FOREGROUND);                 
     }
@@ -169,7 +172,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         super.actionPerformed(e);
         final XYPlot plot = getChart().getXYPlot();
         
-        boolean fit_left = false;
+        boolean goWest = false;
          
         switch (MENUS.translate(e.getActionCommand())) {
             case ADD:               
@@ -178,11 +181,10 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
                 } break;
             case EXPORT_CSV:               
                 if (null != iSeries && iSeries instanceof XYSeries) { 
-                    try (Writer pwr = new PrintWriter("export.csv")){
-                               
-                        for (int i=0;i<iSeries.getItemCount(); ++i) {
+                    try (Writer pwr = new PrintWriter("export.csv")){                               
+                        for (int i = 0; i < iSeries.getItemCount(); ++i) {
                             XYDataItem xy = iSeries.getDataItem(i);
-                            pwr.append(String.format("%f\t%f\n", xy.getXValue(), xy.getYValue()));                        
+                            pwr.append(String.format("%f\t%f\n", xy.getXValue(), xy.getYValue())); //NOI18N                        
                         }
                         pwr.flush(); 
                         pwr.close();
@@ -211,48 +213,51 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
                 break;
             case DELETE_ALL:
                 plot.getDomainMarkers(Layer.FOREGROUND).clear();
+                iInterpolations.stream().forEach((i) -> {i.close();});           
+                iInterpolations.clear();
                 break;
                 
             case FIT_LEFT:   
-                 fit_left = true;
+                 goWest = true;
             case FIT_RIGHT: {                      
                 double x1 = iMarker.getValue();                
-                List<DomainMarker> list = new ArrayList<>( plot.getDomainMarkers(Layer.FOREGROUND) );
+                List<DomainMarker> list = new ArrayList<>(plot.getDomainMarkers(Layer.FOREGROUND) );
 
-                if (list.size() < 2) {
-                    //TODO: message box 2 markers are necessary
+                if (list.isEmpty()) {//TODO: error message box at least 1 marker is necessary                    
                     return;                    
-                }    
-                
-                Collections.sort(list, (DomainMarker aLhs, DomainMarker aRhs) -> {
-                                        if (aLhs == aRhs || aLhs.equals(aRhs))
-                                            return 0;
-                                        if (aLhs.getValue() > aRhs.getValue())
-                                            return 1;
-                                        else
-                                            return -1;
-                                    }
-                                );                
+                } else if (list.size() == 1) {
+                    logger.info(String.format("Fine got just one Marker interpolate till an edge"));                                    
+                    iInterpolations.add(new Interpolation((DomainMarker)list.get(0), goWest));                
+                } else {                  
+                    Collections.sort(list, (DomainMarker aLhs, DomainMarker aRhs) -> {
+                                            if (aLhs == aRhs || aLhs.equals(aRhs))
+                                                return 0;
+                                            if (aLhs.getValue() > aRhs.getValue())
+                                                return 1;
+                                            else
+                                                return -1;
+                                        }
+                                    );                
 
-                DomainMarker mark2 = null;
-                
-                for(int i = 0; i < list.size(); ++i) {
-                    if (list.get(i) == iMarker) {   
-                        int ndx = fit_left ? i-1 : i+1;
-                        if (ndx >= 0 && ndx < list.size())                            
-                            mark2 = list.get(ndx);                        
-                        break;
-                    }                        
+                    DomainMarker mark2 = null;
+
+                    for(int i = 0; i < list.size(); ++i) {
+                        if (list.get(i) == iMarker) {   
+                            int ndx = goWest ? i-1 : i+1;
+                            if (ndx >= 0 && ndx < list.size())                            
+                                mark2 = list.get(ndx);                        
+                            break;
+                        }                        
+                    }
+
+                    if (null != mark2) {
+                        logger.info(String.format("Marker found: %f", mark2.getValue()));                                    
+                        iInterpolations.add(new Interpolation((DomainMarker)iMarker, mark2));    
+                    } else {
+                        logger.info(String.format("No marker in this direction found so interpolate till the edge"));                                    
+                        iInterpolations.add(new Interpolation((DomainMarker)iMarker, goWest));
+                    }
                 }
-                
-                if (null != mark2) {
-                    logger.info(String.format("Marker found: %f", mark2.getValue()));                
-                    if (null == iPol)
-                        iPol = new ArrayList<>();
-                    iPol.add(new Interpolation((DomainMarker)iMarker, mark2));    
-                } else
-                    return;
-   
             } break;                                
             default:
                 break;
@@ -261,95 +266,48 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         dropSelection();        
     }
     
-    List<Interpolation> iPol = null;
+    List<Interpolation> iInterpolations = new ArrayList<>();
     static int iInterpolationID = 0;
     
-    final class Interpolation implements MarkerChangeListener {
+    final class Interpolation implements MarkerChangeListener, AutoCloseable {
         DomainMarker iLhs; 
         DomainMarker iRhs;
-        XYSeries   iSrc;        
+        XYSeries     iSeries;        
         
+              
+        Interpolation(DomainMarker aLhs, boolean aGoWest) {
+            this(aLhs, new DomainMarker(aLhs.getXYSeries().getDataItem(aGoWest ? 0 : aLhs.getXYSeries().getItemCount() - 1).getYValue(), aLhs.getXYSeries()));
+        }
+                
         Interpolation(DomainMarker aLhs, DomainMarker aRhs) {
             iLhs = aLhs; 
             iRhs = aRhs;
-            iSrc = new XYSeries(String.format("INTERPOLATION%d", iInterpolationID++));
-            fillIn();
-            //((XYSeriesCollection)(getChart().getXYPlot().getDataset())).addSeries(iSrc);
+            iSeries = new XYSeries(String.format("INTERPOLATION%d", iInterpolationID++));
+            
+            XYSeriesUtilities.exponentialFit(iLhs.getXYSeries(), iLhs.getValue(), iRhs.getValue(), iSeries);
+            
             XYSeriesCollection ds = new XYSeriesCollection();
-            ds.addSeries(iSrc);
+            ds.addSeries(iSeries);
             getChart().getXYPlot().setDataset(1, ds);
             
             aLhs.addChangeListener(this);
             aRhs.addChangeListener(this);  
-            //int ndx = ((XYSeriesCollection)(getChart().getXYPlot().getDataset())).getSeriesIndex(iSrc.getKey());
-            getChart().getXYPlot().setRenderer(1, new XYSplineRenderer());            
-        }
-             
-        void exponentialFit(XYSeries aS, double aFrom, double aTo) {
-            final double [][] v = aS.toArray();
-            
             /*
-            y' = log(y) = A - B * x;
-            slope = sum((x - mean(x)) * (y' - mean(y')) / sum((x - mean(x))^2) // -B
-            intercept = mean(y' - x * slope) // A
+            getChart().getXYPlot().setRenderer(1, new XYSplineRenderer());            
             */
-            int n1 = XYSeriesUtilities.getDomainIndex(v[0], Math.min(aFrom, aTo));
-            int n2 = XYSeriesUtilities.getDomainIndex(v[0], Math.max(aFrom, aTo));
-            final int length = n2-n1;
-            
-            double[] x = new double [n2-n1];
-            double[] y = new double [n2-n1];
-            
-            double meanX = .0;            
-            double meanY = .0;
-            
-            for(int i=0; i<x.length; ++i) {
-                x[i] = v[1][i+n1];
-                y[i] = Math.log(v[1][i+n1]);                
-                meanX += x[i];
-                meanY += y[i];
-            } 
-            
-            meanX /= (double)length;
-            meanY /= (double)length;
-            
-            double sum1 = .0;
-            double sum2 = .0;
-            for(int i=0; i<x.length; ++i) {               
-               sum1 += (x[i] - meanX) * (y[i] - meanY) ;
-               sum2 += (x[i] - meanX) * (x[i] - meanX) ;
-            }
-            
-            final double slope = sum1 / sum2;
-            
-            double intercept = .0;
-            for(int i=0; i<x.length; ++i) {
-                intercept += y[i] - x[i] * slope;
-            } 
-            intercept /= (double)length;
-            
-            for(int i=0; i<x.length; ++i) {
-                iSrc.add(v[0][i+n1], intercept + slope*v[0][i+n1]);                        
-            }
-            
-            logger.info(String.format("slope = %f; intercept = %f", slope, intercept));
+        }             
+        
+        public void close() {
+            iLhs.removeChangeListener(this);
+            if (iRhs != null)
+                iRhs.removeChangeListener(this);   
+            iSeries.clear();
         }
-        
-        
-        void fillIn() {
-            iSrc.add(iLhs.getValue(), iLhs.getLinkedMarker().getValue());
-            
-            double v = XYSeriesUtilities.getDomainValueOfMinimum(iLhs.getXYSeries(), iLhs.getValue(), iRhs.getValue());
-            iSrc.add(v, XYSeriesUtilities.getNearestY(iLhs.getXYSeries(), v));
-           //iSrc.add((iLhs.getValue() + iRhs.getValue())/2.0, (iLhs.getLinkedMarker().getValue() + iRhs.getLinkedMarker().getValue()) /2.0);
-            
-            iSrc.add(iRhs.getValue(), iRhs.getLinkedMarker().getValue());
-        }
-        
+                
         public void markerChanged(MarkerChangeEvent mce) {
-            iSrc.clear();
-            //fillIn();
-            exponentialFit(iLhs.getXYSeries(), iLhs.getValue(), iRhs.getValue());
+            iSeries.clear();
+            
+            XYSeriesUtilities.exponentialFit(iLhs.getXYSeries(), iLhs.getValue(), iRhs.getValue(), iSeries);              
         }
     }
             
@@ -461,8 +419,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         iDataItem.setY(aNewY);
         iSeries.delete(iSeries.indexOf(iDataItem.getX()), iSeries.indexOf(iDataItem.getX()));
         iSeries.add(iDataItem);         
-    }   
-    
+    }       
     
     private static final Logger logger = LogManager.getLogger(CurvePanel.class);
 }
