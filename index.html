@@ -11,11 +11,11 @@
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script type="text/javascript" src="javascripts/script.js"></script>
 
-  <title>Roim - A Nuclear Medicine Image Viewer</title>
-  <meta name="description" content="A Nuclear Medicine Image Viewer">
+  <title>Roim - Nuclear Medicine Image Viewer</title>
+  <meta name="description" content="Nuclear Medicine Image Viewer">
 
   <meta name="viewport" content="width=device-width,initial-scale=1">
-
+  <link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -25,7 +25,7 @@
       <h1 class="title">ROI-master</h1>
     </header>
     <div id="container">
-      <p class="tagline">A Nuclear Medicine Image Viewer</p>
+      <p class="tagline">Nuclear Medicine Image Viewer</p>
       <div id="main" role="main">
         <div class="download-bar">
         <div class="inner">
@@ -64,7 +64,6 @@ Such a cases when the application might be helpful the most.
 This development was inspired by <a href="http://imagej.net/">ImageJ</a> image viewer.
 The program implements several pixel interpolation algorithms including bicubic and is capable of reading standard LUT palettes in 768 bit NIH format 
 and there is a number of built in <i>LUTs</i>.  
-
 The latest release supports images in DICOM format with raw or uncompressed JPEG data only. <br>
 The program does not make any difference of image modality as long as photometric interpretation is MONOCHROME or MONOCHROME2 
 and pixel data are 8-16 bits.
@@ -76,11 +75,9 @@ The processing unit is built around ROI model - elliptic, rectangular and free f
 
 It is possible to extract some statistics out of ROIs: integral density (sum of pixel values), area (in pixels and millimetres), min/max/avg values.
 For a multiframe image (<i>DYNAMIC</i>) ROI will be propagated to all frames thus giving a possibility to extract all aforementioned values of all frames and build a curve.
-Depending on practical need it is possible to visualize change of integral density, maximal or minimal value... 
-
+It is possible to choice what statistics shall be used to make curve: integral density, maximal or minimal value... 
 <i>ROI calculator</i> offers base algebraic operations on ROIs and results are also can be visualized as curve.
 <br>Reconstructed tomographic images displayed using MIP (Maximum Intensity Projections) algorithm. 
-
 <br>Curves are displayed on separate page where scale/zoom/pan can be applied and it is possible to store entire page into image file.
 Also, data mining functionality provided so one can set crosshair markers and move it to extract Y-values.
 Markers can automatically be positioned to extremum of a curve.
@@ -88,8 +85,13 @@ Curves can be extrapolated using linear and exponential fit built using least sq
 Finally, curves can be exported to text file CSV - for analysis by means of an external tool. 
 
 <br>The last tab displays a matrix of frames (temporal or transversal slices for tomographic mages).      
-<br>The program is written in Java (tm) and run on both Windows and Linux.</p>
- 
+<br>The program is written in Java (tm) and run on both Windows and Linux.
+
+<br>Please wisit <a href="https://github.com/ivli/roim/wiki">Roim wiki</a> for details of how to build Roim and crate applications using it.
+<font face="Indie+Flower">Good luck.</font>
+I. 
+
+</p>
         </article>
       </div>
     </div>
