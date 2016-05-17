@@ -48,8 +48,7 @@
 It is designed to be vendor and modality neutral. 
 Moreover, Roim is a Java (tm) class library developed to simplify building biomedical image processing application.   
 It is well known images of Nuclear Medicine (NM) differ from images of other modalities. 
-In NM images pixel value represents a number of events (scintillations at a particular spatial location) accumulated through given time interval.
-</p> <p>
+In NM images pixel value represents a number of events (scintillations at a particular spatial location) accumulated through given time interval.<br>
 Usually, NM images have rather low resolution 1024x1024 pixels or less while physical pixel size rarely exceeds few to few millimetres.
 Quite often images suffer from poor SNR. 
 NM images are typically 3 dimensional where third dimension is either time or space i.e. present process or volume. However, 2D and 4D
@@ -62,28 +61,30 @@ Algorithms described in these guidelines work fine for the most of the cases but
 Discussing possible causes is clearly out of the scope but it shall be mentioned in many cases the study still can be processed.                     
 Such a cases when the application might be helpful the most.
 </p><p>
-This development was inspired by success of  <a href="http://imagej.net/">ImageJ</a> image processing program.
-
+This development was inspired by <a href="http://imagej.net/">ImageJ</a> image viewer.
 The program implements several pixel interpolation algorithms including bicubic and is capable of reading standard LUT palettes in 768 bit NIH format 
-and there is a number of built in LUTs.  
+and there is a number of built in <i>LUTs</i>.  
 
 The latest release supports images in DICOM format with raw or uncompressed JPEG data only. <br>
 The program does not make any difference of image modality as long as photometric interpretation is MONOCHROME or MONOCHROME2 
 and pixel data are 8-16 bits.
 Supported image types are <i>STATIC/DYNAMIC/WHOLE BODY/TOMO/TOMO RECON</i>.       
-To display reconstructed images MIP algorithm is employed.
+To display reconstructed images <i>MIP</i> algorithm is employed.
 The application has tabbed design. There are three tabs: image viewer, curve viewer and multi-image viewer. 
 Here image viewer tab is central element it is responsible for displaying image, applying LUT, controlling W\L              
 The processing unit is built around ROI model - elliptic, rectangular and free form ROI are implemented.  
 
-It is possible to extract some statistical values out of ROIs: integral density, area, min/max/avg pixel values and perform simple arithmetic manipulation on them.
-For dynamic images (aka <i>multiframe</i>) it is possible to build curves of aforementioned values. You are free to select frame to draw ROI on, it will be populated to all frames.
-<br>Reconstructed tomographic images displayed using MIP (Maximum Intensity Projections). 
+It is possible to extract some statistics out of ROIs: integral density (sum of pixel values), area (in pixels and millimetres), min/max/avg values.
+For a multiframe image (<i>DYNAMIC</i>) ROI will be propagated to all frames thus giving a possibility to extract all aforementioned values of all frames and build a curve.
+Depending on practical need it is possible to visualize change of integral density, maximal or minimal value... 
 
-<br>Curves are displayed on separate page where scale/zoom/pan can be applied and it is possible to store it as an image file.
+<i>ROI calculator</i> offers basis algebraic operations on ROIs and results are also can be visualized as curve.
+
+<br>Reconstructed tomographic images displayed using MIP (Maximum Intensity Projections). 
+<br>Curves are displayed on separate page where scale/zoom/pan can be applied and it is possible to store entire page into image file.
 Also, data mining functionality provided so one can set crosshair markers and move it to observe Y-values.
 Markers can automatically get moved to curve min/max values.
-Using two markers it is possible to interpolate acquired curve with exponential one.
+It is possible to fit acquired curve using linear and exponential one.
 Finally, curves can be exported to text file CSV - for analysis by means of an external tool. 
 
 <br>The last tab displays a matrix of frames (temporal or transversal slices for tomographic mages).      
