@@ -57,7 +57,7 @@ Moreover, Roim is a Java (tm) class library developed to simplify building biome
 It is well known images of Nuclear Medicine (NM) differ from images of other modalities. 
 In NM images pixel value represents a number of events (scintillations at a particular spatial location) accumulated through given time interval.<br>
 Usually, NM images have rather low resolution 1024x1024 pixels or less while physical pixel size rarely exceeds few to few millimetres.
-Quite often images suffer from poor <span class="t">SNR</span>. 
+Quite often images suffer from poor  <abbr title="Signal to Noise Ratio">SNR</abbr>. 
 NM images are typically 3 dimensional where third dimension is either time or space i.e. present process or volume. However, 2D and 4D
 images are also exist.
 Taking all aforementioned into account it is obvious NM images hardly can be processed by means of common image visualization tools.
@@ -69,7 +69,7 @@ Discussing possible causes is clearly out of the scope but it shall be mentioned
 Such a cases when the application might be helpful the most.
 </p><p>
 This development was inspired by <a href="http://imagej.net/">ImageJ</a> image viewer.
-The program implements several pixel interpolation algorithms including bicubic and is capable of reading standard LUT palettes in 768 bit NIH format 
+The program implements several pixel interpolation algorithms including bicubic and is capable of reading standard <abbr title="LookUp Table">LUT</abbr> palettes in 768 bit NIH format 
 and there is a number of built in <span class="t">LUTs</span>.  
 The latest release supports images in DICOM format with raw or uncompressed <span class="t">JPEG</span> data only. <br>
 The program does not make any difference of image modality as long as photometric interpretation is <span class="t">MONOCHROME</span> or <span class="t">MONOCHROME2</span> 
