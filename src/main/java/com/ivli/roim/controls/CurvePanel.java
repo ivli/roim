@@ -273,7 +273,9 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         DomainMarker iLhs; 
         DomainMarker iRhs;
         XYSeries     iSeries;                
-              
+           
+        boolean iExp = true;
+        
         Interpolation(DomainMarker aLhs, boolean aGoWest) {
             this(aLhs, new DomainMarker(aLhs.getXYSeries().getDataItem(aGoWest ? 0 : aLhs.getXYSeries().getItemCount() - 1).getXValue(), aLhs.getXYSeries()));
         }
@@ -283,7 +285,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
             iRhs = aRhs;
             iSeries = new XYSeries(String.format("INTERPOLATION%d", iInterpolationID++));
             
-            XYSeriesUtilities.exponentialFit(iLhs.getXYSeries(), iLhs.getValue(), iRhs.getValue(), iSeries);
+            XYSeriesUtilities.fit(iLhs.getXYSeries(), iLhs.getValue(), iRhs.getValue(), iExp, iSeries);
             
             XYSeriesCollection ds = new XYSeriesCollection();
             ds.addSeries(iSeries);
@@ -295,6 +297,14 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
             getChart().getXYPlot().setRenderer(1, new XYSplineRenderer());            
             */
         }             
+        
+        public void setExp(boolean aExp) {
+            iExp = aExp;
+        }
+        
+        public boolean isExp() {
+            return iExp;
+        }
         
         public void close() {
             iLhs.removeChangeListener(this);
@@ -316,7 +326,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
             } else 
                 throw new IllegalArgumentException();
             
-            XYSeriesUtilities.exponentialFit(iLhs.getXYSeries(), left, right, iSeries);              
+            XYSeriesUtilities.fit(iLhs.getXYSeries(), left, right, iExp, iSeries);              
         }
     }
             
