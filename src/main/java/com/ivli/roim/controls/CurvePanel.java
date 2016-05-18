@@ -304,9 +304,19 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         }
                 
         public void markerChanged(MarkerChangeEvent mce) {
-            iSeries.clear();
+            iSeries.clear();        
+            double left;
+            double right;
+            if (mce.getMarker() == iLhs){
+                left = ((DomainMarker)mce.getMarker()).getValue();
+                right = iRhs.getValue();
+            } else if (mce.getMarker() == iRhs) {
+                left = iLhs.getValue();
+                right = ((DomainMarker)mce.getMarker()).getValue();
+            } else 
+                throw new IllegalArgumentException();
             
-            XYSeriesUtilities.exponentialFit(iLhs.getXYSeries(), iLhs.getValue(), iRhs.getValue(), iSeries);              
+            XYSeriesUtilities.exponentialFit(iLhs.getXYSeries(), left, right, iSeries);              
         }
     }
             
@@ -387,9 +397,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         }  
         if (null != iMarker) {
             double domainX = plot.getDomainAxis().java2DToValue(e.getX(), getScreenDataArea(), plot.getDomainAxisEdge());
-            iMarker.setValue(domainX);//plot.getDomainAxis().java2DToValue(e.getX(), 
-                            //getChartRenderingInfo().getPlotInfo().getDataArea(),                                                                                                                 
-                            //    plot.getDomainAxisEdge()));      
+            iMarker.setValue(domainX); 
         }
         else
             super.mouseDragged(e);

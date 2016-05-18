@@ -199,8 +199,13 @@ class XYSeriesUtilities {
         //y' = log(y) = A - B * x;
         //slope = sum((x - mean(x)) * (y' - mean(y')) / sum((x - mean(x))^2) // -B
         //intercept = mean(y' - x * slope) // A
-        final int n1 = getDomainIndex(v[0], Math.min(aFrom, aTo));
-        final int n2 = getDomainIndex(v[0], Math.max(aFrom, aTo));
+        final double userFrom = Math.min(aFrom, aTo);
+        final double userTo = Math.max(aFrom, aTo);
+        final double availFrom = Math.max(userFrom, aS.getMinX());
+        final double availTo   = Math.min(userTo, aS.getMaxX());
+        
+        final int n1 = getDomainIndex(v[0], availFrom);
+        final int n2 = getDomainIndex(v[0], availTo);
         
         final int length = n2-n1;
 
@@ -212,7 +217,7 @@ class XYSeriesUtilities {
         double sum1 = .0;
         double sum2 = .0;
 
-        for(int i=0; i<length; ++i) {              
+        for(int i = 0; i < length; ++i) {              
             y[i] = Math.log(v[1][i+n1]);                               
             sum1 += v[0][i+n1];
             sum2 += y[i];
@@ -223,7 +228,7 @@ class XYSeriesUtilities {
 
         sum1 = sum2 = .0;
 
-        for(int i=0; i<length; ++i) { 
+        for(int i = 0; i < length; ++i) { 
            final double temp = v[0][i+n1] - meanX;
            sum1 += temp * (y[i] - meanY);
            sum2 += temp * temp;
@@ -232,9 +237,27 @@ class XYSeriesUtilities {
         final double slope = sum1 / sum2;       
         final double intercept = meanY - slope*meanX;
         
-        for(int i=n1; i < length + n1; ++i) 
+        for(int i = n1; i < length + n1; ++i) 
             aRet.add(v[0][i], Math.exp(slope*v[0][i] + intercept)); 
 
+         //extrapolate right       
+        if (userTo > availTo) {            
+            final double step = v[0][v[0].length - 1] - v[0][v[0].length - 2];        
+            double d = availTo;
+            while (d < userTo) {
+                aRet.add(d, Math.exp(slope*d + intercept)); 
+                d+=step;
+            }
+        }
+         //extrapolate left
+        if (userFrom < availFrom) {            
+            final double step = v[0][1] - v[0][0];        
+            double d = availTo;
+            while (d > userFrom) {
+                aRet.add(d, Math.exp(slope*d + intercept)); 
+                d-=step;
+            }
+        }   
         return aRet;
     }
 
@@ -258,7 +281,7 @@ class XYSeriesUtilities {
         double sum1 = .0;
         double sum2 = .0;
 
-        for(int i=n1; i<length+n1; ++i) {                              
+        for(int i = n1; i < length+n1; ++i) {                              
             sum1 += v[0][i];
             sum2 += v[1][i];
         } 
@@ -266,7 +289,8 @@ class XYSeriesUtilities {
         final double meanX = sum1 / (double)length;            
         final double meanY = sum2 / (double)length;
         sum1 = sum2 = .0;
-        for(int i=n1; i<length+n1; ++i) {  
+        
+        for(int i = n1; i < length+n1; ++i) {  
             final double temp = (v[0][i] - meanX);
             sum1 += temp * (v[1][i] - meanY) ;
             sum2 += temp * temp;
@@ -278,6 +302,7 @@ class XYSeriesUtilities {
         for(int i = n1; i < length+n1; ++i) {
             aRet.add(v[0][i], slope*v[0][i] + intercept);                        
         }
+        
         return aRet;
     }    
 }
