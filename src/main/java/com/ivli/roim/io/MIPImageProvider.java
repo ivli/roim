@@ -32,15 +32,14 @@ import com.ivli.roim.core.TimeSliceVector;
  * @author likhachev
  */
 public class MIPImageProvider implements IImageProvider { 
-    protected MIPProjector iProjector;
-    
+    protected MIPProjector iProjector;    
     private final boolean []b;
     
     public MIPImageProvider(IMultiframeImage aSrc, int aProjections) {        
         iProjector = new MIPProjector(aSrc, aProjections);         
         b = new boolean[aProjections];
     }
-    
+
     public ImageFrame get(int anIndex) throws IndexOutOfBoundsException {
         if (anIndex < 0 || anIndex > iProjector.getNumFrames())
             throw new IndexOutOfBoundsException();

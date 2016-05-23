@@ -56,7 +56,7 @@ import org.apache.logging.log4j.Logger;
 /*
  * This class incapsulates dcm4che access to DICOM file entities 
  */
-class DCMImageLoader {
+class DCMImageLoader implements AutoCloseable {
 
     static {
         ImageIO.scanForPlugins();
@@ -75,23 +75,28 @@ class DCMImageLoader {
         return ir;
     }
 
-    private final ImageReader iReader = installImageReader();
+    private ImageReader iReader = installImageReader();
     private Attributes iDataSet;
 
-    public void open(File aFile) throws IOException {
-
-        try (DicomInputStream dis = new DicomInputStream(aFile)) {
-
-            iDataSet = dis.readDataset(-1, -1);//readFileMetaInformation();
-
+    public DCMImageLoader(final String aFile) throws IOException {
+        File f = new File(aFile);
+        
+        try (DicomInputStream dis = new DicomInputStream(f)) {
+            iDataSet = dis.readDataset(-1, -1);
         } catch (IOException e) {
             logger.error("FATAL!", e);
         }
 
-        ImageInputStream iis = ImageIO.createImageInputStream(aFile);
+        ImageInputStream iis = ImageIO.createImageInputStream(f);
         iReader.setInput(iis);
     }
 
+    @Override
+    public void close() {
+        iReader = null;
+        iDataSet = null;
+    }
+    
     public TimeSliceVector getTimeSliceVector() throws IOException {
         ArrayList<PhaseInformation> phases = new ArrayList();
 
@@ -136,43 +141,37 @@ class DCMImageLoader {
     }
 
     public int getNumImages() throws IOException {
-        return iReader.getNumImages(false);
+        
+        return iDataSet.getInt(Tag.NumberOfFrames, 0);
+       // return iReader.getNumImages(false);
+    }
+    
+    public int getWidth() throws IOException {
+        return iReader.getWidth(0);
     }
 
+    public int getHeight() throws IOException {
+        return iReader.getHeight(0);
+    }
+    
     public PValueTransform getRescaleTransform() { 
         double  s = iDataSet.getDouble(Tag.RescaleSlope, 1.);   
         double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);            
         logger.info (String.format("Slope=%f; Intercept=%f", s, i));
         return new PValueTransform(s, i);           
     }
-    
-    static final private String DICOM_KEYWORD_STATIC = "STATIC";
-    static final private String DICOM_KEYWORD_DYNAMIC = "DYNAMIC";   
-    static final private String DICOM_KEYWORD_WB = "WHOLE BODY";
-    static final private String DICOM_KEYWORD_TOMO = "TOMO";
-    static final private String DICOM_KEYWORD_VOLUME = "RECON TOMO";
-    
-    public com.ivli.roim.core.ImageType getImageType() throws IOException {
-        Object o = iDataSet.getValue(Tag.ImageType);
-        ImageType ret = ImageType.IMAGE;
+               
+    public ImageType getImageType() throws IOException {
+        Object o = iDataSet.getValue(Tag.ImageType);        
         
-        if (null != o) {
-            
+        if (null != o) {            
             final String s = new String((byte[])o);
-                   
-            if(s.contains(DICOM_KEYWORD_STATIC))
-                ret = ImageType.STATIC;            
-            else if (s.contains(DICOM_KEYWORD_DYNAMIC))
-                ret = ImageType.DYNAMIC;
-            else if (s.contains(DICOM_KEYWORD_WB))
-                ret = ImageType.WHOLEBODY;    
-            else if (s.contains(DICOM_KEYWORD_VOLUME)) //SIC:order is important
-                ret = ImageType.VOLUME;
-            else if (s.contains(DICOM_KEYWORD_TOMO))
-                ret = ImageType.TOMO;                                        
+            for(ImageType t:ImageType.values())
+                if (s.contains(t.iName))
+                    return t;
         }
 
-        return ret;
+        return ImageType.UNKNOWN;
     }
 
     public Raster readRaster(int aIndex) throws IOException {
@@ -180,17 +179,9 @@ class DCMImageLoader {
     }
 
     private ImageReadParam readParam() {
-        DicomImageReadParam param
-                = (DicomImageReadParam) iReader.getDefaultReadParam();
-        //param.setWindowCenter(windowCenter);
-        //param.setWindowWidth(windowWidth);
-        param.setAutoWindowing(false);
-        //param.setWindowIndex(windowIndex);
-        //param.setVOILUTIndex(voiLUTIndex);
-        //param.setPreferWindow(preferWindow);
-        //param.setPresentationState(prState);
-        //param.setOverlayActivationMask(overlayActivationMask);
-        //param.setOverlayGrayscaleValue(overlayGrayscaleValue);
+        DicomImageReadParam param = (DicomImageReadParam) iReader.getDefaultReadParam();   
+                     
+        param.setAutoWindowing(false);        
         return param;
     }
 

@@ -17,7 +17,8 @@
  */
 package com.ivli.roim.io;
 
-import java.io.File;
+import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.MultiframeImage;
 import java.io.IOException;
 
 /**
@@ -28,12 +29,26 @@ public class ImageProviderFactory {
     
     //TODO: implement here a logic of finding a provider according to image file type (file extension???) 
     public static IImageProvider getProvider(String aFullPath) throws IOException {
-        IImageProvider ret = null;
+       
+
         //try {
-            ret = new DCMImageProvider(new File(aFullPath));
-        //} catch (IOException e) {
-        //    throw e;
-        //}
-        return ret;
+            DCMImageLoader ldr = new DCMImageLoader(aFullPath);
+            switch (ldr.getImageType()) {
+                case STATIC: //fall through
+                case DYNAMIC:
+                    return new DCMImageProvider(ldr);  
+                case TOMO:    
+                case VOLUME: {
+                    
+                    IMultiframeImage mf = new MultiframeImage(new DCMImageProvider(ldr)) ;
+                    
+                    return new MIPImageProvider(mf, 128);
+                } 
+                default: return null;
+            }
+        /*} catch (IOException ex) {
+            throw new IOException();
+        }*/
+      
     }
 }

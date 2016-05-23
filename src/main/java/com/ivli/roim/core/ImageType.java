@@ -29,16 +29,13 @@ public enum ImageType {
     WHOLEBODY("WHOLE BODY"),
     TOMO("TOMO"),
     TOMO_G("TOMO/GATED"),
-    VOLUME("VOLUME"),
-    VOLUME_G("VOLUME/GATED");
+    VOLUME("RECON TOMO"),
+    VOLUME_G("RECON TOMO/GATED"),
+    UNKNOWN("UNKNOWN");
     
-    private final String iName;
+    public final String iName;
     
     private ImageType(String aN) {               
         iName = aN;
-    }
-   
-    public String getName() {
-        return iName;
-    }
+    }  
 }

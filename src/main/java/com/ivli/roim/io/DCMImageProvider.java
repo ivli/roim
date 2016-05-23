@@ -18,7 +18,6 @@
 package com.ivli.roim.io;
 
 import java.io.IOException;
-import java.io.File;
 
 import com.ivli.roim.core.ImageDataType;
 import com.ivli.roim.core.ImageFrame;
@@ -27,6 +26,7 @@ import com.ivli.roim.core.PValueTransform;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.SliceSpacing;
 import com.ivli.roim.core.TimeSliceVector;
+import java.awt.image.Raster;
 
 
 import org.apache.logging.log4j.LogManager;
@@ -46,31 +46,42 @@ class DCMImageProvider implements IImageProvider {
     PixelSpacing iPixelSpacing;    
     SliceSpacing iSliceSpacing;
     ImageType iImageType;
+   
     
-    public DCMImageProvider(File aFile) throws IOException { 
-        iLoader = new DCMImageLoader();
-        
-        try {           
-            iLoader.open(aFile);
-            iImageType = iLoader.getImageType();
-            iTimeSliceVector = iLoader.getTimeSliceVector();        
-            
-            try{
-                iPixelSpacing = iLoader.getPixelSpacing();
-            } catch (IOException ex) {
-                iPixelSpacing = new PixelSpacing(1.0, 1.0);
-            }
-            
-            iNumFrames = iLoader.getNumImages();
-           
-            java.awt.image.Raster f = iLoader.readRaster(0);
+    
+    private void doInit(DCMImageLoader ldr) throws IOException {
 
-            iWidth  = f.getWidth();
-            iHeight = f.getHeight();        
+        iImageType = ldr.getImageType();
+        iTimeSliceVector = ldr.getTimeSliceVector();        
+
+        try {
+            iPixelSpacing = ldr.getPixelSpacing();
+        } catch (IOException ex) {
+            iPixelSpacing = PixelSpacing.UNITY_PIXEL_SPACING;
+        }
+
+        iNumFrames = ldr.getNumImages();
+        //Raster f = ldr.readRaster(0);
+
+        iWidth = ldr.getWidth();
+        iHeight = ldr.getHeight();           
+    } 
+    
+    protected DCMImageProvider(DCMImageLoader aLoader) throws IOException {
+        doInit(aLoader);
+        iLoader = aLoader;
+    }
+    /*
+    private DCMImageProvider(final String aFile) throws IOException {         
+        try (DCMImageLoader ldr = new DCMImageLoader(aFile)) {           
+            doInit(ldr);
+            iLoader = ldr;
         } catch (IOException ex) {
             logger.error("FATAL!!", ex);
         }            
+       
     }  
+    */
     
     @Override
     public int getWidth() {
@@ -112,7 +123,7 @@ class DCMImageProvider implements IImageProvider {
     @Override
     public ImageFrame get(int anIndex) throws IndexOutOfBoundsException/*, IOException*/ {
         try {
-            java.awt.image.Raster r = iLoader.readRaster(anIndex);                       
+            Raster r = iLoader.readRaster(anIndex);                       
             return new ImageFrame(iWidth, iHeight, r.getSamples(0, 0, iWidth, iHeight, 0, new int[iWidth*iHeight]));
         } catch (IOException e) {
             throw new IndexOutOfBoundsException();
