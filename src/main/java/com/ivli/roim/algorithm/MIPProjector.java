@@ -29,11 +29,11 @@ public class MIPProjector {
    
     private final IMultiframeImage iImage;
     private final IMultiframeImage iMIP;
-   // private int iProjections;
+    private int iProjections;
                 
     public MIPProjector(IMultiframeImage aSrc, int aProjections) {
         iImage = aSrc; 
-        //iProjections = aProjections;
+        iProjections = aProjections;
         iMIP = iImage.createCompatibleImage(aProjections);             
     }
      
@@ -57,7 +57,11 @@ public class MIPProjector {
         return iMIP.getNumFrames();
     }
     
-    /*
+    public void project2() {           
+       // iMIP = iImage.duplicate();
+       iMIP.processor().flipVert();
+    }
+        
     public void project() {
         final int nSlices = iImage.getNumFrames();		                
         final int width   = iImage.getWidth();
@@ -95,12 +99,12 @@ public class MIPProjector {
                     frm.set(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
                 }
             }
-            //makeProjection(currProj);
+            
         }
         
         iMIP.processor().flipVert();        
     }
-    */
+    
     
     public ImageFrame get(int currProj) {    
         final ImageFrame frm = iMIP.get(currProj);

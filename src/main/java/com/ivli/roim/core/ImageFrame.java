@@ -178,7 +178,9 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     public void setPixelData(int aWidth, int aHeight, int[] aPixels) {       
         iWidth  = aWidth;
         iHeight = aHeight;
-        iPixels = aPixels;   
+        
+        System.arraycopy(aPixels, 0, iPixels, 0, aWidth * aHeight);  
+        
         //iMin = Double.NaN;
         //iMax = Double.NaN; 
         iIden = Double.NaN;

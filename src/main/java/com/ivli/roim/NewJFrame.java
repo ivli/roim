@@ -20,6 +20,7 @@ package com.ivli.roim;
 
 
 
+import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.MultiframeImage;
 
 import com.ivli.roim.io.IImageProvider;
@@ -35,7 +36,6 @@ import com.ivli.roim.controls.*;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.events.*;
 import com.ivli.roim.io.ImageProviderFactory;
-import com.ivli.roim.io.MIPImageProvider;
 import java.io.File;
 import java.util.Locale;
 import javax.swing.ImageIcon;
@@ -481,11 +481,16 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         IMultiframeImage mi2 = new MultiframeImage(iProvider);       
         IMultiframeImage mi;                
         
-        if (mi2.getImageType() != ImageType.VOLUME) {
+        switch (mi2.getImageType()) {
+            case VOLUME:
+            case TOMO:{        
+                MIPProjector prj = new MIPProjector(mi2, 128);
+                prj.project();
+                mi = prj.getDst();//new MultiframeImage(mi2);//new MIPImageProvider(mi2, 128));              
+                } break;
+            default:       
             mi = mi2;        
-        } else {        
-                              
-            mi = mi2;//new MultiframeImage(mi2);//new MIPImageProvider(mi2, 128));              
+        break;
         }
         
         /**/

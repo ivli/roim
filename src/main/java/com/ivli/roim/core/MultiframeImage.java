@@ -18,7 +18,6 @@
 package com.ivli.roim.core;
 
 import com.ivli.roim.io.IImageProvider;
-import com.ivli.roim.algorithm.FrameProcessor;
 import com.ivli.roim.algorithm.ImageProcessor;
 
 public class MultiframeImage extends IMultiframeImage   {
@@ -38,18 +37,28 @@ public class MultiframeImage extends IMultiframeImage   {
     protected Double iMax = Double.NaN;
     
     //protected java.util.ArrayList<ImageFrame> iFrames; 
-    class Buffer {
-        final boolean[] iMask;         
-        final int [][] iBuf;
+    private final class Buffer {
+        private final boolean[] iMask;         
+        private final int [][] iBuf;
         
         Buffer(int aW, int aH, int aF) {
             iBuf = new int[aF][aW*aH];
             iMask = new boolean[aF];
         }
         
-        boolean isPresent(int aF) {return iMask[aF];}
-        void      present(int aF) {iMask[aF] = true;}
-        //void add(int aF, )
+        boolean isPresent(int aF) {
+            return iMask[aF];
+        }
+        
+        void present(int aF) {
+            iMask[aF] = true;
+        }
+        
+        void all() {
+            for(int i = 0; i < iMask.length; ++i)
+                iMask[i] = true;            
+        }
+        
         int[] get(int aF) {
             return iBuf[aF];
         }
@@ -81,8 +90,7 @@ public class MultiframeImage extends IMultiframeImage   {
         iProvider = null;  
         iWidth = aF.getWidth();
         iHeight = aF.getHeight();
-        iNumFrames = 1;   
-        
+        iNumFrames = 1;           
         iPixelSpacing = PixelSpacing.UNITY_PIXEL_SPACING;
         iTimeSliceVector = TimeSliceVector.ONESHOT; 
         iPVT = PValueTransform.DEFAULT_TRANSFORM;
@@ -99,13 +107,15 @@ public class MultiframeImage extends IMultiframeImage   {
         iTimeSliceVector = aM.getTimeSliceVector();
         iPVT = aM.getTransform();
         iFrames = new Buffer(iWidth, iHeight, iNumFrames); 
+        iFrames.all(); //have no provider - must not call it
     }
-        
-    protected void computeStatistics() {            
+    
+    /*  */  
+    protected void computeStatistics() {                        
         iMin = iProvider.getMin();
         iMax = iProvider.getMax();
     }
-    
+   
     public ImageDataType getImageDataType() {
         return ImageDataType.GRAYS32;
     }
@@ -160,10 +170,11 @@ public class MultiframeImage extends IMultiframeImage   {
             throw new IndexOutOfBoundsException();
                 
         if (!iFrames.isPresent(aFrameNumber)) {
-            int[] t = iProvider.readFrame(aFrameNumber, iFrames.get(aFrameNumber));            
+            int[] t = iFrames.get(aFrameNumber);
+            iProvider.readFrame(aFrameNumber, t);            
         }
         
-        return new ImageFrame(iProvider.getWidth(), iProvider.getHeight(), iFrames.get(aFrameNumber));        
+        return new ImageFrame(getWidth(), getHeight(), iFrames.get(aFrameNumber));        
     }          
     
      @Override             
@@ -181,9 +192,9 @@ public class MultiframeImage extends IMultiframeImage   {
     }  
         
      @Override
-    public IMultiframeImage createCompatibleImage(int aI) {
+    public IMultiframeImage createCompatibleImage(int aNumberOfFRames) {
         //TODO: change type and ... 
-        MultiframeImage ret = new MultiframeImage(this, aI); 
+        MultiframeImage ret = new MultiframeImage(this, aNumberOfFRames); 
         /*
         ret.iNumFrames = aI;
         ret.iWidth = iWidth;
@@ -195,8 +206,11 @@ public class MultiframeImage extends IMultiframeImage   {
         
         ret.iFrames = new java.util.ArrayList<>(iNumFrames);
         for (int n=0; n < iNumFrames; ++n)
-            iFrames.add(n, new ImageFrame(iWidth, iHeight, new int[iWidth*iHeight]));   
+            iFrames.add(n, new ImageFrame(iWidth, iHeight, new int[iWidth*iHeight]));          
         */
+        
+        ret.iFrames.all();
+        
         return ret;
     }
        
@@ -206,11 +220,23 @@ public class MultiframeImage extends IMultiframeImage   {
         /*
         for(int n = 0; n < getNumFrames(); ++n)
            ret.iFrames.add(n, get(n).duplicate());
-       */
+       
+        int i1 = ret.iFrames.iBuf.length;
+        int i2 = ret.iFrames.iBuf[0].length;
+        for (int i=0; i < ret.iFrames.iBuf.length; ++i)
+            System.arraycopy(iFrames.iBuf[i], 0, ret.iFrames.iBuf[i], 0, ret.iFrames.iBuf[i].length);
+        ret.iFrames.all();
+        */
         
-        System.arraycopy(iFrames.iBuf, 0, ret.iFrames.iBuf, 0, iNumFrames*iWidth*iHeight);
+        for (int i=0; i < getNumFrames(); ++i) {
+            ImageFrame f = get(i);
+            System.arraycopy(iFrames.iBuf[i], 0, ret.iFrames.iBuf[i], 0, ret.iFrames.iBuf[i].length);            
+        }
+        
+        ret.iFrames.all();
         return ret;
     }
+    
     /*    
     public MultiframeImage collapse(TimeSlice aS){   
         int frameTo = aS.getTo().isInfinite() ? getNumFrames() : getTimeSliceVector().frameNumber(aS.getTo());

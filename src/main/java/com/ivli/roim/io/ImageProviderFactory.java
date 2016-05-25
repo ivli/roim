@@ -17,8 +17,6 @@
  */
 package com.ivli.roim.io;
 
-import com.ivli.roim.controls.IFrameProvider;
-import com.ivli.roim.core.MultiframeImage;
 import java.io.IOException;
 
 /**
