@@ -15,21 +15,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.io;
+package com.ivli.roim.controls;
 
-import com.ivli.roim.controls.IFrameProvider;
-import com.ivli.roim.core.MultiframeImage;
-import java.io.IOException;
+import com.ivli.roim.core.IImage;
+import com.ivli.roim.core.ImageFrame;
 
 /**
  *
  * @author likhachev
  */
-public class ImageProviderFactory {
-    
-    //TODO: implement here a logic of finding a provider according to image file type (file extension???) 
-    public static IImageProvider getProvider(String aFullPath) throws IOException {
-        return new DCMImageProvider(aFullPath);
-        
-    }
+public interface IFrameProvider extends IImage {
+    /**
+     *
+     * @param anIndex
+     * @return a frame of the image specified by parameter anIndex 
+     */
+    ImageFrame get(int anIndex) throws IndexOutOfBoundsException;     
 }

@@ -485,7 +485,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             mi = mi2;        
         } else {        
                               
-            mi = new MultiframeImage(new MIPImageProvider(mi2, 128));            
+            mi = mi2;//new MultiframeImage(mi2);//new MIPImageProvider(mi2, 128));              
         }
         
         /**/
@@ -509,6 +509,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             jPanel3.add(iChart);  
             iImage.addROIChangeListener(iChart);
         }
+        
         
         if (mi.getImageType() != ImageType.STATIC) {     
             ImageView iv1 = new GridImageView(4, 4) ;

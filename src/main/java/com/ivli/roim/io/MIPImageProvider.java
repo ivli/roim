@@ -18,6 +18,7 @@
 package com.ivli.roim.io;
 
 import com.ivli.roim.algorithm.MIPProjector;
+import com.ivli.roim.controls.IFrameProvider;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageDataType;
 import com.ivli.roim.core.ImageFrame;
@@ -31,7 +32,7 @@ import com.ivli.roim.core.TimeSliceVector;
  *
  * @author likhachev
  */
-public class MIPImageProvider implements IImageProvider { 
+public class MIPImageProvider implements IFrameProvider { 
     protected MIPProjector iProjector;    
     private final boolean []b;
     

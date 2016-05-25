@@ -17,82 +17,13 @@
  */
 package com.ivli.roim.io;
 
-import com.ivli.roim.core.ImageDataType;
-import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.ImageType;
-import com.ivli.roim.core.PValueTransform;
-import com.ivli.roim.core.PixelSpacing;
-import com.ivli.roim.core.SliceSpacing;
-import com.ivli.roim.core.TimeSliceVector;
+import com.ivli.roim.core.IImage;
 
 /**
  *  
  * @author likhachev
  */
-public interface IImageProvider extends java.io.Serializable {                  
-    /**
-     *
-     * @return image width in pixels
-     */
-    int getWidth();  
-    /**
-     *
-     * @return image width in pixels
-     */
-    int getHeight();   
-    /**
-     *
-     * @return a number of frames
-     */
-    int getNumFrames();   
-    /**
-     *
-     * @param anIndex
-     * @return a frame of the image specified by parameter anIndex 
-     */
-    ImageFrame get(int anIndex) throws IndexOutOfBoundsException; 
+public interface IImageProvider extends IImage {                  
     
-    /**
-     * it always returs GRAYS32
-     * @return type of the image
-     * @see ImageDataType
-     *      
-     */
-    ImageDataType getImageDataType();
-        
-    /**
-     *
-     * @return type of the image
-     * @see ImageType
-     */
-    ImageType getImageType();
-    /**
-     *
-     * @return pixel physical dimensions in mm
-     */
-    PixelSpacing getPixelSpacing();  
-    /**
-     *
-     * @return for TOMO RECON images - physical slice thickness 
-     */
-    SliceSpacing getSliceSpacing();    
-    /**
-     *
-     * @return for DYNAMIC images - temporal characteristics of multiframe image 
-     */
-    TimeSliceVector getTimeSliceVector();            
-    /**
-     *
-     * @return minimal pixel value in serie 
-     */
-    double getMin();  
-
-    /**
-     *
-     * @return maximal pixel value in serie 
-     */
-    double getMax();
-    
-    PValueTransform getTransform();        
-    
+    public int[] readFrame(int anIndex, int [] aBuffer) throws IndexOutOfBoundsException;
 }

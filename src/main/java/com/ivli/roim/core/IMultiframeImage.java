@@ -17,8 +17,9 @@
  */
 package com.ivli.roim.core;
 
-import com.ivli.roim.io.IImageProvider;
 import com.ivli.roim.algorithm.ImageProcessor;
+import com.ivli.roim.controls.IFrameProvider;
+import static com.ivli.roim.core.InterpolationMethod.get;
 
 /**
  *
@@ -27,7 +28,7 @@ import com.ivli.roim.algorithm.ImageProcessor;
  * note: this is just an iterator/accessor actual frames stored in subclasses  
  * 
  */
-public abstract class IMultiframeImage implements Iterable<ImageFrame>, IImageProvider, Cloneable {          
+public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFrameProvider, Cloneable {          
   
     public abstract ImageProcessor processor();
     /**

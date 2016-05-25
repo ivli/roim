@@ -151,18 +151,14 @@ public class MultiframeImage extends IMultiframeImage   {
     }
        
      @Override
-    public ImageFrame get(int aFrameNumber) throws java.util.NoSuchElementException {       
-        ImageFrame ret = null;
-        
-        try {
-            ret = iFrames.get(aFrameNumber);                            
-        } catch (IndexOutOfBoundsException ex) {        
-            iFrames.add(aFrameNumber, (ret = iProvider.get(aFrameNumber)));
-        } finally {
-            if (null == ret)
-                iFrames.add(aFrameNumber, (ret = iProvider.get(aFrameNumber)));
+    public ImageFrame get(int aFrameNumber) throws IndexOutOfBoundsException {                      
+        ImageFrame ret = iFrames.get(aFrameNumber);                            
+                
+        if (null == ret) {
+            ret = new ImageFrame(iProvider.getWidth(), iProvider.getHeight(), iProvider.readFrame(aFrameNumber, null));
+            iFrames.add(aFrameNumber, ret);        
         }
-    
+        
         return ret;         
     }          
     
@@ -202,7 +198,7 @@ public class MultiframeImage extends IMultiframeImage   {
        
      @Override
     public IMultiframeImage duplicate() {      
-        MultiframeImage ret = new MultiframeImage(this);
+        MultiframeImage ret = new MultiframeImage(this.iProvider);
 
         for(int n = 0; n < getNumFrames(); ++n)
            ret.iFrames.add(n, get(n).duplicate());

@@ -107,5 +107,5 @@ class JPGImageLoader {
     }
 
    
-    private static final Logger logger = LogManager.getLogger(DCMImageLoader.class);
+    private static final Logger logger = LogManager.getLogger(JPGImageLoader.class);
 }

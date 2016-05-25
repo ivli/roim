@@ -15,21 +15,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.io;
-
-import com.ivli.roim.controls.IFrameProvider;
-import com.ivli.roim.core.MultiframeImage;
-import java.io.IOException;
+package com.ivli.roim.core;
 
 /**
  *
  * @author likhachev
  */
-public class ImageProviderFactory {
+public enum Modality {
+    NM("NM"),
+    CR("CR"),
+    CT("CT"),
+    MR("MR"),
+    UNKNOWN("UNKNOWN");
     
-    //TODO: implement here a logic of finding a provider according to image file type (file extension???) 
-    public static IImageProvider getProvider(String aFullPath) throws IOException {
-        return new DCMImageProvider(aFullPath);
-        
-    }
+    private Modality(final String aName) {iName = aName;}
+    final public String iName;
 }
