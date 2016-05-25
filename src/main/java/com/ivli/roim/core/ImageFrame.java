@@ -34,7 +34,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     
     private int []iPixels;        
     
-    /* */
+    /*
     public ImageFrame(ImageFrame aI) {       
         iWidth = aI.getWidth();
         iHeight = aI.getHeight();
@@ -45,6 +45,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         iRange = new Range(aI.iRange);
         iIden = aI.iIden;
     }
+     */
     
     public ImageFrame(int aWidth, int aHeight, int[] aPixels) {       
         iWidth  = aWidth;
@@ -74,21 +75,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     public int getHeight() {
         return iHeight;
     }
-     
-    /*
-    public double getMin() {
-        if (Double.isNaN(iMin))
-            computeStatistics();
-        return iMin;
-    }
-    
-    public double getMax() {
-        if (Double.isNaN(iMax))
-            computeStatistics();
-        return iMax;
-    }   
-    */
-    
+       
     public Range getRange() {
         if (null == iRange || Double.isNaN(iIden))
             computeStatistics();
@@ -136,36 +123,19 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         } */
         return ImageDataType.GRAYS32;
     }
-    
-    /*
-    public BufferedImage getBufferedImage() {               
-        WritableRaster wr = Raster.createBandedRaster(DataBuffer.TYPE_INT, iWidth, iHeight, 1, new java.awt.Point());
-        wr.setDataElements(0, 0, iWidth, iHeight, iPixels);
-       
-        return new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
-                                                         new int[] {8},
-                                                         false,		// has alpha
-                                                         false,		// alpha premultipled
-                                                         Transparency.OPAQUE,
-                                                         wr.getDataBuffer().getDataType()),                                                                                                                                                                                         
-                                 wr, true, null);        
-    }     
-    */
-    
+   
     private void computeStatistics() throws IndexOutOfBoundsException { 
-        double Min  = Double.MAX_VALUE; 
-        double Max  = Double.MIN_VALUE; 
+        double Min = Double.MAX_VALUE; 
+        double Max = Double.MIN_VALUE; 
         iIden = .0;
         
-        for (int i = 0; i < iWidth; i++) {
-            for (int j = 0; j < iHeight; j++) { 
-                final double temp = get(i, j);
-                if (temp > Max) 
-                    Max = temp;
-                if (temp < Min) 
-                    Min = temp;
-                iIden += temp;
-            }
+        for (int i = 0; i < iPixels.length; i++) {       
+            final int temp = iPixels[i];
+            if (temp > Max) 
+                Max = temp;
+            if (temp < Min) 
+                Min = temp;
+            iIden += temp;        
         }
         
         iRange = new Range(Min, Max);
@@ -181,8 +151,6 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         
         System.arraycopy(aPixels, 0, iPixels, 0, aWidth * aHeight);  
         
-        //iMin = Double.NaN;
-        //iMax = Double.NaN; 
         iIden = Double.NaN;
     }
     
