@@ -36,7 +36,7 @@ public class MultiframeImage extends IMultiframeImage   {
     protected Double iMin = Double.NaN;
     protected Double iMax = Double.NaN;
     
-    //protected java.util.ArrayList<ImageFrame> iFrames; 
+     
     private final class Buffer {
         private final boolean[] iMask;         
         private final int [][] iBuf;
@@ -74,7 +74,7 @@ public class MultiframeImage extends IMultiframeImage   {
             
     private final Buffer iFrames;
     
-    public MultiframeImage(IImageProvider aP) {
+    private MultiframeImage(IImageProvider aP) {
         iProvider = aP;        
         iWidth = aP.getWidth();
         iHeight = aP.getHeight();
@@ -86,7 +86,7 @@ public class MultiframeImage extends IMultiframeImage   {
         iFrames = new Buffer(iWidth, iHeight, iNumFrames);
     }
    
-    public MultiframeImage(ImageFrame aF) {
+    private MultiframeImage(ImageFrame aF) {
         iProvider = null;  
         iWidth = aF.getWidth();
         iHeight = aF.getHeight();
@@ -108,6 +108,10 @@ public class MultiframeImage extends IMultiframeImage   {
         iPVT = aM.getTransform();
         iFrames = new Buffer(iWidth, iHeight, iNumFrames); 
         iFrames.all(); //have no provider - must not call it
+    }
+    
+    public static IMultiframeImage create(IImageProvider aP) {    
+        return new MultiframeImage(aP);
     }
     
     /*  */  

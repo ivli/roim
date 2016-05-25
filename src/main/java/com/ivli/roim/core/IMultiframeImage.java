@@ -19,7 +19,6 @@ package com.ivli.roim.core;
 
 import com.ivli.roim.algorithm.ImageProcessor;
 import com.ivli.roim.controls.IFrameProvider;
-import static com.ivli.roim.core.InterpolationMethod.get;
 
 /**
  *

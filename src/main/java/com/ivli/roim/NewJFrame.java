@@ -478,16 +478,30 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel3.repaint();
         jPanel4.repaint();
         
-        IMultiframeImage mi2 = new MultiframeImage(iProvider);       
+        IMultiframeImage mi2 = MultiframeImage.create(iProvider);       
         IMultiframeImage mi;                
         
         switch (mi2.getImageType()) {
             case VOLUME:
-            case TOMO:{        
+            case TOMO:{   
+                ProgressDialog d = ProgressDialog.create(this, "---");
                 MIPProjector prj = new MIPProjector(mi2, 128);
-                prj.project();
-                mi = prj.getDst();//new MultiframeImage(mi2);//new MIPImageProvider(mi2, 128));              
-                } break;
+                
+                class tmp  implements Runnable {                    
+                    
+                    public void run() {                        
+                        prj.project();
+                    }
+                } 
+                tmp t = new tmp();
+                prj.addProgressListener(d);
+                
+                (new Thread(t)).start();
+                d.show(true);
+                mi = prj.getDst();
+                
+            } break; 
+                
             default:       
             mi = mi2;        
         break;

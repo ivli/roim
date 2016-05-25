@@ -19,12 +19,13 @@ package com.ivli.roim.algorithm;
 
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.events.ProgressNotifier;
 
 /**
  *
  * @author likhachev
  */
-public class MIPProjector {
+public class MIPProjector extends ProgressNotifier{
     private final double DEPTH_FACTOR = .1; //must fit into range [0 - 1]
    
     private final IMultiframeImage iImage;
@@ -65,13 +66,8 @@ public class MIPProjector {
     public void project() {
         final int nSlices = iImage.getNumFrames();		                
         final int width   = iImage.getWidth();
-        final int height  = iImage.getHeight();
-
-        //double minVol = iImage.getMin();
-        final double maxVol = iImage.getMax();
-
-        //IMultiframeImage mip = iImage.createCompatibleImage(iProjections);
-	
+        final int height  = iImage.getHeight();        
+        final double maxVol = iImage.getMax();       	
         final double angStep = 360.0 / iProjections;			
         
         final double weights[] = new double[height]; 
@@ -80,7 +76,7 @@ public class MIPProjector {
             weights[i] = (i + 1) * DEPTH_FACTOR;
         
         for (int currProj = 0; currProj < iProjections; ++currProj) {
-            //notifyProgressChanged((int)(((angStep*currProj)/360.) * 100.));
+            notifyProgressChanged((int)(((angStep*currProj)/360.) * 100.));
             
             final ImageFrame frm = iMIP.get(currProj);            
             IMultiframeImage temp = iImage.duplicate();
@@ -102,7 +98,8 @@ public class MIPProjector {
             
         }
         
-        iMIP.processor().flipVert();        
+        iMIP.processor().flipVert();      
+        notifyProgressChanged(100);
     }
     
     

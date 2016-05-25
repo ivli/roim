@@ -17,7 +17,6 @@
  */
 package com.ivli.roim.controls;
 
-import com.ivli.roim.events.IProgressor;
 import com.ivli.roim.events.ProgressEvent;
 import com.ivli.roim.events.ProgressListener;
 import com.ivli.roim.events.ProgressNotifier;
@@ -33,9 +32,9 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class ProgressDialog extends JPanel implements ProgressListener{
+public class ProgressDialog extends JPanel implements ProgressListener {
 
-    ///private IProgressor iProgressor;
+    JDialog iDialog;
     /**
      * Creates new form ProgressDialog
      */
@@ -86,22 +85,28 @@ public class ProgressDialog extends JPanel implements ProgressListener{
     private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
 
-    public static JDialog getPprogressDialog(Window aParent, IProgressor aN, String aCaption) {
+    public static ProgressDialog create(Window aParent, String aCaption) {
         ProgressDialog panel = new ProgressDialog();
-        aN.getNotifier().addProgressListener(panel);
-        JDialog dialog = new JDialog(aParent, Dialog.ModalityType.APPLICATION_MODAL);
+        
+        ///aN.getNotifier().addProgressListener(panel);
+        
+        panel.iDialog = new JDialog(aParent, Dialog.ModalityType.APPLICATION_MODAL);
         
         if (null != aCaption)
-            dialog.setTitle(aCaption);
+            panel.iDialog.setTitle(aCaption);
         
-        dialog.setContentPane(panel);
+        panel.iDialog.setContentPane(panel);
         
-        dialog.validate();
-        dialog.pack();
-        dialog.setResizable(false);
-        dialog.setLocation(aParent.getLocation().x + (aParent.getWidth() - dialog.getWidth())/2, 
-                           aParent.getLocation().y + (aParent.getHeight() - dialog.getHeight())/2);
-        return dialog;
+        panel.iDialog.validate();
+        panel.iDialog.pack();
+        panel.iDialog.setResizable(false);
+        panel.iDialog.setLocation(aParent.getLocation().x + (aParent.getWidth() - panel.iDialog.getWidth())/2, 
+                           aParent.getLocation().y + (aParent.getHeight() - panel.iDialog.getHeight())/2);
+        return panel;
+    }
+    
+    public void show() {
+        iDialog.setVisible(true);
     }
     
     private final static Logger logger = LogManager.getLogger(ProgressDialog.class);
