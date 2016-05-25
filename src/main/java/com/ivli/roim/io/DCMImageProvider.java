@@ -37,17 +37,17 @@ import org.apache.logging.log4j.Logger;
  * @author likhachev
  */
 class DCMImageProvider implements IImageProvider {    
-    private final DCMImageLoader iLoader;    
     
+    private final DCMImageLoader iLoader;    
+    /**/
     int iWidth;
     int iHeight;
-    int iNumFrames;     
+    int iNumFrames;   
+    
     TimeSliceVector iTimeSliceVector;
     PixelSpacing iPixelSpacing;    
     SliceSpacing iSliceSpacing;
-    ImageType iImageType;
-   
-    
+    ImageType iImageType;   
     
     private void doInit(DCMImageLoader ldr) throws IOException {
 
@@ -71,18 +71,7 @@ class DCMImageProvider implements IImageProvider {
         doInit(aLoader);
         iLoader = aLoader;
     }
-    /*
-    private DCMImageProvider(final String aFile) throws IOException {         
-        try (DCMImageLoader ldr = new DCMImageLoader(aFile)) {           
-            doInit(ldr);
-            iLoader = ldr;
-        } catch (IOException ex) {
-            logger.error("FATAL!!", ex);
-        }            
        
-    }  
-    */
-    
     @Override
     public int getWidth() {
         return iWidth;

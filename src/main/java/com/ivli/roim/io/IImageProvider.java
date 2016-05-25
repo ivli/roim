@@ -29,7 +29,7 @@ import com.ivli.roim.core.TimeSliceVector;
  *  
  * @author likhachev
  */
-public interface IImageProvider {                  
+public interface IImageProvider extends java.io.Serializable {                  
     /**
      *
      * @return image width in pixels
@@ -93,6 +93,6 @@ public interface IImageProvider {
      */
     double getMax();
     
-    public PValueTransform getTransform();        
+    PValueTransform getTransform();        
     
 }

@@ -38,10 +38,8 @@ public class ImageProviderFactory {
                 case DYNAMIC:
                     return new DCMImageProvider(ldr);  
                 case TOMO:    
-                case VOLUME: {
-                    
-                    IMultiframeImage mf = new MultiframeImage(new DCMImageProvider(ldr)) ;
-                    
+                case VOLUME: {                    
+                    IMultiframeImage mf = new MultiframeImage(new DCMImageProvider(ldr)) ;                    
                     return new MIPImageProvider(mf, 128);
                 } 
                 default: return null;

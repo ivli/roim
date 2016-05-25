@@ -24,10 +24,10 @@ import com.ivli.roim.algorithm.ImageProcessor;
  *
  * @author likhachev
  * 
- * note: this is just an iterator/accessor actual frames are stored in descendants  
+ * note: this is just an iterator/accessor actual frames stored in subclasses  
  * 
  */
-public abstract class IMultiframeImage implements Iterable<ImageFrame>, IImageProvider, Cloneable, java.io.Serializable {          
+public abstract class IMultiframeImage implements Iterable<ImageFrame>, IImageProvider, Cloneable {          
   
     public abstract ImageProcessor processor();
     /**
