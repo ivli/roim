@@ -57,12 +57,7 @@ public class MIPProjector extends ProgressNotifier{
     public int getNumFrames() {
         return iMIP.getNumFrames();
     }
-    
-    public void project2() {           
-       // iMIP = iImage.duplicate();
-       iMIP.processor().flipVert();
-    }
-        
+               
     public void project() {
         final int nSlices = iImage.getNumFrames();		                
         final int width   = iImage.getWidth();
@@ -94,8 +89,7 @@ public class MIPProjector extends ProgressNotifier{
 
                     frm.set(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
                 }
-            }
-            
+            }            
         }
         
         iMIP.processor().flipVert();      

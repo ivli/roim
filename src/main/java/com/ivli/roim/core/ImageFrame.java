@@ -32,7 +32,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     private Range iRange = new Range(Double.NaN, Double.NaN);
     private double iIden = Double.NaN;
     
-    private int []iPixels;        
+    private final int []iPixels;        
     
     /*
     public ImageFrame(ImageFrame aI) {       

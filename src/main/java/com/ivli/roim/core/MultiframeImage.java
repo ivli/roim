@@ -37,11 +37,11 @@ public class MultiframeImage extends IMultiframeImage   {
     protected Double iMax = Double.NaN;
     
      
-    private final class Buffer {
+    private final class PixelBuffer {
         private final boolean[] iMask;         
         private final int [][] iBuf;
         
-        Buffer(int aW, int aH, int aF) {
+        PixelBuffer(int aW, int aH, int aF) {
             iBuf = new int[aF][aW*aH];
             iMask = new boolean[aF];
         }
@@ -54,7 +54,7 @@ public class MultiframeImage extends IMultiframeImage   {
             iMask[aF] = true;
         }
         
-        void all() {
+        void present() {
             for(int i = 0; i < iMask.length; ++i)
                 iMask[i] = true;            
         }
@@ -72,7 +72,7 @@ public class MultiframeImage extends IMultiframeImage   {
         }
     }
             
-    private final Buffer iFrames;
+    private final PixelBuffer iFrames;
     
     private MultiframeImage(IImageProvider aP) {
         iProvider = aP;        
@@ -83,7 +83,7 @@ public class MultiframeImage extends IMultiframeImage   {
         iPixelSpacing = aP.getPixelSpacing();
         iTimeSliceVector = aP.getTimeSliceVector(); 
         iPVT = aP.getTransform();
-        iFrames = new Buffer(iWidth, iHeight, iNumFrames);
+        iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames);
     }
    
     private MultiframeImage(ImageFrame aF) {
@@ -94,7 +94,7 @@ public class MultiframeImage extends IMultiframeImage   {
         iPixelSpacing = PixelSpacing.UNITY_PIXEL_SPACING;
         iTimeSliceVector = TimeSliceVector.ONESHOT; 
         iPVT = PValueTransform.DEFAULT_TRANSFORM;
-        iFrames = new Buffer(iWidth, iHeight, iNumFrames);    
+        iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames);    
     }
     
     private MultiframeImage(IMultiframeImage aM, int aFrames) {        
@@ -106,8 +106,8 @@ public class MultiframeImage extends IMultiframeImage   {
         iSliceSpacing = aM.getSliceSpacing();
         iTimeSliceVector = aM.getTimeSliceVector();
         iPVT = aM.getTransform();
-        iFrames = new Buffer(iWidth, iHeight, iNumFrames); 
-        iFrames.all(); //have no provider - must not call it
+        iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames); 
+        iFrames.present(); //have no provider - must not call it
     }
     
     public static IMultiframeImage create(IImageProvider aP) {    
@@ -213,7 +213,7 @@ public class MultiframeImage extends IMultiframeImage   {
             iFrames.add(n, new ImageFrame(iWidth, iHeight, new int[iWidth*iHeight]));          
         */
         
-        ret.iFrames.all();
+        ret.iFrames.present();
         
         return ret;
     }
@@ -237,7 +237,7 @@ public class MultiframeImage extends IMultiframeImage   {
             System.arraycopy(iFrames.iBuf[i], 0, ret.iFrames.iBuf[i], 0, ret.iFrames.iBuf[i].length);            
         }
         
-        ret.iFrames.all();
+        ret.iFrames.present();
         return ret;
     }
     
