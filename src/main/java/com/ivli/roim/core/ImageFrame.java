@@ -129,7 +129,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         double Max = Double.MIN_VALUE; 
         iIden = .0;
         
-        for (int i = 0; i < iPixels.length; i++) {       
+        for (int i = 0; i < iPixels.length; ++i) {       
             final int temp = iPixels[i];
             if (temp > Max) 
                 Max = temp;

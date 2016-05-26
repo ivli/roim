@@ -61,7 +61,7 @@ class DCMImageProvider implements IImageProvider {
         ImageReader ir = ImageIO.getImageReadersByFormatName("DICOM").next(); //NOI18N
 
         if (null == ir) {
-            logger.error("It seems there's no DICOM reader available, make a try to install one"); //NOI18N
+            LOG.error("It seems there's no DICOM reader available, make a try to install one"); //NOI18N
             IIORegistry registry = IIORegistry.getDefaultInstance();
             registry.registerServiceProvider(new DicomImageReaderSpi());
             ir = ImageIO.getImageReadersByFormatName("DICOM").next();  //NOI18N
@@ -75,15 +75,17 @@ class DCMImageProvider implements IImageProvider {
     
     protected DCMImageProvider(final String aFile) throws IOException {
         File f = new File(aFile);
+        DicomInputStream dis = new DicomInputStream(f);
+        iDataSet = dis.readDataset(-1, -1);               
+        iReader.setInput(ImageIO.createImageInputStream(f));  
         
-        try (DicomInputStream dis = new DicomInputStream(f)) {
-            iDataSet = dis.readDataset(-1, -1);
-        } catch (IOException e) {
-            logger.error("FATAL!", e);
-        }
-
-        ImageInputStream iis = ImageIO.createImageInputStream(f);
-        iReader.setInput(iis);         
+        dumpFileInmormation(aFile);   
+    }
+    
+    private void dumpFileInmormation(String aN) {
+        
+        String msg = String.format("\nFILE:%s\nMODALITY:%s\n", aN, getModality().toString());
+        LOG.info(msg);
     }
     
     public Modality getModality() {
@@ -129,7 +131,7 @@ class DCMImageProvider implements IImageProvider {
      public PValueTransform getTransform() { 
         double  s = iDataSet.getDouble(Tag.RescaleSlope, 1.);   
         double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);            
-        logger.info (String.format("Slope=%f; Intercept=%f", s, i));
+        LOG.info (String.format("Slope=%f; Intercept=%f", s, i));
         return new PValueTransform(s, i);           
     }
        
@@ -164,7 +166,7 @@ class DCMImageProvider implements IImageProvider {
         } else {
             // either image is single frame or phase information is not present
             if (getNumFrames() != 1) {
-                logger.info("file is suspicious");
+                LOG.info("file is suspicious");
             }
             phases.add(new PhaseInformation(Math.max(1, getNumFrames()), iDataSet.getInt(Tag.ActualFrameDuration, 1000)));
         }
@@ -196,7 +198,7 @@ class DCMImageProvider implements IImageProvider {
     public PValueTransform getRescaleTransform() { 
         double  s = iDataSet.getDouble(Tag.RescaleSlope, 1.);   
         double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);            
-        logger.info (String.format("Slope=%f; Intercept=%f", s, i));
+        LOG.info (String.format("Slope=%f; Intercept=%f", s, i));
         return new PValueTransform(s, i);           
     }
                
@@ -224,5 +226,5 @@ class DCMImageProvider implements IImageProvider {
         return param;
     }
     
-    private static final Logger logger = LogManager.getLogger(DCMImageProvider.class);       
+    private static final Logger LOG = LogManager.getLogger(DCMImageProvider.class);       
 }
