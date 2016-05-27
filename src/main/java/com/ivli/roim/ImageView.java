@@ -248,7 +248,7 @@ public class ImageView  extends JComponent implements IImageView {
     }  
            
     protected BufferedImage createBufferedImage(ImageFrame aF) {               
-        WritableRaster wr = Raster.createBandedRaster(DataBuffer.TYPE_INT, aF.getWidth(), aF.getHeight(), 1, new java.awt.Point());        
+        WritableRaster wr = Raster.createBandedRaster(DataBuffer.TYPE_INT, aF.getWidth(), aF.getHeight(), 1, new Point());        
         wr.setDataElements(0, 0, aF.getWidth(), aF.getHeight(), aF.getPixelData());
        
         return new BufferedImage(new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
@@ -329,9 +329,7 @@ public class ImageView  extends JComponent implements IImageView {
                   
         iZoom.setToScale(scale, scale);  
     }                         
-    
-   
-    
+ 
     protected void updateBufferedImage() {                  
         updateScale();               
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);

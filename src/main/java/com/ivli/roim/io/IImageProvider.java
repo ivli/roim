@@ -18,6 +18,7 @@
 package com.ivli.roim.io;
 
 import com.ivli.roim.core.IImage;
+import java.io.IOException;
 
 /**
  *  
@@ -25,5 +26,5 @@ import com.ivli.roim.core.IImage;
  */
 public interface IImageProvider extends IImage {                  
     
-    public int[] readFrame(int anIndex, int [] aBuffer) throws IndexOutOfBoundsException;
+    public int[] readFrame(int anIndex, int [] aBuffer) throws IndexOutOfBoundsException, IOException;
 }

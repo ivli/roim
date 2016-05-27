@@ -19,6 +19,7 @@ package com.ivli.roim.core;
 
 import com.ivli.roim.io.IImageProvider;
 import com.ivli.roim.algorithm.ImageProcessor;
+import java.io.IOException;
 
 public class MultiframeImage extends IMultiframeImage   {
     protected final IImageProvider iProvider;
@@ -172,13 +173,19 @@ public class MultiframeImage extends IMultiframeImage   {
     public ImageFrame get(int aFrameNumber) throws IndexOutOfBoundsException {                      
         if (!hasAt(aFrameNumber))
             throw new IndexOutOfBoundsException();
-                
-        if (!iFrames.isPresent(aFrameNumber)) {
-            int[] t = iFrames.get(aFrameNumber);
-            iProvider.readFrame(aFrameNumber, t);            
+
+        final int[] pix = iFrames.get(aFrameNumber);
+        
+        if (!iFrames.isPresent(aFrameNumber)) {                     
+            try{
+                iProvider.readFrame(aFrameNumber, pix);            
+            } catch(IOException ex) {
+                //what to do here ???
+                throw new IndexOutOfBoundsException();
+            }
         }
         
-        return new ImageFrame(getWidth(), getHeight(), iFrames.get(aFrameNumber));        
+        return new ImageFrame(getWidth(), getHeight(), pix);        
     }          
     
      @Override             
@@ -240,29 +247,7 @@ public class MultiframeImage extends IMultiframeImage   {
         ret.iFrames.present();
         return ret;
     }
-    
-    /*    
-    public MultiframeImage collapse(TimeSlice aS){   
-        int frameTo = aS.getTo().isInfinite() ? getNumFrames() : getTimeSliceVector().frameNumber(aS.getTo());
-        int frameFrom = getTimeSliceVector().frameNumber(aS.getFrom());        
-         
-        ImageFrame sum = iFrames.get(frameFrom).duplicate();
-        
-        FrameProcessor fp = new FrameProcessor(sum);
-        
-        for (int n = frameFrom + 1; n < frameTo; ++n)            
-            fp.add(iFrames.get(n));
-       
-        MultiframeImage ret = new MultiframeImage(this.iProvider);
-        
-       
-        ret.iTimeSliceVector = getTimeSliceVector().slice(aS);
-        ret.iFrames.add(new ImageFrame(comp));
-        ret.iNumFrames = 1;
-        
-        return ret; 
-    } 
-    */
+      
     @Override
     public ImageProcessor processor() {
         return new ImageProcessor(this);     

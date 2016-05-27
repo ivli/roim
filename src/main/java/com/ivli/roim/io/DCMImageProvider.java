@@ -35,9 +35,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
-import javax.imageio.stream.ImageInputStream;
-
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dcm4che3.data.Attributes;
@@ -150,24 +147,19 @@ class DCMImageProvider implements IImageProvider {
         return new PValueTransform(s, i);           
     }
        
-    public int[] readFrame(int anIndex, int [] aBuffer) throws IndexOutOfBoundsException {        
-        try {
-            final int w = getWidth();
-            final int h = getHeight();  
-            int []ret;
-            if (null == aBuffer)
-                ret = new int[w*h];
-            else 
-                ret = aBuffer;
-            
-            Raster r = iReader.readRaster(anIndex, readParam());                       
-            return r.getSamples(0, 0, w, h, 0, ret);
-        } catch (IOException e) {
-            throw new IndexOutOfBoundsException();
-        }
+    public int[] readFrame(int anIndex, int[] aBuffer) throws IndexOutOfBoundsException, IOException {        
+        final int w = getWidth();
+        final int h = getHeight();  
+                
+        if (null == aBuffer)
+            aBuffer = new int[w*h];       
+        else if (aBuffer.length != w*h)
+            throw new IllegalArgumentException();
+                      
+        return iReader.readRaster(anIndex, readParam()).getSamples(0, 0, w, h, 0, aBuffer);       
     }
 
-    public TimeSliceVector getTimeSliceVector() {//throws IOException {
+    public TimeSliceVector getTimeSliceVector() {
         ArrayList<PhaseInformation> phases = new ArrayList();
 
         Sequence pid = (Sequence) iDataSet.getValue(Tag.PhaseInformationSequence);
@@ -189,7 +181,7 @@ class DCMImageProvider implements IImageProvider {
         return new TimeSliceVector(phases);
     }
 
-    public PixelSpacing getPixelSpacing() {// throws IOException {
+    public PixelSpacing getPixelSpacing() {
         double[] ps = iDataSet.getDoubles(Tag.PixelSpacing);
         if (null != ps && ps.length >= 2) {
             return new PixelSpacing(ps[0], ps[1]);
