@@ -31,7 +31,7 @@ public class CurveExtractor {
             Shape roi = aRoi.getShape();            
              
             if (null != anOff) {
-                FrameOffset off = anOff.get(n);
+                final FrameOffset off = anOff.get(n);
                 if (off != FrameOffset.ZERO)
                    roi = AffineTransform.getTranslateInstance(off.getX(), off.getY()).createTransformedShape(roi);               
             }

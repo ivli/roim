@@ -22,7 +22,8 @@ package com.ivli.roim.core;
  * @author likhachev
  */
 public enum ImageType {   
-    IMAGE("IMAGE"),        
+    IMAGE("IMAGE"),
+    //NM
     STATIC("STATIC"),        
     DYNAMIC("DYNAMIC"), 
     GATED("DYNAMIC/GATED"), 
@@ -31,6 +32,9 @@ public enum ImageType {
     TOMO_G("TOMO/GATED"),
     VOLUME("RECON TOMO"),
     VOLUME_G("RECON TOMO/GATED"),
+    //CR/CT
+    AXIAL("AXIAL"),
+    LOCALIZER("LOCALIZER"),
     UNKNOWN("UNKNOWN");
     
     public final String iName;

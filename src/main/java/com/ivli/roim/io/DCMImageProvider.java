@@ -57,7 +57,7 @@ class DCMImageProvider implements IImageProvider {
         ImageIO.scanForPlugins();
     }
 
-    static final ImageReader installImageReader() {
+    private static ImageReader installImageReader() {
         ImageReader ir = ImageIO.getImageReadersByFormatName("DICOM").next(); //NOI18N
 
         if (null == ir) {
@@ -70,13 +70,14 @@ class DCMImageProvider implements IImageProvider {
         return ir;
     }
 
-    private ImageReader iReader = installImageReader();
-    private Attributes iDataSet;               
+    private final ImageReader iReader;
+    private final Attributes iDataSet;               
     
     protected DCMImageProvider(final String aFile) throws IOException {
         File f = new File(aFile);
         DicomInputStream dis = new DicomInputStream(f);
-        iDataSet = dis.readDataset(-1, -1);               
+        iDataSet = dis.readDataset(-1, -1);   
+        iReader = installImageReader();
         iReader.setInput(ImageIO.createImageInputStream(f));  
         
         dumpFileInmormation(aFile);   
@@ -125,14 +126,16 @@ class DCMImageProvider implements IImageProvider {
     }
         
     public int getWidth() {        
-        return iDataSet.getInt(Tag.Rows, 0);        
+        return iDataSet.getInt(Tag.Columns, 0);        
     }
 
     public int getHeight() {       
-        return iDataSet.getInt(Tag.Columns, 0);
+        return iDataSet.getInt(Tag.Rows, 0);
     }
    
-    public int getNumFrames() {        
+    public int getNumFrames() {     
+        if (getModality() == Modality.CR)
+            return 1;
         return iDataSet.getInt(Tag.NumberOfFrames, 0);      
     }
      
