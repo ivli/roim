@@ -57,9 +57,9 @@ class XYSeriesUtilities {
     /*
      * returns index of neares element of scale X   
      */
-    static int getDomainIndex(final double []aS, double aX) {        
+    static int getNearestIndex(final double []aS, double aX) {        
         for (int i = 0; i < aS.length - 1; ++i) {        
-            if (aX == aS[i] || aX > aS[i] && aX < aS[i+1]) //this is time axis so only values greater than [i] and less than [i+1] needs to get tested    
+            if (aX == aS[i] || aX > aS[i] && aX < aS[i+1] || aX < aS[i] && aX > aS[i+1]) 
                 return i;          
         }
         if (aX == aS[aS.length-1])
@@ -74,7 +74,7 @@ class XYSeriesUtilities {
         double valY = Double.MIN_VALUE;
         double valX = Double.NaN;
         
-         final int ndx = getDomainIndex(v[0], aX);
+         final int ndx = getNearestIndex(v[0], aX);
         
         if (ndx < 0 || ndx >  v[0].length)
             return Double.NaN;
@@ -105,7 +105,7 @@ class XYSeriesUtilities {
         double valY = Double.MAX_VALUE;
         double valX = Double.NaN;
         
-        final int ndx = getDomainIndex(v[0], aX);
+        final int ndx = getNearestIndex(v[0], aX);
         
         if (ndx < 0 || ndx >  v[0].length)
             return Double.NaN;
@@ -136,8 +136,8 @@ class XYSeriesUtilities {
         double valY = Double.MAX_VALUE;
         double valX = Double.NaN;
         
-        final int ndx1 = getDomainIndex(v[0], aFrom);
-        final int ndx2 = getDomainIndex(v[0], aTo);
+        final int ndx1 = getNearestIndex(v[0], aFrom);
+        final int ndx2 = getNearestIndex(v[0], aTo);
         
         if (ndx1 < 0 || ndx1 >  v[0].length)
             return Double.NaN;
@@ -159,6 +159,16 @@ class XYSeriesUtilities {
         return valX;
     }
     
+    static double getNearestX(XYSeries aS, double aV) {
+        final double [][] v = aS.toArray();
+       
+        int ndx = getNearestIndex(v[1], aV); //illegal use
+        
+        if (ndx >= 0 && ndx < aS.getItemCount()) 
+            return v[0][ndx] ;
+        else
+            return Double.NaN;
+    }
     
     /*
      * computes Y = F(X) where X := [X0, X1, ... Xi, Xi+1 ... Xn] 
@@ -254,8 +264,8 @@ class XYSeriesUtilities {
         final double availFrom = Math.max(userFrom, aS.getMinX());
         final double availTo   = Math.min(userTo, aS.getMaxX());
         
-        final int n1 = getDomainIndex(v[0], availFrom);
-        final int n2 = getDomainIndex(v[0], availTo);
+        final int n1 = getNearestIndex(v[0], availFrom);
+        final int n2 = getNearestIndex(v[0], availTo);
         
         if (n1 < 0 || n2 < 0 || n2 <= n1)
             throw new IllegalArgumentException(String.format("n1 = %d, n2 = %d", n1, n2));

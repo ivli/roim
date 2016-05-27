@@ -17,6 +17,7 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.core.ImageFrame;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -47,12 +48,10 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU|PINNABLE;}
     
     ROI(String aName, Shape aS, ROIManager aMgr, Color aC) {
-        super(aName, aS, aMgr); 
-        
-        iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);
-          
-        iAreaInPixels = -1;///calculateAreaInPixels();
-        iSeries = null;//new SeriesCollection();//CurveExtractor.extract(getManager().getFrame(), this, getManager().getOffsetVector());
+        super(aName, aS, aMgr);         
+        iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);          
+        iAreaInPixels = -1;
+        iSeries = null;
     }
         
     void buildSeriesIfNeeded() {
@@ -61,7 +60,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }
     
     public int getAreaInPixels() {
-        if(-1 == iAreaInPixels)///
+        if(iAreaInPixels < 0)///
             calculateAreaInPixels();
         return iAreaInPixels;
     }
@@ -98,9 +97,9 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     
     @Override
     public void setName(String aName) {
-       String old = getName();
-       super.setName(aName);
-       notifyROIChanged(ROIChangeEvent.ROICHANGEDNAME, old);         
+        String old = getName();
+        super.setName(aName);
+        notifyROIChanged(ROIChangeEvent.ROICHANGEDNAME, old);         
     }
    
     void drawProfiles(Graphics2D aGC, AffineTransform aTrans) {        
@@ -109,21 +108,17 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         final int profileX[] = new int[bounds.width];;
         final int profileY[] = new int[bounds.height];;
         
-        getManager().getView().getFrame().extract(new com.ivli.roim.core.Extractor(){            
-            public void apply(com.ivli.roim.core.ImageFrame aR){
-            //double temp[] = new double [aR.getNumBands()];
-            
+        getManager().getView().getFrame().extract((ImageFrame aF) -> {                        
             for (int i = 0 ; i < bounds.width; ++i)
                 for (int j = bounds.y; j < bounds.y + bounds.height; ++j)
                     if (iShape.contains(new Point(i + bounds.x, j))) 
-                        profileX[i] += aR.getPixel(i + bounds.x, j);
+                        profileX[i] += aF.getPixel(i + bounds.x, j);
             
             for (int i = 0; i < bounds.height; ++i)
                 for (int j = bounds.y; j < bounds.y + bounds.width; ++j)
                     if (iShape.contains(new Point(i + bounds.x, j ))) 
-                        profileY[i] += aR.getPixel(i + bounds.x, j);
-              
-            }
+                        profileY[i] += aF.getPixel(i + bounds.x, j);
+                          
         });
             
         double min = Double.MAX_VALUE;
@@ -185,26 +180,23 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }
         
     private void calculateAreaInPixels() {
-        final java.awt.Rectangle bnds = getShape().getBounds();
-        int AreaInPixels = 0;
-
-        for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
-            for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) //{ 
-                if (getShape().contains(i, j)) 
-                  ++AreaInPixels;
+        final Rectangle bnds = getShape().getBounds();
         
-        iAreaInPixels = AreaInPixels;
+        iAreaInPixels = 0;
+        for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
+            for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) 
+                if (getShape().contains(i, j)) 
+                  ++iAreaInPixels;  
     }                 
         
     @Override
     void update() {    
         iAreaInPixels = -1;
-        iSeries = null;//new SeriesCollection();            
+        iSeries = null;            
     }
     
     @Override
     public void flip(boolean aV) {                        
-        Rectangle r = iShape.getBounds();
         AffineTransform tx;
         
         if (aV) {
@@ -215,9 +207,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
             tx.translate(-getShape().getBounds().getWidth(), 0);       
         }        
         
-        iShape = tx.createTransformedShape(iShape);
-        
-        r = iShape.getBounds();
+        iShape = tx.createTransformedShape(iShape);                
     }
     
     @Override
@@ -279,5 +269,5 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iShape = np;
     }
     */
-    private static final Logger logger = LogManager.getLogger(ROI.class);
+    private static final Logger LOG = LogManager.getLogger(ROI.class);
 }

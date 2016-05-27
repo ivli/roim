@@ -135,7 +135,7 @@ class Controller implements IController {
                             iControlled.repaint();
                         }
                     }catch (IndexOutOfBoundsException ex) {
-                        logger.info(ex);
+                        LOG.info(ex);
                     }
                 }}; 
             case MOUSE_ACTION_WHEEL: 
@@ -631,6 +631,6 @@ class Controller implements IController {
         } 
     }
  
-    private static final Logger logger = LogManager.getLogger(Controller.class);
+    private static final Logger LOG = LogManager.getLogger(Controller.class);
 } 
 

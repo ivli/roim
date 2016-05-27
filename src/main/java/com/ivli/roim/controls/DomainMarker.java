@@ -77,7 +77,7 @@ public class DomainMarker extends ValueMarker {
         if (Double.isFinite(val))
             setValue(val);
         else
-           logger.info("!!!Domain value not found");
+           LOG.info("!!!Domain value not found");
     }
     
     public void moveToMinimum(MOVETO aM) {
@@ -95,8 +95,21 @@ public class DomainMarker extends ValueMarker {
         if (Double.isFinite(val))
             setValue(val);
         else
-           logger.info("!!!Domain value not found");
+           LOG.info("!!!Domain value not found");
     }
+    
+    
+    
+    public void moveToMedian(MOVETO aM) {
+        double medY = (iSeries.getMaxY() - iSeries.getMinY()) / 2.;
+        double val = XYSeriesUtilities.getNearestX(iSeries, medY);
+        
+        if (Double.isFinite(val))
+            setValue(val);
+        else
+           LOG.info("!!!Domain value not found");
+    }
+    
         
     @Override
     public void setValue(double aVal) {
@@ -115,7 +128,7 @@ public class DomainMarker extends ValueMarker {
         }        
     }  
     
-    private static final Logger logger = LogManager.getLogger(DomainMarker.class);
+    private static final Logger LOG = LogManager.getLogger(DomainMarker.class);
 }
 
 

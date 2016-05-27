@@ -38,9 +38,6 @@ public class MIPProjector extends ProgressNotifier{
         iMIP = iImage.createCompatibleImage(aProjections);             
     }
      
-    /*
-     *
-     */
     public MIPProjector(IMultiframeImage aSrc, IMultiframeImage aDst) {
         iImage = aSrc; 
         iMIP = aDst;         
@@ -95,8 +92,7 @@ public class MIPProjector extends ProgressNotifier{
         iMIP.processor().flipVert();      
         notifyProgressChanged(100);
     }
-    
-    
+ 
     public ImageFrame get(int currProj) {    
         final ImageFrame frm = iMIP.get(currProj);
         final int nSlices = iImage.getNumFrames();
@@ -128,18 +124,5 @@ public class MIPProjector extends ProgressNotifier{
         }
         return frm;
     }
-    
-    
-    /*
-    public IMultiframeImage getResult() {
-        return iMIP;
-    }
-    
-    
-    @Override
-    public void run() {         
-        project();  
-        notifyProgressChanged(100);      
-    } 
-    */
+      
 }

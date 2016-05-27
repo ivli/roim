@@ -175,7 +175,7 @@ public class ImageView  extends JComponent implements IImageView {
     }
         
     public void addWindowChangeListener(WindowChangeListener aL) {
-        logger.info("-> addWindowChangeListener {}", aL); //NOI18N
+        LOG.info("-> addWindowChangeListener {}", aL); //NOI18N
         iListeners.add(WindowChangeListener.class, aL);       
     }
    
@@ -232,7 +232,7 @@ public class ImageView  extends JComponent implements IImageView {
         try {            
            ret.invert(); 
         } catch (NoninvertibleTransformException ex) { 
-            logger.info(ex); // can I do anything more conscious here            
+            LOG.info(ex); // can I do anything more conscious here            
         }
         return ret;
     }
@@ -390,7 +390,7 @@ public class ImageView  extends JComponent implements IImageView {
         return iVLUT.transform(aSrc, null);
     }
               
-    private static final Logger logger = LogManager.getLogger(ImageView.class);
+    private static final Logger LOG = LogManager.getLogger(ImageView.class);
 }
 
 

@@ -57,6 +57,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         MOVE_TO_MAX(      "MARKER_CMD_MOVE_TO_MAX",       java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX")),
         MOVE_TO_MAX_LEFT( "MARKER_CMD_MOVE_TO_MAX_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX_LEFT")),
         MOVE_TO_MAX_RIGHT("MARKER_CMD_MOVE_TO_MAX_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX_RIGHT")),
+        MOVE_TO_MEDIAN(     "MARKER_CMD_MOVE_TO_HALS",      "MARKER_COMMAND.MOVE_TO_HALF"),
         FIT_LEFT(         "MARKER_CMD_FIT_LEFT",          java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.FIT_LEFT")),
         FIT_RIGHT(        "MARKER_CMD_FIT_RIGHT",         java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.FIT_RIGHT"));
                         
@@ -208,6 +209,9 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
                 ((DomainMarker)iMarker).moveToMinimum(DomainMarker.MOVETO.LEFT); break;
             case MOVE_TO_MIN_RIGHT:                 
                 ((DomainMarker)iMarker).moveToMinimum(DomainMarker.MOVETO.RIGHT); break;
+            case MOVE_TO_MEDIAN:                 
+                ((DomainMarker)iMarker).moveToMedian(DomainMarker.MOVETO.GLOBAL); break;
+                
             case DELETE:
                 removeMarker((DomainMarker)iMarker);
                 break;
@@ -381,7 +385,9 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
                 mi2.add(MENUS.MOVE_TO_MAX.makeItem(this));
                 mi2.add(MENUS.MOVE_TO_MAX_LEFT.makeItem(this));
                 mi2.add(MENUS.MOVE_TO_MAX_RIGHT.makeItem(this));
+                
                 mnu.add(mi2); 
+                mnu.add(MENUS.MOVE_TO_MEDIAN.makeItem(this));
                 JMenu mi3 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.FIT"));                
                 mi3.add(MENUS.FIT_LEFT.makeItem(this));
                 mi3.add(MENUS.FIT_RIGHT.makeItem(this));

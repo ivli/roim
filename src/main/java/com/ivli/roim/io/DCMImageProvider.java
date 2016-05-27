@@ -28,7 +28,6 @@ import com.ivli.roim.core.Photometric;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.SliceSpacing;
 import com.ivli.roim.core.TimeSliceVector;
-import java.awt.image.Raster;
 import java.io.File;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
