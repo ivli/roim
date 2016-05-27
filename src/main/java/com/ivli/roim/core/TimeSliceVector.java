@@ -18,6 +18,7 @@
 package com.ivli.roim.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -35,13 +36,10 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
     
     public TimeSliceVector(ArrayList<PhaseInformation> aP) {                
         iPhases =  new ArrayList();
-        
-        for (PhaseInformation p : aP)
-            iPhases.add(new PhaseInformation(p));
-        
-        ///iPhases.
-        iSlices = new ArrayList(); 
-        
+       
+        aP.stream().forEach( (p) -> {iPhases.add(new PhaseInformation(p));});
+       
+        iSlices = new ArrayList();         
         fillSlicesArray();
     }
       /**/
@@ -50,6 +48,30 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         iPhases.add(PhaseInformation.ONESHOT);
         iSlices = new ArrayList(); 
         fillSlicesArray();        
+    }
+    
+    public long getSmallestDuration() {
+        long ret = Long.MAX_VALUE;
+        for(PhaseInformation p:iPhases) {
+            if (p.iFrameDuration < ret) 
+                ret = p.iFrameDuration;
+        }
+        return ret;
+    }
+    
+    public String toString() {
+        StringBuilder sb = new StringBuilder();    
+        Iterator<PhaseInformation> pi = iPhases.iterator();
+      
+        do {            
+            sb.append(pi.next());        
+            if (pi.hasNext())
+                sb.append(", ");
+            else 
+                break;
+        } while(true);
+                     
+        return new String(sb);
     }
     
     public TimeSliceVector slice(TimeSlice aS) {        
@@ -75,14 +97,23 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         return new TimeSliceVector(phases);        
     }
     
+    //returns avector of frames' end times for instance having single phase image of 3 1s frames it would return a list of <1000, 2000, 3000>    
     public ArrayList<Long> getSlices() {
         return iSlices;
+    }
+    
+    public long getFrameDuration(int aFrameNumber) {
+        return iPhases.get(phaseFrame(aFrameNumber)).iFrameDuration;
+    }
+    
+    public long getNumberOfFrames(int aFrameNumber) {
+        return iPhases.get(phaseFrame(aFrameNumber)).iNumberOfFrames;
     }
     
     public TimeSlice getSlice(int aFrameNumber) {
         final long from = frameStarts(aFrameNumber);
         final long to = frameStarts(aFrameNumber + 1);
-        return new TimeSlice (from, to);
+        return new TimeSlice(from, to);
     }
     
     private void fillSlicesArray() {
@@ -117,9 +148,8 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         return iPhases.get(aPhase).iFrameDuration * iPhases.get(aPhase).iNumberOfFrames;
     }
     
-     //get phase number by frame
-    public int phaseFrame(int aFrameNumber) {
-        
+    //returns phase number by frame
+    public int phaseFrame(int aFrameNumber) {        
         if (aFrameNumber < 0 || aFrameNumber > getNumFrames())
             throw new IllegalArgumentException("bad FrameNumber");
         

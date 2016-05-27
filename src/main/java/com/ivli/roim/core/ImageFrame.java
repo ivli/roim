@@ -26,27 +26,12 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
    
     private int iWidth;
     private int iHeight;
-        
-    //private double iMin = Double.NaN;
-    //private double iMax = Double.NaN; 
+    
     private Range iRange = new Range(Double.NaN, Double.NaN);
     private double iIden = Double.NaN;
     
     private final int []iPixels;        
-    
-    /*
-    public ImageFrame(ImageFrame aI) {       
-        iWidth = aI.getWidth();
-        iHeight = aI.getHeight();
-        iPixels = new int[iWidth*iHeight];
-        System.arraycopy(aI.getPixelData(), 0, iPixels, 0, iWidth*iHeight);
-        //iMin = aI.iMin;
-        //iMax = aI.iMax;
-        iRange = new Range(aI.iRange);
-        iIden = aI.iIden;
-    }
-     */
-    
+        
     public ImageFrame(int aWidth, int aHeight, int[] aPixels) {       
         iWidth  = aWidth;
         iHeight = aHeight;

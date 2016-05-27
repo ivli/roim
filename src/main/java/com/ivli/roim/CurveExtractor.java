@@ -10,6 +10,8 @@ import com.ivli.roim.core.Series;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.FrameOffsetVector;
 import com.ivli.roim.core.FrameOffset;
+import com.ivli.roim.core.TimeSliceVector;
+import java.awt.Rectangle;
 /**
  *
  * @author likhachev
@@ -22,6 +24,9 @@ public class CurveExtractor {
         Series mins    = new Series(Measurement.MINPIXEL);
         Series maxs    = new Series(Measurement.MAXPIXEL);
         
+        final TimeSliceVector tsv = anImage.getTimeSliceVector();
+        final long smd = tsv.getSmallestDuration();
+        
         for (int n = 0; n < anImage.getNumFrames(); ++n) {  
             Shape roi = aRoi.getShape();            
              
@@ -31,10 +36,15 @@ public class CurveExtractor {
                    roi = AffineTransform.getTranslateInstance(off.getX(), off.getY()).createTransformedShape(roi);               
             }
             
-            Measure m = measure(anImage.get(n), roi); 
-            density.add(m.getIden());   
-            mins.add(m.getMin());
-            maxs.add(m.getMax());
+            /* 
+             * normalize result to smallest frame duration
+             */
+            final double norm = (double)tsv.getFrameDuration(n) / (double)smd;
+            
+            final Measure m = measure(anImage.get(n), roi); 
+            density.add(m.getIden() / norm );   
+            mins.add(m.getMin() / norm);
+            maxs.add(m.getMax() / norm);
         } 
         
         c.addSeries(density);
@@ -44,18 +54,17 @@ public class CurveExtractor {
         return c;
     }    
    
-    private static Measure measure(final ImageFrame aF, Shape aShape) throws ArrayIndexOutOfBoundsException {          
+    private static Measure measure(final ImageFrame aF, final Shape aShape) throws ArrayIndexOutOfBoundsException {          
         double min = Double.MAX_VALUE; 
         double max = Double.MIN_VALUE;
         double sum = .0;
-
-        final java.awt.Rectangle bnds = aShape.getBounds();
+        
+        final Rectangle bnds = aShape.getBounds();
         
         for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
-            for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) //{ 
-                if (aShape.contains(i, j)) {
-                   /// ++pix;
-                    final int temp = aF.getPixel(i, j);
+            for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) 
+                if (aShape.contains(i, j)) {                   
+                    final int temp = aF.get(i, j);
 
                     if (temp > max) 
                         max = temp;

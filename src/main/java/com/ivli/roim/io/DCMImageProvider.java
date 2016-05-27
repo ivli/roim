@@ -82,10 +82,22 @@ class DCMImageProvider implements IImageProvider {
         dumpFileInmormation(aFile);   
     }
     
-    private void dumpFileInmormation(String aN) {
-        
-        String msg = String.format("\nFILE:%s\nMODALITY:%s\n", aN, getModality().toString());
-        LOG.info(msg);
+    private void dumpFileInmormation(String aN) {        
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n-----------------------------------");
+        sb.append("\nFILE: ");
+        sb.append(aN);       
+        sb.append("\nMODALITY: ");
+        sb.append(getModality());
+        sb.append("\nTYPE: ");
+        sb.append(getImageType());        
+        sb.append("\nPHOTOMETRIC INTERPRETATION: ");
+        sb.append(getPhotometric());
+        sb.append(String.format("\nFRAMES:%d; WIDTH:%d; HEIGHT:%d", getNumFrames(), getWidth(), getHeight()));
+        sb.append("\nTIMESLICE VECTOR:");
+        sb.append(getTimeSliceVector());
+        sb.append("\n-----------------------------------\n");
+        LOG.info(sb);
     }
     
     public Modality getModality() {
@@ -101,7 +113,7 @@ class DCMImageProvider implements IImageProvider {
     }
     
     public Photometric getPhotometric() {
-        Object o = iDataSet.getValue(Tag.Modality);        
+        Object o = iDataSet.getValue(Tag.PhotometricInterpretation);        
         
         if (null != o) {            
             final String s = new String((byte[])o);
