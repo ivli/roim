@@ -35,8 +35,7 @@ class XYSeriesUtilities {
                 valY = v[1][i];
                 valX = v[0][i];
             }            
-        }
-  
+        }  
         return valX;
     }
     
@@ -55,7 +54,7 @@ class XYSeriesUtilities {
         return valX;
     }
     /*
-     * returns index of neares element of scale X   
+     * returns neares X index   
      */
     static int getNearestIndex(final double []aS, double aX) {        
         for (int i = 0; i < aS.length - 1; ++i) {        
