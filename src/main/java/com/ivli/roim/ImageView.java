@@ -174,8 +174,7 @@ public class ImageView  extends JComponent implements IImageView {
         return iModel.getHeight();
     }
         
-    public void addWindowChangeListener(WindowChangeListener aL) {
-        LOG.info("-> addWindowChangeListener {}", aL); //NOI18N
+    public void addWindowChangeListener(WindowChangeListener aL) {        
         iListeners.add(WindowChangeListener.class, aL);       
     }
    
