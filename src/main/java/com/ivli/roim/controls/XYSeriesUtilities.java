@@ -194,7 +194,8 @@ class XYSeriesUtilities {
         return Double.NaN;
     }
     
-    private static abstract class F {
+     @FunctionalInterface
+    interface F {
         abstract double f(double x);         
     }       
     
@@ -234,17 +235,18 @@ class XYSeriesUtilities {
         //double []ret = {slope, intercept};
         return exp ? 
                 new F() {
-                            double f(double x) {return Math.exp(slope*x + intercept);}
+                        public double f(double x) {return Math.exp(slope*x + intercept);}                            
                         }: 
                 new F() {
-                            double f(double x) {return slope*x + intercept;}
+                        public double f(double x) {return slope*x + intercept;}
                         };            
     }
     
     
     /*
      * performs exponential fit of a given series aS through interval [aFrom, aTo)   
-     * uses least squares formula to find intercept and slope
+     * uses least squares to find intercept and slope
+     * in the case aFrom and/or aTo lie outside the series then method returns extrapolation 
      */        
     public static XYSeries fit(XYSeries aS, double aFrom, double aTo, boolean aExp, XYSeries aRet) {            
         if (null == aS)
@@ -272,7 +274,7 @@ class XYSeriesUtilities {
         final F f = leastsquares(v[0], v[1], n1, n2, aExp);
         
          //interpolate      
-        for(int i = n1; i < n2; ++i) 
+        for(int i = n1; i <= n2; ++i) 
             aRet.add(v[0][i], f.f(v[0][i])); 
 
          //extrapolate right       

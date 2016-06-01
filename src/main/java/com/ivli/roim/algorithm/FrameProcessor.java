@@ -72,7 +72,7 @@ public class FrameProcessor {
     }
     
     public void flipHorz() {
-       final int width  = iFrame.getWidth();
+        final int width  = iFrame.getWidth();
         final int height = iFrame.getHeight() ;
         final int [] buf = iFrame.getPixelData();
         
