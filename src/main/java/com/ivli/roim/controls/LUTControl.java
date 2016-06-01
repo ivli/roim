@@ -199,7 +199,8 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             Window nw;
             
             if (true) {
-                nw = new Window(iRange = anE.getRange());
+                nw = new Window(iRange = iView.getRange());
+                //nw = new Window(iRange = anE.getRange());
             } else {            
                 //nw = new Window(iView.getWindow());
                 nw = new Window(iRange);
@@ -207,7 +208,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 nw.setTop(screenToImage(iTop.getPosition()));
                                
                 final double or = iRange.range();           
-                final double nr = (iRange = anE.getRange()).range();       
+                final double nr = (iRange = iView.getRange()).range();       
                 nw.scale(nr / or);                
             } 
             

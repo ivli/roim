@@ -178,7 +178,8 @@ public class MultiframeImage extends IMultiframeImage   {
         
         if (!iFrames.isPresent(aFrameNumber)) {                     
             try{
-                iProvider.readFrame(aFrameNumber, pix);            
+                iProvider.readFrame(aFrameNumber, pix);                
+                iFrames.present(aFrameNumber);
             } catch(IOException ex) {
                 //what to do here ???
                 throw new IndexOutOfBoundsException();

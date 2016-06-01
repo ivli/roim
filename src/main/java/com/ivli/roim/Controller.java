@@ -129,14 +129,14 @@ class Controller implements IController {
                 }};                 
             case MOUSE_ACTION_LIST: return new BaseActionItem(aX, aY) {
                 public void DoAction(int aX, int aY) {
-                    try {                            
-                        if (iControlled.loadFrame(iX + aX)) {
+                    //try {                            
+                        if (iControlled.loadFrame(iX + (int)Math.signum(aX))) {
                             iX += aX; 
                             iControlled.repaint();
                         }
-                    }catch (IndexOutOfBoundsException ex) {
-                        LOG.info(ex);
-                    }
+                    //} catch (IndexOutOfBoundsException ex) {
+                    //    LOG.info(ex);
+                    //}
                 }}; 
             case MOUSE_ACTION_WHEEL: 
             case MOUSE_ACTION_ROI: 

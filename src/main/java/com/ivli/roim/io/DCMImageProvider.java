@@ -93,6 +93,8 @@ class DCMImageProvider implements IImageProvider {
         sb.append(String.format("\nFRAMES:%d; WIDTH:%d; HEIGHT:%d", getNumFrames(), getWidth(), getHeight()));
         sb.append("\nTIMESLICE VECTOR:");
         sb.append(getTimeSliceVector());
+        sb.append("\nP-VALUE TRANSFORM:");
+        sb.append(getTransform());                
         sb.append("\n-----------------------------------\n");
         LOG.info(sb);
     }
@@ -141,15 +143,16 @@ class DCMImageProvider implements IImageProvider {
     
      public PValueTransform getTransform() { 
         double  s = iDataSet.getDouble(Tag.RescaleSlope, 1.);   
-        double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);            
-        LOG.info (String.format("Slope=%f; Intercept=%f", s, i));
+        double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);                    
         return new PValueTransform(s, i);           
     }
        
     public int[] readFrame(int anIndex, int[] aBuffer) throws IndexOutOfBoundsException, IOException {        
         final int w = getWidth();
         final int h = getHeight();  
-                
+        
+        LOG.info(String.format("Loading frame # = %d", anIndex));
+        
         if (null == aBuffer)
             aBuffer = new int[w*h];       
         else if (aBuffer.length != w*h)
@@ -171,10 +174,10 @@ class DCMImageProvider implements IImageProvider {
             }
         } else {
             // either image is single frame or phase information is not present
-            if (getNumFrames() != 1) {
-                LOG.info("file is suspicious");
-            }
-            phases.add(new PhaseInformation(Math.max(1, getNumFrames()), iDataSet.getInt(Tag.ActualFrameDuration, 1000)));
+            //if (getNumFrames() != 1) {
+            //    LOG.info("file is suspicious");
+           // }
+            phases.add(PhaseInformation.ONESHOT);//new PhaseInformation(Math.max(1, getNumFrames()), iDataSet.getInt(Tag.ActualFrameDuration, 1000)));
         }
 
         return new TimeSliceVector(phases);

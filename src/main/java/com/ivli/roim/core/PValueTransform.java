@@ -13,6 +13,10 @@ public class PValueTransform implements java.io.Serializable {
     private final double iSlope;
     private final double iIntercept;
 
+    public String toString() {
+        return String.format("%fx + %f", iSlope, iIntercept);
+    }
+    
     public PValueTransform(double aS, double aI) {
         iSlope = aS; 
         iIntercept = aI;

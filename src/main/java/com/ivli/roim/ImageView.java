@@ -199,11 +199,11 @@ public class ImageView  extends JComponent implements IImageView {
     } 
     
     protected void notifyFrameChanged() {
-        final FrameChangeEvent evt = new FrameChangeEvent(this, getFrameNumber(), iModel.getNumFrames(),
-                                                            //new Range(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()),
-                                                            this.getRange(),
-                                                            iModel.getTimeSliceVector().getSlice(getFrameNumber()));                
-      
+        final FrameChangeEvent evt = new FrameChangeEvent(this, getFrameNumber());/*, iModel.getNumFrames(),                                                           
+                                                          this.getRange(),
+                                                          //iModel.getTimeSliceVector().getSlice());                
+                                                            getFrameNumber());
+        */
         for (FrameChangeListener l : iListeners.getListeners(FrameChangeListener.class))
             l.frameChanged(evt);       
     }

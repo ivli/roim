@@ -34,6 +34,7 @@ import javax.swing.UIManager;
 
 import com.ivli.roim.controls.*;
 import com.ivli.roim.core.ImageType;
+import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.events.*;
 import com.ivli.roim.io.ImageProviderFactory;
 import java.io.File;
@@ -493,6 +494,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                         prj.project();
                     }
                 } 
+                
                 tmp t = new tmp();
                 prj.addProgressListener(d);
                 
@@ -726,12 +728,39 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jLabel4.setText(String.format("%3.0f/%3.0f", aE.getWindow().getLevel(), aE.getWindow().getWidth())); // NOI18N        
     }
     
-    public void frameChanged(FrameChangeEvent aE) {     
-        jLabel1.setText(String.format("%d:%d", aE.getFrame() + 1, aE.getTotal())); // NOI18N
-        jLabel2.setText(String.format("%s - %s", aE.getTimeSlice().getFrom().format(), // NOI18N
-                                                 aE.getTimeSlice().getTo().format()));
+    public void frameChanged(FrameChangeEvent aE) { 
+        ImageView iw = (ImageView)aE.getSource();
+        //iw.getImage().getNumFrames(),                                                           
+                                                          // iw.getRange(), getImage().getFrame().getRange(),
+                                                          //iModel.getTimeSliceVector().getSlice());                
+                                                         //   getFrameNumber());
+                                                            
+        jLabel1.setText(String.format("%d:%d", aE.getFrame() + 1, iw.getImage().getNumFrames())); // NOI18N
+        
+        String label2text;
+        
+        switch (iw.getImage().getImageType()) {
+            case DYNAMIC: {
+                TimeSlice ts = iw.getImage().getTimeSliceVector().getSlice(aE.getFrame());
+                label2text = String.format("%s - %s", ts.getFrom().format(), ts.getTo().format());
+            } break;
+            case WHOLEBODY: {
+                label2text = aE.getFrame() == 0 ? "ANT" : "POST";
+            } break;
+            case TOMO: //fall-through
+            case VOLUME:{
+                label2text = String.format("%d", aE.getFrame());
+            } break;
                 
-        jLabel3.setText(String.format("%3.0f/%3.0f", aE.getRange().getMin(), aE.getRange().getMax())); // NOI18N
+            case STATIC: //fall-through
+            default: label2text = "---"; break;
+
+        }
+        
+        jLabel2.setText(label2text);
+                                                 
+                
+        jLabel3.setText(String.format("%3.0f/%3.0f", iw.getRange().getMin(), iw.getRange().getMax())); // NOI18N
         
     }
   
