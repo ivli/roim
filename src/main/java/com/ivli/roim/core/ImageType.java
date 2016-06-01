@@ -38,8 +38,11 @@ public enum ImageType {
     UNKNOWN("UNKNOWN");
     
     public final String iName;
+    private final boolean iDerived;
     
     private ImageType(String aN) {               
         iName = aN;
-    }  
+        iDerived = false;
+    }
+    
 }

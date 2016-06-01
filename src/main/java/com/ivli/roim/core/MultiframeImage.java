@@ -114,8 +114,7 @@ public class MultiframeImage extends IMultiframeImage   {
     public static IMultiframeImage create(IImageProvider aP) {    
         return new MultiframeImage(aP);
     }
-    
-    /*  */  
+       
     protected void computeStatistics() {                        
         iMin = iProvider.getMin();
         iMax = iProvider.getMax();
@@ -207,6 +206,7 @@ public class MultiframeImage extends IMultiframeImage   {
     public IMultiframeImage createCompatibleImage(int aNumberOfFRames) {
         //TODO: change type and ... 
         MultiframeImage ret = new MultiframeImage(this, aNumberOfFRames); 
+        ret.iImageType = iImageType;
         /*
         ret.iNumFrames = aI;
         ret.iWidth = iWidth;

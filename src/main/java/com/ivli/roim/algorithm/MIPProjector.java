@@ -35,7 +35,8 @@ public class MIPProjector extends ProgressNotifier{
     public MIPProjector(IMultiframeImage aSrc, int aProjections) {
         iImage = aSrc; 
         iProjections = aProjections;
-        iMIP = iImage.createCompatibleImage(aProjections);             
+        iMIP = iImage.createCompatibleImage(aProjections); 
+        ///iMIP.iImageType = ImageType 
     }
      
     public MIPProjector(IMultiframeImage aSrc, IMultiframeImage aDst) {
