@@ -57,7 +57,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         MOVE_TO_MAX(      "MARKER_CMD_MOVE_TO_MAX",       java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX")),
         MOVE_TO_MAX_LEFT( "MARKER_CMD_MOVE_TO_MAX_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX_LEFT")),
         MOVE_TO_MAX_RIGHT("MARKER_CMD_MOVE_TO_MAX_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX_RIGHT")),
-        MOVE_TO_MEDIAN(     "MARKER_CMD_MOVE_TO_HALS",      "MARKER_COMMAND.MOVE_TO_HALF"),
+        MOVE_TO_MEDIAN(   "MARKER_CMD_MOVE_TO_MEDIAN",    java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.MOVE_TO_MEDIAN")),
         FIT_LEFT(         "MARKER_CMD_FIT_LEFT",          java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.FIT_LEFT")),
         FIT_RIGHT(        "MARKER_CMD_FIT_RIGHT",         java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MARKER_COMMAND.FIT_RIGHT"));
                         
@@ -287,7 +287,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         Interpolation(DomainMarker aLhs, DomainMarker aRhs) {
             iLhs = aLhs; 
             iRhs = aRhs;
-            iSeries = new XYSeries(String.format("INTERPOLATION%d", iInterpolationID++));
+            iSeries = new XYSeries(String.format(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("INTERPOLATION%D"), iInterpolationID++));
             
             XYSeriesUtilities.fit(iLhs.getXYSeries(), iLhs.getValue(), iRhs.getValue(), iExp, iSeries);
             
