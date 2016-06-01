@@ -20,6 +20,7 @@ package com.ivli.roim.core;
 import com.ivli.roim.io.IImageProvider;
 import com.ivli.roim.algorithm.ImageProcessor;
 import java.io.IOException;
+import java.util.BitSet;
 
 public class MultiframeImage extends IMultiframeImage   {
     protected final IImageProvider iProvider;
@@ -37,33 +38,34 @@ public class MultiframeImage extends IMultiframeImage   {
     protected Double iMin = Double.NaN;
     protected Double iMax = Double.NaN;
     
-     
-    private final class PixelBuffer {
-        private final boolean[] iMask;         
+    
+    private final class PixelBuffer {               
+        private final BitSet iMask;
         private final int [][] iBuf;
         
         PixelBuffer(int aW, int aH, int aF) {
             iBuf = new int[aF][aW*aH];
-            iMask = new boolean[aF];
+            iMask = new BitSet(aF);
         }
         
         boolean isPresent(int aF) {
-            return iMask[aF];
-        }
-        
-        void present(int aF) {
-            iMask[aF] = true;
-        }
-        
-        void present() {
-            for(int i = 0; i < iMask.length; ++i)
-                iMask[i] = true;            
+            return iMask.get(aF);
         }
         
         int[] get(int aF) {
             return iBuf[aF];
         }
         
+        void present(int aF) {
+            iMask.set(aF, true);
+        }
+        
+        void present() {
+            //for(int i = 0; i < iMask.length; ++i)
+            //    iMask[i] = true;      
+            iMask.set(0, iMask.size(), true);
+        }
+ 
         void copyFrom(int aF, int[] aS) {
             System.arraycopy(aS, 0, iBuf, aF * iWidth * iHeight, iWidth * iHeight);
         }
@@ -203,9 +205,9 @@ public class MultiframeImage extends IMultiframeImage   {
     }  
         
      @Override
-    public IMultiframeImage createCompatibleImage(int aNumberOfFRames) {
+    public IMultiframeImage createCompatibleImage(int aNumberOfFrames) {
         //TODO: change type and ... 
-        MultiframeImage ret = new MultiframeImage(this, aNumberOfFRames); 
+        MultiframeImage ret = new MultiframeImage(this, aNumberOfFrames); 
         ret.iImageType = iImageType;
         /*
         ret.iNumFrames = aI;
@@ -219,8 +221,7 @@ public class MultiframeImage extends IMultiframeImage   {
         ret.iFrames = new java.util.ArrayList<>(iNumFrames);
         for (int n=0; n < iNumFrames; ++n)
             iFrames.add(n, new ImageFrame(iWidth, iHeight, new int[iWidth*iHeight]));          
-        */
-        
+        */        
         ret.iFrames.present();
         
         return ret;
