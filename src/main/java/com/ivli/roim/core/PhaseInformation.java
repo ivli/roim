@@ -56,9 +56,7 @@ public class PhaseInformation implements java.io.Serializable, Comparable<PhaseI
              return ret;
         }
     }
-    
-    
-    
+ 
     public String toString() {             
         return String.format("%d:%d", iNumberOfFrames, iFrameDuration);
     }

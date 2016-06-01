@@ -9,7 +9,7 @@ package com.ivli.roim.core;
 public class PValueTransform implements java.io.Serializable {
     private static final long serialVersionUID = 42L;
 
-    public static PValueTransform DEFAULT_TRANSFORM = new  PValueTransform(1.0, 0);
+    public static final PValueTransform DEFAULT_TRANSFORM = new  PValueTransform(1.0, 0);
     private final double iSlope;
     private final double iIntercept;
 

@@ -26,9 +26,9 @@ public class PixelSpacing implements java.io.Serializable {
     /**
      *  pixel-to-pixel spacing when physical measurements are not known
      */
-    public final static double UNITY_PIXEL_SPACING_X = 1.0;
-    public final static double UNITY_PIXEL_SPACING_Y = 1.0;       
-    public final static PixelSpacing UNITY_PIXEL_SPACING = new PixelSpacing(UNITY_PIXEL_SPACING_X, UNITY_PIXEL_SPACING_Y);
+    public static final double UNITY_PIXEL_SPACING_X = 1.0;
+    public static final double UNITY_PIXEL_SPACING_Y = 1.0;       
+    public static final PixelSpacing UNITY_PIXEL_SPACING = new PixelSpacing(UNITY_PIXEL_SPACING_X, UNITY_PIXEL_SPACING_Y);
     
     /**
      * column spacing
