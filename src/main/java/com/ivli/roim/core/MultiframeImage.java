@@ -40,10 +40,10 @@ public class MultiframeImage extends IMultiframeImage   {
     
     
     private final class PixelBuffer {               
-        private final BitSet iMask;
+        private final BitSet iMask;       
         private final int [][] iBuf;
         
-        PixelBuffer(int aW, int aH, int aF) {
+        PixelBuffer(int aW, int aH, int aF){
             iBuf = new int[aF][aW*aH];
             iMask = new BitSet(aF);
         }
@@ -60,9 +60,7 @@ public class MultiframeImage extends IMultiframeImage   {
             iMask.set(aF, true);
         }
         
-        void present() {
-            //for(int i = 0; i < iMask.length; ++i)
-            //    iMask[i] = true;      
+        void present() {           
             iMask.set(0, iMask.size(), true);
         }
  

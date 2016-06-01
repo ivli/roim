@@ -18,6 +18,48 @@ import java.awt.Rectangle;
  */
 public class CurveExtractor {    
     public static SeriesCollection extract(IMultiframeImage anImage, ROI aRoi, FrameOffsetVector anOff) {
+        switch (anImage.getImageType()) {
+            case STATIC:
+            case DYNAMIC:
+                return extract_dynamic(anImage, aRoi, anOff);
+            case TOMO:
+            case VOLUME:
+            default:    
+                return extract_tomo(anImage, aRoi, anOff);
+        }
+    }
+    
+    private static SeriesCollection extract_tomo(IMultiframeImage anImage, ROI aRoi, FrameOffsetVector anOff) {
+        SeriesCollection c = new SeriesCollection();
+       
+        Series density = new Series(Measurement.DENSITY);
+        Series mins    = new Series(Measurement.MINPIXEL);
+        Series maxs    = new Series(Measurement.MAXPIXEL);
+      
+        for (int n = 0; n < anImage.getNumFrames(); ++n) {  
+            Shape roi = aRoi.getShape();            
+             
+            if (null != anOff) {
+                final FrameOffset off = anOff.get(n);
+                if (off != FrameOffset.ZERO)
+                   roi = AffineTransform.getTranslateInstance(off.getX(), off.getY()).createTransformedShape(roi);               
+            }
+         
+            final Measure m = measure(anImage.get(n), roi); 
+            density.add(m.getIden());   
+            mins.add(m.getMin());
+            maxs.add(m.getMax());
+        } 
+        
+        c.addSeries(density);
+        c.addSeries(mins);
+        c.addSeries(maxs);
+        
+        return c;
+    }    
+   
+    
+    private static SeriesCollection extract_dynamic(IMultiframeImage anImage, ROI aRoi, FrameOffsetVector anOff) {
         SeriesCollection c = new SeriesCollection();
        
         Series density = new Series(Measurement.DENSITY);

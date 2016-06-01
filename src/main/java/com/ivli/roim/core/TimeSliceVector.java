@@ -162,7 +162,7 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         
         throw new IllegalArgumentException("bad FrameNumber");        
     }
-     //return number of frames before phase aPhaseNumber
+     //returns number of frames before phase aPhaseNumber
     public int framesToPhase(int aPhaseNumber) {
         int ret = 0;
         
