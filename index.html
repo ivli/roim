@@ -73,22 +73,20 @@ The latest release supports images in DICOM format with raw or uncompressed <spa
 The program does not make any difference of image modality as long as photometric interpretation is <span class="t">MONOCHROME</span> or <span class="t">MONOCHROME2</span> 
 and pixel data are 8-16 bits.
 Following imaging modalities are supported  <abbr title="Computed Radiology">CR</abbr>/<abbr title="Computer Tomography">CT</abbr>/<abbr title="Nuclear Medicine">NM</abbr>
-<p>Following types of images can be displayed and analyzed <span class="t">STATIC/DYNAMIC/WHOLE BODY/TOMO/TOMO RECON</span>.       
+Following types of NM images can be displayed and analyzed <span class="t">STATIC/DYNAMIC/WHOLE BODY/TOMO/TOMO RECON</span>.       
 <br>Reconstructed tomographic images displayed using <abbr title="Maximum Intensity Projections">MIP</abbr> algorithm.
 The application has tabbed design. There are three tabs: image viewer, curve viewer and multi-image viewer. 
 Here image viewer tab is central element it is responsible for displaying image, applying LUT, controlling W\L              
 The processing unit is built around ROI model - elliptic, rectangular and free form ROI are implemented.  
-
 It is possible to extract some statistics out of ROIs: integral density (sum of pixel values), area (in pixels and millimetres), min/max/avg values.
 For a multiframe image (<span class="t">DYNAMIC</span>) ROI will be propagated to all frames thus giving a possibility to extract all aforementioned values of all frames and build a curve.
 It is possible to choice what statistics shall be used to make curve: integral density, maximal or minimal value... 
-<span class="t">ROI calculator</span> offers base algebraic operations on ROIs and results are also can be visualized as curve.
- 
+<span class="t">ROI calculator</span> offers base algebraic operations on ROIs and results are also can be visualized as curve. 
 <br>Curves are displayed on separate page where scale/zoom/pan can be applied and it is possible to store entire page into image file.
 Also, data mining functionality provided so one can set crosshair markers and move it to extract Y-values.
 Markers can automatically be positioned to extremum of a curve.
 Curves can be extrapolated using linear and exponential fit built using least squares algorithm.
-Finally, curves can be exported to text file CSV - for analysis by means of an external tool. 
+Finally, curves can be exported to text file CSV - for analysis in external tool. 
 
 <br>The last tab displays a matrix of frames (temporal or transversal slices for tomographic mages).      
 <br>The program is written in Java (tm) and run on both Windows and Linux.
