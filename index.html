@@ -63,7 +63,12 @@ Dedicated tool shall employ specific image processing to enhance visual percepti
 Otoh, all the calculations have to be done using original pixel values (perhaps on subpixel level).
 There is a standardized framework of <a href="http://www.eanm.org/publications/guidelines/index.php?navId=37">guidelines</a> how to record and process NM images. 
 Algorithms described in these guidelines work fine for the most of the cases but rarely it could fall being unable to handle data or bring meaningless results. 
-Discussing possible causes is clearly out of the scope but it shall be mentioned in many cases the study still can be processed.                     
+Discussing possible causes is clearly out of the scope but it shall be mentioned in many cases the study still can be processed.          
+The library is designed around MVC pattartn where the core element is
+<br>The<span class="t">ImageView class</span> - it is a lightweight control capable of displaying medical images. 
+Also there is a set of <span class="t">Controllers</span> associated to different kinds of images. 
+And, <span class="t">MultiframeImage</span> class - encapsulating actual image, despite of image modality, storage, etc.
+There are several classes providing core image processing functionalities. 
 The program implements several pixel interpolation algorithms including bicubic and is capable of reading standard <abbr title="LookUp Table">LUT</abbr> palettes in 768 bit NIH format 
 and there is a number of built in <span class="t">LUTs</span>.  
 The latest release supports images in DICOM format with raw or uncompressed <span class="t">JPEG</span> data only. <br>
@@ -78,17 +83,20 @@ It is possible to extract statistics: integral density (sum of pixel values), ar
 ROI set on a multiframe images(<span class="t">DYNAMIC</span>) will automatically be propagated to all its frames 
 thus giving a possibility to extract all aforementioned statistics out of entire image and build curves.
 There are several tools and associated widgets:
-<br><span class="t">W/L control</span>
-<br><span class="t">ROI editor</span>
-<br><span class="t">ROI calculator</span> offers base algebraic operations on ROIs and results are also can be visualized as curve. 
-<br>Curves are displayed on separate page where scale/zoom/pan can be applied and it is possible to store entire page into image file.
-Also, data mining functionality provided so one can set crosshair markers and move it to extract Y-values.
-Markers can automatically be positioned to extremum of a curve.
-Curves can be extrapolated using linear and exponential fit built using least squares algorithm.
-Finally, curves can be exported to text file CSV - for analysis in external tool. 
-Here image viewer tab is central element it is responsible for displaying image, applying LUT, controlling W\L 
+<br><span class="t">W/L control</span> - a standard element to control parameters of visual window (width and level). 
+<br><span class="t">ROI editor</span> - it lets changing ROI's name, colour and include\exclude them from charting. 
+<br><span class="t">ROI calculator</span> - offers base algebraic operations on ROIs and results are also can be sent to charts. 
+<br><span class="t">Chart view</span> - based on <a href="http://www.jfree.org/jfreechart/">JFreeChart</a> it offers a number of ways of
+presenting acquired data. It naturally supports scaling/zooming/pan and other operations applied to the set of curves.
+Using markers it is possible to extract, compare and extrapolate experimental data using linear and exponential fit.
+Markers can automatically be positioned to curve minimum and maximum (local and global).
+Finally, it is possible to save curves to CSV - file, for the sake of analysis by means of an external tool. 
 
-<br>The last tab displays a matrix of frames (temporal or transversal slices for tomographic mages).      
+In order to present capabilities of this class library the small application is included. It has tabbed design. 
+<br>The first page is designed to display source image, adjust image size, position, LUT, W/L to better visual perception and let the user set ROI correctly.
+ImageView has there the central role. 
+<br>The second tab displays is ChartView 
+<br>The last tab displays a matrix of frames (temporal or transversal slices for tomographic mages). It is just another instance of ImageView      
 <br>The program is written in Java (tm) and run on both Windows and Linux.
 
 <br>visit <a href="https://github.com/ivli/roim/wiki">Roim wiki</a> for details on how to build Roim and crate applications using it.
