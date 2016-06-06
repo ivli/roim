@@ -61,10 +61,7 @@ images are also exist.
 Taking all aforementioned into account it is obvious NM images hardly can be processed by means of common image visualization tools.
 Dedicated tool shall employ specific image processing to enhance visual perception, offer great flexibility in tuning: colourization, filtering, smoothing, tresholding, etc.  
 Otoh, all the calculations have to be done using original pixel values (perhaps on subpixel level).
-There is a standardized framework of <a href="http://www.eanm.org/publications/guidelines/index.php?navId=37">guidelines</a> how to record and process NM images. 
-Algorithms described in these guidelines work fine for the most of the cases but rarely it could fall being unable to handle data or bring meaningless results. 
-Discussing possible causes is clearly out of the scope but it shall be mentioned in many cases the study still can be processed.          
-The library is designed around MVC pattartn where the core element is
+The library is designed around  <abbr title="Model View Controller">MVC</abbr> pattern where the core element is
 <br>The<span class="t">ImageView class</span> - it is a lightweight control capable of displaying medical images. 
 Also there is a set of <span class="t">Controllers</span> associated to different kinds of images. 
 And, <span class="t">MultiframeImage</span> class - encapsulating actual image, despite of image modality, storage, etc.
