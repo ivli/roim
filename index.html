@@ -49,9 +49,9 @@
             </a>Welcome to ROI-master GitHub Pages.
         </h3>
 
-<p>Roim (ROI-master) is a biomedical image viewer capable of processing nuclear medicine images. 
-It is designed to be vendor and modality neutral. 
-Moreover, Roim is a Java (tm) class library developed to simplify building biomedical image processing application.   
+<p>The Roim (ROI-master) is a java class library aimed to speed up creation of biomedical image processing applications. 
+It is designed to be vendor neutral and support most used modalities. 
+This development was inspired by <a href="https://imagej.nih.gov/ij/">ImageJ</a> image viewer, it's usage to process NM images.  
 It is well known images of Nuclear Medicine (NM) differ from images of other modalities. 
 In NM images pixel value represents a number of events (scintillations at a particular spatial location) accumulated through given time interval.<br>
 Usually, NM images have rather low resolution 1024x1024 pixels or less while physical pixel size rarely exceeds few to few millimetres.
@@ -66,7 +66,7 @@ Algorithms described in these guidelines work fine for the most of the cases but
 Discussing possible causes is clearly out of the scope but it shall be mentioned in many cases the study still can be processed.                     
 Such a cases when the application might be helpful the most.
 <p>
-This development was inspired by <a href="https://imagej.nih.gov/ij/">ImageJ</a> image viewer.
+
 The program implements several pixel interpolation algorithms including bicubic and is capable of reading standard <abbr title="LookUp Table">LUT</abbr> palettes in 768 bit NIH format 
 and there is a number of built in <span class="t">LUTs</span>.  
 The latest release supports images in DICOM format with raw or uncompressed <span class="t">JPEG</span> data only. <br>
@@ -77,7 +77,8 @@ Following types of NM images can be displayed and analyzed <span class="t">STATI
 <br>Reconstructed tomographic images displayed using <abbr title="Maximum Intensity Projections">MIP</abbr> algorithm.
 The application has tabbed design. There are three tabs: image viewer, curve viewer and multi-image viewer. 
 Here image viewer tab is central element it is responsible for displaying image, applying LUT, controlling W\L              
-The processing unit is built around ROI model - elliptic, rectangular and free form ROI are implemented.  
+The processing model is built around <abbr title="Region of Interest">ROI</abbr> concept. ROIs of following kinds are implemented:  
+<ul><li>elliptic; <li>rectangular and <li>free form </ul>  
 It is possible to extract some statistics out of ROIs: integral density (sum of pixel values), area (in pixels and millimetres), min/max/avg values.
 For a multiframe image (<span class="t">DYNAMIC</span>) ROI will be propagated to all frames thus giving a possibility to extract all aforementioned values of all frames and build a curve.
 It is possible to choice what statistics shall be used to make curve: integral density, maximal or minimal value... 
