@@ -64,30 +64,29 @@ Otoh, all the calculations have to be done using original pixel values (perhaps 
 There is a standardized framework of <a href="http://www.eanm.org/publications/guidelines/index.php?navId=37">guidelines</a> how to record and process NM images. 
 Algorithms described in these guidelines work fine for the most of the cases but rarely it could fall being unable to handle data or bring meaningless results. 
 Discussing possible causes is clearly out of the scope but it shall be mentioned in many cases the study still can be processed.                     
-Such a cases when the application might be helpful the most.
-<p>
-
 The program implements several pixel interpolation algorithms including bicubic and is capable of reading standard <abbr title="LookUp Table">LUT</abbr> palettes in 768 bit NIH format 
 and there is a number of built in <span class="t">LUTs</span>.  
 The latest release supports images in DICOM format with raw or uncompressed <span class="t">JPEG</span> data only. <br>
 The program does not make any difference of image modality as long as photometric interpretation is <span class="t">MONOCHROME</span> or <span class="t">MONOCHROME2</span> 
 and pixel data are 8-16 bits.
-Following imaging modalities are supported  <abbr title="Computed Radiology">CR</abbr>/<abbr title="Computer Tomography">CT</abbr>/<abbr title="Nuclear Medicine">NM</abbr>
-Following types of NM images can be displayed and analyzed <span class="t">STATIC/DYNAMIC/WHOLE BODY/TOMO/TOMO RECON</span>.       
+Following imaging modalities are supported <abbr title="Computed Radiology">CR</abbr>/<abbr title="Computer Tomography">CT</abbr>/<abbr title="Nuclear Medicine">NM</abbr>
 <br>Reconstructed tomographic images displayed using <abbr title="Maximum Intensity Projections">MIP</abbr> algorithm.
 The application has tabbed design. There are three tabs: image viewer, curve viewer and multi-image viewer. 
-Here image viewer tab is central element it is responsible for displaying image, applying LUT, controlling W\L              
 The processing model is built around <abbr title="Region of Interest">ROI</abbr> concept. ROIs of following kinds are implemented:  
-<ul><li>elliptic; <li>rectangular and <li>free form </ul>  
-It is possible to extract some statistics out of ROIs: integral density (sum of pixel values), area (in pixels and millimetres), min/max/avg values.
-For a multiframe image (<span class="t">DYNAMIC</span>) ROI will be propagated to all frames thus giving a possibility to extract all aforementioned values of all frames and build a curve.
-It is possible to choice what statistics shall be used to make curve: integral density, maximal or minimal value... 
-<span class="t">ROI calculator</span> offers base algebraic operations on ROIs and results are also can be visualized as curve. 
+<ul><li>elliptic, <li>rectangular, <li>free form. </ul>  
+It is possible to extract statistics: integral density (sum of pixel values), area (in pixels and millimetres), min/max/avg values.
+ROI set on a multiframe images(<span class="t">DYNAMIC</span>) will automatically be propagated to all its frames 
+thus giving a possibility to extract all aforementioned statistics out of entire image and build curves.
+There are several tools and associated widgets:
+<br><span class="t">W/L control</span>
+<br><span class="t">ROI editor</span>
+<br><span class="t">ROI calculator</span> offers base algebraic operations on ROIs and results are also can be visualized as curve. 
 <br>Curves are displayed on separate page where scale/zoom/pan can be applied and it is possible to store entire page into image file.
 Also, data mining functionality provided so one can set crosshair markers and move it to extract Y-values.
 Markers can automatically be positioned to extremum of a curve.
 Curves can be extrapolated using linear and exponential fit built using least squares algorithm.
 Finally, curves can be exported to text file CSV - for analysis in external tool. 
+Here image viewer tab is central element it is responsible for displaying image, applying LUT, controlling W\L 
 
 <br>The last tab displays a matrix of frames (temporal or transversal slices for tomographic mages).      
 <br>The program is written in Java (tm) and run on both Windows and Linux.
