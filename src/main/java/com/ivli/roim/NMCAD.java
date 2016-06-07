@@ -18,42 +18,47 @@
 package com.ivli.roim;
 
 
+
+//import java.awt.*;
+import java.io.File;
+
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.RenderingHints;
+
+import java.util.Locale;
+
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.UIManager;
+
 import com.ivli.roim.view.Settings;
 import com.ivli.roim.view.ImageView;
 import com.ivli.roim.view.GridImageView;
 import com.ivli.roim.algorithm.MIPProjector;
-import com.ivli.roim.core.MultiframeImage;
-
-import com.ivli.roim.io.IImageProvider;
-import com.ivli.roim.core.IMultiframeImage;
-import java.awt.*;
-import java.io.IOException;
-import javax.swing.JDialog;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import javax.swing.UIManager;
-
 import com.ivli.roim.controls.*;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.events.*;
-import com.ivli.roim.io.ImageProviderFactory;
 import com.ivli.roim.view.ImageViewFactory;
-import java.io.File;
-import java.util.Locale;
-import javax.swing.ImageIcon;
+import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.ImageFactory;
+import java.awt.FileDialog;
+import java.io.FilenameFilter;
+import javax.swing.JOptionPane;
 
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
-public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
+public class NMCAD extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
     private ImagePanel  iImage;
     private ImagePanel  iGrid;    
-    private ImagePanel  iOff;
-    private ChartPanel   iChart;
-    private ChartPanel   iChart2;
-    private IImageProvider iProvider;
+    //private ImagePanel  iOff;
+    private ChartPanel  iChart;
+    
+    //private IImageProvider iProvider;
     
     /**/
     private static final void addjustLAF() {
@@ -99,8 +104,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         }
     }
     
-    public NewJFrame() {         
-        logger.info("-->Entering application."); // NOI18N
+    public NMCAD() {         
+        LOG.info("-->Entering application."); // NOI18N
         //iPanel = new ImagePanel();
         ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("images/khibiny.png"));
         setIconImage(img.getImage());
@@ -162,26 +167,26 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel1.setPreferredSize(new java.awt.Dimension(597, 600));
         jPanel1.setVerifyInputWhenFocusTarget(false);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
-        jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
 
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel3.setLayout(new java.awt.BorderLayout());
-        jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
 
         jPanel4.setLayout(new java.awt.BorderLayout());
-        jTabbedPane1.addTab(bundle.getString("NewJFrame.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jLabel1.setText(bundle.getString("NewJFrame.jLabel1.text")); // NOI18N
+        jLabel1.setText(bundle.getString("NMCAD.jLabel1.text")); // NOI18N
 
-        jLabel2.setText(bundle.getString("NewJFrame.jLabel2.text")); // NOI18N
+        jLabel2.setText(bundle.getString("NMCAD.jLabel2.text")); // NOI18N
 
-        jLabel3.setText(bundle.getString("NewJFrame.jLabel3.text")); // NOI18N
+        jLabel3.setText(bundle.getString("NMCAD.jLabel3.text")); // NOI18N
 
-        jLabel4.setText(bundle.getString("NewJFrame.jLabel4.text")); // NOI18N
+        jLabel4.setText(bundle.getString("NMCAD.jLabel4.text")); // NOI18N
 
-        jLabel6.setText(bundle.getString("NewJFrame.jLabel6.text")); // NOI18N
+        jLabel6.setText(bundle.getString("NMCAD.jLabel6.text")); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -216,9 +221,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                 .addContainerGap())
         );
 
-        jMenu1.setText(bundle.getString("NewJFrame.jMenu1.text")); // NOI18N
+        jMenu1.setText(bundle.getString("NMCAD.jMenu1.text")); // NOI18N
 
-        jMenuItem2.setText(bundle.getString("NewJFrame.jMenuItem2.text")); // NOI18N
+        jMenuItem2.setText(bundle.getString("NMCAD.jMenuItem2.text")); // NOI18N
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
@@ -227,7 +232,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jMenu1.add(jMenuItem2);
         jMenu1.add(jSeparator2);
 
-        jMenuItem1.setText(bundle.getString("NewJFrame.jMenuItem1.text")); // NOI18N
+        jMenuItem1.setText(bundle.getString("NMCAD.jMenuItem1.text")); // NOI18N
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -237,14 +242,14 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText(bundle.getString("NewJFrame.jMenu2.text")); // NOI18N
+        jMenu2.setText(bundle.getString("NMCAD.jMenu2.text")); // NOI18N
         jMenu2.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
                 jMenu2ComponentShown(evt);
             }
         });
 
-        jMenuItem3.setText(bundle.getString("NewJFrame.jMenuItem3.text")); // NOI18N
+        jMenuItem3.setText(bundle.getString("NMCAD.jMenuItem3.text")); // NOI18N
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem3ActionPerformed(evt);
@@ -252,7 +257,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu2.add(jMenuItem3);
 
-        jMenuItem7.setText(bundle.getString("NewJFrame.jMenuItem7.text")); // NOI18N
+        jMenuItem7.setText(bundle.getString("NMCAD.jMenuItem7.text")); // NOI18N
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
@@ -260,7 +265,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu2.add(jMenuItem7);
 
-        jMenuItem8.setText(bundle.getString("NewJFrame.jMenuItem8.text")); // NOI18N
+        jMenuItem8.setText(bundle.getString("NMCAD.jMenuItem8.text")); // NOI18N
         jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem8ActionPerformed(evt);
@@ -270,11 +275,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
         jMenuBar1.add(jMenu2);
 
-        jMenu4.setText(bundle.getString("NewJFrame.jMenu4.text")); // NOI18N
+        jMenu4.setText(bundle.getString("NMCAD.jMenu4.text")); // NOI18N
 
-        jMenu3.setText(bundle.getString("NewJFrame.jMenu3.text")); // NOI18N
+        jMenu3.setText(bundle.getString("NMCAD.jMenu3.text")); // NOI18N
 
-        jMenuItem10.setText(bundle.getString("NewJFrame.jMenuItem10.text")); // NOI18N
+        jMenuItem10.setText(bundle.getString("NMCAD.jMenuItem10.text")); // NOI18N
         jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem10ActionPerformed(evt);
@@ -282,7 +287,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu3.add(jMenuItem10);
 
-        jMenuItem11.setText(bundle.getString("NewJFrame.jMenuItem11.text")); // NOI18N
+        jMenuItem11.setText(bundle.getString("NMCAD.jMenuItem11.text")); // NOI18N
         jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem11ActionPerformed(evt);
@@ -290,7 +295,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu3.add(jMenuItem11);
 
-        jMenuItem12.setText(bundle.getString("NewJFrame.jMenuItem12.text")); // NOI18N
+        jMenuItem12.setText(bundle.getString("NMCAD.jMenuItem12.text")); // NOI18N
         jMenuItem12.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem12ActionPerformed(evt);
@@ -300,9 +305,9 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
         jMenu4.add(jMenu3);
 
-        jMenu5.setText(bundle.getString("NewJFrame.jMenu5.text")); // NOI18N
+        jMenu5.setText(bundle.getString("NMCAD.jMenu5.text")); // NOI18N
 
-        jMenuItem13.setText(bundle.getString("NewJFrame.jMenuItem13.text")); // NOI18N
+        jMenuItem13.setText(bundle.getString("NMCAD.jMenuItem13.text")); // NOI18N
         jMenuItem13.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem13ActionPerformed(evt);
@@ -310,7 +315,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu5.add(jMenuItem13);
 
-        jMenuItem14.setText(bundle.getString("NewJFrame.jMenuItem14.text")); // NOI18N
+        jMenuItem14.setText(bundle.getString("NMCAD.jMenuItem14.text")); // NOI18N
         jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem14ActionPerformed(evt);
@@ -318,7 +323,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu5.add(jMenuItem14);
 
-        jMenuItem15.setText(bundle.getString("NewJFrame.jMenuItem15.text")); // NOI18N
+        jMenuItem15.setText(bundle.getString("NMCAD.jMenuItem15.text")); // NOI18N
         jMenuItem15.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem15ActionPerformed(evt);
@@ -326,7 +331,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         });
         jMenu5.add(jMenuItem15);
 
-        jMenuItem5.setText(bundle.getString("NewJFrame.jMenuItem5.text")); // NOI18N
+        jMenuItem5.setText(bundle.getString("NMCAD.jMenuItem5.text")); // NOI18N
         jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem5ActionPerformed(evt);
@@ -336,7 +341,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
         jMenu4.add(jMenu5);
 
-        jMenuItem4.setText(bundle.getString("NewJFrame.jMenuItem4.text")); // NOI18N
+        jMenuItem4.setText(bundle.getString("NMCAD.jMenuItem4.text")); // NOI18N
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem4ActionPerformed(evt);
@@ -346,11 +351,11 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
         jMenuBar1.add(jMenu4);
 
-        jMenu6.setText(bundle.getString("NewJFrame.jMenu6.text")); // NOI18N
+        jMenu6.setText(bundle.getString("NMCAD.jMenu6.text")); // NOI18N
         jMenu6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jMenu6.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
-        jMenuItem6.setText(bundle.getString("NewJFrame.jMenuItem6.text")); // NOI18N
+        jMenuItem6.setText(bundle.getString("NMCAD.jMenuItem6.text")); // NOI18N
         jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem6ActionPerformed(evt);
@@ -387,20 +392,20 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        logger.info("<--BYE, BYE...");// NOI18N
+        LOG.info("<--BYE, BYE...");// NOI18N
         dispose();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
      
     private void openImage(String aF) {   
         String dicomFileName;
         
-        /* USE_SYSTEM_FILE_DIALOG 
+        /* USE_SYSTEM_FILE_DIALOG */
         if (null != aF) {
             dicomFileName = aF;
         } else {
             FileDialog fd = new FileDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_DICOM_FILE"), FileDialog.LOAD);
             
-            fd.setFile(Settings.get(Settings.KEY_FILE_SUFFIX_DICOM, "*.dcm")); // NOI18N
+            fd.setFile(Settings.get(Settings.DEFAULT_FILE_SUFFIX_DICOM, "*.dcm")); // NOI18N
             
             // following doesn't work on windows see JDK-4031440 f**k 
             fd.setFilenameFilter(new FilenameFilter(){
@@ -420,7 +425,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         }
         
         
-        /* ELSE*/
+        /* ELSE
         JFileChooser jfc = new JFileChooser();   
         jfc.setCurrentDirectory(new File(Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")))); // NOI18N
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -445,8 +450,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             }
             
             public String getDescription() {return java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("JFC.FILE_DESCRIPTION_DICOM");}                           
-        });
-        
+        });        
         
         int result = jfc.showOpenDialog(this);
         
@@ -457,22 +461,23 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         } else {
             return;
         }
-        
+        */
         /* ENDIF */
         
-        try {                           
-            iProvider = ImageProviderFactory.create(dicomFileName);
-            logger.info("opened file: " + dicomFileName);            
-        } catch (IOException ex) {            
-            logger.info("Unable to open file: " + dicomFileName); //NOI18N            
-            javax.swing.JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dicomFileName);       
-            return;
+        try {  
+            File f = new File(dicomFileName);                 
+            if (f.exists() && !f.isDirectory()) {
+                initPanels(dicomFileName);
+            } else {
+                JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dicomFileName);                   
+            }                     
+        } catch (Exception ex) {            
+            LOG.info("Unable to open file: " + dicomFileName); //NOI18N            
+            JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dicomFileName);                   
         } 
-        
-        initPanels();
     }
         
-    private void initPanels() {         
+    private void initPanels(final String aFileName) {         
         jPanel1.removeAll();
         jPanel3.removeAll();
         jPanel4.removeAll();
@@ -481,7 +486,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         jPanel3.repaint();
         jPanel4.repaint();
         
-        IMultiframeImage mi2 = MultiframeImage.create(iProvider);       
+        IMultiframeImage mi2 = ImageFactory.create(aFileName);       
         IMultiframeImage mi;                
         
         switch (mi2.getImageType()) {
@@ -578,7 +583,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             case 0:
                 pane = iImage; break;
             case 2:
-                pane = iOff; break;
+              //  pane = iOff; break;
             default: break;    
         }
                 
@@ -601,8 +606,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
                     iImage.showLUTDialog(); 
                 break;
             case 2:
-                if (null != iOff) 
-                    iOff.showLUTDialog(); 
+                //if (null != iOff) 
+                //    iOff.showLUTDialog(); 
                 break;
             default: break;    
         }
@@ -639,7 +644,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             case 0:
                 pane = iImage; break;
             case 2:
-                pane = iOff; break;
+                //pane = iOff; break;
             default: break;    
         }
                 
@@ -657,7 +662,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
     private void jTabbedPane1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jTabbedPane1ComponentShown
         // TODO add your handling code here:
-        logger.info(evt);
+        LOG.info(evt);
     }//GEN-LAST:event_jTabbedPane1ComponentShown
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
@@ -694,14 +699,15 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         /*  END_IF USE_NIMBUS_LAF */    
         
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NMCAD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NMCAD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NMCAD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NMCAD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
         
         addjustLAF();
@@ -709,13 +715,13 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new NewJFrame().setVisible(true);
+                new NMCAD().setVisible(true);
             }
         });
     }
         
     public void ProgressChanged(ProgressEvent aE) {
-        logger.debug(String.format("%d %% complete", (int)(aE.getProgress() * 100)));
+        LOG.debug(String.format("%d %% complete", (int)(aE.getProgress() * 100)));
         jLabel2.setText(String.format("%d %% complete", (int)(aE.getProgress() * 100)));
         jLabel2.repaint();
     }
@@ -730,12 +736,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     }
     
     public void frameChanged(FrameChangeEvent aE) { 
-        ImageView iw = (ImageView)aE.getSource();
-        //iw.getImage().getNumFrames(),                                                           
-                                                          // iw.getRange(), getImage().getFrame().getRange(),
-                                                          //iModel.getTimeSliceVector().getSlice());                
-                                                         //   getFrameNumber());
-                                                            
+        ImageView iw = (ImageView)aE.getSource();        
         jLabel1.setText(String.format("%d:%d", aE.getFrame() + 1, iw.getImage().getNumFrames())); // NOI18N
         
         String label2text;
@@ -758,9 +759,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
 
         }
         
-        jLabel2.setText(label2text);
-                                                 
-                
+        jLabel2.setText(label2text);                                                                 
         jLabel3.setText(String.format("%3.0f/%3.0f", iw.getRange().getMin(), iw.getRange().getMax())); // NOI18N
         
     }
@@ -768,9 +767,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     public void ROIChanged(ROIChangeEvent anEvt) {
     
     }
-    
-    
-    
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -807,5 +804,5 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 
-    private final static Logger logger = LogManager.getLogger(NewJFrame.class);
+    private final static Logger LOG = LogManager.getLogger(NMCAD.class);
 }

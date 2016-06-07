@@ -528,7 +528,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         
         mnu.add(mi11);
 
-        JCheckBoxMenuItem mi12 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.TRIGGER_DIRECT_INVERSE"));
+        JCheckBoxMenuItem mi12 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.TRIGGER_DIRECT_INVERSE"));
         mi12.addActionListener(this);
         mi12.setActionCommand(KCommandTriggerDirect); 
         mi12.setState(iView.isInverted());

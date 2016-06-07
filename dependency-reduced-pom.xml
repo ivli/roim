@@ -61,7 +61,7 @@
                   </artifactSet>
                   <transformers>
                     <transformer>
-                      <mainClass>com.ivli.roim.NewJFrame</mainClass>
+                      <mainClass>com.ivli.roim.NMCAD</mainClass>
                     </transformer>
                   </transformers>
                 </configuration>
@@ -83,7 +83,7 @@
                 <index>true</index>
                 <manifest>
                   <addClasspath>true</addClasspath>
-                  <mainClass>com.ivli.roim.NewJFrame</mainClass>
+                  <mainClass>com.ivli.roim.NMCAD</mainClass>
                 </manifest>
                 <manifestEntries>
                   <mode>development</mode>
