@@ -6,24 +6,25 @@
 package com.ivli.roim.controls;
 
 
-import com.ivli.roim.ImagePanel;
+import com.ivli.roim.view.ImageView;
 import javax.swing.SwingUtilities;
 import java.awt.Window;
+import javax.swing.JPanel;
 import javax.swing.event.TableModelEvent;
 
 /**
  *
  * @author likhachev
  */
-public class ROIListPanel extends javax.swing.JPanel {        
-    private final ImagePanel iView;               
+public class ROIListPanel extends JPanel {        
+    private final ImageView iView;               
     private final ROITableModel iModel;
     
     private int bi = 0;
         
-    public ROIListPanel(com.ivli.roim.ImagePanel aView) {        
+    public ROIListPanel(ImageView aView) {        
         iView = aView;
-        iModel = new ROITableModel(aView.getOverlaysList(), true);       
+        iModel = new ROITableModel(aView.getROIMgr().getOverlaysList(), true);       
         
         initComponents();
      

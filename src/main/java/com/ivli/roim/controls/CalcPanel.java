@@ -21,10 +21,10 @@ package com.ivli.roim.controls;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 
-import com.ivli.roim.ImagePanel;
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.core.Filter;
 import com.ivli.roim.calc.*;
+import com.ivli.roim.view.ImageView;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,15 +37,15 @@ public class CalcPanel extends javax.swing.JPanel {
     private final ROITableModel iLeftModel;
     private final ROITableModel iRightModel;
     
-    private final ImagePanel iPanel;    
+    private final ImageView iPanel;    
     private BinaryOp iOp;
     private Filter iF = Filter.DENSITY; 
     /**
      * Creates new form CalcPanel
      */
-    public CalcPanel(ImagePanel aPanel) {        
-        iLeftModel = new ROITableModel(aPanel.getOverlaysList(), false);
-        iRightModel = new ROITableModel(aPanel.getOverlaysList(), false);
+    public CalcPanel(ImageView aPanel) {        
+        iLeftModel  = new ROITableModel(aPanel.getROIMgr().getOverlaysList(), false);
+        iRightModel = new ROITableModel(aPanel.getROIMgr().getOverlaysList(), false);
         iPanel = aPanel;
         initComponents();
         
@@ -75,7 +75,7 @@ public class CalcPanel extends javax.swing.JPanel {
             jTextField2.setText(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CALC.SELECT_TWO_ROIS"));
             return false;
         } else {
-            logger.info(String.format("%d, %d", jTable1.getSelectedRow(), jTable2.getSelectedRow()));
+            LOG.info(String.format("%d, %d", jTable1.getSelectedRow(), jTable2.getSelectedRow()));
             final ROI iLhs = (ROI)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
             final ROI iRhs = (ROI)jTable2.getValueAt(jTable2.getSelectedRow(), 0);                
             iF = Filter.getFilter((String)jComboBox2.getSelectedItem());
@@ -220,7 +220,7 @@ public class CalcPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        iPanel.getView().getROIMgr().createAnnotation(iOp);
+        iPanel.getROIMgr().createAnnotation(iOp);
         iPanel.repaint();
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -241,7 +241,5 @@ public class CalcPanel extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 
-
-
- private static final Logger logger = LogManager.getLogger(CalcPanel.class);
+ private static final Logger LOG = LogManager.getLogger(CalcPanel.class);
 }

@@ -17,48 +17,55 @@
  */
 package com.ivli.roim;
 
-
-
-//import java.awt.*;
 import java.io.File;
-
+import java.io.FilenameFilter;
+import java.util.Locale;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.RenderingHints;
-
-import java.util.Locale;
-
+import java.awt.FileDialog;
+import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.UIManager;
-
+import javax.swing.JFrame;
 import com.ivli.roim.view.Settings;
 import com.ivli.roim.view.ImageView;
 import com.ivli.roim.view.GridImageView;
 import com.ivli.roim.algorithm.MIPProjector;
-import com.ivli.roim.controls.*;
+import com.ivli.roim.controls.AboutDialog;
+import com.ivli.roim.controls.CalcPanel;
+import com.ivli.roim.controls.ChartPanel;
+import com.ivli.roim.controls.LUTControl;
+import com.ivli.roim.controls.ProgressDialog;
+import com.ivli.roim.controls.ROIListPanel;
+import com.ivli.roim.controls.VOILUTPanel;
+
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.TimeSlice;
-import com.ivli.roim.events.*;
 import com.ivli.roim.view.ImageViewFactory;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
-import java.awt.FileDialog;
-import java.io.FilenameFilter;
-import javax.swing.JOptionPane;
+import com.ivli.roim.events.FrameChangeEvent;
+import com.ivli.roim.events.FrameChangeListener;
+import com.ivli.roim.events.ProgressEvent;
+import com.ivli.roim.events.ProgressListener;
+import com.ivli.roim.events.ROIChangeEvent;
+import com.ivli.roim.events.ROIChangeListener;
+import com.ivli.roim.events.WindowChangeEvent;
+import com.ivli.roim.events.WindowChangeListener;
+import com.ivli.roim.events.ZoomChangeEvent;
+import com.ivli.roim.events.ZoomChangeListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class NMCAD extends javax.swing.JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
-    private ImagePanel  iImage;
-    private ImagePanel  iGrid;    
-    //private ImagePanel  iOff;
+public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
+    private ImageView  iImage;
+    private ImageView  iGrid;    
     private ChartPanel  iChart;
-    
-    //private IImageProvider iProvider;
+ 
     
     /**/
     private static final void addjustLAF() {
@@ -516,16 +523,14 @@ public class NMCAD extends javax.swing.JFrame implements FrameChangeListener, Wi
         break;
         }
         
-        /**/
+      
          //IMAGE
-        iImage = new ImagePanel(); 
-        ImageView iv = ImageViewFactory.create(mi);
-        ///iv.setImage(mi);
-        iImage.setView(iv);
-        iImage.setPreferredSize(jPanel1.getSize());
-        iImage.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+       
+        iImage = ImageView.create(mi);        
+        iImage.setPreferredSize(jPanel1.getSize());        
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iImage, BorderLayout.CENTER);
+        jPanel1.add(LUTControl.create(iImage), BorderLayout.LINE_END);
         jPanel1.validate(); 
         
         //CHART
@@ -535,25 +540,21 @@ public class NMCAD extends javax.swing.JFrame implements FrameChangeListener, Wi
             iChart.initChart();
             iChart.setPreferredSize(jPanel3.getPreferredSize());
             jPanel3.add(iChart);  
-            iImage.addROIChangeListener(iChart);
-        }
+            iImage.getROIMgr().addROIChangeListener(iChart);
+        } 
                 
         if (mi.getImageType() != ImageType.STATIC) {     
-            ImageView iv1 = GridImageView.create(mi2, 4, 4) ;
-            //iv1.setImage(mi2);
-            iGrid = new ImagePanel(); 
-            iGrid.setView(iv1);
-            iGrid.setPreferredSize(jPanel4.getSize());
-            ///iGrid.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));        
+            iGrid = GridImageView.create(mi2, 4, 4) ;          
+            iGrid.setPreferredSize(jPanel4.getSize());                  
             jPanel4.setLayout(new BorderLayout());     
-            jPanel4.add(iGrid, BorderLayout.CENTER);        
+            jPanel4.add(iGrid, BorderLayout.CENTER);   
+            jPanel4.add(LUTControl.create(iGrid), BorderLayout.LINE_END);   
         }        
-        //
                
         iImage.addFrameChangeListener(this);        
         iImage.addWindowChangeListener(this);
         iImage.addZoomChangeListener(this);
-        iImage.addROIChangeListener(this);                 
+        iImage.getROIMgr().addROIChangeListener(this);                 
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -577,18 +578,18 @@ public class NMCAD extends javax.swing.JFrame implements FrameChangeListener, Wi
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         
-        ImagePanel pane = null;
+        ImageView view = null;
                
         switch(jTabbedPane1.getSelectedIndex()) {
             case 0:
-                pane = iImage; break;
+                view = iImage; break;
             case 2:
               //  pane = iOff; break;
             default: break;    
         }
                 
-        if (null != pane) {
-            ROIListPanel panel = new ROIListPanel(pane);
+        if (null != view) {
+            ROIListPanel panel = new ROIListPanel(view);
             JDialog dialog = new JDialog(this, "ROI manager", Dialog.ModalityType.APPLICATION_MODAL);
             dialog.setContentPane(panel);
             dialog.validate();
@@ -602,9 +603,18 @@ public class NMCAD extends javax.swing.JFrame implements FrameChangeListener, Wi
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         switch(jTabbedPane1.getSelectedIndex()) {
             case 0:
-                if (null != iImage) 
-                    iImage.showLUTDialog(); 
-                break;
+                if (null != iImage) {
+                    /*
+                    VOILUTPanel panel = new VOILUTPanel(iLut, iImage);
+                    JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
+
+                    dialog.setContentPane(panel);
+                    dialog.validate();
+                    dialog.pack();
+                    dialog.setResizable(false);
+                    dialog.setVisible(true);
+                    */
+                } break;
             case 2:
                 //if (null != iOff) 
                 //    iOff.showLUTDialog(); 
@@ -638,18 +648,18 @@ public class NMCAD extends javax.swing.JFrame implements FrameChangeListener, Wi
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        ImagePanel pane = null;
+        ImageView view = null;
                
         switch(jTabbedPane1.getSelectedIndex()) {
             case 0:
-                pane = iImage; break;
+                view = iImage; break;
             case 2:
                 //pane = iOff; break;
             default: break;    
         }
                 
-        if (null != pane) {
-            CalcPanel panel = new CalcPanel(pane);
+        if (null != view) {
+            CalcPanel panel = new CalcPanel(view);
             JDialog dialog = new JDialog(this, Dialog.ModalityType.MODELESS);
             dialog.setContentPane(panel);
             dialog.validate();

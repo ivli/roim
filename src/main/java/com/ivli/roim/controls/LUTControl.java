@@ -81,7 +81,14 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     private boolean iCanShowDialog;
     private ImageView  iView;                 
     
-    public LUTControl() { 
+    
+    public static LUTControl create(ImageView aV) {
+        LUTControl ret = new LUTControl();
+        ret.attach(aV);
+        return ret;
+    }
+    
+    protected LUTControl() { 
         iTop = new Marker(true);  
         iBottom = new Marker(false);  
         iList = new EventListenerList();
