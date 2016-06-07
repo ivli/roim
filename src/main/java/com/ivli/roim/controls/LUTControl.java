@@ -109,7 +109,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             public void ancestorAdded(AncestorEvent event) {}
 
             public void ancestorRemoved(AncestorEvent event){        
-                logger.info("Deregistered");
+                LOG.info("Deregistered");
                 aParent.removeWindowChangeListener(LUTControl.this);            
             }
 
@@ -422,7 +422,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                     iKnob = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/knob_bot.png")); //NOI18N                                   
                 
              } catch (IOException ex) {              
-                 logger.error("FATAL!!!", ex); //NOI18N               
+                 LOG.error("FATAL!!!", ex); //NOI18N               
              }         
         }
         
@@ -470,7 +470,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     public void actionPerformed(ActionEvent e) {
         assert (null != iView);
         
-        logger.info(e.getActionCommand() +  e.paramString()); // NOI18N
+        LOG.info(e.getActionCommand() +  e.paramString()); // NOI18N
         
         switch (e.getActionCommand()) {             
             case KCommandTriggerLinear: 
@@ -560,6 +560,6 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         mnu.show(this, aX, aY);
     }   
 
-    private static final Logger logger = LogManager.getLogger(LUTControl.class);
+    private static final Logger LOG = LogManager.getLogger(LUTControl.class);
 }
 
