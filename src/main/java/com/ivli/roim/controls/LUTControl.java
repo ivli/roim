@@ -84,7 +84,9 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     
     public static LUTControl create(ImageView aV) {
         LUTControl ret = new LUTControl();
-        ret.attach(aV);
+        ret.construct(aV);
+        aV.addFrameChangeListener(ret);
+        aV.addWindowChangeListener(ret); 
         return ret;
     }
     
@@ -97,15 +99,8 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         iRange  = null;        
         iCanShowDialog = true;        
     }
-       
-    public void attach(ImageView aParent) {
-       construct(aParent); 
-       
-       aParent.addFrameChangeListener(this);
-       aParent.addWindowChangeListener(this);       
-    }
- 
-    public void attach(LUTControl aParent) {                          
+          
+    protected void attach(LUTControl aParent) {                          
         construct(aParent.iView);
         
         iCanShowDialog = false;

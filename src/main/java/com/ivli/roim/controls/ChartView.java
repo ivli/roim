@@ -33,17 +33,28 @@ import com.ivli.roim.core.Series;
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
+import com.ivli.roim.view.ImageView;
 import javax.swing.JPanel;
 /**
  *
  * @author likhachev
  */
-public class ChartPanel extends JPanel implements ROIChangeListener {                   
+public class ChartView extends JPanel implements ROIChangeListener {                   
     private XYPlot     iPlot;
     private JFreeChart iJfc;    
     private CurvePanel iChart;  
-  
-    public void initChart () {
+      
+    public static ChartView create(ImageView aV) {
+        ChartView ret = new ChartView();
+        ret.initChart();
+        aV.getROIMgr().addROIChangeListener(ret);
+        return ret;
+    }
+        
+    protected ChartView() {
+    }
+    
+    protected void initChart () {
         if (null != iPlot) {
             ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries();
         } else {

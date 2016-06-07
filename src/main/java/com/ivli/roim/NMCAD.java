@@ -35,7 +35,7 @@ import com.ivli.roim.view.GridImageView;
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.controls.AboutDialog;
 import com.ivli.roim.controls.CalcPanel;
-import com.ivli.roim.controls.ChartPanel;
+import com.ivli.roim.controls.ChartView;
 import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.controls.ProgressDialog;
 import com.ivli.roim.controls.ROIListPanel;
@@ -64,7 +64,7 @@ import org.apache.logging.log4j.Logger;
 public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
     private ImageView  iImage;
     private ImageView  iGrid;    
-    private ChartPanel  iChart;
+    private ChartView  iChart;
  
     
     /**/
@@ -524,8 +524,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         }
         
       
-         //IMAGE
-       
+         //IMAGE       
         iImage = ImageView.create(mi);        
         iImage.setPreferredSize(jPanel1.getSize());        
         jPanel1.setLayout(new BorderLayout());
@@ -533,14 +532,11 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jPanel1.add(LUTControl.create(iImage), BorderLayout.LINE_END);
         jPanel1.validate(); 
         
-        //CHART
-        
+        //CHART        
         if (mi.getImageType() == ImageType.DYNAMIC) {
-            iChart = new ChartPanel();        
-            iChart.initChart();
+            iChart = ChartView.create(iImage);                    
             iChart.setPreferredSize(jPanel3.getPreferredSize());
-            jPanel3.add(iChart);  
-            iImage.getROIMgr().addROIChangeListener(iChart);
+            jPanel3.add(iChart);              
         } 
                 
         if (mi.getImageType() != ImageType.STATIC) {     
