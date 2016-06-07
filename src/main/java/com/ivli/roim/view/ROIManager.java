@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.view;
 
+import com.ivli.roim.core.SeriesCollection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.io.IOException;

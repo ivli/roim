@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.view;
 
+import com.ivli.roim.core.SeriesCollection;
 import com.ivli.roim.core.ImageFrame;
 import java.awt.Color;
 import java.awt.Graphics2D;

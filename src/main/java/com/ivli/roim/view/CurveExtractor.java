@@ -1,6 +1,7 @@
 
 package com.ivli.roim.view;
 
+import com.ivli.roim.core.SeriesCollection;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import com.ivli.roim.core.IMultiframeImage;
