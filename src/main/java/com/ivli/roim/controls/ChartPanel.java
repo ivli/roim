@@ -30,7 +30,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
-import com.ivli.roim.ROI;
+import com.ivli.roim.view.ROI;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 import javax.swing.JPanel;

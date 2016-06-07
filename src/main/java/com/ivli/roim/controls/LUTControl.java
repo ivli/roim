@@ -35,10 +35,10 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.EventListenerList;
 
-import com.ivli.roim.ActionItem;
-import com.ivli.roim.ImageView;
+import com.ivli.roim.view.ActionItem;
+import com.ivli.roim.view.ImageView;
 import com.ivli.roim.io.LutReader;
-import com.ivli.roim.Settings;
+import com.ivli.roim.view.Settings;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.Window;

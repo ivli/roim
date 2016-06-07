@@ -1,5 +1,5 @@
 
-package com.ivli.roim;
+package com.ivli.roim.view;
 
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;

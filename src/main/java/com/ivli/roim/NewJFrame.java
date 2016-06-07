@@ -20,6 +20,9 @@ package com.ivli.roim;
 
 
 
+import com.ivli.roim.view.Settings;
+import com.ivli.roim.view.ImageView;
+import com.ivli.roim.view.GridImageView;
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.MultiframeImage;
 
@@ -37,6 +40,7 @@ import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.events.*;
 import com.ivli.roim.io.ImageProviderFactory;
+import com.ivli.roim.view.ImageViewFactory;
 import java.io.File;
 import java.util.Locale;
 import javax.swing.ImageIcon;
@@ -512,8 +516,8 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         /**/
          //IMAGE
         iImage = new ImagePanel(); 
-        ImageView iv = new ImageView();
-        iv.setImage(mi);
+        ImageView iv = ImageViewFactory.create(mi);
+        ///iv.setImage(mi);
         iImage.setView(iv);
         iImage.setPreferredSize(jPanel1.getSize());
         iImage.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
@@ -530,11 +534,10 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
             jPanel3.add(iChart);  
             iImage.addROIChangeListener(iChart);
         }
-        
-        
+                
         if (mi.getImageType() != ImageType.STATIC) {     
-            ImageView iv1 = new GridImageView(4, 4) ;
-            iv1.setImage(mi2);
+            ImageView iv1 = GridImageView.create(mi2, 4, 4) ;
+            //iv1.setImage(mi2);
             iGrid = new ImagePanel(); 
             iGrid.setView(iv1);
             iGrid.setPreferredSize(jPanel4.getSize());

@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim;
+package com.ivli.roim.view;
 
 import com.ivli.roim.core.IImageView;
 import com.ivli.roim.core.Window;
@@ -146,14 +146,13 @@ class Controller implements IController {
         }        
     }  
     
-    private IImageView iControlled;    
+    protected IImageView iControlled;    
     private ActionItem iAction;   
     private Overlay iSelected;
     private ActionItem iWheel;
     
     public Controller(IImageView aC) {       
-        iControlled = aC;
-        
+        iControlled = aC;        
         iWheel = NewAction(iWheelAction, 0, 0);       
     }
 

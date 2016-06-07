@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.calc;
 
-import com.ivli.roim.ROI;
+import com.ivli.roim.view.ROI;
 import com.ivli.roim.core.Filter;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;

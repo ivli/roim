@@ -27,7 +27,7 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
 
 import com.ivli.roim.core.*;
-import com.ivli.roim.ImageView;
+import com.ivli.roim.view.ImageView;
 import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
 

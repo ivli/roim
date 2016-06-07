@@ -1,5 +1,5 @@
 
-package com.ivli.roim;
+package com.ivli.roim.view;
 
 import com.ivli.roim.core.Series;
 import com.ivli.roim.core.Measurement;

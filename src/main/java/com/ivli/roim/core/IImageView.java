@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.core;
 
-import com.ivli.roim.ROIManager;
+import com.ivli.roim.view.ROIManager;
 import java.awt.geom.AffineTransform;
 
 

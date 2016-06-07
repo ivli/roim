@@ -69,12 +69,12 @@ public class AnnotationPanel extends javax.swing.JPanel {
     }    
         
    private final String[] str = Measurement.getAllMeasurements();
-   private final com.ivli.roim.Annotation.Static iAnno;
+   private final com.ivli.roim.view.Annotation.Static iAnno;
     /**
      * Creates new form AnnotationPanel
      * @param anA
      */
-    public AnnotationPanel(com.ivli.roim.Annotation.Static anA) {
+    public AnnotationPanel(com.ivli.roim.view.Annotation.Static anA) {
         iAnno = anA;
         rowData = new Object[str.length][2];
                 

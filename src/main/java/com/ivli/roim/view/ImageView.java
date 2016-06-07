@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim;
+package com.ivli.roim.view;
 
 import com.ivli.roim.core.IImageView;
 import java.awt.Graphics;
@@ -71,8 +71,7 @@ public class ImageView  extends JComponent implements IImageView {
     
     protected Point iOrigin;              
     protected AffineTransform iZoom;    
-        
-    private final EventListenerList iListeners;
+   
         
     protected ROIManager iROIMgr;
     protected VOILut iVLUT;
@@ -80,31 +79,31 @@ public class ImageView  extends JComponent implements IImageView {
     protected int iCurrent;
     protected IMultiframeImage iModel;                     
     protected IController iController; 
+    
     protected BufferedImage iBuf; //offscreen buffer 
-    protected BufferedImage iBuf2; //pre zoomed image 
-     
-    public ImageView() {           
-        this(ZoomFit.VISIBLE, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR, null);    
+    protected BufferedImage iBuf2; //pre zoomed image      
+         
+    private EventListenerList iListeners;
+
+    public static ImageView create(IMultiframeImage aI) {
+        ImageView ret = new ImageView();
+        ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        ret.setFit(ImageView.ZoomFit.VISIBLE);
+        ret.setController(new Controller(ret));
+        //ret.setLUT(null);
+        ret.setImage(aI);
+        return ret;    
     }
     
-    public ImageView(ZoomFit aFit, Object aInterp, String aLut) {    
-        iFit = aFit;                    
-        iInterpolation = aInterp;      
+    protected ImageView() {                                
         iOrigin = new Point(0, 0);              
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
-        iCurrent = 0;
-        iVLUT = new VOILut(aLut);
-        iController = new Controller(this);
-        iListeners = new EventListenerList();
         
-        registerListeners(); 
-    }
+        iVLUT = new VOILut(null);
         
-    final void registerListeners() {        
-        addMouseListener(iController);
-        addMouseMotionListener(iController);
-        addMouseWheelListener(iController);
-        addKeyListener(iController);
+        iCurrent = 0;      
+        
+        iListeners = new EventListenerList(); 
         
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {
@@ -115,9 +114,23 @@ public class ImageView  extends JComponent implements IImageView {
             public void componentHidden(ComponentEvent e) {}
             public void componentMoved(ComponentEvent e) {}
             public void componentShown(ComponentEvent e) {}                    
-        });                
+        });           
     }
-    
+      
+    final void setController(IController aC) {
+        if (null != iController) {
+            removeMouseListener(iController);
+            removeMouseMotionListener(iController);
+            removeMouseWheelListener(iController);
+            removeKeyListener(iController);
+        }
+        iController  = aC;
+        addMouseListener(iController);
+        addMouseMotionListener(iController);
+        addMouseWheelListener(iController);
+        addKeyListener(iController);
+    }
+            
     public void setLUT(String aLUT) {         
         iVLUT.setLUT(aLUT);
         invalidateBuffer();

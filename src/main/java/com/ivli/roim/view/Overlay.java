@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim;
+package com.ivli.roim.view;
 
 import java.awt.Shape;
 import java.awt.Graphics2D;
@@ -33,16 +33,16 @@ public abstract class Overlay implements java.io.Serializable {
     private static final long serialVersionUID = 42L;
     
     //static final int VISIBLE = 0x1;
-    static final int SELECTABLE = 0x1;      
-    static final int MOVEABLE   = SELECTABLE << 0x1;
-    static final int PERMANENT  = MOVEABLE  << 0x1;
-    static final int CLONEABLE  = PERMANENT << 0x1;
-    static final int CANFLIP    = CLONEABLE << 0x1;
-    static final int CANROTATE  = CANFLIP   << 0x1;
-    static final int RESIZABLE  = CANROTATE << 0x1;
-    static final int PINNABLE   = RESIZABLE << 0x1;
-    static final int HASMENU    = PINNABLE  << 0x1;  
-    static final int HASCUSTOMMENU = HASMENU << 0x1;  
+    public static final int SELECTABLE = 0x1;      
+    public static final int MOVEABLE   = SELECTABLE << 0x1;
+    public static final int PERMANENT  = MOVEABLE  << 0x1;
+    public static final int CLONEABLE  = PERMANENT << 0x1;
+    public static final int CANFLIP    = CLONEABLE << 0x1;
+    public static final int CANROTATE  = CANFLIP   << 0x1;
+    public static final int RESIZABLE  = CANROTATE << 0x1;
+    public static final int PINNABLE   = RESIZABLE << 0x1;
+    public static final int HASMENU    = PINNABLE  << 0x1;  
+    public static final int HASCUSTOMMENU = HASMENU << 0x1;  
         
     transient protected ROIManager iMgr; 
     

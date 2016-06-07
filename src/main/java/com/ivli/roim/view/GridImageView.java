@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim;
+package com.ivli.roim.view;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -38,77 +38,93 @@ import com.ivli.roim.core.Window;
 public class GridImageView extends ImageView {    
     private int iRows;
     private int iCols;
-    private boolean iDisplayFrameNumbers = true;
+    private boolean iShowFrames = true;
     
     private static final String KCommandShowFrameNumbers = "MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS"; // NOI18N
     private static final String KCommandOptimalLayout = "MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL"; // NOI18N
     
-    public GridImageView(int aRows, int aColunmns) {            
-        iRows = aRows;
-        iCols = aColunmns;
-        //GRID CONTROLLER
-        iController = new Controller(this) {                        
-            @Override
-            JPopupMenu buildContextPopupMenu() {
-            
-                JPopupMenu mnu = new JPopupMenu("MNU_CONTEXT_GRIDVIEW"); 
-                {                   
-                    {
-                    JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL"));
-                    mi.addActionListener(this);
-                    mi.setActionCommand(KCommandOptimalLayout); 
-                    mnu.add(mi);
-                    } 
-                    {
-                    JCheckBoxMenuItem mi = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS"));
-                    mi.addActionListener(this);
-                    mi.setActionCommand(KCommandShowFrameNumbers); 
-                    mi.setState(iDisplayFrameNumbers);
-                    mnu.add(mi);
-                    }                                         
-                }
-                return mnu;
-            }
-            
-            @Override
-            public void keyPressed(KeyEvent e) {        
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_PLUS:
-                    case KeyEvent.VK_EQUALS:    
-                        setGrid(++iRows, iCols);                       
-                        break;
-                    case KeyEvent.VK_MINUS: 
-                        if (iRows > 1 && iCols > 2) {                                                    
-                            setGrid(--iRows, iCols);                        
-                        } else if (1 == iRows && iCols > 1) {
-                            setGrid(iRows, --iCols);
-                        } break;                        
-                    default: break;
-                }
-            }
-                        
-            JPopupMenu buildObjectSpecificPopupMenu() {
-                return buildContextPopupMenu();
-            }
-            
-            protected boolean handleCustomCommand(ActionEvent aCommand) {
-                switch(aCommand.getActionCommand()) {
-                    case KCommandOptimalLayout:
-                        return true;
-                    case KCommandShowFrameNumbers: {
-                        iDisplayFrameNumbers = !iDisplayFrameNumbers;
-                        invalidateBuffer();
-                        repaint();
-                    } break;
-                }
-                return false;
-            }
-        };   
+    public static GridImageView create(IMultiframeImage aI, int aRows, int aCols) { 
+        GridImageView ret = new GridImageView();
+        ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        ret.setFit(ImageView.ZoomFit.VISIBLE);
+        ret.setController(new GridViewController(ret));
+        ret.setImage(aI);
+        ret.setGrid(4, 4);
+        return ret;
+    }
         
-        registerListeners();
+    static class GridViewController extends Controller {      
+        
+        GridViewController(GridImageView aI) {
+            super(aI);
+        }
+        
+        @Override
+        JPopupMenu buildContextPopupMenu() {
+            GridImageView v = (GridImageView)iControlled;
+            
+            JPopupMenu mnu = new JPopupMenu("MNU_CONTEXT_GRIDVIEW"); 
+            {                   
+                {
+                JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL"));
+                mi.addActionListener(this);
+                mi.setActionCommand(KCommandOptimalLayout); 
+                mnu.add(mi);
+                } 
+                {
+                JCheckBoxMenuItem mi = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS"));
+                mi.addActionListener(this);
+                mi.setActionCommand(KCommandShowFrameNumbers); 
+                mi.setState(v.isShowFrames());
+                mnu.add(mi);
+                }                                         
+            }
+            return mnu;
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) { 
+            GridImageView v = (GridImageView)iControlled;
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_PLUS:
+                case KeyEvent.VK_EQUALS:    
+                    v.setGrid(v.getRows(), v.getCols());                       
+                    break;
+                case KeyEvent.VK_MINUS: /*
+                    if (iRows > 1 && iCols > 2) {                                                    
+                        setGrid(--iRows, iCols);                        
+                    } else if (1 == iRows && iCols > 1) {
+                        setGrid(iRows, --iCols);
+                    } */break;                        
+                default: break;
+            }
+        }
+
+        JPopupMenu buildObjectSpecificPopupMenu() {
+            return buildContextPopupMenu();
+        }
+
+        protected boolean handleCustomCommand(ActionEvent aCommand) {
+            GridImageView v = (GridImageView)iControlled;
+            switch(aCommand.getActionCommand()) {
+                case KCommandOptimalLayout:
+                    return true;
+                case KCommandShowFrameNumbers: {
+                    v.setShowFrames(!v.isShowFrames());
+                    //v.invalidateBuffer();
+                    v.repaint();
+                } break;
+            }
+            return false;
+        }
+    };   
+    
+    protected GridImageView(){//int aRows, int aCols) {            
+        iRows = 1;
+        iCols = 1;        
     }
     
-    void checkGrid() {
+    private void checkGrid() {
         final int n = iModel.getNumFrames();
         if (n < 2) {
             iRows = iCols = 1;
@@ -121,13 +137,25 @@ public class GridImageView extends ImageView {
         super.setImage(anImage);
         checkGrid();   
     }
-        
+    
+    public void setShowFrames(boolean aS) {
+        iShowFrames = aS; 
+        invalidateBuffer();
+    }   
+    
+    public boolean isShowFrames() {
+        return iShowFrames;         
+    }   
+    
+    public int getRows() {return iRows;}
+    public int getCols() {return iCols;}
+                    
     public void setGrid(int aRows, int aColunmns) {
         iRows = aRows;
         iCols = aColunmns;
         checkGrid(); 
         invalidateBuffer();
-        repaint();
+       // repaint();
     }
     
     @Override
@@ -208,7 +236,7 @@ public class GridImageView extends ImageView {
 
                     gc.drawImage(src, posx, posy, width, height, null);
                     
-                    if (iDisplayFrameNumbers) {
+                    if (iShowFrames) {
                         gc.setColor(Color.RED);
                         gc.drawString(String.format("%d", ndx), posx + 2, posy + 12); // NOI18N
                     }                

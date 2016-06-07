@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.ivli</groupId>
   <artifactId>roim</artifactId>
-  <version>0.7</version>
+  <version>0.9</version>
   <scm>
     <connection>scm:git:git@github.com:ivli/roim.git</connection>
     <developerConnection>scm:git:git@github.com:ivli/roim.git</developerConnection>

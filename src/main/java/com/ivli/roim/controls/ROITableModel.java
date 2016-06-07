@@ -17,8 +17,8 @@
  */
 package com.ivli.roim.controls;
 
-import com.ivli.roim.Overlay;
-import com.ivli.roim.ROI;
+import com.ivli.roim.view.Overlay;
+import com.ivli.roim.view.ROI;
 import java.awt.Color;
 import java.awt.Component;
 

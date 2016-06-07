@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim;
+package com.ivli.roim.view;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -103,8 +103,10 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     FrameOffsetVector getOffsetVector() {
+        /*
         if (iView instanceof OffsetImageView)
             return ((OffsetImageView)iView).iOff;
+        */
         return null;
     }
             

@@ -22,7 +22,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 
 import com.ivli.roim.ImagePanel;
-import com.ivli.roim.ROI;
+import com.ivli.roim.view.ROI;
 import com.ivli.roim.core.Filter;
 import com.ivli.roim.calc.*;
 
