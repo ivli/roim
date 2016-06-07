@@ -18,8 +18,6 @@
 package com.ivli.roim;
 
 
-
-
 import com.ivli.roim.view.Settings;
 import com.ivli.roim.view.ImageView;
 import com.ivli.roim.view.GridImageView;
@@ -463,7 +461,7 @@ public class NewJFrame extends javax.swing.JFrame implements FrameChangeListener
         /* ENDIF */
         
         try {                           
-            iProvider = ImageProviderFactory.getProvider(dicomFileName);
+            iProvider = ImageProviderFactory.create(dicomFileName);
             logger.info("opened file: " + dicomFileName);            
         } catch (IOException ex) {            
             logger.info("Unable to open file: " + dicomFileName); //NOI18N            

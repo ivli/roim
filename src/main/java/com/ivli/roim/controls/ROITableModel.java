@@ -56,10 +56,10 @@ public class ROITableModel extends DefaultTableModel {
      
         iColumns = new String[]{"OBJ", // NOI18N - holds an object reference  
                                 " ",
-                                java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.NAME"), 
-                                java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.PIXELS"), 
-                                java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.DENSITY"), 
-                                java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_TABLE_HEADER.COLOUR"),
+                                java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.NAME"), 
+                                java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.PIXELS"), 
+                                java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.DENSITY"), 
+                                java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.COLOUR"),
                                
                                };
 
@@ -167,7 +167,7 @@ public class ROITableModel extends DefaultTableModel {
             colorChooser = new JColorChooser();
             
             dialog = JColorChooser.createDialog(button,
-                        java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("COLOR_CHOOSER_DIALOG.PICK_A_COLOR"),
+                        java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("COLOR_CHOOSER_DIALOG.PICK_A_COLOR"),
                         true,  //modal
                         colorChooser,
                         this,  //OK button handler

@@ -49,8 +49,8 @@ public class ChartPanel extends JPanel implements ROIChangeListener {
         } else {
             iPlot = new XYPlot();           
             iPlot.setRenderer(new StandardXYItemRenderer());
-            iPlot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_CHART.TIME_SERIES_VALUES")));
-            iPlot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ROI_CHART.ROI_INTDEN_VALUES")));           
+            iPlot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_CHART.TIME_SERIES_VALUES")));
+            iPlot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_CHART.ROI_INTDEN_VALUES")));           
             iPlot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
             iPlot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
 

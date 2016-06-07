@@ -72,7 +72,7 @@ public class CalcPanel extends javax.swing.JPanel {
 
     private boolean rebuildOp() {
         if (jTable1.getSelectedRow() < 0 || jTable2.getSelectedRow() < 0) {
-            jTextField2.setText(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("CALC.SELECT_TWO_ROIS"));
+            jTextField2.setText(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CALC.SELECT_TWO_ROIS"));
             return false;
         } else {
             logger.info(String.format("%d, %d", jTable1.getSelectedRow(), jTable2.getSelectedRow()));
@@ -137,7 +137,7 @@ public class CalcPanel extends javax.swing.JPanel {
 
         jTextField2.setEditable(false);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle"); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
         jButton1.setText(bundle.getString("CALCPANEL.ADD_TO_FORM")); // NOI18N
         jButton1.setEnabled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {

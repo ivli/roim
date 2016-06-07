@@ -60,7 +60,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
             iHist = iHEx.iHist;
         }
         
-        final String name = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.HISTOGRAM");
+        final String name = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM");
         XYSeries s = iHist.getSeriesRebinned(name, NO_OF_BINS);
         return s;
     }
@@ -73,7 +73,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     
     public VOILUTPanel(LUTControl aP, ImageView aView) {        
         iView = aView;
-        iCurveName = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.VOI_LUT");        
+        iCurveName = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.VOI_LUT");        
         
         iLUT = new LUTControl();
         iLUT.attach(aP);
@@ -86,17 +86,17 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         plot.setRenderer(0, new XYSplineRenderer());  
         
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
-        plot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_VOI_CURVE")));                
+        plot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.AXIS_LABEL_VOI_CURVE")));                
                  
         XYSeriesCollection col2 = new XYSeriesCollection();
         col2.addSeries(makeHistogram(jPanel1.getPreferredSize().width));
 
         plot.setDataset(1, col2);
         plot.setRenderer(1, new XYBarRenderer());
-        plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_IMAGE_SPACE")));
+        plot.setRangeAxis(1, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.AXIS_LABEL_IMAGE_SPACE")));
         plot.mapDatasetToRangeAxis(1, 1);      
         
-        plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("VOILUTPANEL.AXIS_LABEL_IMAGE_HISTOGRAM")));                
+        plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.AXIS_LABEL_IMAGE_HISTOGRAM")));                
         plot.setRangeGridlinesVisible(true);
         plot.setDomainGridlinesVisible(true);
         // change the rendering order so the primary dataset appears "behind" the 

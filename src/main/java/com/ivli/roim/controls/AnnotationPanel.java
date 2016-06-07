@@ -27,8 +27,8 @@ import com.ivli.roim.core.Measurement;
  */
 public class AnnotationPanel extends javax.swing.JPanel {
     Object rowData[][];
-    final String columnNames[] = {java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ANNOTATION_PANEL.NAME"), 
-                                  java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("ANNOTATION_PANEL.DISPLAY")};
+    final String columnNames[] = {java.util.ResourceBundle.getBundle("com/ivli/controls/Bundle").getString("ANNOTATION_PANEL.NAME"), 
+                                  java.util.ResourceBundle.getBundle("com/ivli/controls/Bundle").getString("ANNOTATION_PANEL.DISPLAY")};
                                 
     
     private class PropertyTableModel extends AbstractTableModel {
@@ -110,7 +110,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
         jTable1.setModel(new PropertyTableModel());
         jScrollPane1.setViewportView(jTable1);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle"); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
         jButton1.setText(bundle.getString("OK")); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -118,7 +118,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        jCheckBox1.setText(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("MULTILINE"));
+        jCheckBox1.setText(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MULTILINE"));
         jCheckBox1.setSelected(iAnno.isMultiline());
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

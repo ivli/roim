@@ -496,7 +496,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
                 dialog.setVisible(true);                 
                 break;
             case KCommandChangeLUT:
-                FileDialog fd = new FileDialog((Frame)null , java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.CHOOSE_LUT_FILE"), FileDialog.LOAD);
+                FileDialog fd = new FileDialog((Frame)null , java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.CHOOSE_LUT_FILE"), FileDialog.LOAD);
                 fd.setDirectory(Settings.get(Settings.KEY_DEFAULT_FOLDER_LUT, System.getProperty("user.home")));
                 fd.setFile(Settings.get(Settings.KEY_FILE_SUFFIX_LUT, Settings.DEFAULT_FILE_SUFFIX_LUT));
                 fd.setVisible(true);
@@ -521,7 +521,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     
     void showPopupMenu(int aX, int aY) {
         final JPopupMenu mnu = new JPopupMenu("WL_CONTEXT_MENU_TITLE");     //NOI18N    
-        JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.TRIGGER_LOGARITHMIC"));
+        JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.TRIGGER_LOGARITHMIC"));
         mi11.addActionListener(this);
         mi11.setState(!iView.isLinear());
         mi11.setActionCommand(KCommandTriggerLinear);
@@ -535,13 +535,13 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         mnu.add(mi12);
         
         if (iCanShowDialog) {
-            JMenuItem mi13 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.SHOW_DIALOG"));
+            JMenuItem mi13 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.SHOW_DIALOG"));
             mi13.addActionListener(this);
             mi13.setActionCommand(KCommandShowDialog); 
             mnu.add(mi13);
         }
         
-        JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.OPEN_BUILTIN_LUT"));
+        JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.OPEN_BUILTIN_LUT"));
                
         for (String s : LutReader.getInstalledLUT()) {
             JMenuItem mit = new JMenuItem(s);
@@ -552,7 +552,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         
         mnu.add(m1);
         
-        JMenuItem mi14 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/controls/Bundle").getString("LUT_MENU.CHOOSE_LUT_FILE"));
+        JMenuItem mi14 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.CHOOSE_LUT_FILE"));
         mi14.addActionListener(this);
         mi14.setActionCommand(KCommandChangeLUT); 
         mnu.add(mi14);

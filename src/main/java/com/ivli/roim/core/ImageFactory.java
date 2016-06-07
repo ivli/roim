@@ -15,20 +15,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.io;
+package com.ivli.roim.core;
 
+import com.ivli.roim.io.IImageProvider;
+import com.ivli.roim.io.ImageProviderFactory;
 import java.io.IOException;
 
 /**
  *
  * @author likhachev
  */
-public class ImageProviderFactory {
-    
-    //TODO: implement here a logic of finding a provider according to image file type (file extension???) 
-    public static IImageProvider create(final String aFullPath) throws IOException {
-        
-        return new DCMImageProvider(aFullPath);
-        
+public class ImageFactory { 
+    public static IMultiframeImage create(final String aFullPath) { 
+        try {
+            IImageProvider provider = ImageProviderFactory.create(aFullPath);        
+            return MultiframeImage.create(provider);
+        } catch (IOException ex) {
+            return null;
+        }
     }
 }
