@@ -44,8 +44,8 @@ import org.jfree.ui.Layer;
  *
  * @author likhachev
  */
-public class CurvePanel extends org.jfree.chart.ChartPanel {            
-    static enum MENUS {
+public class ChartControl extends org.jfree.chart.ChartPanel {            
+    private static enum MENUS {
         NOP(              "NOP",                          "NOP"),
         ADD(              "MARKER_CMD_MARKER_ADD",        java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MARKER_ADD")),
         EXPORT_CSV(       "MARKER_CMD_EXPORT_CSV",        java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MARKER_EXPORT_CSV")),
@@ -84,7 +84,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         }
     }
             
-    public CurvePanel(JFreeChart aChart) {
+    public ChartControl(JFreeChart aChart) {
         super(aChart);
     }
     
@@ -95,8 +95,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         aM.setLinkedMarker(vm);        
     }
     
-    public void removeMarker(DomainMarker aM) {
-        
+    public void removeMarker(DomainMarker aM) {        
         ListIterator<Interpolation> it = iInterpolations.listIterator();
         
         while(it.hasNext()) {
@@ -104,8 +103,7 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
             if(i.iLhs == aM || i.iRhs == aM) {                
                 it.remove();
                 i.close();               
-            }
-            
+            }            
         }
                        
         getChart().getXYPlot().removeRangeMarker(aM.getLinkedMarker(), Layer.FOREGROUND);
@@ -182,7 +180,10 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
                 } break;
             case EXPORT_CSV:               
                 if (null != iSeries && iSeries instanceof XYSeries) { 
-                    try (Writer pwr = new PrintWriter("export.csv")){                               
+                    FileOpenDialog dlg = new FileOpenDialog("Select file", "*.csv", "");
+                    if (!dlg.DoModal(null, false))
+                        return;
+                    try (Writer pwr = new PrintWriter(dlg.getFileName())) { //NOI18N                              
                         for (int i = 0; i < iSeries.getItemCount(); ++i) {
                             XYDataItem xy = iSeries.getDataItem(i);
                             pwr.append(String.format("%f\t%f\n", xy.getXValue(), xy.getYValue())); //NOI18N                        
@@ -444,5 +445,5 @@ public class CurvePanel extends org.jfree.chart.ChartPanel {
         iSeries.add(iDataItem);         
     }       
     
-    private static final Logger logger = LogManager.getLogger(CurvePanel.class);
+    private static final Logger logger = LogManager.getLogger(ChartControl.class);
 }

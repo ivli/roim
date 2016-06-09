@@ -42,7 +42,7 @@ import javax.swing.JPanel;
 public class ChartView extends JPanel implements ROIChangeListener {                   
     private XYPlot     iPlot;
     private JFreeChart iJfc;    
-    private CurvePanel iChart;  
+    private ChartControl iChart;  
       
     public static ChartView create(ImageView aV) {
         ChartView ret = new ChartView();
@@ -66,7 +66,7 @@ public class ChartView extends JPanel implements ROIChangeListener {
             iPlot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
 
             iJfc   = new JFreeChart(iPlot); 
-            iChart = new CurvePanel(iJfc);           
+            iChart = new ChartControl(iJfc);           
            
             iPlot.setDataset(new XYSeriesCollection());
 

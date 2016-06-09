@@ -18,32 +18,27 @@
 package com.ivli.roim;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Locale;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.RenderingHints;
-import java.awt.FileDialog;
 import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.UIManager;
 import javax.swing.JFrame;
-import com.ivli.roim.view.Settings;
 import com.ivli.roim.view.ImageView;
 import com.ivli.roim.view.GridImageView;
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.controls.AboutDialog;
 import com.ivli.roim.controls.CalcPanel;
 import com.ivli.roim.controls.ChartView;
+import com.ivli.roim.controls.FileOpenDialog;
 import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.controls.ProgressDialog;
 import com.ivli.roim.controls.ROIListPanel;
-import com.ivli.roim.controls.VOILUTPanel;
-
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.TimeSlice;
-import com.ivli.roim.view.ImageViewFactory;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
 import com.ivli.roim.events.FrameChangeEvent;
@@ -64,50 +59,15 @@ import org.apache.logging.log4j.Logger;
 public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
     private ImageView  iImage;
     private ImageView  iGrid;    
-    private ChartView  iChart;
- 
+    private ChartView  iChart; 
     
     /**/
     private static final void addjustLAF() {
         if (Locale.getDefault().equals(new Locale("ru", "RU"))) { //NOI18N
-            /*  add locale to JFileChooser */
-            UIManager.put("FileChooser.lookInLabelText", "Папка");
-            UIManager.put("FileChooser.cancelButtonText", "Отмена");
-            UIManager.put("FileChooser.cancelButtonToolTipText", "Отмена");
-            UIManager.put("FileChooser.openButtonText", "Открыть");
-            UIManager.put("FileChooser.openButtonToolTipText", "Открыть");
-            UIManager.put("FileChooser.filesOfTypeLabelText", "Тип");
-            UIManager.put("FileChooser.fileNameLabelText", "Файл");
-            UIManager.put("FileChooser.detailsViewButtonToolTipText", "Подробно");
-            UIManager.put("FileChooser.detailsViewButtonAccessibleName", "Подробно");
-            UIManager.put("FileChooser.upFolderToolTipText",    "На один уровень вверх"); 
-            UIManager.put("FileChooser.upFolderAccessibleName", "На один уровень вверх"); 
-            UIManager.put("FileChooser.homeFolderToolTipText",   "Домой"); 
-            UIManager.put("FileChooser.homeFolderAccessibleName", "Домой"); 
-            UIManager.put("FileChooser.fileNameHeaderText", "Имя"); 
-            UIManager.put("FileChooser.fileSizeHeaderText", "Размер");
-            UIManager.put("FileChooser.fileTypeHeaderText", "Тип"); 
-            UIManager.put("FileChooser.fileDateHeaderText", "Дата"); 
-            UIManager.put("FileChooser.fileAttrHeaderText", "Аттрибуты");
-            UIManager.put("FileChooser.listViewButtonToolTipText", "Список"); 
-            UIManager.put("FileChooser.listViewButtonAccessibleName", "Список");      
-            UIManager.put("FileChooser.openDialogTitleText", "Выберите файл");
-            UIManager.put("FileChooser.saveDialogTitleText", "Выберите файл");
-            UIManager.put("FileChooser.saveAsButtonText", "Сохранить как");
-            UIManager.put("FileChooser.saveButtonText", "Сохранить");
-            UIManager.put("FileChooser.saveButtonToolTipText", "Сохранить");
-            
-            UIManager.put("FileChooser.acceptAllFileFilterText", "Все файлы");
-            
-            UIManager.put("FileChooser.desktopAccessibleName", "Рабочий стол");
-            UIManager.put("FileChooser.desktopToolTipText",    "Рабочий стол");
-            
-            UIManager.put("FileChooser.readOnly", Boolean.TRUE);       
-            
+            /*  add locale to JFileChooser */            
             UIManager.put("ColorChooser.okText", "Выбрать");
             UIManager.put("ColorChooser.cancelText", "Отменить");
-            UIManager.put("ColorChooser.resetText", "Сброс");
-            
+            UIManager.put("ColorChooser.resetText", "Сброс");            
         }
     }
     
@@ -116,6 +76,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         //iPanel = new ImagePanel();
         ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("images/khibiny.png"));
         setIconImage(img.getImage());
+      
         initComponents();    
     }
     	
@@ -406,81 +367,20 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     private void openImage(String aF) {   
         String dicomFileName;
         
-        /* USE_SYSTEM_FILE_DIALOG */
-        if (null != aF) {
-            dicomFileName = aF;
-        } else {
-            FileDialog fd = new FileDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("NEWJFRAME.CHOOSE_DICOM_FILE"), FileDialog.LOAD);
-            
-            fd.setFile(Settings.get(Settings.DEFAULT_FILE_SUFFIX_DICOM, "*.dcm")); // NOI18N
-            
-            // following doesn't work on windows see JDK-4031440 f**k 
-            fd.setFilenameFilter(new FilenameFilter(){
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(".dcm") || name.endsWith(".dicom");
-                }
-            });
-            
-            fd.setDirectory(Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home"))); // NOI18N
-            fd.setVisible(true);
-
-            if (null != fd.getFile()) 
-                dicomFileName = fd.getDirectory() + fd.getFile(); 
-            else
-                return;
-        }
-        
-        
-        /* ELSE
-        JFileChooser jfc = new JFileChooser();   
-        jfc.setCurrentDirectory(new File(Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")))); // NOI18N
-        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfc.setFileFilter(new FileFilter(){ 
-            public  boolean accept(File f) {                                 
-                if (f.isDirectory()) 
-                    return true;
-                else {
-                    String ext = "";
-                    String s = f.getName();
-                    int i = s.lastIndexOf('.');
-
-                    if (i > 0 &&  i < s.length() - 1) {
-                        ext = s.substring(i+1).toLowerCase();
-                    }    
-
-                    if (ext.equalsIgnoreCase(Settings.DEFAULT_FILE_SUFFIX_DICOM))
-                        return true;
-                }
-                
-                return false;
-            }
-            
-            public String getDescription() {return java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("JFC.FILE_DESCRIPTION_DICOM");}                           
-        });        
-        
-        int result = jfc.showOpenDialog(this);
-        
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = jfc.getSelectedFile();
-            System.out.println("Selected file: " + (dicomFileName = selectedFile.getAbsolutePath()));
-            Settings.set(Settings.KEY_DEFAULT_FOLDER_DICOM,  selectedFile.getPath());
-        } else {
+        FileOpenDialog dlg = new FileOpenDialog("Choice file", "*.dcm", "Medical image in DICOM format");
+        if(!dlg.DoModal(this, true))
             return;
-        }
-        */
-        /* ENDIF */
-        
         try {  
-            File f = new File(dicomFileName);                 
+            File f = new File(dlg.getFileName());                 
             if (f.exists() && !f.isDirectory()) {
-                initPanels(dicomFileName);
+                initPanels(dlg.getFileName());
+                setTitle(dlg.getFileName());
             } else {
-                JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dicomFileName);                   
+                JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dlg.getFileName());                   
             }                     
         } catch (Exception ex) {            
-            LOG.info("Unable to open file: " + dicomFileName); //NOI18N            
-            JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dicomFileName);                   
+            LOG.info("Unable to open file: " + dlg.getFileName()); //NOI18N            
+            JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dlg.getFileName());                   
         } 
     }
         
@@ -704,18 +604,10 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
             
         /*  END_IF USE_NIMBUS_LAF */    
         
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NMCAD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NMCAD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NMCAD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(NMCAD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
-        
+               
         addjustLAF();
         
         /* Create and display the form */
