@@ -89,16 +89,20 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jSplitPane2 = new javax.swing.JSplitPane();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -125,27 +129,9 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
 
-        jTabbedPane1.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                jTabbedPane1ComponentShown(evt);
-            }
-        });
-
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel1.setPreferredSize(new java.awt.Dimension(597, 600));
-        jPanel1.setVerifyInputWhenFocusTarget(false);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
-        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel3.setLayout(new java.awt.BorderLayout());
-        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
-
-        jPanel4.setLayout(new java.awt.BorderLayout());
-        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
-
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
         jLabel1.setText(bundle.getString("NMCAD.jLabel1.text")); // NOI18N
 
         jLabel2.setText(bundle.getString("NMCAD.jLabel2.text")); // NOI18N
@@ -163,7 +149,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 140, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -188,6 +174,41 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        jSplitPane1.setDividerLocation(400);
+
+        jSplitPane2.setDividerLocation(400);
+        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        jTabbedPane1.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                jTabbedPane1ComponentShown(evt);
+            }
+        });
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel1.setPreferredSize(new java.awt.Dimension(597, 600));
+        jPanel1.setVerifyInputWhenFocusTarget(false);
+        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel3.setLayout(new java.awt.BorderLayout());
+        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
+
+        jPanel4.setLayout(new java.awt.BorderLayout());
+        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
+
+        jSplitPane2.setTopComponent(jTabbedPane1);
+
+        jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel6.setLayout(new java.awt.BorderLayout());
+        jSplitPane2.setRightComponent(jPanel6);
+
+        jSplitPane1.setLeftComponent(jSplitPane2);
+
+        jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel5.setLayout(new java.awt.BorderLayout());
+        jSplitPane1.setRightComponent(jPanel5);
 
         jMenu1.setText(bundle.getString("NMCAD.jMenu1.text")); // NOI18N
 
@@ -342,14 +363,15 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
             .addGroup(layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE)
+                    .addComponent(jSplitPane1)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1)
+                .addContainerGap()
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -388,10 +410,14 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jPanel1.removeAll();
         jPanel3.removeAll();
         jPanel4.removeAll();
+        jPanel5.removeAll();
+        jPanel6.removeAll();
         
         jPanel1.repaint();
         jPanel3.repaint();
         jPanel4.repaint();
+        jPanel5.repaint();
+        jPanel6.repaint();
         
         IMultiframeImage mi2 = ImageFactory.create(aFileName);       
         IMultiframeImage mi;                
@@ -435,16 +461,16 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         //CHART        
         if (mi.getImageType() == ImageType.DYNAMIC) {
             iChart = ChartView.create(iImage);                    
-            iChart.setPreferredSize(jPanel3.getPreferredSize());
-            jPanel3.add(iChart);              
+            iChart.setPreferredSize(jPanel5.getPreferredSize());
+            jPanel5.add(iChart);              
         } 
                 
         if (mi.getImageType() != ImageType.STATIC) {     
             iGrid = GridImageView.create(mi2, 4, 4) ;          
-            iGrid.setPreferredSize(jPanel4.getSize());                  
-            jPanel4.setLayout(new BorderLayout());     
-            jPanel4.add(iGrid, BorderLayout.CENTER);   
-            jPanel4.add(LUTControl.create(iGrid), BorderLayout.LINE_END);   
+            iGrid.setPreferredSize(jPanel6.getSize());                  
+            jPanel6.setLayout(new BorderLayout());     
+            jPanel6.add(iGrid, BorderLayout.CENTER);   
+            jPanel6.add(LUTControl.create(iGrid), BorderLayout.LINE_END);   
         }        
                
         iImage.addFrameChangeListener(this);        
@@ -698,7 +724,11 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 
