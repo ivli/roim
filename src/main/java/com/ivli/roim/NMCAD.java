@@ -17,6 +17,7 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.algorithm.ImageProcessor;
 import java.io.File;
 import java.util.Locale;
 import java.awt.BorderLayout;
@@ -29,13 +30,11 @@ import javax.swing.UIManager;
 import javax.swing.JFrame;
 import com.ivli.roim.view.ImageView;
 import com.ivli.roim.view.GridImageView;
-import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.controls.AboutDialog;
 import com.ivli.roim.controls.CalcPanel;
 import com.ivli.roim.controls.ChartView;
 import com.ivli.roim.controls.FileOpenDialog;
 import com.ivli.roim.controls.LUTControl;
-import com.ivli.roim.controls.ProgressDialog;
 import com.ivli.roim.controls.ROIListPanel;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.TimeSlice;
@@ -419,44 +418,23 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jPanel5.repaint();
         jPanel6.repaint();
         
-        IMultiframeImage mi2 = ImageFactory.create(aFileName);       
-        IMultiframeImage mi;                
+        IMultiframeImage mi = ImageFactory.create(aFileName);       
         
-        switch (mi2.getImageType()) {
-            case VOLUME:
-            case TOMO:{   
-                ProgressDialog d = ProgressDialog.create(this, "---");
-                MIPProjector prj = new MIPProjector(mi2, 128);
-                
-                class tmp  implements Runnable {                    
-                    
-                    public void run() {                        
-                        prj.project();
-                    }
-                } 
-                
-                tmp t = new tmp();
-                prj.addProgressListener(d);
-                
-                (new Thread(t)).start();
-                d.show(true);
-                mi = prj.getDst();
-                
-            } break; 
-                
-            default:       
-            mi = mi2;        
-        break;
-        }
-        
-      
          //IMAGE       
         iImage = ImageView.create(mi);        
-        iImage.setPreferredSize(jPanel1.getSize());        
+        //iImage.setPreferredSize(jPanel1.getSize());        
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iImage, BorderLayout.CENTER);
         jPanel1.add(LUTControl.create(iImage), BorderLayout.LINE_END);
         jPanel1.validate(); 
+        
+        /**/
+        ImageProcessor ip = mi.processor();
+        IMultiframeImage sum = ip.collapse(null);
+        ImageView sumView = ImageView.create(sum);
+        jPanel3.add(sumView, BorderLayout.CENTER);
+        jPanel3.add(LUTControl.create(sumView), BorderLayout.LINE_END);
+        jPanel3.validate(); 
         
         //CHART        
         if (mi.getImageType() == ImageType.DYNAMIC) {
@@ -466,7 +444,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         } 
                 
         if (mi.getImageType() != ImageType.STATIC) {     
-            iGrid = GridImageView.create(mi2, 4, 4) ;          
+            iGrid = GridImageView.create(mi, 4, 4) ;          
             iGrid.setPreferredSize(jPanel6.getSize());                  
             jPanel6.setLayout(new BorderLayout());     
             jPanel6.add(iGrid, BorderLayout.CENTER);   

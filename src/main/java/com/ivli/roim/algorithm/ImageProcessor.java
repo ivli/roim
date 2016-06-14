@@ -19,6 +19,8 @@ package com.ivli.roim.algorithm;
 
 import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.TimeSlice;
 
 /**
  *
@@ -77,5 +79,19 @@ public class ImageProcessor {
             
     public void rotate(final double anAngle) {
         rotate(anAngle, 0, iImage.getNumFrames());
-    }           
+    }      
+        
+    public IMultiframeImage collapse(TimeSlice anInterval) {        
+        IMultiframeImage ret = iImage.createCompatibleImage(1);
+        
+        int[] dst = ret.get(0).getPixelData();
+        
+        for (int i = 0; i < iImage.getNumFrames(); ++i) {
+            int []src = iImage.get(i).getPixelData();
+            
+            for (int j = 0; j < dst.length; ++j)
+                dst[j] += src[j];
+        }        
+        return ret;
+    }
 }
