@@ -401,7 +401,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
                 JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dlg.getFileName());                   
             }                     
         } catch (Exception ex) {            
-            LOG.info("Unable to open file: " + dlg.getFileName()); //NOI18N            
+            LOG.error(ex);           
             JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dlg.getFileName());                   
         } 
     }

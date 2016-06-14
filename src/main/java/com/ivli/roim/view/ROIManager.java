@@ -86,17 +86,17 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     public void setView(ImageView aV) {
          iView = aV;
     }
-        
+      
     public ImageView getView() {
         return iView;
     } 
-        
+
     public int getWidth() {
-        return iView.getImage().getWidth();
+        return getImage().getWidth();
     }
     
     public int getHeight() {
-        return iView.getImage().getHeight();
+        return getImage().getHeight();
     }    
                         
     public IMultiframeImage getImage() {
@@ -127,7 +127,8 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
             if(o.isVisible()) 
                 o.paint(aGC, aT);
         });
-    }            
+    }    
+    
     /*
      * creates profile curve for whole width of the image
      * aS - shape <b><i> in screen coordinates </i></b>  
@@ -176,14 +177,14 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         final class SO implements IOperand {
             double iV; 
 
-            SO(double aV ) {
+            SO(double aV) {
                 iV = aV;
             } 
-            public double value() {return iV;}
+            public double value() { return iV;}
             public String getString() { return "";}
         } 
         
-        ROI surrogate = new ROI(ln + on + rn, ((ConcreteOperand)anOp.getLhs()).getROI().getShape(), this, Color.YELLOW){//((ConcreteOperand)anOp.getLhs()).getROI().getColor()) {
+        ROI surrogate = new ROI(ln + on + rn, ((ConcreteOperand)anOp.getLhs()).getROI().getShape(), this, Color.YELLOW) {
             void buildSeriesIfNeeded() {               
                 final Measurement f1 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();                
                 final Measurement f2 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();
@@ -322,7 +323,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
             oos.close();
             fos.close();
         } catch (IOException ex){
-           logger.error("Unable to externalize objects" + ex); 
+           LOG.error("Unable to externalize objects" + ex); 
         } 
     }
              
@@ -333,7 +334,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
             ois.close();
             fis.close();            
         } catch (IOException|ClassNotFoundException ex) {
-            logger.error("Unable to deserialize" + ex);
+            LOG.error("Unable to deserialize" + ex);
         }         
     }
     
@@ -361,6 +362,6 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         notifyROIChanged(anEvt.getObject(), anEvt.getChange(), anEvt.getExtra());
     }
     
-    private static final Logger logger = LogManager.getLogger(ROIManager.class);
+    private static final Logger LOG = LogManager.getLogger(ROIManager.class);
 }
 

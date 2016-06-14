@@ -90,7 +90,7 @@ public class ImageView  extends JComponent implements IImageView {
         ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         ret.setFit(ImageView.ZoomFit.VISIBLE);
         ret.setController(new Controller(ret));
-        //ret.setLUT(null);
+        ret.setROIMgr(new ROIManager());
         ret.setImage(aI);
         return ret;    
     }
@@ -124,6 +124,7 @@ public class ImageView  extends JComponent implements IImageView {
             removeMouseWheelListener(iController);
             removeKeyListener(iController);
         }
+        
         iController  = aC;
         addMouseListener(iController);
         addMouseMotionListener(iController);
@@ -136,12 +137,17 @@ public class ImageView  extends JComponent implements IImageView {
         invalidateBuffer();
     }    
     
+    public void setROIMgr(ROIManager aMgr) {
+        iROIMgr = new ROIManager();  
+    }
+    
     public void setImage(IMultiframeImage anImage) {                
         iModel = anImage;             
         iVLUT.setTransform(iModel.getTransform());
-        iROIMgr = new ROIManager();
         
-        iROIMgr.setView(this);            
+        if (null != iROIMgr)
+            iROIMgr.setView(this);            
+        
         loadFrame(0);
     }
                  
