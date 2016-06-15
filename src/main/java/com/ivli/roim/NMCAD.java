@@ -73,7 +73,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }
     
     public NMCAD() {         
-        LOG.info("-->Enter application {}", LocalDate.now()); // NOI18N       
+        LOG.info("-->Entering application"); // NOI18N       
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("images/khibiny.png")).getImage());
       
         initComponents();    
