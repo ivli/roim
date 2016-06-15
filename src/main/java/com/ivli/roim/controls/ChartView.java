@@ -18,8 +18,11 @@
 package com.ivli.roim.controls;
 
 
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import javax.swing.JPanel;
+
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
@@ -33,8 +36,11 @@ import com.ivli.roim.core.Series;
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
-import com.ivli.roim.view.ImageView;
-import javax.swing.JPanel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
+
 /**
  *
  * @author likhachev
@@ -44,10 +50,10 @@ public class ChartView extends JPanel implements ROIChangeListener {
     private JFreeChart iJfc;    
     private ChartControl iChart;  
       
-    public static ChartView create(ImageView aV) {
+    public static ChartView create(/*ImageView aV*/) {
         ChartView ret = new ChartView();
         ret.initChart();
-        aV.getROIMgr().addROIChangeListener(ret);
+        ///aV.getROIMgr().addROIChangeListener(ret);
         return ret;
     }
         
@@ -93,7 +99,11 @@ public class ChartView extends JPanel implements ROIChangeListener {
             case ROIChangeEvent.ROICHANGED: {                
                 if (aE.getObject() instanceof ROI) {
                     int ndx = col.indexOf(aE.getObject().getName());    
-
+                    
+                    if (ndx < 0) {
+                        LOG.debug("Serie {}:{} does not exist", aE.getObject().getName(), ndx);                        
+                    }
+                    
                     Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                     XYSeries s = col.getSeries(ndx); 
                     s.clear();
@@ -105,7 +115,10 @@ public class ChartView extends JPanel implements ROIChangeListener {
                 }
             } break;
                 
-            case ROIChangeEvent.ROICREATED: {                
+            case ROIChangeEvent.ROICREATED: {  
+                if (0 > col.indexOf(aE.getObject().getName())) {
+                    LOG.debug("Serie {} already exists", aE.getObject().getName());                    
+                }
                 final XYSeries s = new XYSeries(aE.getObject().getName(), true, false);
                 final Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                
@@ -117,7 +130,8 @@ public class ChartView extends JPanel implements ROIChangeListener {
                     s.add(x, y);
                 }
 
-                ((XYSeriesCollection)iPlot.getDataset()).addSeries(s);   
+                ((XYSeriesCollection)iPlot.getDataset()).addSeries(s); 
+                
                 iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getObject().getName()), ((ROI)aE.getObject()).getColor());  
                 /*
                  * the place to create default markers if needed
@@ -146,4 +160,5 @@ public class ChartView extends JPanel implements ROIChangeListener {
                 throw new java.lang.IllegalArgumentException();    
         }   
     }
+    private final static Logger LOG = LogManager.getLogger();
 }

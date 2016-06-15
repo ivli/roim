@@ -204,5 +204,5 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
-    private final static Logger logger = LogManager.getLogger(VOILUTPanel.class);
+    private final static Logger LOG = LogManager.getLogger();
 }

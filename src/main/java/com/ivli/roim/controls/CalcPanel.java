@@ -75,7 +75,7 @@ public class CalcPanel extends javax.swing.JPanel {
             jTextField2.setText(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CALC.SELECT_TWO_ROIS"));
             return false;
         } else {
-            LOG.info(String.format("%d, %d", jTable1.getSelectedRow(), jTable2.getSelectedRow()));
+            LOG.info("{}, {}", jTable1.getSelectedRow(), jTable2.getSelectedRow());
             final ROI iLhs = (ROI)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
             final ROI iRhs = (ROI)jTable2.getValueAt(jTable2.getSelectedRow(), 0);                
             iF = Filter.getFilter((String)jComboBox2.getSelectedItem());
@@ -241,5 +241,5 @@ public class CalcPanel extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 
- private static final Logger LOG = LogManager.getLogger(CalcPanel.class);
+ private static final Logger LOG = LogManager.getLogger();
 }

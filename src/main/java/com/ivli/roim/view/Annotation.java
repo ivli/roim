@@ -69,7 +69,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             notifyROIChanged(ROIChangeEvent.ROICHANGED, null);
         }  
                       
-        public Overlay getRoi() {return iRoi;}
+        public OverlayBase getRoi() {return iRoi;}
 
         public Filter[] getFilters() {
             return iFilters;
@@ -185,10 +185,10 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
     public static class Active extends Annotation {
         private Color iColor = Color.RED;
         //private String iAnnotation;        
-        private Overlay iOverlay;
+        private OverlayBase iOverlay;
         private IOperation iOp;
         
-        Active(IOperation aOp, Overlay anO, ROIManager aRM) {
+        Active(IOperation aOp, OverlayBase anO, ROIManager aRM) {
             super("ANNOTATION.ACTIVE", null, aRM);        
             
             iOp = aOp;                 

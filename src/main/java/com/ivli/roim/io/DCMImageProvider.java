@@ -151,7 +151,7 @@ class DCMImageProvider implements IImageProvider {
         final int w = getWidth();
         final int h = getHeight();  
         
-        LOG.info(String.format("Loading frame # = %d", anIndex));
+        LOG.debug("Loading frame # = {}", anIndex);
         
         if (null == aBuffer)
             aBuffer = new int[w*h];       
@@ -207,7 +207,7 @@ class DCMImageProvider implements IImageProvider {
     public PValueTransform getRescaleTransform() { 
         double  s = iDataSet.getDouble(Tag.RescaleSlope, 1.);   
         double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);            
-        LOG.info (String.format("Slope=%f; Intercept=%f", s, i));
+        LOG.info ("Slope={}; Intercept={}", s, i);
         return new PValueTransform(s, i);           
     }
                
@@ -235,5 +235,5 @@ class DCMImageProvider implements IImageProvider {
         return param;
     }
     
-    private static final Logger LOG = LogManager.getLogger(DCMImageProvider.class);       
+    private static final Logger LOG = LogManager.getLogger();       
 }

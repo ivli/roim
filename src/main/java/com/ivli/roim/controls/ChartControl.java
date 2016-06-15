@@ -133,24 +133,14 @@ public class ChartControl extends org.jfree.chart.ChartPanel {
         
         if (null == mark || mark.isEmpty())
             return null;
-        //{
+      
         
         Point2D p = translateScreenToJava2D(e.getPoint());
         Rectangle2D plotArea = getScreenDataArea();
-        ///XYPlot plot = (XYPlot) chart.getPlot(); // your plot
-        double domainX = plot.getDomainAxis().java2DToValue(e.getX(), getScreenDataArea(), plot.getDomainAxisEdge());
         
-        
-        //logger.info(String.format("domainX = %f, point(%f:%f), plotArea(%f:%f:%f:%f)", domainX, p.getX(), p.getY(), plotArea.getX(), plotArea.getY(), plotArea.getWidth(), plotArea.getHeight()  ));
-        double domainY = plot.getRangeAxis().java2DToValue(p.getY(), plotArea, plot.getRangeAxisEdge());
-        
-       // }
-        /*
-        final double domainX = plot.getDomainAxis().java2DToValue(e.getX(), 
-                                                                  getChartRenderingInfo().getPlotInfo().getDataArea(),                             
-                                                                  plot.getDomainAxisEdge());
-        
-         */       
+        final double domainX = plot.getDomainAxis().java2DToValue(e.getX(), getScreenDataArea(), plot.getDomainAxisEdge());                     
+        //double domainY = plot.getRangeAxis().java2DToValue(p.getY(), plotArea, plot.getRangeAxisEdge());
+       
         final double Epsilon = plot.getDataRange(plot.getDomainAxis()).getLength() * .01d;
         
         for (Object o : mark) {
@@ -231,7 +221,7 @@ public class ChartControl extends org.jfree.chart.ChartPanel {
                 if (list.isEmpty()) {//TODO: error message box at least 1 marker is necessary                    
                     return;                    
                 } else if (list.size() == 1) {
-                    logger.info(String.format("Fine got just one Marker interpolate till an edge"));                                    
+                    LOG.info(String.format("Fine got just one Marker interpolate till an edge"));                                    
                     iInterpolations.add(new Interpolation((DomainMarker)list.get(0), goWest));                
                 } else {                  
                     Collections.sort(list, (DomainMarker aLhs, DomainMarker aRhs) -> {
@@ -256,10 +246,10 @@ public class ChartControl extends org.jfree.chart.ChartPanel {
                     }
 
                     if (null != mark2) {
-                        logger.info(String.format("Marker found: %f", mark2.getValue()));                                    
+                        LOG.debug("Marker found: {}", mark2.getValue());                                    
                         iInterpolations.add(new Interpolation((DomainMarker)iMarker, mark2));    
                     } else {
-                        logger.info(String.format("No marker in this direction found so interpolate till the edge"));                                    
+                        LOG.debug("No marker in this direction found so interpolate till the edge");                                    
                         iInterpolations.add(new Interpolation((DomainMarker)iMarker, goWest));
                     }
                 }
@@ -445,5 +435,5 @@ public class ChartControl extends org.jfree.chart.ChartPanel {
         iSeries.add(iDataItem);         
     }       
     
-    private static final Logger logger = LogManager.getLogger(ChartControl.class);
+    private static final Logger LOG = LogManager.getLogger();
 }

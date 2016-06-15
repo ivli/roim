@@ -147,5 +147,5 @@ public class Profile extends Overlay {
         return iShow = !iShow; 
     }
     
-    private static final Logger logger = LogManager.getLogger(Profile.class);
+    private static final Logger LOG = LogManager.getLogger();
 }

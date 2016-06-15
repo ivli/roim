@@ -222,11 +222,11 @@ public final class LutReader {
                 if (size == 0 && length>768L)
                     size = openTextLut(fi, reds, greens, blues);
                 if (size == 0) {
-                    logger.error(String.format("Unsupported LUT format"));
+                    LOG.error("Unsupported LUT format");
                     throw new IOException("Unsupported LUT format");
                 }
             } catch (IOException e) {                        
-                logger.error("Error reading LUT file {}", e);
+                LOG.error("Error reading LUT file {}", e);
                 throw e;
             }
             return size;
@@ -307,5 +307,5 @@ public final class LutReader {
             return new IndexColorModel(8, 256, reds, greens, blues);
     }
 
-    private static final Logger logger = LogManager.getLogger(LutReader.class);
+    private static final Logger LOG = LogManager.getLogger();
 }

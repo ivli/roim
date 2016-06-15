@@ -408,7 +408,7 @@ public class ImageView  extends JComponent implements IImageView {
         return iVLUT.transform(aSrc, null);
     }
               
-    private static final Logger LOG = LogManager.getLogger(ImageView.class);
+    private static final Logger LOG = LogManager.getLogger();
 }
 
 

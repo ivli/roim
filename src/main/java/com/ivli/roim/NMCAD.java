@@ -438,9 +438,11 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         
         //CHART        
         if (mi.getImageType() == ImageType.DYNAMIC) {
-            iChart = ChartView.create(iImage);                    
+            iChart = ChartView.create();                    
             iChart.setPreferredSize(jPanel5.getPreferredSize());
-            jPanel5.add(iChart);              
+            jPanel5.add(iChart);      
+            iImage.getROIMgr().addROIChangeListener(iChart);   
+            sumView.getROIMgr().addROIChangeListener(iChart);             
         } 
                 
         if (mi.getImageType() != ImageType.STATIC) {     
@@ -454,7 +456,11 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         iImage.addFrameChangeListener(this);        
         iImage.addWindowChangeListener(this);
         iImage.addZoomChangeListener(this);
-        iImage.getROIMgr().addROIChangeListener(this);                 
+        
+        iImage.getROIMgr().addROIChangeListener(this);   
+        sumView.getROIMgr().addROIChangeListener(this); 
+        
+        
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -609,7 +615,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         /*  END_IF USE_NIMBUS_LAF */    
         
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NMCAD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            LOG.error(ex);
         }
                
         addjustLAF();
@@ -623,7 +629,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }
         
     public void ProgressChanged(ProgressEvent aE) {
-        LOG.debug(String.format("%d %% complete", (int)(aE.getProgress() * 100)));
+        LOG.debug("{} %% complete", aE.getProgress() * 100 );
         jLabel2.setText(String.format("%d %% complete", (int)(aE.getProgress() * 100)));
         jLabel2.repaint();
     }
@@ -710,5 +716,5 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 
-    private final static Logger LOG = LogManager.getLogger(NMCAD.class);
+    private final static Logger LOG = LogManager.getLogger();
 }

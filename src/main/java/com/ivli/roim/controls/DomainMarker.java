@@ -77,7 +77,7 @@ public class DomainMarker extends ValueMarker {
         if (Double.isFinite(val))
             setValue(val);
         else
-           LOG.info("!!!Domain value not found");
+           LOG.debug("!!!Domain value not found");
     }
     
     public void moveToMinimum(MOVETO aM) {
@@ -128,7 +128,7 @@ public class DomainMarker extends ValueMarker {
         }        
     }  
     
-    private static final Logger LOG = LogManager.getLogger(DomainMarker.class);
+    private static final Logger LOG = LogManager.getLogger();
 }
 
 

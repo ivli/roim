@@ -61,7 +61,7 @@ public class Ruler extends Overlay {
             return; 
         
         iDistance = a.distance(b) * getManager().getImage().getPixelSpacing().getX();
-        logger.info(String.format("distance is: %f", iDistance));           
+        LOG.debug("distance is: {}", iDistance);           
     }       
     
     IOperation getOperation() {
@@ -81,5 +81,5 @@ public class Ruler extends Overlay {
         };
     }
     
-    private static final Logger logger = LogManager.getLogger(Ruler.class);
+    private static final Logger LOG = LogManager.getLogger();
 }

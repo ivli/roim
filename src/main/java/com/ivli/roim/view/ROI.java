@@ -36,7 +36,7 @@ import com.ivli.roim.events.ROIChangeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {          
+public class ROI extends OverlayBase implements OverlayBase.IFlip, OverlayBase.IRotate {          
     private final static boolean DRAW_PROFILES = false;
     private final static int EMPHASIZED_STROKE = 20;
     private final static Color EMPHASIZED_COLOR = Color.RED;
@@ -223,5 +223,5 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iShape = tx.createTransformedShape(iShape);
     }      
        
-    private static final Logger LOG = LogManager.getLogger(ROI.class);
+    private static final Logger LOG = LogManager.getLogger();
 }

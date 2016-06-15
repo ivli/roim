@@ -111,7 +111,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
             public void ancestorAdded(AncestorEvent event) {}
 
             public void ancestorRemoved(AncestorEvent event){        
-                LOG.info("Deregistered");
+                LOG.debug("Deregistered");
                 aParent.removeWindowChangeListener(LUTControl.this);            
             }
 
@@ -562,6 +562,6 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         mnu.show(this, aX, aY);
     }   
 
-    private static final Logger LOG = LogManager.getLogger(LUTControl.class);
+    private static final Logger LOG = LogManager.getLogger();
 }
 

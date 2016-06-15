@@ -49,7 +49,7 @@ class JPGImageLoader {
         ImageReader ir = ImageIO.getImageReadersByFormatName("JPEG").next(); //NOI18N
 
         if (null == ir) {
-            logger.error("It seems there's no DICOM reader available, make a try to install one"); //NOI18N
+            LOG.error("It seems there's no DICOM reader available, make a try to install one"); //NOI18N
            // IIORegistry registry = IIORegistry.getDefaultInstance();
             //registry.registerServiceProvider(new DicomImageReaderSpi());            
             //ir = ImageIO.getImageReadersByFormatName("DICOM").next();  //NOI18N
@@ -107,5 +107,5 @@ class JPGImageLoader {
     }
 
    
-    private static final Logger logger = LogManager.getLogger(JPGImageLoader.class);
+    private static final Logger LOG = LogManager.getLogger();
 }

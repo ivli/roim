@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.events;
 
-import com.ivli.roim.view.Overlay;
+import com.ivli.roim.view.OverlayBase;
 
 /**
  *
@@ -34,10 +34,10 @@ public final class ROIChangeEvent extends java.util.EventObject {
     public final static int ROIALLDELETED = 7;   //all ROI have been removed    
     
     private final int iChange;   //what happened
-    private final Overlay iObj;   //object    
+    private final OverlayBase iObj;   //object    
     private final Object  iExtra; //depending on change it carries old name, old colour or ... 
     
-    public ROIChangeEvent(Object aO, int aC, Overlay aR, Object aExtra) {
+    public ROIChangeEvent(Object aO, int aC, OverlayBase aR, Object aExtra) {
         super (aO);
         iObj = aR;
         iChange = aC;
@@ -48,7 +48,7 @@ public final class ROIChangeEvent extends java.util.EventObject {
         return iChange;
     }
     
-    public Overlay getObject() {
+    public OverlayBase getObject() {
         return iObj;
     }   
     

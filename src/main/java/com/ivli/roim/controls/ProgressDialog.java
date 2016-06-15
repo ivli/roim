@@ -109,5 +109,5 @@ public class ProgressDialog extends JPanel implements ProgressListener {
         iDialog.setVisible(true);
     }
     
-    private final static Logger logger = LogManager.getLogger(ProgressDialog.class);
+    private final static Logger LOG = LogManager.getLogger();
 }

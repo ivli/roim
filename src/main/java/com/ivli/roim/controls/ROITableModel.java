@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.controls;
 
-import com.ivli.roim.view.Overlay;
+import com.ivli.roim.view.OverlayBase;
 import com.ivli.roim.view.ROI;
 import java.awt.Color;
 import java.awt.Component;
@@ -52,7 +52,7 @@ public class ROITableModel extends DefaultTableModel {
     public final static int TABLE_COLUMN_COUNTS = 4;
     public final static int TABLE_COLUMN_COLOR = 5;
     
-    ROITableModel(Iterator<Overlay> aList, boolean canEdit) {     
+    ROITableModel(Iterator<ROI> aList, boolean canEdit) {     
      
         iColumns = new String[]{"OBJ", // NOI18N - holds an object reference  
                                 " ",
@@ -83,7 +83,7 @@ public class ROITableModel extends DefaultTableModel {
         setDataVector (new Object [][] {}, iColumns); 
         
         while (aList.hasNext()) {
-            Overlay o = aList.next();
+            OverlayBase o = aList.next();
             if (o instanceof ROI) {       
                 final ROI r = (ROI)o;                   
                 addRow(new Object[]{o, false, r.getName(), r.getAreaInPixels(), r.getDensity(), r.getColor()});                                        
