@@ -17,7 +17,7 @@
  */
 package com.ivli.roim;
 
-import com.ivli.roim.algorithm.ImageProcessor;
+
 import java.io.File;
 import java.util.Locale;
 import java.awt.BorderLayout;
@@ -50,6 +50,8 @@ import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
 import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
+import com.ivli.roim.algorithm.ImageProcessor;
+import java.time.LocalDate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,10 +73,8 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }
     
     public NMCAD() {         
-        LOG.info("-->Entering application."); // NOI18N
-        //iPanel = new ImagePanel();
-        ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("images/khibiny.png"));
-        setIconImage(img.getImage());
+        LOG.info("-->Enter application {}", LocalDate.now()); // NOI18N       
+        setIconImage(new ImageIcon(ClassLoader.getSystemResource("images/khibiny.png")).getImage());
       
         initComponents();    
     }
