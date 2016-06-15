@@ -24,7 +24,7 @@ public class ROIListPanel extends JPanel {
         
     public ROIListPanel(ImageView aView) {        
         iView = aView;
-        iModel = new ROITableModel(aView.getROIMgr().getOverlaysList(), true);       
+        iModel = new ROITableModel(aView.getROIMgr().getROIList(), true);       
         
         initComponents();
      

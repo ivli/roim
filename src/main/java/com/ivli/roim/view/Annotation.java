@@ -27,7 +27,7 @@ import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.core.Filter;
-import java.awt.Rectangle;
+import com.ivli.roim.core.IImageView;
 
 /**
  *

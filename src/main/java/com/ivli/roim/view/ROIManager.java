@@ -48,8 +48,6 @@ import com.ivli.roim.calc.IOperand;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
 
-
-
 /**
  *
  * @author likhachev
@@ -65,7 +63,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
                                         */
     
     private final HashSet<Overlay> iOverlays; 
-    private final static HashSet<ROI> iRois = new HashSet(); 
+    private final HashSet<ROI> iRois = new HashSet(); 
     
     private final EventListenerList iList;
     
@@ -288,7 +286,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
         
     boolean deleteRoi(ROI aR) {         
-        final Iterator<ROI> it = iRois.iterator();
+        final Iterator<Overlay> it = iOverlays.iterator();
 
         while (it.hasNext()) {  //clean annotations out - silly but workin'
             final OverlayBase o = it.next();
@@ -298,7 +296,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
                 
         notifyROIChanged(aR, ROIChangeEvent.ROIDELETED, null);
         
-        return iOverlays.remove(aR);   
+        return iRois.remove(aR);   
     }  
     
     public boolean deleteOverlay(OverlayBase aO) {      
@@ -312,8 +310,8 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         iOverlays.clear();
     }  
     
-    public Iterator<ROI> getOverlaysList() {        
-        return iRois.iterator();// listIterator();
+    public Iterator<ROI> getROIList() {        
+        return iRois.iterator();
     }     
            
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {

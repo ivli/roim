@@ -2,12 +2,13 @@
 package com.ivli.roim.view;
 
 import java.awt.Color;
+import java.util.prefs.Preferences;
 
 /**
  *
  * @author likhachev
  */
-public class Settings {//java.io.Serializable { 
+public class Settings {
     public static final String KEY_ACTIVE_ROI_COLOR = "ACTIVE_ROI_COLOR";///NOI18N  
     public static final String KEY_ZOOM_STEP_FACTOR = "ZOOM_STEP_FACTOR";//NOI18N   
     public static final String KEY_DEFAULT_PRESENTATION_LUT = "DEFAULT_PRESENTATION_LUT";//NOI18N
@@ -33,7 +34,7 @@ public class Settings {//java.io.Serializable {
     public static final String KEY_PRESERVE_WINDOW = "PRESERVE_WINDOW";//true;
        
     
-    static java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userNodeForPackage(Settings.class);
+    static Preferences prefs = Preferences.userNodeForPackage(Settings.class);
     
     public static int get(String aKey, int aDefaultValue) {    
         return prefs.getInt(aKey, aDefaultValue);

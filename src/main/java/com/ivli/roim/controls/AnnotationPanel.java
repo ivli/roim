@@ -27,8 +27,8 @@ import com.ivli.roim.core.Measurement;
  */
 public class AnnotationPanel extends javax.swing.JPanel {
     Object rowData[][];
-    final String columnNames[] = {java.util.ResourceBundle.getBundle("com/ivli/controls/Bundle").getString("ANNOTATION_PANEL.NAME"), 
-                                  java.util.ResourceBundle.getBundle("com/ivli/controls/Bundle").getString("ANNOTATION_PANEL.DISPLAY")};
+    final String columnNames[] = {java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ANNOTATION_PANEL.NAME"), 
+                                  java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ANNOTATION_PANEL.DISPLAY")};
                                 
     
     private class PropertyTableModel extends AbstractTableModel {

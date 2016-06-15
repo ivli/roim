@@ -67,24 +67,25 @@ public class FileOpenDialog {
             UIManager.put("FileChooser.readOnly", Boolean.TRUE);   
         }
     }
-        
-    
-    private String iTitle;
-    private String iFileExtension; 
-    private String iFileDescription;
-    private String iFileName = null;
-    
+ 
+    private final String iTitle;
+    private final String iFileExtension; 
+    private final String iFileDescription;
+    private String iFileName;
     
     public FileOpenDialog(String aTitle, String aFileExtension, String aFileDescription) {
         iTitle = aTitle;
         iFileExtension = aFileExtension;
         iFileDescription = aFileDescription;
+        iFileName = null;
     }
+    
     public String getFileName() {
         return iFileName;
     }
     
     public boolean DoModal(JFrame aF, boolean aOpen) {
+        
         if (USE_SYSTEM_FILE_DIALOG) {
             FileDialog fd = new FileDialog(aF, iTitle, aOpen ? FileDialog.LOAD : FileDialog.SAVE);
             
@@ -93,13 +94,13 @@ public class FileOpenDialog {
             // following doesn't work on windows see JDK-4031440 f**k 
             fd.setFilenameFilter((File dir, String name) -> name.endsWith(iFileExtension) );
                 
-
             fd.setDirectory(Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home"))); // NOI18N
             fd.setVisible(true);
 
-            if (null != fd.getFile()) 
+            if (null != fd.getFile()) {
                 iFileName = fd.getDirectory() + fd.getFile(); 
-           
+                Settings.set(Settings.KEY_DEFAULT_FOLDER_DICOM, fd.getDirectory());
+            }
             return null != iFileName;       
         } else {    
             JFileChooser jfc = new JFileChooser();   
@@ -131,12 +132,12 @@ public class FileOpenDialog {
             });        
            
             if (JFileChooser.APPROVE_OPTION == (aOpen ? jfc.showOpenDialog(aF) : jfc.showSaveDialog(aF))) {
-                iFileName = jfc.getSelectedFile().getAbsolutePath();                
+                iFileName = jfc.getSelectedFile().getAbsolutePath();  
+                Settings.set(Settings.KEY_DEFAULT_FOLDER_DICOM, jfc.getSelectedFile().getParent());
             } else {
                 return false;
             }
             return true;
         }
-    }
-    
+    }    
 }

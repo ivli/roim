@@ -56,10 +56,7 @@ public class ChartView extends JPanel implements ROIChangeListener {
         ///aV.getROIMgr().addROIChangeListener(ret);
         return ret;
     }
-        
-    protected ChartView() {
-    }
-    
+              
     protected void initChart () {
         if (null != iPlot) {
             ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries();
@@ -71,7 +68,7 @@ public class ChartView extends JPanel implements ROIChangeListener {
             iPlot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
             iPlot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
 
-            iJfc   = new JFreeChart(iPlot); 
+            iJfc   = new JFreeChart("TITLE", iPlot); 
             iChart = new ChartControl(iJfc);           
            
             iPlot.setDataset(new XYSeriesCollection());
@@ -99,7 +96,7 @@ public class ChartView extends JPanel implements ROIChangeListener {
             case ROIChangeEvent.ROICHANGED: {                
                 if (aE.getObject() instanceof ROI) {
                     int ndx = col.indexOf(aE.getObject().getName());    
-                    
+                                        
                     if (ndx < 0) {
                         LOG.debug("Serie {}:{} does not exist", aE.getObject().getName(), ndx);                        
                     }

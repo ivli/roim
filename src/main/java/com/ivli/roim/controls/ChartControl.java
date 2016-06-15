@@ -5,7 +5,9 @@
  */
 package com.ivli.roim.controls;
 
+import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +28,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.EntityCollection;
 import org.jfree.chart.entity.PlotEntity;
@@ -35,6 +40,7 @@ import org.jfree.chart.event.MarkerChangeEvent;
 import org.jfree.chart.event.MarkerChangeListener;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -44,7 +50,7 @@ import org.jfree.ui.Layer;
  *
  * @author likhachev
  */
-public class ChartControl extends org.jfree.chart.ChartPanel {            
+public class ChartControl extends ChartPanel {            
     private static enum MENUS {
         NOP(              "NOP",                          "NOP"),
         ADD(              "MARKER_CMD_MARKER_ADD",        java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MARKER_ADD")),
@@ -83,8 +89,11 @@ public class ChartControl extends org.jfree.chart.ChartPanel {
             return MENUS.NOP;
         }
     }
-            
-    public ChartControl(JFreeChart aChart) {
+      
+    ///////////////////////////////////////
+    
+       
+    ChartControl(JFreeChart aChart) {
         super(aChart);
     }
     
