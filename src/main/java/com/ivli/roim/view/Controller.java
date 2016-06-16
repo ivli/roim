@@ -148,7 +148,7 @@ class Controller implements IController {
     
     protected IImageView iControlled;    
     private ActionItem iAction;   
-    private OverlayBase iSelected;
+    private Overlay iSelected;
     private ActionItem iWheel;
     
     public Controller(IImageView aC) {       
@@ -161,21 +161,21 @@ class Controller implements IController {
             iAction.paint(gc);
     }
      
-    protected OverlayBase findActionTarget(Point aP) {
-        OverlayBase ret = iControlled.getROIMgr().findOverlay(aP);
+    protected Overlay findActionTarget(Point aP) {
+        Overlay ret = iControlled.getROIMgr().findObject(aP);
         if (null != ret && true == ret.isSelectable())
             return ret;
         return null;
     }
     
-    protected void addSelection(OverlayBase aO) {
+    protected void addSelection(Overlay aO) {
         if (null != aO) {
             iSelected = aO;
             iSelected.setEmphasized(true);
         }
     }
     
-    protected void releaseSelection(OverlayBase aO) {
+    protected void releaseSelection(Overlay aO) {
         if (null != aO) {
             aO.setEmphasized(false);                    
         } else if (null != iSelected) {
@@ -207,7 +207,7 @@ class Controller implements IController {
 
     public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
-            OverlayBase tmp = iControlled.getROIMgr().findOverlay(e.getPoint());
+            Overlay tmp = iControlled.getROIMgr().findObject(e.getPoint());
 
             if (null != tmp) {
                 addSelection(tmp);
@@ -228,15 +228,15 @@ class Controller implements IController {
     }
 
     public void mousePressed(MouseEvent e) {
-        OverlayBase tmp = null;
+        Overlay tmp = null;
         if (null != iAction) {
             iAction.action(e.getX(), e.getY());             
         } else if (null != (tmp = findActionTarget(e.getPoint()) )) { // Object specific handling                    
             addSelection(tmp);
             iAction = new BaseActionItem(e.getX(), e.getY()) {
                 protected void DoAction(int aX, int aY) {
-                    //iControlled.getROIMgr().moveRoi(iSelected, aX-iX, aY-iY);
-                    iControlled.getROIMgr().moveRoi(iSelected, (aX-iX)/iControlled.getZoom().getScaleX(), (aY-iY)/iControlled.getZoom().getScaleY());
+                    //iControlled.getROIMgr().moveObject(iSelected, aX-iX, aY-iY);
+                    iControlled.getROIMgr().moveObject(iSelected, (aX-iX)/iControlled.getZoom().getScaleX(), (aY-iY)/iControlled.getZoom().getScaleY());
                     iControlled.repaint();//old.createIntersection(iSelected.iShape.getBounds2D())); 
                 }    
                 protected boolean DoRelease(int aX, int aY) {    
@@ -247,8 +247,8 @@ class Controller implements IController {
                     return false;
                 }  
                 protected boolean DoWheel(int aX) {
-                    if (iSelected instanceof OverlayBase.IRotate) {
-                        ((OverlayBase.IRotate)iSelected).rotate(aX);
+                    if (iSelected instanceof Overlay.IRotate) {
+                        ((Overlay.IRotate)iSelected).rotate(aX);
                         iControlled.repaint();
                     }
                     return true;
@@ -269,7 +269,7 @@ class Controller implements IController {
     }
 
     public void mouseMoved(MouseEvent e) {   
-        final OverlayBase r = findActionTarget(e.getPoint());
+        final Overlay r = findActionTarget(e.getPoint());
 
         if (null != r ) { 
             if (r.isMovable())            
@@ -433,29 +433,29 @@ class Controller implements IController {
                 iSelected.setPinned(!iSelected.isPinned());
                 break;
             case KCommandRoiDelete: 
-                iControlled.getROIMgr().deleteOverlay(iSelected); 
+                iControlled.getROIMgr().deleteObject(iSelected); 
                 //iSelected = null; 
                 releaseSelection(null);
                 iControlled.repaint(); 
                 break;                
             case KCommandRoiFlipHorz:
-                ((OverlayBase.IFlip)iSelected).flip(false);
+                ((Overlay.IFlip)iSelected).flip(false);
                 iControlled.repaint();
                 break;
             case KCommandRoiFlipVert:
-                ((OverlayBase.IFlip)iSelected).flip(true);
+                ((Overlay.IFlip)iSelected).flip(true);
                 iControlled.repaint();
                 break;
             case KCommandRoiRotate90CW:
-                ((OverlayBase.IRotate)iSelected).rotate(90);
+                ((Overlay.IRotate)iSelected).rotate(90);
                 iControlled.repaint();
                 break;
             case KCommandRoiRotate90CCW:
-                ((OverlayBase.IRotate)iSelected).rotate(-90);
+                ((Overlay.IRotate)iSelected).rotate(-90);
                 iControlled.repaint();
                 break;
             case KCommandRoiConvertToIso:
-                ((OverlayBase.IIsoLevel)iSelected).isolevel(0);
+                ((Overlay.IIsoLevel)iSelected).isolevel(0);
                 iControlled.repaint();
                 ;break;
             case KCommandRoiDeleteAll: 
@@ -541,7 +541,7 @@ class Controller implements IController {
         return mnu;//mnu.show(iControlled, aX, aY);
     }
     
-    JPopupMenu buildObjectSpecificPopupMenu(OverlayBase aO) {
+    JPopupMenu buildObjectSpecificPopupMenu(Overlay aO) {
        JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS")); 
         
        buildPopupMenu_Roi(mnu);
@@ -584,7 +584,7 @@ class Controller implements IController {
             mnu.add(mi);
         }
         
-        if (iSelected instanceof OverlayBase.IFlip/*iSelected.canFlip()*/) {
+        if (iSelected instanceof Overlay.IFlip/*iSelected.canFlip()*/) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_HORZ"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiFlipHorz);
@@ -595,7 +595,7 @@ class Controller implements IController {
             mnu.add(mi);         
         }
         
-        if (iSelected instanceof OverlayBase.IRotate/*iSelected.canRotate()*/) {
+        if (iSelected instanceof Overlay.IRotate/*iSelected.canRotate()*/) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.ROTATE_90_CW"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiRotate90CW);
@@ -606,14 +606,14 @@ class Controller implements IController {
             mnu.add(mi);
         }
          
-        if (iSelected instanceof OverlayBase.IIsoLevel/*iSelected.canFlip()*/) {
+        if (iSelected instanceof Overlay.IIsoLevel/*iSelected.canFlip()*/) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CONVERT_TO_ISO"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiConvertToIso);
             mnu.add(mi);           
         }
         
-        if (0 != (iSelected.getCaps() & OverlayBase.HASCUSTOMMENU)) {
+        if (0 != (iSelected.getCaps() & Overlay.HASCUSTOMMENU)) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CUSTOMMENU"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandCustomCommand); 

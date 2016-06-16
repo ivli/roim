@@ -36,16 +36,14 @@ public interface IImage {
      *
      * @return a number of frames
      */
-    int getNumFrames();   
-    
+    int getNumFrames();       
     /**
-     * it always returs GRAYS32
+     * it always returns GRAYS32
      * @return type of the image
      * @see ImageDataType
      *      
      */
-    ImageDataType getImageDataType();
-        
+    ImageDataType getImageDataType();        
     /**
      *
      * @return type of the image
@@ -72,7 +70,6 @@ public interface IImage {
      * @return minimal pixel value in serie 
      */
     double getMin();  
-
     /**
      *
      * @return maximal pixel value in serie 

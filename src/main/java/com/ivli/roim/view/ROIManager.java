@@ -63,7 +63,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
                                         */
     
     private final HashSet<Overlay> iOverlays; 
-    private final HashSet<ROI> iRois = new HashSet(); 
+    private final HashSet<Overlay> iRois = new HashSet(); 
     
     private final EventListenerList iList;
     
@@ -81,8 +81,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     private final static TUid iUid = new TUid(0);
     
     public ROIManager() {        
-        iOverlays = new HashSet(); 
-        ///iRois ; 
+        iOverlays = new HashSet();        
         iList = new EventListenerList();
     }
     
@@ -251,8 +250,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     public ROI cloneRoi(ROI aR) {       
-        ROI newRoi = new ROI(iUid.getNext(), aR.getShape(), this, CLONE_INHERIT_COLOUR ? aR.getColor() : null);
-               
+        ROI newRoi = new ROI(iUid.getNext(), aR.getShape(), this, CLONE_INHERIT_COLOUR ? aR.getColor() : null);               
         iRois.add(newRoi); 
         
         if (ROI_HAS_ANNOTATIONS) 
@@ -265,20 +263,20 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         return newRoi;
     }
     
-    public void moveRoi(OverlayBase aO, double adX, double adY) {                         
+    public void moveObject(Overlay aO, double adX, double adY) {                         
         //aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));            
         aO.move(adX, adY);            
     }
     
-    public OverlayBase findOverlay(Point aP) {      
+    public Overlay findObject(Point aP) {      
         final Rectangle temp = iView.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();
                 
-        for (OverlayBase o : iOverlays) {           
+        for (Overlay o : iOverlays) {           
             if (o.isSelectable() && o.intersects(temp)) 
                 return o;                                   
         }
         
-        for (ROI r: iRois)
+        for (Overlay r: iRois)
             if (r.isSelectable() && r.intersects(temp))
                 return r;
         
@@ -289,7 +287,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         final Iterator<Overlay> it = iOverlays.iterator();
 
         while (it.hasNext()) {  //clean annotations out - silly but workin'
-            final OverlayBase o = it.next();
+            final Overlay o = it.next();
             if (o instanceof Annotation.Static && ((Annotation.Static)o).getRoi() == aR)               
                 it.remove();
         } 
@@ -299,18 +297,14 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         return iRois.remove(aR);   
     }  
     
-    public boolean deleteOverlay(OverlayBase aO) {      
+    public boolean deleteObject(Overlay aO) {      
         if (aO instanceof ROI)
             return deleteRoi((ROI)aO);
         else
             return iOverlays.remove(aO);   
     }
-    
-    void deleteAllOverlays() {          
-        iOverlays.clear();
-    }  
-    
-    public Iterator<ROI> getROIList() {        
+        
+    public Iterator<Overlay> getROIList() {        
         return iRois.iterator();
     }     
            
@@ -320,9 +314,9 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {                                            
-        HashSet<OverlayBase> tmp = (HashSet<OverlayBase>)ois.readObject();  
+        HashSet<Overlay> tmp = (HashSet<Overlay>)ois.readObject();  
 
-        for (OverlayBase r : tmp) {               
+        for (Overlay r : tmp) {               
             if (r instanceof ROI)
                 internalCreateROI((ROI)r);
         }
@@ -358,7 +352,7 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         iList.remove(ROIChangeListener.class, aL);
     }
     
-    void notifyROIChanged(OverlayBase aR, int aS, Object aEx) {
+    void notifyROIChanged(Overlay aR, int aS, Object aEx) {
         final ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR, aEx);
 
         ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);

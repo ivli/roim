@@ -17,8 +17,7 @@
  */
 package com.ivli.roim.view;
 
-import com.ivli.roim.events.ROIChangeEvent;
-import java.awt.Shape;
+
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -26,28 +25,10 @@ import java.util.Iterator;
  *
  * @author likhachev
  */
-public class RootROIManager {
+public class OverlayManager {    
+    private final static HashSet<Overlay> iObjects = new HashSet();
     
-    private final static HashSet<ROI> iRois = new HashSet();
-     /*
-     
-    public void createRoi(String aN, Shape aS) {                 
-       
-        ROI newRoi = new ROI(aN, aS, this, null);       
-
-        iRois.add(newRoi);
-
-        if (ROI_HAS_ANNOTATIONS) 
-            createAnnotation(newRoi);      
-
-        newRoi.addROIChangeListener(this);
-
-        newRoi.update();
-        notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, null);
-    }
-     
-    public Iterator<ROI> getOverlaysList() {        
-       return iRois.iterator();// listIterator();
-    }  
-*/
+    
+    
+    
 }

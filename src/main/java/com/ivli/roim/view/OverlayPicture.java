@@ -29,7 +29,7 @@ import java.awt.image.AffineTransformOp;
  *
  * @author likhachev
  */
-public class OverlayPicture extends Overlay {
+public class OverlayPicture extends ScreenObject {
     
     java.awt.Image iPicture;
     //Point iOrigin=new Point(0,0);

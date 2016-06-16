@@ -386,23 +386,28 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }//GEN-LAST:event_jMenuItem1ActionPerformed
      
     private void openImage(String aF) {   
-        String dicomFileName;
-        
-        FileOpenDialog dlg = new FileOpenDialog("Choice file", "*.dcm", "Medical image in DICOM format");
-        if(!dlg.DoModal(this, true))
-            return;
+        final String fn;
+        if (null != aF) 
+            fn = aF;
+        else {
+            FileOpenDialog dlg = new FileOpenDialog("Choice file", "*.dcm", "Medical image in DICOM format");
+            if(!dlg.DoModal(this, true))
+                return;
+            else
+                fn = dlg.getFileName();
+        }
         try {  
-            File f = new File(dlg.getFileName());                 
+            File f = new File(fn);                 
             if (f.exists() && !f.isDirectory()) {
-                initPanels(dlg.getFileName());
-                setTitle(dlg.getFileName());
+                initPanels(fn);
+                setTitle(fn);
             } else {
-                JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dlg.getFileName());                   
+                JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + fn);                   
             }                     
         } catch (Exception ex) {            
             LOG.error(ex);           
-            JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + dlg.getFileName());                   
-        } 
+            JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + fn);                   
+        }         
     }
         
     private void initPanels(final String aFileName) {         
@@ -466,7 +471,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        openImage(null);
+        openImage("D:/images/cholescy.dcm");
     }//GEN-LAST:event_jMenuItem2ActionPerformed
           
     private void jMenu2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu2ComponentShown

@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class Profile extends Overlay {   
+public class Profile extends ScreenObject {   
     public static final Color BLUEVIOLET = new Color(0.5411765f, 0.16862746f, 0.8862745f);
     public static final Color VIOLET     = new Color(0.93333334f, 0.50980395f, 0.93333334f);
     

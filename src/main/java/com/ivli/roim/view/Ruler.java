@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class Ruler extends Overlay {
+public class Ruler extends ScreenObject {
     private double iDistance;
     
     Ruler(Shape aR, ROIManager aM) {         

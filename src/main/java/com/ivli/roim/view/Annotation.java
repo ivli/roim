@@ -33,7 +33,7 @@ import com.ivli.roim.core.IImageView;
  *
  * @author likhachev
  */
-public abstract class Annotation extends Overlay implements ROIChangeListener {              
+public abstract class Annotation extends ScreenObject implements ROIChangeListener {              
     Annotation(String aName, Shape aShape, ROIManager aRM) {
         super(aName, aShape, aRM);    
     }
@@ -69,7 +69,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             notifyROIChanged(ROIChangeEvent.ROICHANGED, null);
         }  
                       
-        public OverlayBase getRoi() {return iRoi;}
+        public Overlay getRoi() {return iRoi;}
 
         public Filter[] getFilters() {
             return iFilters;
@@ -132,7 +132,7 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
             switch (anEvt.getChange()) {
                 case ROIChangeEvent.ROIDELETED: 
                     //commit suicide 
-                    getManager().deleteOverlay(this);
+                    getManager().deleteObject(this);
                     break;
                 case ROIChangeEvent.ROIMOVED: {//if not pinned move the same dX and dY
                     final double[] deltas = (double[])anEvt.getExtra();
@@ -185,10 +185,10 @@ public abstract class Annotation extends Overlay implements ROIChangeListener {
     public static class Active extends Annotation {
         private Color iColor = Color.RED;
         //private String iAnnotation;        
-        private OverlayBase iOverlay;
+        private Overlay iOverlay;
         private IOperation iOp;
         
-        Active(IOperation aOp, OverlayBase anO, ROIManager aRM) {
+        Active(IOperation aOp, Overlay anO, ROIManager aRM) {
             super("ANNOTATION.ACTIVE", null, aRM);        
             
             iOp = aOp;                 
