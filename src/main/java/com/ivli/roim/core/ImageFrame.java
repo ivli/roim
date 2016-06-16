@@ -17,6 +17,8 @@
  */
 package com.ivli.roim.core;
 
+import com.ivli.roim.algorithm.FrameProcessor;
+
 /**
  * 
  * @author likhachev
@@ -142,4 +144,8 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     public void extract(Extractor aEx) {
         aEx.apply(this);
     }        
+    
+    public FrameProcessor processor(){
+        return new FrameProcessor(this);
+    }
 }

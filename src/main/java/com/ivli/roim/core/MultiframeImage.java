@@ -25,6 +25,8 @@ import java.util.BitSet;
 public class MultiframeImage extends IMultiframeImage   {
     protected final IImageProvider iProvider;
      //read from ImageProvider
+    protected final IMultiframeImage iParent;
+    
     protected final int iWidth;
     protected final int iHeight;
     protected final int iNumFrames;   
@@ -75,8 +77,12 @@ public class MultiframeImage extends IMultiframeImage   {
             
     private final PixelBuffer iFrames;
     
+    
+    public IMultiframeImage parent() {return iParent;}
+    
     private MultiframeImage(IImageProvider aP) {
         iProvider = aP;        
+        iParent = null;
         iWidth = aP.getWidth();
         iHeight = aP.getHeight();
         iNumFrames = aP.getNumFrames();           
@@ -89,6 +95,7 @@ public class MultiframeImage extends IMultiframeImage   {
    
     private MultiframeImage(ImageFrame aF) {
         iProvider = null;  
+        iParent = null; //TODO: it looks like strayed image, do i have to set parent for it ????? 
         iWidth = aF.getWidth();
         iHeight = aF.getHeight();
         iNumFrames = 1;           
@@ -100,6 +107,7 @@ public class MultiframeImage extends IMultiframeImage   {
     
     private MultiframeImage(IMultiframeImage aM, int aFrames) {        
         iProvider = null;
+        iParent = aM;
         iNumFrames = aFrames;        
         iWidth = aM.getWidth();
         iHeight = aM.getHeight();        
@@ -204,7 +212,7 @@ public class MultiframeImage extends IMultiframeImage   {
         
      @Override
     public IMultiframeImage createCompatibleImage(int aNumberOfFrames) {
-        //TODO: change type and ... 
+        //TODO: change type and ... parent too 
         MultiframeImage ret = new MultiframeImage(this, aNumberOfFrames); 
         ret.iImageType = iImageType;
         /*
@@ -226,8 +234,10 @@ public class MultiframeImage extends IMultiframeImage   {
     }
        
      @Override
-    public IMultiframeImage duplicate() {      
+    public IMultiframeImage duplicate() { 
+        //TODO: parent???
         MultiframeImage ret = new MultiframeImage(this.iProvider);
+        
         /*
         for(int n = 0; n < getNumFrames(); ++n)
            ret.iFrames.add(n, get(n).duplicate());

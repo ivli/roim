@@ -23,12 +23,19 @@ import com.ivli.roim.algorithm.ImageProcessor;
  *
  * @author likhachev
  * 
- * note: this is just an iterator/accessor actual frames stored in subclasses  
  * 
  */
 public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFrameProvider, Cloneable {          
-  
+    /**
+     *    
+     * @return ImageProcessor - providing means of image manipulations
+     */
     public abstract ImageProcessor processor();
+    /**
+     *    
+     * @return parent image or null for the root image
+     */
+    public abstract IMultiframeImage parent();
     /**
      *
      * @param aFrameNumber

@@ -94,4 +94,11 @@ public class ImageProcessor {
         }        
         return ret;
     }
+    
+    
+    public void map(double aKey) {
+        for(ImageFrame f:iImage)
+            f.processor().map(aKey);
+    
+    }
 }

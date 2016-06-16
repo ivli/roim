@@ -83,8 +83,7 @@ public class FrameProcessor {
                 buf[width*(i+1) - j -1] = temp;
             } 
     }
-        
-    
+            
     public void rotate(final double anAngle) {               
         int roiX = 0;
         int roiY = 0;
@@ -157,4 +156,41 @@ public class FrameProcessor {
         return lowerAverage + yFraction * (upperAverage - lowerAverage);
     }
 
+    public static final double NORMAL_KEY = 0.18;
+    public static final double LOW_KEY    = 0.09;
+    public static final double HIGH_KEY   = 0.72;
+    /*
+     * luminance mapping
+     * aKey value should lie in range 0.09 - 1.0 
+     *      0.18 - 0.36 - normal key
+     *      0.09 - 0.18 - low key
+     *      0.63 - 0.72 - high key
+     */
+    public void map(double aKey) {
+        final double delta = 0.0001;
+        
+        double L0 = Double.MAX_VALUE;
+        double L1 = Double.MIN_VALUE;
+        int[] d = iFrame.getPixelData();
+        double log = 0;
+        double sum = 0;
+        for (int i=0;i<d.length; ++i) {
+            int p = d[i];
+            sum += p;
+            log += Math.log(delta + (double)p);
+            if (p < L0)
+                L0 = p;
+            if (p > L1)
+                L1 = p;
+        }
+        
+        final double Lw = Math.exp(log) / iFrame.getPixelData().length; //log-average luminance
+        
+        final double c = aKey/Lw;
+        
+        for (int i=0;i<d.length;++i) {
+            d[i] = (int)((double)d[i] * c) ;
+        }
+    }
+    
 }

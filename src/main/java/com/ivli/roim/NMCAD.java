@@ -420,7 +420,8 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         
         IMultiframeImage mi = ImageFactory.create(aFileName);       
         
-         //IMAGE       
+         //IMAGE      
+        
         iImage = ImageView.create(mi);        
         //iImage.setPreferredSize(jPanel1.getSize());        
         jPanel1.setLayout(new BorderLayout());
@@ -431,6 +432,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         /**/
         ImageProcessor ip = mi.processor();
         IMultiframeImage sum = ip.collapse(null);
+        ///sum.processor().map(0.18);
         ImageView sumView = ImageView.create(sum);
         jPanel3.add(sumView, BorderLayout.CENTER);
         jPanel3.add(LUTControl.create(sumView), BorderLayout.LINE_END);

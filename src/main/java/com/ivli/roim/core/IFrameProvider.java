@@ -17,9 +17,6 @@
  */
 package com.ivli.roim.core;
 
-import com.ivli.roim.core.IImage;
-import com.ivli.roim.core.ImageFrame;
-
 /**
  *
  * @author likhachev
