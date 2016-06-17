@@ -44,8 +44,8 @@ public class CalcPanel extends javax.swing.JPanel {
      * Creates new form CalcPanel
      */
     public CalcPanel(ImageView aPanel) {        
-        iLeftModel  = new ROITableModel(aPanel.getROIMgr().getROIList(), false);
-        iRightModel = new ROITableModel(aPanel.getROIMgr().getROIList(), false);
+        iLeftModel  = new ROITableModel(aPanel.getROIMgr().getObjects(), false);
+        iRightModel = new ROITableModel(aPanel.getROIMgr().getObjects(), false);
         iPanel = aPanel;
         initComponents();
         

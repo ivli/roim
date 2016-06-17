@@ -41,12 +41,12 @@ import org.apache.logging.log4j.Logger;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 import com.ivli.roim.core.IMultiframeImage;
-import com.ivli.roim.core.FrameOffsetVector;
 import com.ivli.roim.calc.BinaryOp;
 import com.ivli.roim.calc.ConcreteOperand;
 import com.ivli.roim.calc.IOperand;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
+import java.awt.geom.Rectangle2D;
 
 /**
  *
@@ -92,27 +92,11 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     public ImageView getView() {
         return iView;
     } 
-
-    public int getWidth() {
-        return getImage().getWidth();
-    }
     
-    public int getHeight() {
-        return getImage().getHeight();
-    }    
-                        
     public IMultiframeImage getImage() {
         return iView.getImage();
     }
-    
-    FrameOffsetVector getOffsetVector() {
-        /*
-        if (iView instanceof OffsetImageView)
-            return ((OffsetImageView)iView).iOff;
-        */
-        return null;
-    }
-            
+      
     public void clear() {
         iOverlays.clear();
         notifyROIChanged(null, ROIChangeEvent.ROIALLDELETED, null);      
@@ -124,14 +108,15 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
         });
     }
     
-    public void paint(Graphics2D aGC, AffineTransform aT) {        
+    public void paint(AbstractPainter aP) {       
         iRois.stream().forEach((r) -> {
             if (r.isVisible()) 
-                r.paint(aGC, aT);
+                r.paint(aP);
         });
+        
         iOverlays.stream().forEach((o) -> {
             if(o.isVisible()) 
-                o.paint(aGC, aT);
+                o.paint(aP);
         });
     }    
     
@@ -140,10 +125,9 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
      * aS - shape <b><i> in screen coordinates </i></b>  
     */
     public void createProfile(Shape aS) {               
-        Rectangle r = iView.screenToVirtual().createTransformedShape(aS).getBounds();
-        
+        Rectangle r = iView.screenToVirtual().createTransformedShape(aS).getBounds();        
         r.x = 0;
-        r.width = getWidth();
+        r.width = getImage().getWidth();
         
         Profile newRoi = new Profile(r, this);     
         iOverlays.add(newRoi);   
@@ -264,8 +248,13 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     }
     
     public void moveObject(Overlay aO, double adX, double adY) {                         
-        //aO.move((adX/iView.getZoom().getScaleX()), (adY/iView.getZoom().getScaleY()));            
-        aO.move(adX, adY);            
+        if (!aO.isPinned()) {          
+            Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(aO.getShape());        
+            Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getImage().getWidth(), getImage().getHeight());
+
+            if (bounds.contains(temp.getBounds()))            
+                aO.move(adX, adY);   
+        }
     }
     
     public Overlay findObject(Point aP) {      
@@ -304,13 +293,13 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
             return iOverlays.remove(aO);   
     }
         
-    public Iterator<Overlay> getROIList() {        
+    public Iterator<Overlay> getObjects() {        
         return iRois.iterator();
     }     
            
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
          //out.writeObject(iList);
-         out.writeObject(iOverlays);         
+        out.writeObject(iOverlays);         
     }
     
     private void readObject(java.io.ObjectInputStream ois) throws IOException, ClassNotFoundException {                                            

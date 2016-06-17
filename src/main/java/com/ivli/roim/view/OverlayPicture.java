@@ -42,6 +42,11 @@ public class OverlayPicture extends ScreenObject {
     
     int getCaps(){return CANFLIP|CANROTATE|HASMENU|PERMANENT;}
     
+    void paint(AbstractPainter aP) {
+        aP.paint(this);
+    }
+    
+    /*
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.KEY_INTERPOLATION_METHOD);
@@ -57,7 +62,8 @@ public class OverlayPicture extends ScreenObject {
         //aGC.drawImage(iBuf, 0, 0, r.width, r.height, null);
         aGC.drawImage(iPicture, trans, null);        
     } 
-     
+    */
+    
     void update(){
     }
          

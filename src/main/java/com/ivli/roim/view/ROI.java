@@ -19,18 +19,14 @@ package com.ivli.roim.view;
 
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
+
 import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
-import java.awt.BasicStroke;
 
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
 import com.ivli.roim.core.SeriesCollection;
-import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.events.ROIChangeEvent;
 
 import org.apache.logging.log4j.LogManager;
@@ -58,7 +54,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         
     void buildSeriesIfNeeded() {
         if (null == iSeries)
-            iSeries = CurveExtractor.extract(getManager().getImage(), this, getManager().getOffsetVector());
+            iSeries = CurveExtractor.extract(getManager().getImage(), this, null);
     }
     
     public int getAreaInPixels() {
@@ -96,92 +92,18 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iColor = aC;
         notifyROIChanged(ROIChangeEvent.ROICHANGEDCOLOR, old);
     }
-    
+    /*
     @Override
     public void setName(String aName) {
         String old = getName();
         super.setName(aName);
         notifyROIChanged(ROIChangeEvent.ROICHANGEDNAME, old);         
     }
-    
-   /*
-    void drawProfiles(Graphics2D aGC, AffineTransform aTrans) {        
-        final Rectangle bounds = iShape.getBounds();
-        
-        final int profileX[] = new int[bounds.width];;
-        final int profileY[] = new int[bounds.height];;
-        
-        getManager().getView().getFrame().extract((ImageFrame aF) -> {                        
-            for (int i = 0 ; i < bounds.width; ++i)
-                for (int j = bounds.y; j < bounds.y + bounds.height; ++j)
-                    if (iShape.contains(new Point(i + bounds.x, j))) 
-                        profileX[i] += aF.getPixel(i + bounds.x, j);
-            
-            for (int i = 0; i < bounds.height; ++i)
-                for (int j = bounds.y; j < bounds.y + bounds.width; ++j)
-                    if (iShape.contains(new Point(i + bounds.x, j ))) 
-                        profileY[i] += aF.getPixel(i + bounds.x, j);
-                          
-        });
-            
-        double min = Double.MAX_VALUE;
-        double max = Double.MIN_VALUE;
-
-        for (double d : profileX) {
-            min = Math.min(min, d);
-            max = Math.max(max, d);
-        }
-
-        double range = max - min;
-        double scale = Math.min(iShape.getBounds().getY() / (range), getManager().getHeight() / (4*range));
-
-        Path2D.Double xpath = new Path2D.Double();
-
-        xpath.moveTo(iShape.getBounds().getX(), iShape.getBounds().getY() - profileX[0] * scale);
-
-        for (int n = 1; n < profileX.length; ++n) 
-            xpath.lineTo(iShape.getBounds().getX() + n, iShape.getBounds().getY() - profileX[n] * scale);
-
-        Path2D.Double ypath = new Path2D.Double();                   
-
-        for (double d : profileY) {
-            min = Math.min(min, d);
-            max = Math.max(max, d);
-        }
-
-        range = max - min;
-
-        scale = Math.min(iShape.getBounds().getX() / (range), 
-                                  getManager().getWidth() / (4*range) );
-
-        ypath.moveTo(iShape.getBounds().getX() + iShape.getBounds().getWidth() + profileY[0] * scale , iShape.getBounds().getY());
-
-        for (int n = 1; n < profileY.length; ++n) 
-            ypath.lineTo(iShape.getBounds().getX() + iShape.getBounds().getWidth() + profileY[n] * scale , iShape.getBounds().getY() + n);
-
-
-        aGC.setXORMode(Color.WHITE);   
-        aGC.draw(aTrans.createTransformedShape(xpath));
-        aGC.draw(aTrans.createTransformedShape(ypath));
-        aGC.setPaintMode(); //turn XOR mode off
-
-    }
-   */
+*/
     
     @Override
-    void paint(Graphics2D aGC, AffineTransform aTrans) {        
-        if (iEmphasized) {
-            aGC.setColor(EMPHASIZED_COLOR);
-            aGC.setStroke(new BasicStroke(2));        
-        } else {
-            aGC.setColor(iColor);
-        }
-        
-        aGC.draw(aTrans.createTransformedShape(getShape()));       
-        /*
-        if (DRAW_PROFILES)
-            drawProfiles(aGC, aTrans);
-        */
+    void paint(AbstractPainter aD) {//Graphics2D aGC, AffineTransform aTrans) {        
+        aD.paint(this);     
     }
         
     private void calculateAreaInPixels() {

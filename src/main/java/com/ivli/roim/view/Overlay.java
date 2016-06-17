@@ -66,7 +66,7 @@ public abstract class Overlay implements java.io.Serializable {
     }    
     
     public boolean canMove(double adX, double adY) {           
-        final Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());        
+        final Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());        
         return bounds.contains(AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(getShape()).getBounds2D());
     }
     
@@ -75,7 +75,9 @@ public abstract class Overlay implements java.io.Serializable {
     }
     
     public void setName(String aName) {
-        iName = aName;
+        String old = getName();
+        iName  = aName;
+        notifyROIChanged(ROIChangeEvent.ROICHANGEDNAME, old);         
     }
     
     public void setPinned(boolean aPin) {
@@ -116,24 +118,17 @@ public abstract class Overlay implements java.io.Serializable {
     }       
     
     boolean intersects(Rectangle2D aR) {
-        return getShape().intersects(aR);
+        return null != getShape() && getShape().intersects(aR);
     }   
         
-    void move(double adX, double adY) {
-        if (!isPinned()) {          
-            Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);        
-            Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());
-
-            if (bounds.contains(temp.getBounds())) {            
-                iShape = temp;                    
-                update();
-                notifyROIChanged(ROIChangeEvent.ROIMOVED, new double[]{adX, adY});
-            }
-        }
+    void move(double adX, double adY) {       
+        iShape = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);                    
+        update();
+        notifyROIChanged(ROIChangeEvent.ROIMOVED, new double[]{adX, adY});
     } 
     
-    abstract int  getCaps();     
-    abstract void paint(Graphics2D aGC, AffineTransform aTrans);    
+    abstract int  getCaps();         
+    abstract void paint(AbstractPainter aP);    
     abstract void update();  
     
     interface IFlip {

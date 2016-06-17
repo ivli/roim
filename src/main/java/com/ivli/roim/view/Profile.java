@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.view;
 
+import com.ivli.roim.core.Extractor;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.Graphics2D;
@@ -38,7 +39,7 @@ public class Profile extends ScreenObject {
     private boolean iShow = true;
     
     private boolean iNormalize = false;
-    private double  iHist[];
+    private double[]  iHist;
     
     public Profile(Rectangle2D aS, ROIManager aMgr) {
         super("PROFILE", aS, aMgr); //NOI18N 
@@ -50,23 +51,12 @@ public class Profile extends ScreenObject {
         return MOVEABLE | SELECTABLE | HASMENU;
     }
     
+    /*    */
     @Override
-    public void paint(Graphics2D aGC, AffineTransform aTrans) {
-        final Rectangle bn = aTrans.createTransformedShape(iShape).getBounds();          
-        final Color tmp = aGC.getColor();
-        
-        aGC.setColor(BLUEVIOLET);
-        aGC.drawLine(bn.x, bn.y, bn.x+bn.width, bn.y);                           
-        
-        aGC.setColor(java.awt.Color.RED);
-        aGC.drawLine(bn.x, bn.y+bn.height, bn.x+bn.width, bn.y+bn.height);
-      
-        aGC.setColor(tmp);
-        
-        if (iShow)
-            drawHistogram(aGC, aTrans);
+    public void paint(AbstractPainter aP) {
+        aP.paint(this);
     } 
-   
+ 
     @Override
     public void update() {
         makeHistogram();        
@@ -80,7 +70,7 @@ public class Profile extends ScreenObject {
                                  new Rectangle2D.Double(r.getX(), r.getY(), r.getWidth(), Math.max(1.0, r.getHeight() + adX))
                               );  
         
-        Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getWidth(), getManager().getHeight());
+        Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
         
         if (bounds.contains(temp.getBounds())) {
             iShape = temp;
@@ -91,13 +81,11 @@ public class Profile extends ScreenObject {
     private void makeHistogram() {
         final Rectangle bounds = iShape.getBounds();
 
-        getManager().getView().getFrame().extract(new com.ivli.roim.core.Extractor() {
+        getManager().getView().getFrame().extract(new Extractor() {
             
         public void apply(com.ivli.roim.core.ImageFrame aR) {
                 
             iHist = new double[bounds.width];
-            
-            //double temp[] = new double [aR.getNumBands()];
             
             for (int i = 0; i < bounds.width; ++i)
                 for (int j = bounds.y; j < bounds.y + bounds.height; ++j)
@@ -114,38 +102,40 @@ public class Profile extends ScreenObject {
             min = Math.min(min, d);
             max = Math.max(max, d);
         }
-        
-        //double maxV = getManager().getView().getFrame().getMax();
-        //double minV = getManager().getView().getFrame().getMin();
+      
         final double range =  getManager().getView().getFrame().getRange().range();// maxV - minV; 
         
-        Rectangle bounds = new Rectangle(0, 0, getManager().getWidth(), getManager().getHeight());
+        Rectangle bounds = new Rectangle(0, 0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
                        
-        final double scale = Math.min(iShape.getBounds().getY()/(4*range), bounds.getHeight()/(4*range));
-                                              
-        Path2D.Double s = new Path2D.Double();
+        final double scale = Math.min(iShape.getBounds().getY()/(4*range), bounds.getHeight()/(4*range));                                              
+        Path2D.Double s = new Path2D.Double();        
+        //int n = 0;
+        s.moveTo(0, iShape.getBounds().getY() - iHist[0] * scale);
         
-        int n = 0;
-        s.moveTo(0, iShape.getBounds().getY() - iHist[n] * scale);
-        
-        for (;n < iHist.length; ++n) 
+        for (int n = 1; n < iHist.length; ++n) 
             s.lineTo(n, iShape.getBounds().getY() - iHist[n] * scale);
-        
-       
-        aGC.setXORMode(Color.WHITE);     
-        
-        aGC.draw(aTrans.createTransformedShape(s));
-                
+               
+        aGC.setXORMode(Color.WHITE);             
+        aGC.draw(aTrans.createTransformedShape(s));                
         aGC.setPaintMode(); //turn XOR mode off
     }
     
     public boolean normalize() {
         return iNormalize = !iNormalize; 
     }
-    
-    public boolean showHistogram() {
-        return iShow = !iShow; 
+   
+    public boolean isShowHistogram() {
+        return iShow; 
     }
+    
+    public void showHistogram(boolean aS) {
+         iShow = aS; 
+    }
+    
+    public double[] getHistogram() {
+         return iHist;
+    }
+    
     
     private static final Logger LOG = LogManager.getLogger();
 }

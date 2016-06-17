@@ -465,7 +465,7 @@ class Controller implements IController {
                 iControlled.repaint();
                 break;
             case KCommandProfileShow:
-                ((Profile)iSelected).showHistogram();
+                ((Profile)iSelected).showHistogram(!((Profile)iSelected).isShowHistogram());
                 iControlled.repaint();
                 break;
             case KCommandCustomCommand: {

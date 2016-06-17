@@ -17,18 +17,30 @@
  */
 package com.ivli.roim.view;
 
-
-import java.util.HashSet;
-import java.util.Iterator;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 /**
  *
  * @author likhachev
  */
-public class OverlayManager {    
-    private final static HashSet<Overlay> iObjects = new HashSet();
+public abstract class AbstractPainter {    
+    ImageView        iView;
+    Graphics2D         iGC;
+    AffineTransform iTrans;
     
     
+    public AbstractPainter(Graphics2D aGC, AffineTransform aT, ImageView aV) {
+        iView = aV;
+        iGC = aGC;
+        iTrans = aT;
+    }
     
+    public ImageView getView() {return iView;}
     
+    public abstract void paint(Overlay aO);
+    public abstract void paint(ROI aO);
+    public abstract void paint(Annotation aO);    
+    public abstract void paint(Ruler aO);
+    public abstract void paint(Profile aO);
 }

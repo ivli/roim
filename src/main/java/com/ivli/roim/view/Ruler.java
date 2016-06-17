@@ -27,10 +27,8 @@ public class Ruler extends ScreenObject {
     }
           
     @Override
-    void paint(Graphics2D aGC, AffineTransform aTrans) {        
-        final Shape rect = aTrans.createTransformedShape(iShape);                           
-        aGC.setColor(Color.YELLOW);       
-        aGC.draw(rect);   
+    void paint(AbstractPainter aP) {   
+        aP.paint(this);    
     } 
      
     @Override

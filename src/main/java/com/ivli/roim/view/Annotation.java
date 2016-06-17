@@ -17,23 +17,23 @@
  */
 package com.ivli.roim.view;
 
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.AffineTransform;
-import java.awt.Color;
 import java.awt.Shape;
 
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.core.Filter;
-import com.ivli.roim.core.IImageView;
+import java.awt.Color;
+import java.util.ArrayList;
 
 /**
  *
  * @author likhachev
  */
 public abstract class Annotation extends ScreenObject implements ROIChangeListener {              
+    protected boolean iMultiline = true; 
+   
     Annotation(String aName, Shape aShape, ROIManager aRM) {
         super(aName, aShape, aRM);    
     }
@@ -41,13 +41,33 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
     @Override
     int getCaps(){return HASMENU|MOVEABLE|SELECTABLE|PINNABLE|HASCUSTOMMENU;}    
    
+    public void setMultiline(boolean aM) {
+        iMultiline = aM;
+        notifyROIChanged(ROIChangeEvent.ROICHANGED, null);
+    }
+
+    public boolean isMultiline() {
+        return iMultiline;
+    }
+        
+    public abstract Color getColor();
+    
+    protected abstract void computeShape(AbstractPainter aP);
+    
+    @Override
+    void paint(AbstractPainter aP) {   
+        computeShape(aP);
+        aP.paint(this);    
+    } 
+    
+    abstract public ArrayList<String> getText();
+        
     /**
      *
      */
-    public static class Static extends Annotation {
-        protected boolean iMultiline = true;       
-        protected final ROI iRoi;                 
-        protected final java.util.ArrayList<String> iAnnotation = new java.util.ArrayList<>();           
+    public static class Static extends Annotation {              
+        protected final ROI iRoi;              
+        protected final ArrayList<String> iAnnotation;           
       
         protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
         
@@ -55,36 +75,28 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
             super("ANNOTATION::STATIC", // NOI18N
                     null, null != aRM ? aRM : aRoi.getManager());  
             iRoi = aRoi;     
-            /* */
+            iAnnotation = new ArrayList<>();
             for (Filter f : iFilters)
                 iAnnotation.add(f.getMeasurement().format(f.filter(aRoi)));        
 
-            computeShape(true);
-
             aRoi.addROIChangeListener(this);
         }
-                
+              
+        public ArrayList<String> getText() {return iAnnotation;}
+        public Color getColor() {return getRoi().getColor();}
+        
         public void setFilters(Filter[] aF) {
             iFilters = aF;
             notifyROIChanged(ROIChangeEvent.ROICHANGED, null);
         }  
                       
-        public Overlay getRoi() {return iRoi;}
+        public ROI getRoi() {return iRoi;}
 
         public Filter[] getFilters() {
             return iFilters;
         }
-
-        public void setMultiline(boolean aM) {
-            iMultiline = aM;
-            notifyROIChanged(ROIChangeEvent.ROICHANGED, null);
-        }
-
-        public boolean isMultiline() {
-            return iMultiline;
-        }
-               
-        private void computeShape(boolean aInitial) {            
+                
+        protected void computeShape(AbstractPainter aP) {            
             double width  = 0;
             double height = 0;
 
@@ -105,27 +117,26 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
             final Rectangle2D bnds = new Rectangle2D.Double(0, 0, width, height);            
             final double scaleX = getManager().getView().screenToVirtual().getScaleX();      
             
-            if (aInitial) 
+            if (null == iShape) 
                 iShape = new Rectangle2D.Double(iRoi.getShape().getBounds2D().getX(),  
                                                 iRoi.getShape().getBounds2D().getY() - bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX() , 
                                                 bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
                                                 bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());
             else
-                iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), getShape().getBounds2D().getY(),                                                                                        
+                iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), 
+                                                getShape().getBounds2D().getY(),                                                                                        
                                                 bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                                             
         }
                 
         @Override
         public void update() {     
             iAnnotation.clear();
-            
-            //if (iRoi instanceof ROI) {
+           
             for (Filter f : iFilters)
                 iAnnotation.add(f.getMeasurement().format(f.filter(iRoi)));     
-            //}
-            computeShape(false);   
+         
+            ///computeShape();   
         }
-
         
         @Override
         public void ROIChanged(ROIChangeEvent anEvt) {               
@@ -137,38 +148,15 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
                 case ROIChangeEvent.ROIMOVED: {//if not pinned move the same dX and dY
                     final double[] deltas = (double[])anEvt.getExtra();
                     ///logger.info(String.format("%f, %f",deltas[0], deltas[1]));
-                    move(deltas[0], deltas[1]);
-                    update();
+                    getManager().moveObject(this, deltas[0], deltas[1]);
+                    ///update();
                 } break;
                 case ROIChangeEvent.ROICHANGED:   
                 default: //fall-through
                     update(); break;
             }        
         }
-
-        @Override
-        void paint(Graphics2D aGC, AffineTransform aTrans) {
-            final Rectangle2D temp = aTrans.createTransformedShape(getShape()).getBounds();     
-            aGC.setColor(iRoi.getColor());
-            if (!iMultiline) {
-                String str = new String();
-                str = iAnnotation.stream().map((s) -> s).reduce(str, String::concat);            
-                aGC.drawString(str, (int)temp.getX(), (int)(temp.getY() + temp.getHeight() - 4));                   
-            } else {            
-                final double stepY = temp.getHeight() / iAnnotation.size();
-                double posY = temp.getY() + stepY - 4.;
-                for(String str : iAnnotation) {                               
-                    aGC.drawString(str, (int)temp.getX(), (int)posY);
-                    posY += stepY;
-                }
-            }
-            aGC.draw(temp);                 
-        }               
-
-        /**
-         * returns a list of menu strings
-         * @return
-         */
+        
         public String []getCustomMenu() {
             java.util.ArrayList<String> ret = new java.util.ArrayList<>();
 
@@ -182,40 +170,46 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
     /**
      *
      */
-    public static class Active extends Annotation {
-        private Color iColor = Color.RED;
-        //private String iAnnotation;        
-        private Overlay iOverlay;
-        private IOperation iOp;
+    public static class Active extends Annotation {        
+        private final IOperation iOp;
+        private final Overlay  iOver;
         
         Active(IOperation aOp, Overlay anO, ROIManager aRM) {
-            super("ANNOTATION.ACTIVE", null, aRM);        
-            
-            iOp = aOp;                 
-                        
-            final ImageView w = getManager().getView();
-            final Rectangle2D bnds = w.getFontMetrics(w.getFont()).getStringBounds(aOp.getCompleteString(), w.getGraphics());        
-                       
+            super("ANNOTATION.ACTIVE", null, aRM);                    
+            iOp = aOp;       
+            iOver = anO;
+        }   
+        
+        public Color getColor() {return Color.RED;}
+        
+        protected void computeShape(AbstractPainter aP) {
+            final ImageView w =aP.getView();
+            final Rectangle2D bnds = w.getFontMetrics(w.getFont()).getStringBounds(iOp.getCompleteString(), w.getGraphics());        
+
             double posX = .0, posY = .0;
-           
-            if (null != anO) {
-                iOverlay = anO;  
-                Rectangle2D r = w.virtualToScreen().createTransformedShape(anO.getShape()).getBounds2D();
+
+            if (null != iOver) {                 
+                Rectangle2D r = w.virtualToScreen().createTransformedShape(iOver.getShape()).getBounds2D();
                 posX = r.getX();
                 posY = r.getY();
-                
-                if (anO instanceof Ruler) {
-                    
-                } else {
-      
-                    posY += bnds.getHeight();
-                }
-                anO.addROIChangeListener(this);
+
+                if (!(iOver instanceof Ruler))                
+                    posY += bnds.getHeight();               
+
+                iOver.addROIChangeListener(this);
             }
-            
-            iShape = w.screenToVirtual().createTransformedShape(new Rectangle2D.Double(posX, posY, bnds.getWidth(), bnds.getHeight()));            
-            
-        }   
+
+            iShape = w.screenToVirtual().createTransformedShape(new Rectangle2D.Double(posX, posY, bnds.getWidth(), bnds.getHeight()));  
+        }
+               
+        public ArrayList<String> getText() {
+            ArrayList<String> ret = new ArrayList<>();            
+            ret.add(iOp.getCompleteString());
+            return ret;
+        }
+               
+        @Override
+        public void update() {    }
         
         @Override
         public void ROIChanged(ROIChangeEvent anEvt) {              
@@ -233,28 +227,5 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
                     break;
             }        
         }
-
-        @Override
-        void paint(Graphics2D aGC, AffineTransform aTrans) {     
-            Rectangle2D tmp = aTrans.createTransformedShape(iShape).getBounds2D();            
-            aGC.setColor(iColor);
-
-            aGC.drawString(iOp.getCompleteString(), (int)tmp.getMinX(), (int)tmp.getMaxY());       
-            //aGC.draw(tmp);        
-        }
-        
-        @Override
-        public void update() {      
-            //iAnnotation = iOp.getCompleteString();
-/*
-            final Rectangle2D bnds = getManager().getView().getFontMetrics(getManager().getView().getFont()).getStringBounds(iAnnotation, getManager().getView().getGraphics());        
-            
-            //final double scaleX = getManager().getView().screenToVirtual().getScaleX();    
-            Rectangle2D temp = getShape().getBounds2D();
-            temp.setFrame(temp.getX(), temp.getY(), bnds.getWidth(), bnds.getHeight());
-            iShape = getManager().getView().screenToVirtual().createTransformedShape(temp);                   
-*/
-        }
-    }  
-        
+    }          
 }

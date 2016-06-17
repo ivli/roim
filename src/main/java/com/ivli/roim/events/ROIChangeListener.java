@@ -6,5 +6,5 @@ package com.ivli.roim.events;
  * @author likhachev
  */
 public interface ROIChangeListener extends java.util.EventListener {
-    void ROIChanged(ROIChangeEvent anEvt);   
+    public void ROIChanged(ROIChangeEvent anEvt);   
 }
