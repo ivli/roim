@@ -26,7 +26,6 @@ import java.io.ObjectOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -44,6 +43,7 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.calc.BinaryOp;
 import com.ivli.roim.calc.ConcreteOperand;
 import com.ivli.roim.calc.IOperand;
+import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
 import java.awt.geom.Rectangle2D;
@@ -88,10 +88,18 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
     public void setView(ImageView aV) {
          iView = aV;
     }
-      
+    
+    /*  
     public ImageView getView() {
         return iView;
     } 
+    */
+    
+    public ImageFrame getFrame() {
+        return getImage().get(iView.getFrameNumber());
+    }
+    
+    public int getFrameNumber() {return iView.getFrameNumber();}
     
     public IMultiframeImage getImage() {
         return iView.getImage();
@@ -252,8 +260,10 @@ public class ROIManager implements ROIChangeListener, java.io.Serializable {
             Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(aO.getShape());        
             Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getImage().getWidth(), getImage().getHeight());
 
-            if (bounds.contains(temp.getBounds()))            
+            if (bounds.contains(temp.getBounds())) {            
                 aO.move(adX, adY);   
+                aO.update();
+            }
         }
     }
     

@@ -81,11 +81,11 @@ public abstract class Overlay implements java.io.Serializable {
     }
     
     public void setPinned(boolean aPin) {
-        iPinned = aPin;
+        iPinned = isPinnable() && aPin;
     }
     
     public boolean isPinned() {
-        return iPinned;
+        return isPinnable() && iPinned;
     }
   
     public void setEmphasized(boolean aE) {

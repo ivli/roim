@@ -100,10 +100,12 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
             double width  = 0;
             double height = 0;
 
-            final java.awt.FontMetrics fm = getManager().getView().getFontMetrics(getManager().getView().getFont());
+            ImageView w = aP.getView();
+            
+            final java.awt.FontMetrics fm = w.getFontMetrics(w.getFont());
 
             for (String s : iAnnotation) {
-                Rectangle2D b = fm.getStringBounds(s, getManager().getView().getGraphics());        
+                Rectangle2D b = fm.getStringBounds(s, w.getGraphics());        
 
                 if (iMultiline) {
                     width = Math.max(width, b.getWidth());
@@ -115,13 +117,12 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
             }
             
             final Rectangle2D bnds = new Rectangle2D.Double(0, 0, width, height);            
-            final double scaleX = getManager().getView().screenToVirtual().getScaleX();      
+            final double scaleX = w.screenToVirtual().getScaleX();      
             
             if (null == iShape) 
                 iShape = new Rectangle2D.Double(iRoi.getShape().getBounds2D().getX(),  
-                                                iRoi.getShape().getBounds2D().getY() - bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX() , 
-                                                bnds.getWidth() * getManager().getView().screenToVirtual().getScaleX(), 
-                                                bnds.getHeight() * getManager().getView().screenToVirtual().getScaleX());
+                                                iRoi.getShape().getBounds2D().getY() - bnds.getHeight() * scaleX, 
+                                                bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                                                
             else
                 iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), 
                                                 getShape().getBounds2D().getY(),                                                                                        

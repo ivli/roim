@@ -471,7 +471,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        openImage("D:/images/cholescy.dcm");
+        openImage(null);//"D:/images/cholescy.dcm");
     }//GEN-LAST:event_jMenuItem2ActionPerformed
           
     private void jMenu2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu2ComponentShown

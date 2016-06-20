@@ -17,14 +17,13 @@
  */
 package com.ivli.roim.view;
 
-import com.ivli.roim.core.Extractor;
 import java.awt.Color;
 import java.awt.Shape;
-import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Path2D;
-import java.awt.Rectangle;
+import com.ivli.roim.core.Extractor;
+import com.ivli.roim.core.ImageFrame;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,14 +35,13 @@ public class Profile extends ScreenObject {
     public static final Color BLUEVIOLET = new Color(0.5411765f, 0.16862746f, 0.8862745f);
     public static final Color VIOLET     = new Color(0.93333334f, 0.50980395f, 0.93333334f);
     
-    private boolean iShow = true;
-    
-    private boolean iNormalize = false;
-    private double[]  iHist;
+    private boolean  iShow = true;    
+    private boolean  iNormalize = false;
+    private double[] iHist;
     
     public Profile(Rectangle2D aS, ROIManager aMgr) {
         super("PROFILE", aS, aMgr); //NOI18N 
-        makeHistogram();
+        iHist = getManager().getFrame().processor().histogram(iShape.getBounds()); 
     }
     
     @Override
@@ -59,7 +57,7 @@ public class Profile extends ScreenObject {
  
     @Override
     public void update() {
-        makeHistogram();        
+        iHist = getManager().getFrame().processor().histogram(iShape.getBounds());      
     }            
     
     @Override
@@ -74,52 +72,10 @@ public class Profile extends ScreenObject {
         
         if (bounds.contains(temp.getBounds())) {
             iShape = temp;
-            update();
+           /// update();
         }
     }  
-    
-    private void makeHistogram() {
-        final Rectangle bounds = iShape.getBounds();
-
-        getManager().getView().getFrame().extract(new Extractor() {
-            
-        public void apply(com.ivli.roim.core.ImageFrame aR) {
-                
-            iHist = new double[bounds.width];
-            
-            for (int i = 0; i < bounds.width; ++i)
-                for (int j = bounds.y; j < bounds.y + bounds.height; ++j)
-                    iHist[i] += aR.getPixel(i, j);
-        }});
-    
-    }
-    
-    private void drawHistogram(Graphics2D aGC, AffineTransform aTrans) {        
-        double min = Double.MAX_VALUE;
-        double max = Double.MIN_VALUE;
-        
-        for (double d : iHist) {
-            min = Math.min(min, d);
-            max = Math.max(max, d);
-        }
-      
-        final double range =  getManager().getView().getFrame().getRange().range();// maxV - minV; 
-        
-        Rectangle bounds = new Rectangle(0, 0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
-                       
-        final double scale = Math.min(iShape.getBounds().getY()/(4*range), bounds.getHeight()/(4*range));                                              
-        Path2D.Double s = new Path2D.Double();        
-        //int n = 0;
-        s.moveTo(0, iShape.getBounds().getY() - iHist[0] * scale);
-        
-        for (int n = 1; n < iHist.length; ++n) 
-            s.lineTo(n, iShape.getBounds().getY() - iHist[n] * scale);
-               
-        aGC.setXORMode(Color.WHITE);             
-        aGC.draw(aTrans.createTransformedShape(s));                
-        aGC.setPaintMode(); //turn XOR mode off
-    }
-    
+          
     public boolean normalize() {
         return iNormalize = !iNormalize; 
     }
@@ -136,6 +92,5 @@ public class Profile extends ScreenObject {
          return iHist;
     }
     
-    
-    private static final Logger LOG = LogManager.getLogger();
+        private static final Logger LOG = LogManager.getLogger();
 }

@@ -20,6 +20,7 @@ package com.ivli.roim.algorithm;
 
 import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.ImageFrame;
+import java.awt.Rectangle;
 /**
  *
  * @author likhachev
@@ -156,6 +157,16 @@ public class FrameProcessor {
         return lowerAverage + yFraction * (upperAverage - lowerAverage);
     }
 
+    public double[] histogram(Rectangle aR) {     
+        double [] ret = new double[aR.width];
+
+        for (int i = 0; i < aR.width; ++i)
+            for (int j = aR.y; j < aR.y + aR.height; ++j)
+                ret[i] += iFrame.get(i, j);
+        
+        return ret;
+    }
+    
     public static final double NORMAL_KEY = 0.18;
     public static final double LOW_KEY    = 0.09;
     public static final double HIGH_KEY   = 0.72;

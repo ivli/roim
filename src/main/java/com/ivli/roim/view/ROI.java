@@ -17,13 +17,10 @@
  */
 package com.ivli.roim.view;
 
-
 import java.awt.Color;
-
 import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
 import com.ivli.roim.core.SeriesCollection;
@@ -32,11 +29,7 @@ import com.ivli.roim.events.ROIChangeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {          
-    private final static boolean DRAW_PROFILES = false;
-    private final static int EMPHASIZED_STROKE = 20;
-    private final static Color EMPHASIZED_COLOR = Color.RED;
-    
+public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {             
     private Color iColor;          
     private int iAreaInPixels;   
     
@@ -65,17 +58,17 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     
     public double getDensity() {
         buildSeriesIfNeeded();
-        return getSeries(Measurement.DENSITY).get(getManager().getView().getFrameNumber());
+        return getSeries(Measurement.DENSITY).get(getManager().getFrameNumber());
     }
     
     public double getMinPixel() {
         buildSeriesIfNeeded();
-        return getSeries(Measurement.MINPIXEL).get(getManager().getView().getFrameNumber());
+        return getSeries(Measurement.MINPIXEL).get(getManager().getFrameNumber());
     }
     
     public double getMaxPixel() {
         buildSeriesIfNeeded();
-        return getSeries(Measurement.MAXPIXEL).get(getManager().getView().getFrameNumber());
+        return getSeries(Measurement.MAXPIXEL).get(getManager().getFrameNumber());
     }
     
     public Series getSeries(Measurement anId) {  
@@ -91,18 +84,10 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         Color old = iColor;
         iColor = aC;
         notifyROIChanged(ROIChangeEvent.ROICHANGEDCOLOR, old);
-    }
-    /*
-    @Override
-    public void setName(String aName) {
-        String old = getName();
-        super.setName(aName);
-        notifyROIChanged(ROIChangeEvent.ROICHANGEDNAME, old);         
-    }
-*/
+    }  
     
     @Override
-    void paint(AbstractPainter aD) {//Graphics2D aGC, AffineTransform aTrans) {        
+    void paint(AbstractPainter aD) {
         aD.paint(this);     
     }
         
