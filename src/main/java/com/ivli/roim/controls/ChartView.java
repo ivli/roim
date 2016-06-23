@@ -18,7 +18,6 @@
 package com.ivli.roim.controls;
 
 
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JPanel;
@@ -36,8 +35,11 @@ import com.ivli.roim.core.Series;
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
+import java.util.Iterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jfree.chart.LegendItem;
+import org.jfree.chart.LegendItemCollection;
 
 
 
@@ -85,22 +87,39 @@ public class ChartView extends JPanel implements ROIChangeListener {
     
     @Override
     public void ROIChanged (ROIChangeEvent aE) {
-        XYSeriesCollection col = ((XYSeriesCollection)iPlot.getDataset());
         
-        switch (aE.getChange()) {
-            case ROIChangeEvent.ROIDELETED: {                
-                int ndx = col.indexOf(aE.getObject().getName());
-                col.removeSeries(ndx);                
-            } break;    
-            case ROIChangeEvent.ROIMOVED: //fall-through
-            case ROIChangeEvent.ROICHANGED: {                
-                if (aE.getObject() instanceof ROI) {
-                    int ndx = col.indexOf(aE.getObject().getName());    
-                                        
-                    if (ndx < 0) {
-                        LOG.debug("Serie {}:{} does not exist", aE.getObject().getName(), ndx);                        
+        if (aE.getObject() instanceof ROI) {
+            XYSeriesCollection col = ((XYSeriesCollection)iPlot.getDataset());  
+            
+            
+            switch (aE.getChange()) {
+                case ROIChangeEvent.ROICREATED: {  
+                    if (0 <= col.indexOf(aE.getObject().getName())) {
+                        LOG.debug("Serie {} already exists", aE.getObject().getName());                    
+                        return;
                     }
                     
+                    final XYSeries s = new XYSeries(aE.getObject().getName(), true, false);
+                    final Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
+
+                    assert(c.getNumFrames() == aE.getObject().getManager().getImage().getTimeSliceVector().getNumFrames());
+
+                    for (int n = 0; n < c.getNumFrames(); ++n)   {                  
+                        double x = aE.getObject().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000.;
+                        double y = c.get(n);
+                        s.add(x, y);
+                    }
+                    ((XYSeriesCollection)iPlot.getDataset()).addSeries(s); 
+                    iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getObject().getName()), ((ROI)aE.getObject()).getColor());                     
+                } break;
+                
+                case ROIChangeEvent.ROIDELETED: {                
+                    final int ndx = col.indexOf(aE.getObject().getName());
+                    col.removeSeries(ndx);                
+                } break;    
+                case ROIChangeEvent.ROIMOVED: //fall-through
+                case ROIChangeEvent.ROICHANGED: {                                    
+                    final int ndx = col.indexOf(aE.getObject().getName());    
                     Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                     XYSeries s = col.getSeries(ndx); 
                     s.clear();
@@ -108,54 +127,35 @@ public class ChartView extends JPanel implements ROIChangeListener {
                     for (int n = 0; n < c.getNumFrames(); ++n) {
                         long dur = aE.getObject().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000;
                         s.add(dur, c.get(n));
-                    }
-                }
-            } break;
-                
-            case ROIChangeEvent.ROICREATED: {  
-                if (0 > col.indexOf(aE.getObject().getName())) {
-                    LOG.debug("Serie {} already exists", aE.getObject().getName());                    
-                }
-                final XYSeries s = new XYSeries(aE.getObject().getName(), true, false);
-                final Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
-               
-                assert(c.getNumFrames() == aE.getObject().getManager().getImage().getTimeSliceVector().getNumFrames());
-                
-                for (int n = 0; n < c.getNumFrames(); ++n)   {                  
-                    double x = aE.getObject().getManager().getImage().getTimeSliceVector().getSlices().get(n) / 1000.;
-                    double y = c.get(n);
-                    s.add(x, y);
-                }
+                    }                   
+                } break;
 
-                ((XYSeriesCollection)iPlot.getDataset()).addSeries(s); 
-                
-                iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getObject().getName()), ((ROI)aE.getObject()).getColor());  
-                /*
-                 * the place to create default markers if needed
-                ////iChart.addMarker(new DomainMarker(s));
-                 */
-            } break;
-            
-            case ROIChangeEvent.ROICHANGEDCOLOR: {
-                assert (aE.getExtra() instanceof java.awt.Color);
-                final int ndx = col.indexOf(aE.getObject().getName());
-                if (ndx >=0)
+                case ROIChangeEvent.ROICHANGEDCOLOR: {
+                    assert (aE.getExtra() instanceof java.awt.Color);
+                    final int ndx = col.indexOf(aE.getObject().getName());
                     iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)aE.getObject()).getColor());                                 
-            } break;
-                        
-            case ROIChangeEvent.ROICHANGEDNAME: {
-                assert (aE.getExtra() instanceof String);
-                final int ndx = col.indexOf((String)aE.getExtra());  
-                XYSeries s = col.getSeries(ndx); 
-                s.setKey(aE.getObject().getName());
-            } break;    
-            
-            case ROIChangeEvent.ROIALLDELETED: {
-                ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); 
-            } break;     
-            default: 
-                throw new java.lang.IllegalArgumentException();    
-        }   
+                } break;
+
+                case ROIChangeEvent.ROICHANGEDNAME: {
+                    assert (aE.getExtra() instanceof String);
+                    final int ndx = col.indexOf(((String)aE.getExtra())); 
+                    
+                    col.getSeries(ndx).setKey(aE.getObject().getName());
+                    /* this is a work-around the case when two or more ROI have the same names (user mistakenly renamed) 
+                     * when this mistake is corrected it might happen the colors of curves does not match colors of corresponding ROI 
+                     */                     
+                    iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)aE.getObject()).getColor());
+                    
+                } break;    
+
+                case ROIChangeEvent.ROIALLDELETED: {
+                    ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); 
+                } break;     
+                default: 
+                    ///throw new java.lang.IllegalArgumentException();    
+                    break;
+            }  
+        }
     }
     private final static Logger LOG = LogManager.getLogger();
 }

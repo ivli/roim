@@ -17,13 +17,9 @@
  */
 package com.ivli.roim.view;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.image.AffineTransformOp;
+
+
 
 /**
  *
@@ -35,7 +31,7 @@ public class OverlayPicture extends ScreenObject {
     //Point iOrigin=new Point(0,0);
     
     OverlayPicture(java.awt.Image aP, String aN) { 
-        super(aN, new Rectangle(aP.getWidth(null), aP.getHeight(null)), null);
+        super(-1, aN, new Rectangle(aP.getWidth(null), aP.getHeight(null)), null);
        
         iPicture = aP;
     }

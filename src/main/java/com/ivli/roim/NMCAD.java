@@ -630,7 +630,10 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new NMCAD().setVisible(true);
+                NMCAD nmc = new NMCAD();
+                if (args.length > 0)
+                    nmc.openImage(args[0]);
+                nmc.setVisible(true);
             }
         });
     }

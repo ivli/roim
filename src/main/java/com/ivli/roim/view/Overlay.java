@@ -18,7 +18,6 @@
 package com.ivli.roim.view;
 
 import java.awt.Shape;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import javax.swing.event.EventListenerList;
@@ -46,19 +45,29 @@ public abstract class Overlay implements java.io.Serializable {
         
     transient private final ROIManager iMgr; 
     
+    protected final int iUid;
     protected Shape  iShape;
     protected String iName;
     protected boolean iEmphasized = false;
     protected boolean iPinned = false;
     protected boolean iVisible = true;
     
-    private final EventListenerList iListeners;    
+    private final EventListenerList iListeners;        
+            
+    protected Overlay(int anID, ROIManager aMgr) {
+        this(anID, null, null, aMgr);
+    }
     
-    protected Overlay(String aName, Shape aShape, ROIManager aMgr) {
-        iMgr   = aMgr;
+    protected Overlay(int anID, String aName, Shape aShape, ROIManager aMgr) {
+        iUid = anID;
+        iMgr = aMgr;
         iShape = aShape;         
-        iName = (null != aName)? aName : ""; //NOI18N                  
+        iName = (null != aName)? aName : String.format("OVERLAY%d", anID); //NOI18N                  
         iListeners = new EventListenerList();   
+    }
+               
+    public int getID() {
+        return iUid;
     }
     
     public final ROIManager getManager() {

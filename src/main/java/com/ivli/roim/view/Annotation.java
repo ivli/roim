@@ -34,8 +34,8 @@ import java.util.ArrayList;
 public abstract class Annotation extends ScreenObject implements ROIChangeListener {              
     protected boolean iMultiline = true; 
    
-    Annotation(String aName, Shape aShape, ROIManager aRM) {
-        super(aName, aShape, aRM);    
+    Annotation(int aUid, String aName, Shape aShape, ROIManager aRM) {
+        super(aUid, aName, aShape, aRM);    
     }
     
     @Override
@@ -72,7 +72,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
         
         public Static(ROI aRoi, ROIManager aRM) {
-            super("ANNOTATION::STATIC", // NOI18N
+            super(-1, "ANNOTATION::STATIC", // NOI18N
                     null, null != aRM ? aRM : aRoi.getManager());  
             iRoi = aRoi;     
             iAnnotation = new ArrayList<>();
@@ -176,7 +176,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         private final Overlay  iOver;
         
         Active(IOperation aOp, Overlay anO, ROIManager aRM) {
-            super("ANNOTATION.ACTIVE", null, aRM);                    
+            super(-1, "ANNOTATION.ACTIVE", null, aRM);                    
             iOp = aOp;       
             iOver = anO;
         }   

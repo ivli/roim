@@ -416,17 +416,14 @@ class Controller implements IController {
                     public void DoPaint(Graphics2D gc) {                                              
                         if (start != null && finish != null)
                             gc.drawLine(start.x, start.y, finish.x, finish.y);
-                    }
-                       
+                    }                       
                 };
                 } break;
             case KCommandRoiClone:   
-                ROI r = iControlled.getROIMgr().cloneRoi((ROI)iSelected);
-                iControlled.repaint();
-                //iSelected.select(false);
-                //iSelected = null;
-                releaseSelection(null);
-                //addSelection(r);
+                Overlay c = iControlled.getROIMgr().cloneObject(iSelected);
+                iControlled.repaint();                
+                releaseSelection(null);     
+                addSelection(c);
                 break;
             case KCommandRoiMove: break;            
             case KCommandRoiPin: 

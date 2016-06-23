@@ -25,6 +25,7 @@ import com.ivli.roim.view.Overlay;
  */
 public final class ROIChangeEvent extends java.util.EventObject { 
     //TODO: rename logicaly    
+    public final static int OVERLAYCREATED = 0;  
     public final static int ROICREATED = 1;  
     public final static int ROIDELETED = 2; 
     public final static int ROICHANGED = 3; 
@@ -47,7 +48,7 @@ public final class ROIChangeEvent extends java.util.EventObject {
     public int getChange() {
         return iChange;
     }
-    
+       
     public Overlay getObject() {
         return iObj;
     }   

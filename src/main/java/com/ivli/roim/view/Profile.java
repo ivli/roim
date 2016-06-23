@@ -40,7 +40,7 @@ public class Profile extends ScreenObject {
     private double[] iHist;
     
     public Profile(Rectangle2D aS, ROIManager aMgr) {
-        super("PROFILE", aS, aMgr); //NOI18N 
+        super(-1, "PROFILE", aS, aMgr); //NOI18N 
         iHist = getManager().getFrame().processor().histogram(iShape.getBounds()); 
     }
     

@@ -4,11 +4,7 @@ package com.ivli.roim.view;
 import com.ivli.roim.calc.IOperand;
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.calc.Operand;
-import java.awt.Graphics2D;
-
-import java.awt.Color;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 
@@ -23,7 +19,7 @@ public class Ruler extends ScreenObject {
     private double iDistance;
     
     Ruler(Shape aR, ROIManager aM) {         
-        super("RULER",  aR, aM);            
+        super(-1, "RULER",  aR, aM);            
     }
           
     @Override
