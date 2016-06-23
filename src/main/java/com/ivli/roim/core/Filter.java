@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.core;
 
+import com.ivli.roim.view.OverlayManager;
 import com.ivli.roim.view.ROI;
 
 
@@ -25,19 +26,19 @@ import com.ivli.roim.view.ROI;
  * @author likhachev
  */
 public enum Filter {        
-        DENSITY((ROI aR) -> aR.getDensity(),
+        DENSITY((ROI aR, OverlayManager aM) -> aR.getDensity(aM),
                 Measurement.DENSITY),
        
-        AREAINPIXELS((ROI aR) -> aR.getAreaInPixels(),
+        AREAINPIXELS((ROI aR, OverlayManager aM) -> aR.getAreaInPixels(),
                      Measurement.AREAINPIXELS),
         
-        MINPIXEL((ROI aR) -> aR.getMinPixel(),
+        MINPIXEL((ROI aR, OverlayManager aM) -> aR.getMinPixel(aM),
                  Measurement.MINPIXEL),
         
-        MAXPIXEL((ROI aR) -> aR.getMaxPixel(),
+        MAXPIXEL((ROI aR, OverlayManager aM) -> aR.getMaxPixel(aM),
                  Measurement.MAXPIXEL),
         
-        AREAINLOCALUNITS((ROI aR) -> (aR.getMaxPixel() * aR.getManager().getImage().getPixelSpacing().getX()),
+        AREAINLOCALUNITS((ROI aR, OverlayManager aM) -> aR.getAreaInPixels() * aM.getImage().getPixelSpacing().getX(), 
                          Measurement.AREAINLOCALUNITS);
         
         
@@ -53,8 +54,8 @@ public enum Filter {
             iF = aF;
         }
                              
-        public double filter(ROI aRoi) {
-            return iF.filter(aRoi);
+        public double filter(ROI aRoi, OverlayManager aM) {
+            return iF.filter(aRoi, aM);
         }
         
         public Measurement getMeasurement() {

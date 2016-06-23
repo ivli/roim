@@ -34,8 +34,8 @@ import java.util.ArrayList;
 public abstract class Annotation extends ScreenObject implements ROIChangeListener {              
     protected boolean iMultiline = true; 
    
-    Annotation(int aUid, String aName, Shape aShape, ROIManager aRM) {
-        super(aUid, aName, aShape, aRM);    
+    Annotation(int aUid, String aName, Shape aShape) {
+        super(aUid, aName, aShape);    
     }
     
     @Override
@@ -71,15 +71,17 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
       
         protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
         
-        public Static(ROI aRoi, ROIManager aRM) {
-            super(-1, "ANNOTATION::STATIC", // NOI18N
-                    null, null != aRM ? aRM : aRoi.getManager());  
+        public Static(ROI aRoi) {
+            super(-1, 
+                  "ANNOTATION::STATIC", // NOI18N
+                 aRoi.getShape() );  
             iRoi = aRoi;     
             iAnnotation = new ArrayList<>();
-            for (Filter f : iFilters)
-                iAnnotation.add(f.getMeasurement().format(f.filter(aRoi)));        
+            
+           // for (Filter f : iFilters)
+           //     iAnnotation.add(f.getMeasurement().format(f.filter(aRoi)));        
 
-            aRoi.addROIChangeListener(this);
+            ///aRoi.addROIChangeListener(this);
         }
               
         public ArrayList<String> getText() {return iAnnotation;}
@@ -130,11 +132,11 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         }
                 
         @Override
-        public void update() {     
+        public void update(OverlayManager aM) {     
             iAnnotation.clear();
            
             for (Filter f : iFilters)
-                iAnnotation.add(f.getMeasurement().format(f.filter(iRoi)));     
+                iAnnotation.add(f.getMeasurement().format(f.filter(iRoi, aM)));     
          
             ///computeShape();   
         }
@@ -144,17 +146,16 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
             switch (anEvt.getChange()) {
                 case ROIChangeEvent.ROIDELETED: 
                     //commit suicide 
-                    getManager().deleteObject(this);
+                   // getManager().deleteObject(this);
                     break;
-                case ROIChangeEvent.ROIMOVED: {//if not pinned move the same dX and dY
-                    final double[] deltas = (double[])anEvt.getExtra();
-                    ///logger.info(String.format("%f, %f",deltas[0], deltas[1]));
-                    getManager().moveObject(this, deltas[0], deltas[1]);
-                    ///update();
+                case ROIChangeEvent.ROIMOVED: {//if not pinned move the same dX and dY                    
+                    final double[] deltas = (double[])anEvt.getExtra();                    
+                    /// TODO: getManager().moveObject(this, deltas[0], deltas[1]);
+                    
                 } break;
                 case ROIChangeEvent.ROICHANGED:   
                 default: //fall-through
-                    update(); break;
+                    //update(); break;
             }        
         }
         
@@ -175,8 +176,8 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         private final IOperation iOp;
         private final Overlay  iOver;
         
-        Active(IOperation aOp, Overlay anO, ROIManager aRM) {
-            super(-1, "ANNOTATION.ACTIVE", null, aRM);                    
+        Active(IOperation aOp, Overlay anO) {
+            super(-1, "ANNOTATION.ACTIVE", null);                    
             iOp = aOp;       
             iOver = anO;
         }   
@@ -210,7 +211,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         }
                
         @Override
-        public void update() {    }
+        public void update(OverlayManager aM) {    }
         
         @Override
         public void ROIChanged(ROIChangeEvent anEvt) {              
@@ -220,11 +221,11 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
                 case ROIChangeEvent.ROIMOVED: {  
                     final double[] deltas = (double[])anEvt.getExtra();                    
                     move(deltas[0], deltas[1]);
-                    update();
+                    //update();
                 } break;            
                 case ROIChangeEvent.ROICHANGED:   
                 default: //fall-through
-                    update();                                
+                    //update();                                
                     break;
             }        
         }

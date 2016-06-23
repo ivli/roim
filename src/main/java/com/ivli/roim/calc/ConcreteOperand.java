@@ -21,30 +21,32 @@ import com.ivli.roim.view.ROI;
 import com.ivli.roim.core.Filter;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
+import com.ivli.roim.view.OverlayManager;
 /**
  *
  * @author likhachev
  */
 public class ConcreteOperand implements IOperand, ROIChangeListener, AutoCloseable {   
     private Filter iF; 
-    private ROI iRoi;
-       
-    public ConcreteOperand(ROI aRoi, Filter aF) {        
+    private ROI  iRoi;
+    private OverlayManager iM;
+    
+    public ConcreteOperand(ROI aRoi, Filter aF, OverlayManager aM) {        
         iRoi = aRoi;    
+        iM = aM;
         iF = (null != aF) ?  aF : Filter.DENSITY;   
         iRoi.addROIChangeListener(this);
     }
        
-    public ConcreteOperand(ROI aRoi) {
-        this(aRoi, Filter.DENSITY);
+    public ConcreteOperand(ROI aRoi, OverlayManager aM) {
+        this(aRoi, Filter.DENSITY, aM);
     }
     
     public ROI getROI() {return iRoi;}
-    public Filter getFilter() {return iF;}
-    
+    public Filter getFilter() {return iF;}    
     
     public double value() {
-        return iF.filter(iRoi);
+        return iF.filter(iRoi, iM);
     }
     
     @Override

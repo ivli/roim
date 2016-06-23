@@ -74,7 +74,7 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
     
     public void update() {
         iOverlays.stream().forEach((o) -> {
-            o.update();
+            o.update(this);
         });
     }
     
@@ -89,7 +89,7 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
        
     protected void addObject(Overlay aO) {
         iOverlays.add(aO);
-        notifyROIChanged(aO, ROIChangeEvent.OVERLAYCREATED, null);  
+        notifyROIChanged(aO, ROIChangeEvent.OVERLAYCREATED, this);  
     }
     
     public void moveObject(Overlay aO, double adX, double adY) {                         
@@ -99,14 +99,14 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
 
             if (bounds.contains(temp.getBounds())) {            
                 aO.move(adX, adY);   
-                aO.update();
+//                notifyROIChanged(aO, ROIChangeEvent.ROIMOVED, this);
+                aO.update(this);
             }
         }
     }
     
     public Overlay findObject(Point aP) {      
-        final Rectangle temp = iView.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();
-                 
+        final Rectangle temp = iView.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();                 
         
         for (Overlay o : iOverlays) {           
             if (o.isSelectable() && o.intersects(temp)) 

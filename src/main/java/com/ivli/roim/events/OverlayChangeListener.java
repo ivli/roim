@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 likhachev
+ * Copyright (C) 2016 likhachev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,15 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.core;
-
-import com.ivli.roim.view.OverlayManager;
+package com.ivli.roim.events;
 
 /**
  *
  * @author likhachev
  */
- @FunctionalInterface
-public interface IFilter {        
-    public double filter(com.ivli.roim.view.ROI aR, OverlayManager aM);
+public interface OverlayChangeListener extends java.util.EventListener {
+    public void OverlayChanged(OverlayChangeEvent anEvt);   
 }

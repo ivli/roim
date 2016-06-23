@@ -68,7 +68,7 @@ public class ROIManager extends OverlayManager {
         r.x = 0;
         r.width = getImage().getWidth();
         
-        Profile newRoi = new Profile(r, this);     
+        Profile newRoi = new Profile(r);     
         addObject(newRoi);   
         newRoi.addROIChangeListener(this);
     }
@@ -79,22 +79,25 @@ public class ROIManager extends OverlayManager {
         r.lineTo(aTo.x, aTo.y);                                
         Shape s = iView.screenToVirtual().createTransformedShape(r);     
         
-        Ruler ruler = new Ruler(s, this);     
+        Ruler ruler = new Ruler(s);     
                 
         addObject(ruler);   
         ruler.addROIChangeListener(this);
    
-        addObject(new Annotation.Active(ruler.getOperation(), ruler, this));
+        addObject(new Annotation.Active(ruler.getOperation(), ruler));
     }
     
     public void createAnnotation(BinaryOp anOp) {    
-        Annotation a = new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI(), this);
+        Annotation a = new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI());
         addObject(a);  
         createSurrogateROI(anOp);
     }
     
     public void createAnnotation(ROI aROI) {    
-        addObject(new Annotation.Static(aROI, this));      
+        Annotation.Static o = new Annotation.Static(aROI);
+        addObject(o);
+        o.update(this);
+        aROI.addROIChangeListener(o);        
     }    
     
     void createSurrogateROI(BinaryOp anOp) {           
@@ -112,7 +115,7 @@ public class ROIManager extends OverlayManager {
             public String getString() { return "";}
         } 
         
-        ROI surrogate = new ROI(iUid.getNext(), null, ((ConcreteOperand)anOp.getLhs()).getROI().getShape(), this, Color.YELLOW) {
+        ROI surrogate = new ROI(iUid.getNext(), null, ((ConcreteOperand)anOp.getLhs()).getROI().getShape(), Color.YELLOW) {
             void buildSeriesIfNeeded() {               
                 final Measurement f1 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();                
                 final Measurement f2 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();
@@ -136,7 +139,7 @@ public class ROIManager extends OverlayManager {
                         
         surrogate.setVisible(false);
         addObject(surrogate);
-        surrogate.update();
+        surrogate.update(this);
         notifyROIChanged(surrogate, ROIChangeEvent.ROICREATED, null);  
         surrogate.addROIChangeListener(this);
     }
@@ -162,13 +165,13 @@ public class ROIManager extends OverlayManager {
         
         ret.addROIChangeListener(this);
         
-        ret.update();
+        ret.update(this);
         notifyROIChanged(ret, ROIChangeEvent.ROICREATED, aR); 
         return ret;        
     }
     
     protected void internalCreateROI(ROI aS) {
-        ROI newRoi = new ROI(iUid.getNext(), null, aS.getShape(), this, aS.getColor());       
+        ROI newRoi = new ROI(iUid.getNext(), null, aS.getShape(), aS.getColor());       
   
         addObject(newRoi);
         
@@ -177,14 +180,14 @@ public class ROIManager extends OverlayManager {
        
         newRoi.addROIChangeListener(this);
         
-        newRoi.update();
+        newRoi.update(this);
         notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, null);    
     }
     
     public void createRoi(Shape aS) {                 
         final Shape shape = iView.screenToVirtual().createTransformedShape(aS);
         
-        ROI newRoi = new ROI(iUid.getNext(), null, shape, this, null);       
+        ROI newRoi = new ROI(iUid.getNext(), null, shape, null);       
   
         addObject(newRoi);
         
@@ -193,8 +196,8 @@ public class ROIManager extends OverlayManager {
        
         newRoi.addROIChangeListener(this);
         
-        newRoi.update();
-        notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, null);
+        newRoi.update(this);
+       // notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, null);
     }
    /*
     boolean deleteRoi(ROI aR) {         

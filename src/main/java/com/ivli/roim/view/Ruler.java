@@ -18,8 +18,8 @@ import org.apache.logging.log4j.Logger;
 public class Ruler extends ScreenObject {
     private double iDistance;
     
-    Ruler(Shape aR, ROIManager aM) {         
-        super(-1, "RULER",  aR, aM);            
+    Ruler(Shape aR) {         
+        super(-1, "RULER",  aR);            
     }
           
     @Override
@@ -33,7 +33,7 @@ public class Ruler extends ScreenObject {
     }
     
     @Override
-    void update() {  
+    void update(OverlayManager aM) {  
         Point2D.Double a = null, b = null;
         
         PathIterator pi = iShape.getPathIterator(null);
@@ -54,12 +54,12 @@ public class Ruler extends ScreenObject {
         if (null == a || null == b)
             return; 
         
-        iDistance = a.distance(b) * getManager().getImage().getPixelSpacing().getX();
+        iDistance = a.distance(b);//TODO: * getManager().getImage().getPixelSpacing().getX();
         LOG.debug("distance is: {}", iDistance);           
     }       
     
     IOperation getOperation() {
-        update();        
+        ///update();        
         return new IOperation() {
             Ruler iR = Ruler.this;
             public IOperand value() {

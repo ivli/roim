@@ -31,7 +31,7 @@ public class OverlayPicture extends ScreenObject {
     //Point iOrigin=new Point(0,0);
     
     OverlayPicture(java.awt.Image aP, String aN) { 
-        super(-1, aN, new Rectangle(aP.getWidth(null), aP.getHeight(null)), null);
+        super(-1, aN, new Rectangle(aP.getWidth(null), aP.getHeight(null)));
        
         iPicture = aP;
     }
@@ -60,7 +60,6 @@ public class OverlayPicture extends ScreenObject {
     } 
     */
     
-    void update(){
-    }
+    void update(OverlayManager aM){}
          
 }

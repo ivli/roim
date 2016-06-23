@@ -79,8 +79,8 @@ public class CalcPanel extends javax.swing.JPanel {
             final ROI iLhs = (ROI)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
             final ROI iRhs = (ROI)jTable2.getValueAt(jTable2.getSelectedRow(), 0);                
             iF = Filter.getFilter((String)jComboBox2.getSelectedItem());
-            iOp = new BinaryOp(new ConcreteOperand(iLhs, iF), 
-                                new ConcreteOperand(iRhs, iF), 
+            iOp = new BinaryOp(new ConcreteOperand(iLhs, iF, iPanel.getROIMgr()), 
+                                new ConcreteOperand(iRhs, iF, iPanel.getROIMgr()), 
                                     (String)jComboBox1.getSelectedItem());
             
             jTextField2.setText(iOp.getCompleteString());   

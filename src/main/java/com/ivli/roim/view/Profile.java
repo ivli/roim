@@ -39,9 +39,9 @@ public class Profile extends ScreenObject {
     private boolean  iNormalize = false;
     private double[] iHist;
     
-    public Profile(Rectangle2D aS, ROIManager aMgr) {
-        super(-1, "PROFILE", aS, aMgr); //NOI18N 
-        iHist = getManager().getFrame().processor().histogram(iShape.getBounds()); 
+    public Profile(Rectangle2D aS) {
+        super(-1, "PROFILE", (Shape)aS); //NOI18N 
+        ///iHist = getManager().getFrame().processor().histogram(iShape.getBounds()); 
     }
     
     @Override
@@ -56,8 +56,8 @@ public class Profile extends ScreenObject {
     } 
  
     @Override
-    public void update() {
-        iHist = getManager().getFrame().processor().histogram(iShape.getBounds());      
+    public void update(OverlayManager aM) {
+        iHist = aM.getFrame().processor().histogram(iShape.getBounds());      
     }            
     
     @Override
@@ -68,12 +68,14 @@ public class Profile extends ScreenObject {
                                  new Rectangle2D.Double(r.getX(), r.getY(), r.getWidth(), Math.max(1.0, r.getHeight() + adX))
                               );  
         
-        Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
+        ///TODO:!!!
         
-        if (bounds.contains(temp.getBounds())) {
-            iShape = temp;
+        //Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
+        
+        //if (bounds.contains(temp.getBounds())) {
+        //    iShape = temp;
            /// update();
-        }
+        //}
     }  
           
     public boolean normalize() {

@@ -43,42 +43,32 @@ public abstract class Overlay implements java.io.Serializable {
     public static final int HASMENU    = PINNABLE  << 0x1;  
     public static final int HASCUSTOMMENU = HASMENU << 0x1;  
         
-    transient private final ROIManager iMgr; 
+    //transient private final ROIManager iMgr; 
     
     protected final int iUid;
-    protected Shape  iShape;
-    protected String iName;
+    protected Shape   iShape;
+    protected String  iName;
     protected boolean iEmphasized = false;
     protected boolean iPinned = false;
     protected boolean iVisible = true;
     
     private final EventListenerList iListeners;        
             
-    protected Overlay(int anID, ROIManager aMgr) {
-        this(anID, null, null, aMgr);
+    protected Overlay(int anID) {
+        this(anID, null, null);
     }
     
-    protected Overlay(int anID, String aName, Shape aShape, ROIManager aMgr) {
-        iUid = anID;
-        iMgr = aMgr;
+    protected Overlay(int anID, String aName, Shape aShape) {
+        iUid   = anID;
         iShape = aShape;         
-        iName = (null != aName)? aName : String.format("OVERLAY%d", anID); //NOI18N                  
+        iName  = (null != aName)? aName : String.format("OVERLAY%d", anID); //NOI18N                  
         iListeners = new EventListenerList();   
     }
                
     public int getID() {
         return iUid;
     }
-    
-    public final ROIManager getManager() {
-        return iMgr;
-    }    
-    
-    public boolean canMove(double adX, double adY) {           
-        final Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());        
-        return bounds.contains(AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(getShape()).getBounds2D());
-    }
-    
+       
     public String getName() {
         return iName;
     }
@@ -131,15 +121,15 @@ public abstract class Overlay implements java.io.Serializable {
     }   
         
     void move(double adX, double adY) {       
-        iShape = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);                    
-        update();
-        notifyROIChanged(ROIChangeEvent.ROIMOVED, new double[]{adX, adY});
+        iShape = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);                            
+///        notifyROIChanged(ROIChangeEvent.ROIMOVED, new double[]{adX, adY});
     } 
     
+    abstract void update(OverlayManager aRM);  
+        
     abstract int  getCaps();         
-    abstract void paint(AbstractPainter aP);    
-    abstract void update();  
-    
+    abstract void paint(AbstractPainter aP);  
+            
     interface IFlip {
         public void flip(boolean aVertical);
     } 
@@ -161,7 +151,7 @@ public abstract class Overlay implements java.io.Serializable {
     }
     
     protected void notifyROIChanged(int aS, Object aEx) {        
-        ROIChangeEvent evt = new ROIChangeEvent(this, aS, this, aEx);
+        final ROIChangeEvent evt = new ROIChangeEvent(this, aS, this, aEx);
 
         ROIChangeListener arr[] = iListeners.getListeners(ROIChangeListener.class);
 

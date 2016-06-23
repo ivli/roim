@@ -86,7 +86,7 @@ public class ROITableModel extends DefaultTableModel {
             Overlay o = aList.next();
             if (o instanceof ROI) {       
                 final ROI r = (ROI)o;                   
-                addRow(new Object[]{o, false, r.getName(), r.getAreaInPixels(), r.getDensity(), r.getColor()});                                        
+                addRow(new Object[]{o, false, r.getName(), r.getAreaInPixels(), 0/*r.getDensity()*/, r.getColor()});                                        
             }
         }
          

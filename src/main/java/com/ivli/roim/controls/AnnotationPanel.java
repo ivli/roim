@@ -21,6 +21,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.SwingUtilities;
 import com.ivli.roim.core.Filter;
 import com.ivli.roim.core.Measurement;
+import java.util.ArrayList;
 /**
  *
  * @author likhachev
@@ -77,9 +78,8 @@ public class AnnotationPanel extends javax.swing.JPanel {
     public AnnotationPanel(com.ivli.roim.view.Annotation.Static anA) {
         iAnno = anA;
         rowData = new Object[str.length][2];
-                
-        ///com.ivli.roim.core.Filter [] fs = anA.getFilters();
-        for(int n=0; n < str.length; ++n ) {
+                        
+        for(int n=0; n < str.length; ++n) {
             rowData[n][0] = str[n];
             rowData[n][1] = false;
             
@@ -156,7 +156,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
-        java.util.ArrayList<com.ivli.roim.core.Filter> f = new java.util.ArrayList<>();
+        ArrayList<Filter> f = new ArrayList<>();
         
         int cnt = 0;
         for(int n=0; n < jTable1.getRowCount(); ++n ) {          
@@ -164,7 +164,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 cnt++;//f.add(Filter.getFilter((String)rowData[n][0]));
         }
         
-        com.ivli.roim.core.Filter []fi = new com.ivli.roim.core.Filter[cnt];
+        Filter []fi = new Filter[cnt];
         
         for(int n=0; n < jTable1.getRowCount(); ++n ) {
             if (true == (boolean)jTable1.getModel().getValueAt(n, 1))

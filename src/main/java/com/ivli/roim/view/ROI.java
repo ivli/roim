@@ -39,45 +39,46 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU|PINNABLE;}
     
-    public ROI(int anID, ROIManager aMgr) {
-        this(anID, null , null, aMgr, Colorer.getNextColor(ROI.class));                 
+    public ROI(int anID) {
+        this(anID, null , null, Colorer.getNextColor(ROI.class));                 
     }
     
-    public ROI(int anID, String aName, Shape aS, ROIManager aMgr, Color aC) {
-        super(anID, null == aName ?  String.format("ROI%d", anID):aName, aS, aMgr);         
+    public ROI(int anID, String aName, Shape aS, Color aC) {
+        super(anID, null == aName ?  String.format("ROI%d", anID):aName, aS);         
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);          
         iAreaInPixels = -1;
         iSeries = null;
     }
-        
-    void buildSeriesIfNeeded() {
+     
+    /* */
+    private void buildSeriesIfNeeded(OverlayManager aMgr) {
         if (null == iSeries)
-            iSeries = CurveExtractor.extract(getManager().getImage(), this, null);
+            iSeries = CurveExtractor.extract(aMgr.getImage(), this, null);
     }
-    
+       
     public int getAreaInPixels() {
         if(iAreaInPixels < 0)///
             calculateAreaInPixels();
         return iAreaInPixels;
     }
     
-    public double getDensity() {
-        buildSeriesIfNeeded();
-        return getSeries(Measurement.DENSITY).get(getManager().getFrameNumber());
+    public double getDensity(OverlayManager aMgr) {
+        buildSeriesIfNeeded(aMgr);
+        return getSeries(Measurement.DENSITY).get(aMgr.getFrameNumber());
     }
     
-    public double getMinPixel() {
-        buildSeriesIfNeeded();
-        return getSeries(Measurement.MINPIXEL).get(getManager().getFrameNumber());
+    public double getMinPixel(OverlayManager aMgr) {
+        buildSeriesIfNeeded(aMgr);
+        return getSeries(Measurement.MINPIXEL).get(aMgr.getFrameNumber());
     }
     
-    public double getMaxPixel() {
-        buildSeriesIfNeeded();
-        return getSeries(Measurement.MAXPIXEL).get(getManager().getFrameNumber());
+    public double getMaxPixel(OverlayManager aMgr) {
+        buildSeriesIfNeeded(aMgr);
+        return getSeries(Measurement.MAXPIXEL).get(aMgr.getFrameNumber());
     }
     
     public Series getSeries(Measurement anId) {  
-        buildSeriesIfNeeded();
+        //buildSeriesIfNeeded(aMgr);
         return iSeries.get(anId);
     }
     
@@ -107,9 +108,10 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }                 
         
     @Override
-    void update() {    
+    void update(OverlayManager aM) {    
         iAreaInPixels = -1;
-        iSeries = null;            
+        iSeries = null;   
+        buildSeriesIfNeeded(aM);
     }
     
     @Override
