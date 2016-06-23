@@ -197,7 +197,7 @@ public class ROIManager extends OverlayManager {
         newRoi.addROIChangeListener(this);
         
         newRoi.update(this);
-       // notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, null);
+        notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, this.getImage());
     }
    /*
     boolean deleteRoi(ROI aR) {         

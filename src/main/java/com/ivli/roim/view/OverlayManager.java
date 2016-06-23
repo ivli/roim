@@ -99,7 +99,7 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
 
             if (bounds.contains(temp.getBounds())) {            
                 aO.move(adX, adY);   
-//                notifyROIChanged(aO, ROIChangeEvent.ROIMOVED, this);
+                notifyROIChanged(aO, ROIChangeEvent.ROIMOVED, this.getImage());
                 aO.update(this);
             }
         }

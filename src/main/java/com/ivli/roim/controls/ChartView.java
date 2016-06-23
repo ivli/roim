@@ -115,8 +115,7 @@ public class ChartView extends JPanel implements ROIChangeListener {
                     final int ndx = col.indexOf(aE.getObject().getName());
                     col.removeSeries(ndx);                
                 } break;    
-                case ROIChangeEvent.ROIMOVED: //fall-through
-                 {                                    
+                case ROIChangeEvent.ROIMOVED: {  //fall-through                                                  
                     final int ndx = col.indexOf(aE.getObject().getName());    
                     Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                     XYSeries s = col.getSeries(ndx); 
