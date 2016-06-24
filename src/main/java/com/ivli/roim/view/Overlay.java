@@ -28,7 +28,7 @@ import com.ivli.roim.events.ROIChangeListener;
  *
  * @author likhachev
  */
-public abstract class Overlay implements java.io.Serializable {  
+public abstract class Overlay implements ROIChangeListener, java.io.Serializable {  
     private static final long serialVersionUID = 42L;
     
     //static final int VISIBLE = 0x1;
@@ -158,4 +158,7 @@ public abstract class Overlay implements java.io.Serializable {
         for (ROIChangeListener l : arr)
             l.ROIChanged(evt);
     }
+       
+    @Override
+    public void ROIChanged(ROIChangeEvent anEvt) {}
 }

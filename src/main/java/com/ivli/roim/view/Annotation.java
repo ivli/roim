@@ -19,19 +19,17 @@ package com.ivli.roim.view;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
-
-import com.ivli.roim.events.ROIChangeEvent;
-import com.ivli.roim.events.ROIChangeListener;
-import com.ivli.roim.calc.IOperation;
-import com.ivli.roim.core.Filter;
 import java.awt.Color;
 import java.util.ArrayList;
+import com.ivli.roim.events.ROIChangeEvent;
+import com.ivli.roim.calc.IOperation;
+import com.ivli.roim.core.Filter;
 
 /**
  *
  * @author likhachev
  */
-public abstract class Annotation extends ScreenObject implements ROIChangeListener {              
+public abstract class Annotation extends ScreenObject {              
     protected boolean iMultiline = true; 
    
     Annotation(int aUid, String aName, Shape aShape) {
@@ -174,31 +172,31 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
      */
     public static class Active extends Annotation {        
         private final IOperation iOp;
-        private final Overlay  iOver;
+        private final Overlay iR;
         
-        Active(IOperation aOp, Overlay anO) {
+        Active(IOperation anOp, Overlay aR) {
             super(-1, "ANNOTATION.ACTIVE", null);                    
-            iOp = aOp;       
-            iOver = anO;
+            iOp = anOp;       
+            iR = aR;
         }   
         
         public Color getColor() {return Color.RED;}
         
         protected void computeShape(AbstractPainter aP) {
-            final ImageView w =aP.getView();
+            final ImageView w = aP.getView();
             final Rectangle2D bnds = w.getFontMetrics(w.getFont()).getStringBounds(iOp.getCompleteString(), w.getGraphics());        
 
             double posX = .0, posY = .0;
 
-            if (null != iOver) {                 
-                Rectangle2D r = w.virtualToScreen().createTransformedShape(iOver.getShape()).getBounds2D();
+            if (null != iR) {                 
+                Rectangle2D r = w.virtualToScreen().createTransformedShape(iR.getShape()).getBounds2D();
                 posX = r.getX();
                 posY = r.getY();
 
-                if (!(iOver instanceof Ruler))                
+                if (!(iR instanceof Ruler))                
                     posY += bnds.getHeight();               
 
-                iOver.addROIChangeListener(this);
+                iR.addROIChangeListener(this);
             }
 
             iShape = w.screenToVirtual().createTransformedShape(new Rectangle2D.Double(posX, posY, bnds.getWidth(), bnds.getHeight()));  

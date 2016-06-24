@@ -87,12 +87,6 @@ public class ROIManager extends OverlayManager {
         addObject(new Annotation.Active(ruler.getOperation(), ruler));
     }
     
-    public void createAnnotation(BinaryOp anOp) {    
-        Annotation a = new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI());
-        addObject(a);  
-        createSurrogateROI(anOp);
-    }
-    
     public void createAnnotation(ROI aROI) {    
         Annotation.Static o = new Annotation.Static(aROI);
         addObject(o);
@@ -100,8 +94,16 @@ public class ROIManager extends OverlayManager {
         aROI.addROIChangeListener(o);        
     }    
     
+    
+    public void createAnnotation(BinaryOp anOp) {    
+        Annotation a = new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI());
+        addObject(a);  
+        createSurrogateROI(anOp);
+    }
+    
     void createSurrogateROI(BinaryOp anOp) {           
       
+        
         final class SO implements IOperand {
             double iV; 
             SO(double aV) {
@@ -111,7 +113,15 @@ public class ROIManager extends OverlayManager {
             public String getString() {return "";}
         } 
         
-        ROI surrogate = new ROI(iUid.getNext(), null, null/*((ConcreteOperand)anOp.getLhs()).getROI().getShape()*/, Color.YELLOW) {
+        ROI surrogate = new ROI(iUid.getNext(), null, null, Color.YELLOW) {
+             ROI iLhs = ((ConcreteOperand)anOp.getLhs()).getROI();
+             ROI iRhs = ((ConcreteOperand)anOp.getRhs()).getROI();
+             
+            {
+               
+                iRhs.addROIChangeListener(this);
+                iLhs.addROIChangeListener(this);
+            }
             
             @Override
             protected void buildSeriesIfNeeded(OverlayManager aMgr) {               
@@ -128,17 +138,29 @@ public class ROIManager extends OverlayManager {
                         double r = anOp.getOp().product(new SO(aLhs.get(i)), new SO(aRhs.get(i))).value();
                         density.add(r);
                     } 
-
+                    
                     iSeries = new SeriesCollection();
                     iSeries.addSeries(density);
                 }  
             }
+            
+            public void ROIChanged(ROIChangeEvent anEvt) {
+                if (iLhs.equals(anEvt.getObject()) || iRhs.equals(anEvt.getObject())) {
+                    switch (anEvt.getChange()) {
+                        case ROIChangeEvent.ROIMOVED: //cheat
+                            update((OverlayManager)anEvt.getExtra());
+                            notifyROIChanged(ROIChangeEvent.ROIMOVED, anEvt.getExtra()); break;
+                        case ROIChangeEvent.ROIALLDELETED://TODO;
+                        default: break;
+                    }
+                }            
+            }            
         };  
                         
         surrogate.setVisible(false);
         addObject(surrogate);
         surrogate.update(this);
-        notifyROIChanged(surrogate, ROIChangeEvent.ROICREATED, this.getImage());  
+        notifyROIChanged(surrogate, ROIChangeEvent.ROICREATED, this);  
         surrogate.addROIChangeListener(this);
     }
     
@@ -170,7 +192,7 @@ public class ROIManager extends OverlayManager {
                       
         aR.addROIChangeListener(this);        
         aR.update(this);
-        notifyROIChanged(aR, ROIChangeEvent.ROICREATED, this.getImage()); 
+        notifyROIChanged(aR, ROIChangeEvent.ROICREATED, this); 
     }
     
     public void createRoi(Shape aS) {                 

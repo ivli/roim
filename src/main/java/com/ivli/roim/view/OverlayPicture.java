@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.view;
 
+import com.ivli.roim.events.ROIChangeEvent;
 import java.awt.Rectangle;
 
 
@@ -42,6 +43,8 @@ public class OverlayPicture extends ScreenObject {
         aP.paint(this);
     }
     
+    @Override
+    public void ROIChanged(ROIChangeEvent anEvt) {}
     /*
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         

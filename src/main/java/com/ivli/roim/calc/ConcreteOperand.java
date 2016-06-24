@@ -52,6 +52,7 @@ public class ConcreteOperand implements IOperand, ROIChangeListener, AutoCloseab
     @Override
     public void ROIChanged(ROIChangeEvent anEvt) {   
         //TODO: dispatch to upper level container
+        System.out.print("called");
     } 
     
      @Override

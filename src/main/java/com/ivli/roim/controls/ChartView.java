@@ -36,6 +36,7 @@ import com.ivli.roim.core.Series;
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
+import com.ivli.roim.view.OverlayManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -90,23 +91,19 @@ public class ChartView extends JPanel implements ROIChangeListener {
                         
             switch (aE.getChange()) {
                 case ROIChangeEvent.ROICREATED: {  
-                    if (0 <= col.indexOf(aE.getObject().getName())) {
-                        LOG.debug("Serie {} already exists", aE.getObject().getName());                    
-                        return;
-                    }
+                    assert (aE.getExtra() instanceof OverlayManager);                    
+                    assert (0 > col.indexOf(aE.getObject().getName()));
                     
                     final XYSeries s = new XYSeries(aE.getObject().getName(), true, false);
                     final Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
 
-                    IMultiframeImage img = (IMultiframeImage)aE.getExtra();
+                    IMultiframeImage img = ((OverlayManager)aE.getExtra()).getImage();
                     
                     assert(c.getNumFrames() == img.getTimeSliceVector().getNumFrames());
 
-                    for (int n = 0; n < c.getNumFrames(); ++n)   {                  
-                        double x = img.getTimeSliceVector().getSlices().get(n) / 1000.;
-                        double y = c.get(n);
-                        s.add(x, y);
-                    }
+                    for (int n = 0; n < c.getNumFrames(); ++n)                                       
+                        s.add(img.getTimeSliceVector().getSlices().get(n) / 1000., c.get(n));
+                  
                     ((XYSeriesCollection)iPlot.getDataset()).addSeries(s); 
                     iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getObject().getName()), ((ROI)aE.getObject()).getColor());                     
                 } break;
@@ -115,21 +112,23 @@ public class ChartView extends JPanel implements ROIChangeListener {
                     final int ndx = col.indexOf(aE.getObject().getName());
                     col.removeSeries(ndx);                
                 } break;    
+                
                 case ROIChangeEvent.ROIMOVED: {  //fall-through                                                  
+                    assert (aE.getExtra() instanceof OverlayManager);
+                    
                     final int ndx = col.indexOf(aE.getObject().getName());    
                     Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                     XYSeries s = col.getSeries(ndx); 
                     s.clear();
-                    
-                    IMultiframeImage img = (IMultiframeImage)aE.getExtra();
+                                        
+                    IMultiframeImage img = ((OverlayManager)aE.getExtra()).getImage();
                     
                     for (int n = 0; n < c.getNumFrames(); ++n) {
                         long dur = img.getTimeSliceVector().getSlices().get(n) / 1000;
                         s.add(dur, c.get(n));
                     }                   
                 } break;
-
-                case ROIChangeEvent.ROICHANGED:
+                case ROIChangeEvent.ROICHANGED: //TODO: fall through
                 case ROIChangeEvent.ROICHANGEDCOLOR: {
                     assert (aE.getExtra() instanceof java.awt.Color);
                     final int ndx = col.indexOf(aE.getObject().getName());

@@ -25,14 +25,14 @@ import com.ivli.roim.view.Overlay;
  */
 public final class ROIChangeEvent extends java.util.EventObject { 
     //TODO: rename logicaly    
-    public final static int OVERLAYCREATED = 0;  
+    public final static int OVERLAYCREATED = 0;   
     public final static int ROICREATED = 1;  
     public final static int ROIDELETED = 2; 
-    public final static int ROICHANGED = 3; 
-    public final static int ROIMOVED = 4;        //ROI has been moved
+    public final static int ROICHANGED = 3; //some other presentation changed  
+    public final static int ROIMOVED   = 4; //ROI has been moved, iExtra => instanceof OverlayManager
     public final static int ROICHANGEDCOLOR = 5; //ROI's colour has been changed
-    public final static int ROICHANGEDNAME = 6;  //ROI's name has been changed
-    public final static int ROIALLDELETED = 7;   //all ROI have been removed    
+    public final static int ROICHANGEDNAME  = 6; //ROI's name has been changed
+    public final static int ROIALLDELETED   = 7; //all ROIs have been removed    
     
     private final int iChange;   //what happened
     private final Overlay iObj;   //object    

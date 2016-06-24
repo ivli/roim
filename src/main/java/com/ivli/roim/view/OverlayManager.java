@@ -99,7 +99,7 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
 
             if (bounds.contains(temp.getBounds())) {            
                 aO.move(adX, adY);   
-                notifyROIChanged(aO, ROIChangeEvent.ROIMOVED, this.getImage());
+                notifyROIChanged(aO, ROIChangeEvent.ROIMOVED, this);
                 aO.update(this);
             }
         }
@@ -117,7 +117,7 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
     }
                
     public boolean deleteObject(Overlay aO) {
-        notifyROIChanged(aO, ROIChangeEvent.ROIDELETED, null);        
+        notifyROIChanged(aO, ROIChangeEvent.ROIDELETED, this);        
         return iOverlays.remove(aO);   
     }
         
