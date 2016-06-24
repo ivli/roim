@@ -32,8 +32,7 @@ import org.apache.logging.log4j.Logger;
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {             
     private Color iColor;          
     private int iAreaInPixels;   
-    
-    
+        
     transient SeriesCollection iSeries;               
     
     @Override
@@ -49,15 +48,14 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iAreaInPixels = -1;
         iSeries = null;
     }
-     
-    /* */
-    private void buildSeriesIfNeeded(OverlayManager aMgr) {
+         
+    protected void buildSeriesIfNeeded(OverlayManager aMgr) {
         if (null == iSeries)
             iSeries = CurveExtractor.extract(aMgr.getImage(), this, null);
     }
        
     public int getAreaInPixels() {
-        if(iAreaInPixels < 0)///
+        if(iAreaInPixels < 0)
             calculateAreaInPixels();
         return iAreaInPixels;
     }

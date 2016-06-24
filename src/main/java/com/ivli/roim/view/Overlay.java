@@ -156,6 +156,6 @@ public abstract class Overlay implements java.io.Serializable {
         ROIChangeListener arr[] = iListeners.getListeners(ROIChangeListener.class);
 
         for (ROIChangeListener l : arr)
-            l. ROIChanged(evt);
+            l.ROIChanged(evt);
     }
 }

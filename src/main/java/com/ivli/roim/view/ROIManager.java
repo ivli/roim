@@ -101,22 +101,20 @@ public class ROIManager extends OverlayManager {
     }    
     
     void createSurrogateROI(BinaryOp anOp) {           
-        final String ln = ((ConcreteOperand)anOp.getLhs()).getROI().getName();
-        final String rn = ((ConcreteOperand)anOp.getRhs()).getROI().getName();
-        final String on = anOp.getOp().getOperationChar();
-        
+      
         final class SO implements IOperand {
             double iV; 
-
             SO(double aV) {
                 iV = aV;
             } 
-            public double value() { return iV;}
-            public String getString() { return "";}
+            public double value() {return iV;}
+            public String getString() {return "";}
         } 
         
-        ROI surrogate = new ROI(iUid.getNext(), null, ((ConcreteOperand)anOp.getLhs()).getROI().getShape(), Color.YELLOW) {
-            void buildSeriesIfNeeded() {               
+        ROI surrogate = new ROI(iUid.getNext(), null, null/*((ConcreteOperand)anOp.getLhs()).getROI().getShape()*/, Color.YELLOW) {
+            
+            @Override
+            protected void buildSeriesIfNeeded(OverlayManager aMgr) {               
                 final Measurement f1 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();                
                 final Measurement f2 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();
                 
@@ -140,7 +138,7 @@ public class ROIManager extends OverlayManager {
         surrogate.setVisible(false);
         addObject(surrogate);
         surrogate.update(this);
-        notifyROIChanged(surrogate, ROIChangeEvent.ROICREATED, null);  
+        notifyROIChanged(surrogate, ROIChangeEvent.ROICREATED, this.getImage());  
         surrogate.addROIChangeListener(this);
     }
     
@@ -148,7 +146,7 @@ public class ROIManager extends OverlayManager {
         Overlay ret;
         
         try {
-            ret = aR.getClass().getConstructor(int.class, ROIManager.class).newInstance(iUid.getNext(), this);             
+            ret = aR.getClass().getConstructor(int.class).newInstance(iUid.getNext());             
             ret.iShape = aR.getShape();
             
         } catch (InstantiationException|IllegalAccessException|NoSuchMethodException|InvocationTargetException ex) {
@@ -156,65 +154,31 @@ public class ROIManager extends OverlayManager {
             return null;
         }
         
-        addObject(ret);
+        if (ret instanceof ROI)
+            internalAddRoi((ROI)ret);
+        else
+            addObject(ret);
         
-        if (aR instanceof ROI && ROI_HAS_ANNOTATIONS) {     
-            createAnnotation((ROI)ret);            
-        } 
-        
-        
-        ret.addROIChangeListener(this);
-        
-        ret.update(this);
-        notifyROIChanged(ret, ROIChangeEvent.ROICREATED, aR); 
         return ret;        
     }
-    
-    protected void internalCreateROI(ROI aS) {
-        ROI newRoi = new ROI(iUid.getNext(), null, aS.getShape(), aS.getColor());       
-  
-        addObject(newRoi);
-        
-        if (ROI_HAS_ANNOTATIONS) 
-            createAnnotation(newRoi);      
        
-        newRoi.addROIChangeListener(this);
+    private void internalAddRoi(ROI aR) {
+        addObject(aR);
         
-        newRoi.update(this);
-        notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, null);    
+        if (ROI_HAS_ANNOTATIONS)    
+            createAnnotation((ROI)aR);            
+                      
+        aR.addROIChangeListener(this);        
+        aR.update(this);
+        notifyROIChanged(aR, ROIChangeEvent.ROICREATED, this.getImage()); 
     }
     
     public void createRoi(Shape aS) {                 
-        final Shape shape = iView.screenToVirtual().createTransformedShape(aS);
-        
-        ROI newRoi = new ROI(iUid.getNext(), null, shape, null);       
-  
-        addObject(newRoi);
-        
-        if (ROI_HAS_ANNOTATIONS) 
-            createAnnotation(newRoi);      
-       
-        newRoi.addROIChangeListener(this);
-        
-        newRoi.update(this);
-        notifyROIChanged(newRoi, ROIChangeEvent.ROICREATED, this.getImage());
+        final Shape shape = iView.screenToVirtual().createTransformedShape(aS);        
+        ROI ret = new ROI(iUid.getNext(), null, shape, null);         
+        internalAddRoi(ret);       
     }
-   /*
-    boolean deleteRoi(ROI aR) {         
-        final Iterator<Overlay> it = iOverlays.iterator();
-
-        while (it.hasNext()) {  //clean annotations out - silly but workin'
-            final Overlay o = it.next();
-            if (o instanceof Annotation.Static && ((Annotation.Static)o).getRoi() == aR)               
-                it.remove();
-        } 
-                
-        notifyROIChanged(aR, ROIChangeEvent.ROIDELETED, null);
-        
-        return iRois.remove(aR);   
-    }  
-    */
- 
+    
     private final static Logger LOG = LogManager.getLogger();
 }
 
