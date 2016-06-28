@@ -21,6 +21,8 @@ package com.ivli.roim.view;
 import com.ivli.roim.core.IImageView;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.events.OverlayChangeEvent;
+import com.ivli.roim.events.OverlayChangeListener;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 import java.awt.Point;
@@ -37,7 +39,7 @@ import javax.swing.event.EventListenerList;
  *
  * @author likhachev
  */
-public class OverlayManager implements ROIChangeListener, java.io.Serializable {  
+public class OverlayManager implements OverlayChangeListener, java.io.Serializable {  
     private static final long serialVersionUID = 42L;    
     
     transient protected IImageView iView; 
@@ -69,7 +71,7 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
       
     public void clear() {
         iOverlays.clear();
-        notifyROIChanged(null, ROIChangeEvent.ROIALLDELETED, null);      
+        notifyROIChanged(null, ROIChangeEvent.CODE.ALLDELETED, null);      
     }
     
     public void update() {
@@ -89,7 +91,7 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
        
     protected void addObject(Overlay aO) {
         iOverlays.add(aO);
-        notifyROIChanged(aO, ROIChangeEvent.OVERLAYCREATED, this);  
+        notifyROIChanged(aO, ROIChangeEvent.CODE.CREATED, this);  
     }
     
     public void moveObject(Overlay aO, double adX, double adY) {                         
@@ -99,7 +101,7 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
 
             if (bounds.contains(temp.getBounds())) {            
                 aO.move(adX, adY);   
-                notifyROIChanged(aO, ROIChangeEvent.ROIMOVED, this);
+                notifyROIChanged(aO, ROIChangeEvent.CODE.MOVED, new double[]{adX, adY});
                 aO.update(this);
             }
         }
@@ -117,7 +119,7 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
     }
                
     public boolean deleteObject(Overlay aO) {
-        notifyROIChanged(aO, ROIChangeEvent.ROIDELETED, this);        
+        notifyROIChanged(aO, ROIChangeEvent.CODE.DELETED, this);        
         return iOverlays.remove(aO);   
     }
         
@@ -133,7 +135,7 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
         iList.remove(ROIChangeListener.class, aL);
     }
     
-    void notifyROIChanged(Overlay aR, int aS, Object aEx) {
+    void notifyROIChanged(Overlay aR, ROIChangeEvent.CODE aS, Object aEx) {
         final ROIChangeEvent evt = new ROIChangeEvent(this, aS, aR, aEx);
 
         ROIChangeListener arr[] = iList.getListeners(ROIChangeListener.class);
@@ -143,8 +145,20 @@ public class OverlayManager implements ROIChangeListener, java.io.Serializable {
     }
         
     @Override
-    public void ROIChanged(ROIChangeEvent anEvt) {        
-        notifyROIChanged(anEvt.getObject(), anEvt.getChange(), anEvt.getExtra());
+    public void OverlayChanged(OverlayChangeEvent anEvt) {  
+        
+        switch (anEvt.getCode()) {
+            case NAME:
+                notifyROIChanged(anEvt.getObject(), ROIChangeEvent.CODE.CHANGEDNAME, anEvt.getExtra());
+                break;
+            case COLOR:
+                notifyROIChanged(anEvt.getObject(), ROIChangeEvent.CODE.CHANGEDCOLOR, anEvt.getExtra());
+                break;
+            default:
+                break;
+        }
+        
+        //notifyROIChanged(anEvt.getObject(), anEvt.getCode(), anEvt.getExtra());
     }
         
 }

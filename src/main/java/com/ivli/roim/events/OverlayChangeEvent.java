@@ -23,23 +23,27 @@ import com.ivli.roim.view.Overlay;
  *
  * @author likhachev
  */
-public class OverlayChangeEvent extends java.util.EventObject {    
-    public final static int CHANGEDCOLOR = 5; //ROI's colour has been changed
-    public final static int CHANGEDNAME = 6;  //ROI's name has been changed      
+public class OverlayChangeEvent extends java.util.EventObject {  
+    public enum CODE {
+        MOVED, //extra => double [] {adX, adY}
+        COLOR, // color has been changed
+        NAME,  //name has been changed      
+        PRESENTATION //other specifis proterties have been changed, such as Multi/Single - line, Filters etc
+    }
     
-    private final int iChange;   //what happened
+    private final CODE    iCode; //what happened
     private final Overlay iObj;   //object    
     private final Object  iExtra; //depending on change it carries old name, old colour or ... 
     
-    public OverlayChangeEvent(Object aO, int aC, Overlay aR, Object aExtra) {
+    public OverlayChangeEvent(Object aO, CODE aC, Overlay aR, Object aExtra) {
         super (aO);
         iObj = aR;
-        iChange = aC;
+        iCode = aC;
         iExtra = aExtra;
     }
     
-    public int getChange() {
-        return iChange;
+    public CODE getCode() {
+        return iCode;
     }
        
     public Overlay getObject() {

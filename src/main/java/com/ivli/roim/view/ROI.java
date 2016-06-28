@@ -24,6 +24,7 @@ import java.awt.geom.AffineTransform;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
 import com.ivli.roim.core.SeriesCollection;
+import com.ivli.roim.events.OverlayChangeEvent;
 import com.ivli.roim.events.ROIChangeEvent;
 
 import org.apache.logging.log4j.LogManager;
@@ -60,23 +61,20 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         return iAreaInPixels;
     }
     
-    public double getDensity(OverlayManager aMgr) {
-        buildSeriesIfNeeded(aMgr);
-        return getSeries(Measurement.DENSITY).get(aMgr.getFrameNumber());
+    public double getDensity(OverlayManager aMgr) {      
+        return getSeries(aMgr, Measurement.DENSITY).get(aMgr.getFrameNumber());
     }
     
-    public double getMinPixel(OverlayManager aMgr) {
-        buildSeriesIfNeeded(aMgr);
-        return getSeries(Measurement.MINPIXEL).get(aMgr.getFrameNumber());
+    public double getMinPixel(OverlayManager aMgr) {       
+        return getSeries(aMgr, Measurement.MINPIXEL).get(aMgr.getFrameNumber());
     }
     
     public double getMaxPixel(OverlayManager aMgr) {
-        buildSeriesIfNeeded(aMgr);
-        return getSeries(Measurement.MAXPIXEL).get(aMgr.getFrameNumber());
+        return getSeries(aMgr, Measurement.MAXPIXEL).get(aMgr.getFrameNumber());
     }
     
-    public Series getSeries(Measurement anId) {  
-        //buildSeriesIfNeeded(aMgr);
+    public Series getSeries(OverlayManager aMgr, Measurement anId) {  
+        buildSeriesIfNeeded(aMgr);
         return iSeries.get(anId);
     }
     
@@ -87,7 +85,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     public void setColor(Color aC) {
         Color old = iColor;
         iColor = aC;
-        notifyROIChanged(ROIChangeEvent.ROICHANGEDCOLOR, old);
+        notify(OverlayChangeEvent.CODE.COLOR, old);
     }  
     
     @Override

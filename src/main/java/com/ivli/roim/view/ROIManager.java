@@ -70,7 +70,7 @@ public class ROIManager extends OverlayManager {
         
         Profile newRoi = new Profile(r);     
         addObject(newRoi);   
-        newRoi.addROIChangeListener(this);
+        newRoi.addChangeListener(this);
     }
             
     public void createRuler(Point aFrom, Point aTo) {                
@@ -82,7 +82,7 @@ public class ROIManager extends OverlayManager {
         Ruler ruler = new Ruler(s);     
                 
         addObject(ruler);   
-        ruler.addROIChangeListener(this);
+        ruler.addChangeListener(this);
    
         addObject(new Annotation.Active(ruler.getOperation(), ruler));
     }
@@ -91,7 +91,7 @@ public class ROIManager extends OverlayManager {
         Annotation.Static o = new Annotation.Static(aROI);
         addObject(o);
         o.update(this);
-        aROI.addROIChangeListener(o);        
+        addROIChangeListener(o);        
     }    
     
     
@@ -101,9 +101,7 @@ public class ROIManager extends OverlayManager {
         createSurrogateROI(anOp);
     }
     
-    void createSurrogateROI(BinaryOp anOp) {           
-      
-        
+    void createSurrogateROI(BinaryOp anOp) {               
         final class SO implements IOperand {
             double iV; 
             SO(double aV) {
@@ -119,8 +117,8 @@ public class ROIManager extends OverlayManager {
              
             {
                
-                iRhs.addROIChangeListener(this);
-                iLhs.addROIChangeListener(this);
+                iRhs.addChangeListener(this);
+                iLhs.addChangeListener(this);
             }
             
             @Override
@@ -128,8 +126,8 @@ public class ROIManager extends OverlayManager {
                 final Measurement f1 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();                
                 final Measurement f2 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();
                 
-                final Series aLhs = ((ConcreteOperand)anOp.getLhs()).getROI().getSeries(f1);
-                final Series aRhs = ((ConcreteOperand)anOp.getRhs()).getROI().getSeries(f2);
+                final Series aLhs = ((ConcreteOperand)anOp.getLhs()).getROI().getSeries(aMgr, f1);
+                final Series aRhs = ((ConcreteOperand)anOp.getRhs()).getROI().getSeries(aMgr, f2);
                      
                 if (null != aLhs && null != aRhs) {
                     Series density = new Series(f1);
@@ -146,11 +144,11 @@ public class ROIManager extends OverlayManager {
             
             public void ROIChanged(ROIChangeEvent anEvt) {
                 if (iLhs.equals(anEvt.getObject()) || iRhs.equals(anEvt.getObject())) {
-                    switch (anEvt.getChange()) {
-                        case ROIChangeEvent.ROIMOVED: //cheat
-                            update((OverlayManager)anEvt.getExtra());
-                            notifyROIChanged(ROIChangeEvent.ROIMOVED, anEvt.getExtra()); break;
-                        case ROIChangeEvent.ROIALLDELETED://TODO;
+                    switch (anEvt.getCode()) {
+                        case MOVED: //cheat
+                           // update((OverlayManager)anEvt.getExtra());
+                           // notifyROIChanged(ROIChangeEvent.ROIMOVED, anEvt.getExtra()); break;
+                        case ALLDELETED: //TODO;
                         default: break;
                     }
                 }            
@@ -160,8 +158,8 @@ public class ROIManager extends OverlayManager {
         surrogate.setVisible(false);
         addObject(surrogate);
         surrogate.update(this);
-        notifyROIChanged(surrogate, ROIChangeEvent.ROICREATED, this);  
-        surrogate.addROIChangeListener(this);
+        ////notifyROIChanged(surrogate, ROIChangeEvent.CODE.CREATED, this);  
+        surrogate.addChangeListener(this);
     }
     
     public Overlay cloneObject(Overlay aR) {             
@@ -190,9 +188,9 @@ public class ROIManager extends OverlayManager {
         if (ROI_HAS_ANNOTATIONS)    
             createAnnotation((ROI)aR);            
                       
-        aR.addROIChangeListener(this);        
+        aR.addChangeListener(this);        
         aR.update(this);
-        notifyROIChanged(aR, ROIChangeEvent.ROICREATED, this); 
+        
     }
     
     public void createRoi(Shape aS) {                 

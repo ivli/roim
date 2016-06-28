@@ -88,16 +88,16 @@ public class ChartView extends JPanel implements ROIChangeListener {
     public void ROIChanged (ROIChangeEvent aE) {        
         if (aE.getObject() instanceof ROI) {
             XYSeriesCollection col = ((XYSeriesCollection)iPlot.getDataset());  
-                        
-            switch (aE.getChange()) {
-                case ROIChangeEvent.ROICREATED: {  
-                    assert (aE.getExtra() instanceof OverlayManager);                    
+            final OverlayManager mgr = (OverlayManager)aE.getSource();
+            
+            switch (aE.getCode()) {
+                case CREATED: {                                     
                     assert (0 > col.indexOf(aE.getObject().getName()));
                     
                     final XYSeries s = new XYSeries(aE.getObject().getName(), true, false);
-                    final Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
+                    final Series c = ((ROI)aE.getObject()).getSeries(mgr, Measurement.DENSITY);
 
-                    IMultiframeImage img = ((OverlayManager)aE.getExtra()).getImage();
+                    IMultiframeImage img = mgr.getImage();
                     
                     assert(c.getNumFrames() == img.getTimeSliceVector().getNumFrames());
 
@@ -108,34 +108,30 @@ public class ChartView extends JPanel implements ROIChangeListener {
                     iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getObject().getName()), ((ROI)aE.getObject()).getColor());                     
                 } break;
                 
-                case ROIChangeEvent.ROIDELETED: {                
+                case DELETED: {                
                     final int ndx = col.indexOf(aE.getObject().getName());
                     col.removeSeries(ndx);                
                 } break;    
                 
-                case ROIChangeEvent.ROIMOVED: {  //fall-through                                                  
-                    assert (aE.getExtra() instanceof OverlayManager);
-                    
+                case MOVED: {  //fall-through                                                                      
                     final int ndx = col.indexOf(aE.getObject().getName());    
-                    Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
+                    Series c = ((ROI)aE.getObject()).getSeries(mgr, Measurement.DENSITY);
                     XYSeries s = col.getSeries(ndx); 
-                    s.clear();
-                                        
-                    IMultiframeImage img = ((OverlayManager)aE.getExtra()).getImage();
+                    s.clear();              
                     
                     for (int n = 0; n < c.getNumFrames(); ++n) {
-                        long dur = img.getTimeSliceVector().getSlices().get(n) / 1000;
+                        long dur = mgr.getImage().getTimeSliceVector().getSlices().get(n) / 1000;
                         s.add(dur, c.get(n));
                     }                   
                 } break;
-                case ROIChangeEvent.ROICHANGED: //TODO: fall through
-                case ROIChangeEvent.ROICHANGEDCOLOR: {
+                case CHANGED: //TODO: fall through
+                case CHANGEDCOLOR: {
                     assert (aE.getExtra() instanceof java.awt.Color);
                     final int ndx = col.indexOf(aE.getObject().getName());
                     iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)aE.getObject()).getColor());                                 
                 } break;
 
-                case ROIChangeEvent.ROICHANGEDNAME: {
+                case CHANGEDNAME: {
                     assert (aE.getExtra() instanceof String);
                     final int ndx = col.indexOf(((String)aE.getExtra())); 
                     
@@ -147,7 +143,7 @@ public class ChartView extends JPanel implements ROIChangeListener {
                     
                 } break;    
 
-                case ROIChangeEvent.ROIALLDELETED: {
+                case ALLDELETED: {
                     ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); 
                 } break;     
                 default: 

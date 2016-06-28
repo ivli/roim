@@ -19,14 +19,14 @@ package com.ivli.roim.calc;
 
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.core.Filter;
-import com.ivli.roim.events.ROIChangeEvent;
-import com.ivli.roim.events.ROIChangeListener;
+import com.ivli.roim.events.OverlayChangeEvent;
+import com.ivli.roim.events.OverlayChangeListener;
 import com.ivli.roim.view.OverlayManager;
 /**
  *
  * @author likhachev
  */
-public class ConcreteOperand implements IOperand, ROIChangeListener, AutoCloseable {   
+public class ConcreteOperand implements IOperand, OverlayChangeListener, AutoCloseable {   
     private Filter iF; 
     private ROI  iRoi;
     private OverlayManager iM;
@@ -35,7 +35,7 @@ public class ConcreteOperand implements IOperand, ROIChangeListener, AutoCloseab
         iRoi = aRoi;    
         iM = aM;
         iF = (null != aF) ?  aF : Filter.DENSITY;   
-        iRoi.addROIChangeListener(this);
+        iRoi.addChangeListener(this);
     }
        
     public ConcreteOperand(ROI aRoi, OverlayManager aM) {
@@ -50,14 +50,14 @@ public class ConcreteOperand implements IOperand, ROIChangeListener, AutoCloseab
     }
     
     @Override
-    public void ROIChanged(ROIChangeEvent anEvt) {   
+    public void OverlayChanged(OverlayChangeEvent anEvt) {   
         //TODO: dispatch to upper level container
         System.out.print("called");
     } 
     
      @Override
     public void close() {
-        iRoi.removeROIChangeListener(this);
+        iRoi.removeChangeListener(this);
     }
         
     public String getString() {

@@ -24,16 +24,20 @@ import java.util.ArrayList;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.core.Filter;
+import com.ivli.roim.events.OverlayChangeEvent;
+import com.ivli.roim.events.ROIChangeListener;
 
 /**
  *
  * @author likhachev
  */
-public abstract class Annotation extends ScreenObject {              
+public abstract class Annotation extends ScreenObject implements ROIChangeListener {              
     protected boolean iMultiline = true; 
-   
+    protected final ArrayList<String> iAnnotation;    
+    
     Annotation(int aUid, String aName, Shape aShape) {
-        super(aUid, aName, aShape);    
+        super(aUid, aName, aShape);   
+        iAnnotation = new ArrayList<>();
     }
     
     @Override
@@ -41,7 +45,7 @@ public abstract class Annotation extends ScreenObject {
    
     public void setMultiline(boolean aM) {
         iMultiline = aM;
-        notifyROIChanged(ROIChangeEvent.ROICHANGED, null);
+        notify(OverlayChangeEvent.CODE.PRESENTATION, null);
     }
 
     public boolean isMultiline() {
@@ -57,37 +61,30 @@ public abstract class Annotation extends ScreenObject {
         computeShape(aP);
         aP.paint(this);    
     } 
-    
-    abstract public ArrayList<String> getText();
         
+    public ArrayList<String> getText() {
+        return iAnnotation;
+    }    
     /**
      *
      */
     public static class Static extends Annotation {              
         protected final ROI iRoi;              
-        protected final ArrayList<String> iAnnotation;           
-      
+                
         protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
         
         public Static(ROI aRoi) {
             super(-1, 
                   "ANNOTATION::STATIC", // NOI18N
                  aRoi.getShape() );  
-            iRoi = aRoi;     
-            iAnnotation = new ArrayList<>();
-            
-           // for (Filter f : iFilters)
-           //     iAnnotation.add(f.getMeasurement().format(f.filter(aRoi)));        
-
-            ///aRoi.addROIChangeListener(this);
+            iRoi = aRoi;             
         }
-              
-        public ArrayList<String> getText() {return iAnnotation;}
+  
         public Color getColor() {return getRoi().getColor();}
         
         public void setFilters(Filter[] aF) {
             iFilters = aF;
-            notifyROIChanged(ROIChangeEvent.ROICHANGED, null);
+            notify(OverlayChangeEvent.CODE.PRESENTATION, null);
         }  
                       
         public ROI getRoi() {return iRoi;}
@@ -139,19 +136,32 @@ public abstract class Annotation extends ScreenObject {
             ///computeShape();   
         }
         
+        public void OverlayChanged(OverlayChangeEvent anEvt) {
+            switch (anEvt.getCode()) {                
+                case MOVED: {//if not pinned move the same dX and dY                    
+                    //final double[] deltas = (double[])anEvt.getExtra(); 
+                    ///OverlayManager mgr = (OverlayManager)anEvt.getSource();
+                    //mgr.moveObject(this, deltas[0], deltas[1]);                    
+                } break;                 
+            }
+        }
+         
         @Override
-        public void ROIChanged(ROIChangeEvent anEvt) {               
-            switch (anEvt.getChange()) {
-                case ROIChangeEvent.ROIDELETED: 
+        public void ROIChanged(ROIChangeEvent anEvt) {   
+            if (!anEvt.getObject().equals(iRoi))
+                return; //not interested in 
+            switch (anEvt.getCode()) {
+                case DELETED: 
                     //commit suicide 
-                   // getManager().deleteObject(this);
+                    ((OverlayManager)anEvt.getSource()).deleteObject(this);
                     break;
-                case ROIChangeEvent.ROIMOVED: {//if not pinned move the same dX and dY                    
-                    final double[] deltas = (double[])anEvt.getExtra();                    
-                    /// TODO: getManager().moveObject(this, deltas[0], deltas[1]);
-                    
-                } break;
-                case ROIChangeEvent.ROICHANGED:   
+                case MOVED: {//if not pinned move the same dX and dY                    
+                    final double[] deltas = (double[])anEvt.getExtra(); 
+                    OverlayManager mgr = (OverlayManager)anEvt.getSource();
+                    mgr.moveObject(this, deltas[0], deltas[1]);                    
+                } ///fall through break;
+                case CHANGED:  
+                    update(((OverlayManager)anEvt.getSource()));
                 default: //fall-through
                     //update(); break;
             }        
@@ -196,34 +206,35 @@ public abstract class Annotation extends ScreenObject {
                 if (!(iR instanceof Ruler))                
                     posY += bnds.getHeight();               
 
-                iR.addROIChangeListener(this);
+                ///iR.addROIChangeListener(this);
             }
 
             iShape = w.screenToVirtual().createTransformedShape(new Rectangle2D.Double(posX, posY, bnds.getWidth(), bnds.getHeight()));  
         }
-               
-        public ArrayList<String> getText() {
-            ArrayList<String> ret = new ArrayList<>();            
-            ret.add(iOp.getCompleteString());
-            return ret;
-        }
-               
+       
         @Override
-        public void update(OverlayManager aM) {    }
+        public void update(OverlayManager aM) {              
+            iAnnotation.clear();            
+            iAnnotation.add(iOp.getCompleteString());
+        }
+        
+        public void OverlayChanged(OverlayChangeEvent anEvt) {
+        
+        }
         
         @Override
         public void ROIChanged(ROIChangeEvent anEvt) {              
-            switch (anEvt.getChange()) {
-                case ROIChangeEvent.ROIDELETED: 
+            switch (anEvt.getCode()) {
+                case DELETED: 
                     break;
-                case ROIChangeEvent.ROIMOVED: {  
+                case MOVED: {  
                     final double[] deltas = (double[])anEvt.getExtra();                    
-                    move(deltas[0], deltas[1]);
+                    ((OverlayManager)anEvt.getSource()).moveObject(this, deltas[0], deltas[1]);
                     //update();
                 } break;            
-                case ROIChangeEvent.ROICHANGED:   
+                case CHANGED:   
                 default: //fall-through
-                    //update();                                
+                    update((OverlayManager)anEvt.getSource());                                
                     break;
             }        
         }

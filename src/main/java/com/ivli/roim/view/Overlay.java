@@ -17,18 +17,19 @@
  */
 package com.ivli.roim.view;
 
+
+import com.ivli.roim.events.OverlayChangeEvent;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import javax.swing.event.EventListenerList;
-import com.ivli.roim.events.ROIChangeEvent;
-import com.ivli.roim.events.ROIChangeListener;
+import com.ivli.roim.events.OverlayChangeListener;
 
 /**
  *
  * @author likhachev
  */
-public abstract class Overlay implements ROIChangeListener, java.io.Serializable {  
+public abstract class Overlay implements OverlayChangeListener, java.io.Serializable {  
     private static final long serialVersionUID = 42L;
     
     //static final int VISIBLE = 0x1;
@@ -76,7 +77,7 @@ public abstract class Overlay implements ROIChangeListener, java.io.Serializable
     public void setName(String aName) {
         String old = getName();
         iName  = aName;
-        notifyROIChanged(ROIChangeEvent.ROICHANGEDNAME, old);         
+        notify(OverlayChangeEvent.CODE.NAME, old);         
     }
     
     public void setPinned(boolean aPin) {
@@ -122,7 +123,7 @@ public abstract class Overlay implements ROIChangeListener, java.io.Serializable
         
     void move(double adX, double adY) {       
         iShape = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);                            
-///        notifyROIChanged(ROIChangeEvent.ROIMOVED, new double[]{adX, adY});
+        notify(OverlayChangeEvent.CODE.MOVED, new double[]{adX, adY});
     } 
     
     abstract void update(OverlayManager aRM);  
@@ -142,23 +143,23 @@ public abstract class Overlay implements ROIChangeListener, java.io.Serializable
         public void isolevel(int aTolerance);
     }
             
-    public void addROIChangeListener(ROIChangeListener aL) {       
-        iListeners.add(ROIChangeListener.class, aL);
+    public void addChangeListener(OverlayChangeListener aL) {       
+        iListeners.add(OverlayChangeListener.class, aL);
     }
     
-    public void removeROIChangeListener(ROIChangeListener aL) {        
-        iListeners.remove(ROIChangeListener.class, aL);
+    public void removeChangeListener(OverlayChangeListener aL) {        
+        iListeners.remove(OverlayChangeListener.class, aL);
     }
     
-    protected void notifyROIChanged(int aS, Object aEx) {        
-        final ROIChangeEvent evt = new ROIChangeEvent(this, aS, this, aEx);
+    protected void notify(OverlayChangeEvent.CODE aS, Object aEx) {        
+        final OverlayChangeEvent evt = new OverlayChangeEvent(this, aS, this, aEx);
 
-        ROIChangeListener arr[] = iListeners.getListeners(ROIChangeListener.class);
+        OverlayChangeListener arr[] = iListeners.getListeners(OverlayChangeListener.class);
 
-        for (ROIChangeListener l : arr)
-            l.ROIChanged(evt);
+        for (OverlayChangeListener l : arr)
+            l.OverlayChanged(evt);
     }
        
     @Override
-    public void ROIChanged(ROIChangeEvent anEvt) {}
+    public void OverlayChanged(OverlayChangeEvent anEvt) {}
 }

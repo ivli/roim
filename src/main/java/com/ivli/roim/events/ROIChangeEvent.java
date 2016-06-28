@@ -23,30 +23,36 @@ import com.ivli.roim.view.Overlay;
  *
  * @author likhachev
  */
+
+/**
+ * 
+ * this event OverlayManager based class sends to subscribers to inform on a particular event
+ * 
+ */
 public final class ROIChangeEvent extends java.util.EventObject { 
-    //TODO: rename logicaly    
-    public final static int OVERLAYCREATED = 0;   
-    public final static int ROICREATED = 1;  
-    public final static int ROIDELETED = 2; 
-    public final static int ROICHANGED = 3; //some other presentation changed  
-    public final static int ROIMOVED   = 4; //ROI has been moved, iExtra => instanceof OverlayManager
-    public final static int ROICHANGEDCOLOR = 5; //ROI's colour has been changed
-    public final static int ROICHANGEDNAME  = 6; //ROI's name has been changed
-    public final static int ROIALLDELETED   = 7; //all ROIs have been removed    
-    
-    private final int iChange;   //what happened
+    //TODO: rename logicaly 
+    public enum CODE {          
+        CREATED,       
+        DELETED,      //a ROI has been deleted 
+        CHANGED,      //some other presentation changed  
+        MOVED,        //ROI has been moved, iExtra => double[]{adX, adY}
+        CHANGEDCOLOR, //ROI's colour has been changed, iExtra => Color oldColor
+        CHANGEDNAME,  //ROI's name has been changed, iExtra => String oldName
+        ALLDELETED    //all ROIs have been removed    
+    }
+    private final CODE    iCode; //what happened
     private final Overlay iObj;   //object    
     private final Object  iExtra; //depending on change it carries old name, old colour or ... 
     
-    public ROIChangeEvent(Object aO, int aC, Overlay aR, Object aExtra) {
+    public ROIChangeEvent(Object aO, CODE aC, Overlay aR, Object aExtra) {
         super (aO);
         iObj = aR;
-        iChange = aC;
+        iCode = aC;
         iExtra = aExtra;
     }
         
-    public int getChange() {
-        return iChange;
+    public CODE getCode() {
+        return iCode;
     }
        
     public Overlay getObject() {
