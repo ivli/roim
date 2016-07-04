@@ -96,7 +96,7 @@ class Controller implements IController {
         }
 
         public boolean DoRelease(int aX, int aY) {
-            iControlled.getROIMgr().createRoi(iShape);
+            iControlled.getROIMgr().createRoi(iShape, iControlled);
             iControlled.repaint();
             return false;
         }
@@ -162,7 +162,7 @@ class Controller implements IController {
     }
      
     protected Overlay findActionTarget(Point aP) {
-        Overlay ret = iControlled.getROIMgr().findObject(aP);
+        Overlay ret = iControlled.getROIMgr().findObject(aP, iControlled);
         if (null != ret && true == ret.isSelectable())
             return ret;
         return null;
@@ -207,7 +207,7 @@ class Controller implements IController {
 
     public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
-            Overlay tmp = iControlled.getROIMgr().findObject(e.getPoint());
+            Overlay tmp = iControlled.getROIMgr().findObject(e.getPoint(), iControlled);
 
             if (null != tmp) {
                 addSelection(tmp);
@@ -333,10 +333,6 @@ class Controller implements IController {
 
     @Override
     public void actionPerformed(ActionEvent aCommand) {  
-       // onAction(e.getActionCommand());
-   // }
-    
-   // protected void onAction(final String aCommand) {
         switch (aCommand.getActionCommand()) {
             case KCommandRoiCreateFree: ///amazingly but it does work
                 iAction = new BaseActionItem(-1, -1) {                           
@@ -356,7 +352,7 @@ class Controller implements IController {
                             return true;
                         else {
                             iPath.closePath();
-                            iControlled.getROIMgr().createRoi(iPath);
+                            iControlled.getROIMgr().createRoi(iPath, iControlled);
                             iControlled.repaint();
                         }
                         return false;
@@ -379,7 +375,7 @@ class Controller implements IController {
                 iAction = new RectangularRoiCreator(new Rectangle2D.Double()) {
                     
                     public boolean DoRelease(int aX, int aY) {
-                        iControlled.getROIMgr().createProfile(iShape);
+                        iControlled.getROIMgr().createProfile(iShape, iControlled);
                         iControlled.repaint();
                         return false;
                     }
@@ -408,7 +404,7 @@ class Controller implements IController {
                     
                     public boolean DoRelease(int aX, int aY) {
                         //
-                        iControlled.getROIMgr().createRuler(start, new Point(aX, aY));
+                        iControlled.getROIMgr().createRuler(start, new Point(aX, aY), iControlled);
                         iControlled.repaint();
                         return false;
                     }

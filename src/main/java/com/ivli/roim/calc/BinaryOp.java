@@ -42,7 +42,7 @@ public class BinaryOp implements IOperation {
         return iOp.product(iLhs, iRhs);
     }
     
-    
+    /*
     public String getString() {
         return iLhs.getString() + " " 
                 + iOp.getOperationChar() + " " 
@@ -53,4 +53,5 @@ public class BinaryOp implements IOperation {
         return this.getString() + "=" 
                 + value().getString();
     }    
+    */
 }

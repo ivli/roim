@@ -26,57 +26,53 @@ import com.ivli.roim.view.ROI;
  * @author likhachev
  */
 public enum Filter {        
-        DENSITY((ROI aR, OverlayManager aM) -> aR.getDensity(aM),
-                Measurement.DENSITY),
-       
-        AREAINPIXELS((ROI aR, OverlayManager aM) -> aR.getAreaInPixels(),
-                     Measurement.AREAINPIXELS),
-        
-        MINPIXEL((ROI aR, OverlayManager aM) -> aR.getMinPixel(aM),
-                 Measurement.MINPIXEL),
-        
-        MAXPIXEL((ROI aR, OverlayManager aM) -> aR.getMaxPixel(aM),
-                 Measurement.MAXPIXEL),
-        
-        AREAINLOCALUNITS((ROI aR, OverlayManager aM) -> aR.getAreaInPixels() * aM.getImage().getPixelSpacing().getX(), 
-                         Measurement.AREAINLOCALUNITS);
-        
-        
-        /*
-         * to be continued
-         */
-        
-        protected final Measurement iM;
-        protected final IFilter     iF;
-                
-        private Filter(IFilter aF, Measurement aM) {             
-            iM = aM;
-            iF = aF;
-        }
-                             
-        public double filter(ROI aRoi, OverlayManager aM) {
-            return iF.filter(aRoi, aM);
-        }
-        
-        public Measurement getMeasurement() {
-            return iM;
-        }
-        
-        public static String[] getAllFilters() {            
-            java.util.Set<Filter> so = java.util.EnumSet.allOf(Filter.class);
+    DENSITY((ROI aR, OverlayManager aM) -> aR.getSeries(aM, Measurement.DENSITY), Measurement.DENSITY),
 
-            String[] ret = new String[so.size()];
-            int n = 0;
-            for (Filter o : Filter.values())
-                ret[n++] = o.iM.iName;
-            return ret;        
-        }
-        
-        public static Filter getFilter(final String aS) {
-            for (Filter o : Filter.values())
-                if(o.iM.iName.equals(aS))
-                    return o;
-            return DENSITY;     
-        }
+    AREAINPIXELS((ROI aR, OverlayManager aM) -> new Series(Measurement.AREAINPIXELS, aR.getAreaInPixels()), Measurement.AREAINPIXELS),
+
+    MINPIXEL((ROI aR, OverlayManager aM) -> aR.getSeries(aM, Measurement.MINPIXEL), Measurement.MINPIXEL),                 
+
+    MAXPIXEL((ROI aR, OverlayManager aM) -> aR.getSeries(aM, Measurement.MINPIXEL), Measurement.MAXPIXEL);//,                 
+
+    //AREAINLOCALUNITS((ROI aR, OverlayManager aM) -> aR.getAreaInPixels() * aM.getImage().getPixelSpacing().getX(), 
+    //                 Measurement.AREAINLOCALUNITS);
+
+
+    /*
+     * to be continued
+     */
+
+    protected final Measurement iM;
+    protected final IFilter     iF;
+
+    private Filter(IFilter aF, Measurement aM) {                         
+        iM = aM;
+        iF = aF;
     }
-    
+
+    public IFilter filter(){//ROI aRoi, OverlayManager aM) {
+        return iF;// .filter(aRoi, aM);
+    }
+
+    public Measurement getMeasurement() {
+        return iM;
+    }
+
+    public static String[] getAllFilters() {            
+        java.util.Set<Filter> so = java.util.EnumSet.allOf(Filter.class);
+
+        String[] ret = new String[so.size()];
+        int n = 0;
+        for (Filter o : Filter.values())
+            ret[n++] = o.iM.iName;
+        return ret;        
+    }
+
+    public static Filter getFilter(final String aS) {
+        for (Filter o : Filter.values())
+            if(o.iM.iName.equals(aS))
+                return o;
+        return DENSITY;     
+    }
+}
+

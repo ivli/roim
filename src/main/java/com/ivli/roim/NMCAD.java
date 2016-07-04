@@ -36,6 +36,7 @@ import com.ivli.roim.controls.ChartView;
 import com.ivli.roim.controls.FileOpenDialog;
 import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.controls.ROIListPanel;
+import com.ivli.roim.core.IImageView;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.IMultiframeImage;
@@ -50,8 +51,7 @@ import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
 import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
-import com.ivli.roim.algorithm.ImageProcessor;
-import java.time.LocalDate;
+import com.ivli.roim.view.ImageViewGroup;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,6 +61,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     private ImageView  iImage;
     private ImageView  iGrid;    
     private ChartView  iChart; 
+    private ImageViewGroup iGroup;
     
     /**/
     private static final void addjustLAF() {
@@ -423,33 +424,35 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jPanel5.repaint();
         jPanel6.repaint();
         
-        IMultiframeImage mi = ImageFactory.create(aFileName);       
+        IMultiframeImage mi = ImageFactory.create(aFileName);               
         
          //IMAGE      
-        
-        iImage = ImageView.create(mi);        
+        ///ROIManager root = new ROIManager();
+        iGroup = ImageViewGroup.create(mi);
+       
+        iImage = iGroup.createView(); //ImageView.create(mi, root);        
         //iImage.setPreferredSize(jPanel1.getSize());        
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iImage, BorderLayout.CENTER);
         jPanel1.add(LUTControl.create(iImage), BorderLayout.LINE_END);
         jPanel1.validate(); 
         
-        /**/
-        ImageProcessor ip = mi.processor();
-        IMultiframeImage sum = ip.collapse(null);
+        /* 
+        //ImageProcessor ip = mi.processor();
+        //IMultiframeImage sum = ip.collapse(null);
         ///sum.processor().map(0.18);
-        ImageView sumView = ImageView.create(sum);
+        ImageView sumView = iGroup.createView();//ImageView.create(sum, root);
         jPanel3.add(sumView, BorderLayout.CENTER);
         jPanel3.add(LUTControl.create(sumView), BorderLayout.LINE_END);
         jPanel3.validate(); 
-        
+       */
         //CHART        
         if (mi.getImageType() == ImageType.DYNAMIC) {
             iChart = ChartView.create();                    
             iChart.setPreferredSize(jPanel5.getPreferredSize());
             jPanel5.add(iChart);      
-            iImage.getROIMgr().addROIChangeListener(iChart);   
-            sumView.getROIMgr().addROIChangeListener(iChart);             
+            iGroup.addROIChangeListener(iChart);   
+            //sumView.getROIMgr().addROIChangeListener(iChart);             
         } 
                 
         if (mi.getImageType() != ImageType.STATIC) {     
@@ -464,8 +467,8 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         iImage.addWindowChangeListener(this);
         iImage.addZoomChangeListener(this);
         
-        iImage.getROIMgr().addROIChangeListener(this);   
-        sumView.getROIMgr().addROIChangeListener(this); 
+        iGroup.addROIChangeListener(this);   
+        //sumView.getROIMgr().addROIChangeListener(this); 
         
         
     }

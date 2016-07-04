@@ -17,6 +17,8 @@
  */
 package com.ivli.roim.calc;
 
+import com.ivli.roim.algorithm.SeriesProcessor;
+
 /**
  *
  * @author likhachev
@@ -98,40 +100,40 @@ public abstract class MathOp {
     static final MathOp getOP(OP anO) {
         switch (anO) {
             case CHSIGN: 
-                return new MathOp(OP.NOP) {            
+                return new MathOp(OP.CHSIGN) {            
                     @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
-                        return new Operand((-1.0) * aLhs.value());
+                        return new Operand(aLhs.value().processor().add(-1.0));
                 }};                                 
             case ADDITION: 
                 return new MathOp(OP.ADDITION) {
                     @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
-                        return new Operand(aLhs.value() + aRhs.value());
+                        return new Operand(aLhs.value().processor().add(aRhs.value()));
                 }};                    
             case SUBTRACTION: 
                 return new MathOp(OP.SUBTRACTION) {            
                     @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
-                        return new Operand(aLhs.value() - aRhs.value());
+                        return new Operand(aLhs.value().processor().sub(aRhs.value()));
                 }};                    
             case MULTIPLICATION:  
                 return new MathOp(OP.MULTIPLICATION) {            
                     @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
-                        return new Operand(aLhs.value() * aRhs.value());
+                        return new Operand(aLhs.value().processor().mul(aRhs.value()));
                 }};                   
             case DIVISION:  
                 return new MathOp(OP.DIVISION) {            
                     @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
-                        return new Operand(aLhs.value() / aRhs.value());
+                        return new Operand(aLhs.value().processor().div(aRhs.value()));
                 }};            
             case NOP: //fall thru
             default: return new MathOp(OP.NOP) {            
                     @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
-                        return new Operand(aLhs.value() / aRhs.value());
+                        return new Operand();
                 }};
         }
     }    

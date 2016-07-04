@@ -17,13 +17,13 @@
  */
 package com.ivli.roim.core;
 
+import com.ivli.roim.view.ROI;
 import com.ivli.roim.view.OverlayManager;
-
 /**
  *
  * @author likhachev
  */
  @FunctionalInterface
 public interface IFilter {        
-    public double filter(com.ivli.roim.view.ROI aR, OverlayManager aM);
+    public Series eval(ROI aR, OverlayManager aM);
 }

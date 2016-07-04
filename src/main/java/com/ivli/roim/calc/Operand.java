@@ -17,14 +17,16 @@
  */
 package com.ivli.roim.calc;
 
+import com.ivli.roim.core.Series;
+
 /**
  *
  * @author likhachev
  */
 public class Operand implements IOperand {
-    protected double iValue;    
+    protected Series iValue;    
     
-    public Operand(Double aVal) {
+    public Operand(Series aVal) {
         iValue = aVal;        
     } 
         
@@ -33,14 +35,14 @@ public class Operand implements IOperand {
     } 
     
     public Operand() {
-        iValue = Double.NaN;
+        iValue = null;//Double.NaN;
     }
     
-    public double value() {
+    public Series value() {
         return iValue;
     }
     
-    public String getString() {
-        return String.format("%.2f", value());
-    }
+   // public String getString() {
+   //     return String.format("%.2f", value());
+   // }
 }

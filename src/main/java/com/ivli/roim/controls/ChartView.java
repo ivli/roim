@@ -51,10 +51,9 @@ public class ChartView extends JPanel implements ROIChangeListener {
     private JFreeChart iJfc;    
     private ChartControl iChart;  
       
-    public static ChartView create(/*ImageView aV*/) {
+    public static ChartView create() {
         ChartView ret = new ChartView();
-        ret.initChart();
-        ///aV.getROIMgr().addROIChangeListener(ret);
+        ret.initChart();        
         return ret;
     }
               

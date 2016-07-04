@@ -17,11 +17,13 @@
  */
 package com.ivli.roim.calc;
 
+import com.ivli.roim.core.Series;
+
 /**
  *
  * @author likhachev
  */
 public interface IOperand {
-    double value();
-    String getString();
+    Series value();
+    ////String getString();
 }

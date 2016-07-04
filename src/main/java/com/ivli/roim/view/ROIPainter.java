@@ -99,31 +99,21 @@ public class ROIPainter extends AbstractPainter {
     }   
     
     public void paint(Annotation aO) {        
-       //void paint(Graphics2D aGC, AffineTransform aTrans) {
-            final Rectangle2D temp = iTrans.createTransformedShape(aO.getShape()).getBounds();     
-            iGC.setColor(aO.getColor());
-            
-            if (!aO.isMultiline()) {
-                String str = new String();
-                str = aO.getText().stream().map((s) -> s).reduce(str, String::concat);            
-                iGC.drawString(str, (int)temp.getX(), (int)(temp.getY() + temp.getHeight() - 4));                   
-            } else {            
-                final double stepY = temp.getHeight() / aO.getText().size();
-                double posY = temp.getY() + stepY - 4.;
-                for(String str : aO.getText()) {                               
-                    iGC.drawString(str, (int)temp.getX(), (int)posY);
-                    posY += stepY;
-                }
-            }
-            iGC.draw(temp);                 
-        }
-    /*
-    public void paint(Annotation.Active aO) {           
-        Rectangle2D tmp = iTrans.createTransformedShape(aO.getShape()).getBounds2D();            
-        iGC.setColor(Color.RED);
+        final Rectangle2D temp = iTrans.createTransformedShape(aO.getShape()).getBounds();     
+        iGC.setColor(aO.getColor());
 
-        iGC.drawString(aO.getText(), (int)tmp.getMinX(), (int)tmp.getMaxY());       
-        //aGC.draw(tmp);        
-    }    
-    */
+        if (!aO.isMultiline()) {
+            String str = new String();
+            str = aO.getText().stream().map((s) -> s).reduce(str, String::concat);            
+            iGC.drawString(str, (int)temp.getX(), (int)(temp.getY() + temp.getHeight() - 4));                   
+        } else {            
+            final double stepY = temp.getHeight() / aO.getText().size();
+            double posY = temp.getY() + stepY - 4.;
+            for(String str : aO.getText()) {                               
+                iGC.drawString(str, (int)temp.getX(), (int)posY);
+                posY += stepY;
+            }
+        }
+        iGC.draw(temp);                 
+    }   
 }

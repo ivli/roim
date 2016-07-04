@@ -57,7 +57,8 @@ public class Profile extends ScreenObject {
  
     @Override
     public void update(OverlayManager aM) {
-        iHist = aM.getFrame().processor().histogram(iShape.getBounds());      
+        //TODO!!!!!
+        ///iHist = aM.getFrame().processor().histogram(iShape.getBounds());      
     }            
     
     @Override

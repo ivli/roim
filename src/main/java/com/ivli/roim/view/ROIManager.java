@@ -27,6 +27,8 @@ import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.calc.BinaryOp;
 import com.ivli.roim.calc.ConcreteOperand;
 import com.ivli.roim.calc.IOperand;
+import com.ivli.roim.core.IImageView;
+import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
 import java.lang.reflect.InvocationTargetException;
@@ -55,16 +57,16 @@ public class ROIManager extends OverlayManager {
     
     private final static TUid iUid = new TUid();
     
-    public ROIManager() {
-        super (null);
+    public ROIManager(IMultiframeImage anImage) {
+        super (anImage, null);
     }
      
     /*
      * creates profile curve for whole width of the image
      * aS - shape <b><i> in screen coordinates </i></b>  
     */
-    public void createProfile(Shape aS) {               
-        Rectangle r = iView.screenToVirtual().createTransformedShape(aS).getBounds();        
+    public void createProfile(Shape aS, IImageView aV) {               
+        Rectangle r = aV.screenToVirtual().createTransformedShape(aS).getBounds();        
         r.x = 0;
         r.width = getImage().getWidth();
         
@@ -73,11 +75,11 @@ public class ROIManager extends OverlayManager {
         newRoi.addChangeListener(this);
     }
             
-    public void createRuler(Point aFrom, Point aTo) {                
+    public void createRuler(Point aFrom, Point aTo, IImageView aV) {                
         Path2D.Double r = new Path2D.Double();         
         r.moveTo(aFrom.x, aFrom.y);
         r.lineTo(aTo.x, aTo.y);                                
-        Shape s = iView.screenToVirtual().createTransformedShape(r);     
+        Shape s = aV.screenToVirtual().createTransformedShape(r);     
         
         Ruler ruler = new Ruler(s);     
                 
@@ -88,26 +90,26 @@ public class ROIManager extends OverlayManager {
     }
     
     public void createAnnotation(ROI aROI) {    
-        Annotation.Static o = new Annotation.Static(aROI);
-        addObject(o);
-        o.update(this);
-        addROIChangeListener(o);        
+        Annotation.Static ret = new Annotation.Static(aROI);
+        addObject(ret);
+        ret.update(this);
+        addROIChangeListener(ret);        
     }    
-    
-    
+        
     public void createAnnotation(BinaryOp anOp) {    
-        Annotation a = new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI());
-        addObject(a);  
+        Annotation ret = new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI());
+        addObject(ret);  
         createSurrogateROI(anOp);
+        ret.update(this);
     }
     
     void createSurrogateROI(BinaryOp anOp) {               
         final class SO implements IOperand {
-            double iV; 
-            SO(double aV) {
+            Series iV; 
+            SO(Series aV) {
                 iV = aV;
             } 
-            public double value() {return iV;}
+            public Series value() {return iV;}
             public String getString() {return "";}
         } 
         
@@ -128,18 +130,19 @@ public class ROIManager extends OverlayManager {
                 
                 final Series aLhs = ((ConcreteOperand)anOp.getLhs()).getROI().getSeries(aMgr, f1);
                 final Series aRhs = ((ConcreteOperand)anOp.getRhs()).getROI().getSeries(aMgr, f2);
-                     
+                    
                 if (null != aLhs && null != aRhs) {
-                    Series density = new Series(f1);
-
+                 /*   Series density = new Series(f1);
+ 
                     for (int i = 0; i < aLhs.getNumFrames(); ++i) {                    
-                        double r = anOp.getOp().product(new SO(aLhs.get(i)), new SO(aRhs.get(i))).value();
+                        double r = anOp.getOp().product(new SO(aLhs), new SO(aRhs)).value();
                         density.add(r);
                     } 
-                    
+                    */
                     iSeries = new SeriesCollection();
-                    iSeries.addSeries(density);
+                    iSeries.addSeries(anOp.getOp().product(new SO(aLhs), new SO(aRhs)).value());
                 }  
+ 
             }
             
             public void ROIChanged(ROIChangeEvent anEvt) {
@@ -183,7 +186,10 @@ public class ROIManager extends OverlayManager {
     }
        
     private void internalAddRoi(ROI aR) {
-        addObject(aR);
+        if (null != iParent)
+            iParent.addObject(aR);
+        else
+            addObject(aR);
         
         if (ROI_HAS_ANNOTATIONS)    
             createAnnotation((ROI)aR);            
@@ -193,8 +199,8 @@ public class ROIManager extends OverlayManager {
         
     }
     
-    public void createRoi(Shape aS) {                 
-        final Shape shape = iView.screenToVirtual().createTransformedShape(aS);        
+    public void createRoi(Shape aS, IImageView aV) {                 
+        final Shape shape = aV.screenToVirtual().createTransformedShape(aS);        
         ROI ret = new ROI(iUid.getNext(), null, shape, null);         
         internalAddRoi(ret);       
     }

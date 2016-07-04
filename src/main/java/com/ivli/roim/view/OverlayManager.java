@@ -42,33 +42,24 @@ import javax.swing.event.EventListenerList;
 public class OverlayManager implements OverlayChangeListener, java.io.Serializable {  
     private static final long serialVersionUID = 42L;    
     
-    transient protected IImageView iView; 
-    
+   /// transient protected IImageView iView; 
+    private final IMultiframeImage iImage;
     private final HashSet<Overlay> iOverlays;        
     private final EventListenerList iList;
         
-    private final OverlayManager iParent;
+    protected final OverlayManager iParent;
             
-    public OverlayManager(OverlayManager aP) {
+    public OverlayManager(IMultiframeImage anImage, OverlayManager aP) {
+        iImage = anImage;
         iParent = aP;        
         iOverlays = new HashSet();        
         iList = new EventListenerList();
     }
-        
-    public void setView(ImageView aV) {
-         iView = aV;
-    }
-           
-    public ImageFrame getFrame() {
-        return getImage().get(iView.getFrameNumber());
-    }
-    
-    public int getFrameNumber() {return iView.getFrameNumber();}
-    
+   
     public IMultiframeImage getImage() {
-        return iView.getImage();
+        return iImage;
     }
-      
+          
     public void clear() {
         iOverlays.clear();
         notifyROIChanged(null, ROIChangeEvent.CODE.ALLDELETED, null);      
@@ -83,6 +74,7 @@ public class OverlayManager implements OverlayChangeListener, java.io.Serializab
     public void paint(AbstractPainter aP) {    
         if (null != iParent)
             iParent.paint(aP);
+        
         iOverlays.stream().forEach((o) -> {
             if(o.isVisible()) 
                 o.paint(aP);
@@ -97,7 +89,7 @@ public class OverlayManager implements OverlayChangeListener, java.io.Serializab
     public void moveObject(Overlay aO, double adX, double adY) {                         
         if (!aO.isPinned()) {          
             Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(aO.getShape());        
-            Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getImage().getWidth(), getImage().getHeight());
+            Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, iImage.getWidth(), iImage.getHeight());
 
             if (bounds.contains(temp.getBounds())) {            
                 aO.move(adX, adY);   
@@ -107,8 +99,8 @@ public class OverlayManager implements OverlayChangeListener, java.io.Serializab
         }
     }
     
-    public Overlay findObject(Point aP) {      
-        final Rectangle temp = iView.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();                 
+    public Overlay findObject(Point aP, IImageView aV) {      
+        final Rectangle temp = aV.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();                 
         
         for (Overlay o : iOverlays) {           
             if (o.isSelectable() && o.intersects(temp)) 

@@ -4,6 +4,8 @@ package com.ivli.roim.view;
 import com.ivli.roim.calc.IOperand;
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.calc.Operand;
+import com.ivli.roim.core.Measurement;
+import com.ivli.roim.core.Series;
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -63,7 +65,7 @@ public class Ruler extends ScreenObject {
         return new IOperation() {
             Ruler iR = Ruler.this;
             public IOperand value() {
-                return new Operand(iR.iDistance);
+                return new Operand(new Series(Measurement.DISTANCE, iR.iDistance));
             }
             public String getString() {
                 return String.format("%.1f", iR.iDistance);

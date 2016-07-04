@@ -19,6 +19,7 @@ package com.ivli.roim.calc;
 
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.core.Filter;
+import com.ivli.roim.core.Series;
 import com.ivli.roim.events.OverlayChangeEvent;
 import com.ivli.roim.events.OverlayChangeListener;
 import com.ivli.roim.view.OverlayManager;
@@ -33,8 +34,8 @@ public class ConcreteOperand implements IOperand, OverlayChangeListener, AutoClo
     
     public ConcreteOperand(ROI aRoi, Filter aF, OverlayManager aM) {        
         iRoi = aRoi;    
-        iM = aM;
-        iF = (null != aF) ?  aF : Filter.DENSITY;   
+        iM   = aM;
+        iF   = (null != aF) ?  aF : Filter.DENSITY;   
         iRoi.addChangeListener(this);
     }
        
@@ -43,23 +44,24 @@ public class ConcreteOperand implements IOperand, OverlayChangeListener, AutoClo
     }
     
     public ROI getROI() {return iRoi;}
+    
     public Filter getFilter() {return iF;}    
     
-    public double value() {
-        return iF.filter(iRoi, iM);
+    @Override
+    public Series value() {
+        return getFilter().filter().eval(iRoi, iM);
     }
     
     @Override
-    public void OverlayChanged(OverlayChangeEvent anEvt) {   
-        //TODO: dispatch to upper level container
-        System.out.print("called");
+    public void OverlayChanged(OverlayChangeEvent anEvt) {         
     } 
     
      @Override
     public void close() {
         iRoi.removeChangeListener(this);
     }
-        
+    
+    /*    
     public String getString() {
         return iF.getMeasurement().getString(value());
     }
@@ -67,4 +69,5 @@ public class ConcreteOperand implements IOperand, OverlayChangeListener, AutoClo
     public String format() {
         return iF.getMeasurement().format(value());
     }
+    */
 }

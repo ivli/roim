@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.view;
 
+import com.ivli.roim.calc.Formatter;
 import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
 import java.awt.Color;
@@ -66,7 +67,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         return iAnnotation;
     }    
     /**
-     *
+     * 
      */
     public static class Static extends Annotation {              
         protected final ROI iRoi;              
@@ -76,7 +77,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         public Static(ROI aRoi) {
             super(-1, 
                   "ANNOTATION::STATIC", // NOI18N
-                 aRoi.getShape() );  
+                  aRoi.getShape() );  
             iRoi = aRoi;             
         }
   
@@ -129,11 +130,10 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         @Override
         public void update(OverlayManager aM) {     
             iAnnotation.clear();
-           
+           /*
             for (Filter f : iFilters)
                 iAnnotation.add(f.getMeasurement().format(f.filter(iRoi, aM)));     
-         
-            ///computeShape();   
+          */
         }
         
         public void OverlayChanged(OverlayChangeEvent anEvt) {
@@ -155,13 +155,13 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
                     //commit suicide 
                     ((OverlayManager)anEvt.getSource()).deleteObject(this);
                     break;
-                case MOVED: {//if not pinned move the same dX and dY                    
+                case MOVED: {//if it is not pinned down then move it the same dX and dY                    
                     final double[] deltas = (double[])anEvt.getExtra(); 
                     OverlayManager mgr = (OverlayManager)anEvt.getSource();
-                    mgr.moveObject(this, deltas[0], deltas[1]);                    
+                    mgr.moveObject(this, deltas[0], deltas[1]); 
+                    update(((OverlayManager)anEvt.getSource()));                   
                 } ///fall through break;
-                case CHANGED:  
-                    update(((OverlayManager)anEvt.getSource()));
+                case CHANGED:                      
                 default: //fall-through
                     //update(); break;
             }        
@@ -190,11 +190,17 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
             iR = aR;
         }   
         
-        public Color getColor() {return Color.RED;}
+        public Color getColor() {
+            return Color.RED;
+        }
         
         protected void computeShape(AbstractPainter aP) {
             final ImageView w = aP.getView();
-            final Rectangle2D bnds = w.getFontMetrics(w.getFont()).getStringBounds(iOp.getCompleteString(), w.getGraphics());        
+            
+            iAnnotation.clear();            
+            iAnnotation.add(Formatter.getCompleteString(iOp, w.getFrameNumber()));
+            
+            final Rectangle2D bnds = w.getFontMetrics(w.getFont()).getStringBounds(iAnnotation.get(0), w.getGraphics());        
 
             double posX = .0, posY = .0;
 
@@ -205,8 +211,6 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
 
                 if (!(iR instanceof Ruler))                
                     posY += bnds.getHeight();               
-
-                ///iR.addROIChangeListener(this);
             }
 
             iShape = w.screenToVirtual().createTransformedShape(new Rectangle2D.Double(posX, posY, bnds.getWidth(), bnds.getHeight()));  
@@ -214,12 +218,8 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
        
         @Override
         public void update(OverlayManager aM) {              
-            iAnnotation.clear();            
-            iAnnotation.add(iOp.getCompleteString());
-        }
-        
-        public void OverlayChanged(OverlayChangeEvent anEvt) {
-        
+           // iAnnotation.clear();            
+           // iAnnotation.add(iOp.getCompleteString());
         }
         
         @Override

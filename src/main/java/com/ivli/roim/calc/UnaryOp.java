@@ -32,9 +32,9 @@ public class UnaryOp implements IOperation {
     
     @Override
     public IOperand value() {
-        return iOp.product(new Operand(.0), iLhs);
+        return iOp.product(new Operand(), iLhs);
     }
-    
+    /*
     @Override
     public String getString() {
         return iOp.getOperationChar() + " " + iLhs.getString();                
@@ -45,4 +45,5 @@ public class UnaryOp implements IOperation {
         return this.getString() + "=" 
                 + value().getString();
     }
+*/
 }

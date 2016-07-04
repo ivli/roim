@@ -37,16 +37,16 @@ public class CalcPanel extends javax.swing.JPanel {
     private final ROITableModel iLeftModel;
     private final ROITableModel iRightModel;
     
-    private final ImageView iPanel;    
+    private final ImageView iView;    
     private BinaryOp iOp;
     private Filter iF = Filter.DENSITY; 
     /**
      * Creates new form CalcPanel
      */
-    public CalcPanel(ImageView aPanel) {        
-        iLeftModel  = new ROITableModel(aPanel.getROIMgr().getObjects(), false);
-        iRightModel = new ROITableModel(aPanel.getROIMgr().getObjects(), false);
-        iPanel = aPanel;
+    public CalcPanel(ImageView aView) {        
+        iLeftModel  = new ROITableModel(aView.getROIMgr().getObjects(), false);
+        iRightModel = new ROITableModel(aView.getROIMgr().getObjects(), false);
+        iView = aView;
         initComponents();
         
         iLeftModel.attach(jTable1);
@@ -79,11 +79,12 @@ public class CalcPanel extends javax.swing.JPanel {
             final ROI iLhs = (ROI)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
             final ROI iRhs = (ROI)jTable2.getValueAt(jTable2.getSelectedRow(), 0);                
             iF = Filter.getFilter((String)jComboBox2.getSelectedItem());
-            iOp = new BinaryOp(new ConcreteOperand(iLhs, iF, iPanel.getROIMgr()), 
-                                new ConcreteOperand(iRhs, iF, iPanel.getROIMgr()), 
+            iOp = new BinaryOp(new ConcreteOperand(iLhs, iF, iView.getROIMgr()), 
+                                new ConcreteOperand(iRhs, iF, iView.getROIMgr()), 
                                     (String)jComboBox1.getSelectedItem());
             
-            jTextField2.setText(iOp.getCompleteString());   
+                //!!!!!TODO            
+            jTextField2.setText(iF.getMeasurement().format(iOp.value().value().get(iView.getFrameNumber())));   
             
             return true;
         }
@@ -216,12 +217,12 @@ public class CalcPanel extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         SwingUtilities.getWindowAncestor(this).setVisible(false);
-        iPanel.repaint();
+        iView.repaint();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        iPanel.getROIMgr().createAnnotation(iOp);
-        iPanel.repaint();
+        iView.getROIMgr().createAnnotation(iOp);
+        iView.repaint();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed

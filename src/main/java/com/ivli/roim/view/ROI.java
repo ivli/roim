@@ -61,6 +61,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         return iAreaInPixels;
     }
     
+    /*
     public double getDensity(OverlayManager aMgr) {      
         return getSeries(aMgr, Measurement.DENSITY).get(aMgr.getFrameNumber());
     }
@@ -72,6 +73,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     public double getMaxPixel(OverlayManager aMgr) {
         return getSeries(aMgr, Measurement.MAXPIXEL).get(aMgr.getFrameNumber());
     }
+    */
     
     public Series getSeries(OverlayManager aMgr, Measurement anId) {  
         buildSeriesIfNeeded(aMgr);

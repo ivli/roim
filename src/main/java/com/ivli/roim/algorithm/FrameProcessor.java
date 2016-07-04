@@ -17,7 +17,6 @@
  */
 package com.ivli.roim.algorithm;
 
-
 import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.ImageFrame;
 import java.awt.Rectangle;
@@ -114,11 +113,11 @@ public class FrameProcessor {
         double tmp3, tmp4, xs, ys;
         int ixs, iys;
        
-        for (int y=roiY; y<(roiY + roiHeight); y++) {
+        for (int y=roiY; y<(roiY + roiHeight); ++y) {
             int index = width*y + roiX;
             tmp3 = tmp1 - y*sa + centerX;
             tmp4 = tmp2 + y*ca + centerY;
-            for (int x=roiX; x<=xMax; x++) {
+            for (int x=roiX; x<=xMax; ++x) {
                 xs = x*ca + tmp3;
                 ys = x*sa + tmp4;
                 if ((xs>=-0.01) && (xs<dwidth) && (ys>=-0.01) && (ys<dheight)) {

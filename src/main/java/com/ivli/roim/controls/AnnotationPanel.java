@@ -118,7 +118,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        jCheckBox1.setText(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MULTILINE"));
+        jCheckBox1.setText(bundle.getString("ANNOTATION.HIDECURVE")); // NOI18N
         jCheckBox1.setSelected(iAnno.isMultiline());
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -139,7 +139,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addComponent(jCheckBox1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1)
-                .addGap(83, 83, 83))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

@@ -23,6 +23,6 @@ package com.ivli.roim.calc;
  */
 public interface IOperation {   
     public IOperand value();
-    public String getString();
-    public String getCompleteString();
+    //public String getString();
+    //public String getCompleteString();
 }

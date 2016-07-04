@@ -71,8 +71,7 @@ public class ImageView  extends JComponent implements IImageView {
     
     protected Point iOrigin;              
     protected AffineTransform iZoom;    
-   
-        
+           
     protected ROIManager iROIMgr;
     protected VOILut iVLUT;
    
@@ -86,7 +85,7 @@ public class ImageView  extends JComponent implements IImageView {
     private EventListenerList iListeners;
 
     public static ImageView create(IMultiframeImage aI) {        
-        return create(aI, new ROIManager());    
+        return create(aI, new ROIManager(aI));    
     }
         
     public static ImageView create(IMultiframeImage aI, ROIManager aM) {
@@ -94,7 +93,7 @@ public class ImageView  extends JComponent implements IImageView {
         ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         ret.setFit(ImageView.ZoomFit.VISIBLE);
         ret.setController(new Controller(ret));
-        ret.setROIMgr(new ROIManager());
+        ret.setROIMgr(aM);
         ret.setImage(aI);
         return ret;    
     }
@@ -139,15 +138,16 @@ public class ImageView  extends JComponent implements IImageView {
     }    
     
     public void setROIMgr(ROIManager aMgr) {
-        iROIMgr = new ROIManager();  
+        iROIMgr = aMgr;  
+        //iROIMgr.setView(this);
     }
     
     public void setImage(IMultiframeImage anImage) {                
         iModel = anImage;             
         iVLUT.setTransform(iModel.getTransform());
         
-        if (null != iROIMgr)
-            iROIMgr.setView(this);            
+       // if (null != iROIMgr)
+       //     iROIMgr.setView(this);            
         
         loadFrame(0);
     }
@@ -366,8 +366,8 @@ public class ImageView  extends JComponent implements IImageView {
               
         g.drawImage(iBuf, iOrigin.x, iOrigin.y, iBuf.getWidth(), iBuf.getHeight(), null);       
         ROIPainter p = new ROIPainter((Graphics2D)g, virtualToScreen(), this);
-        iROIMgr.paint(p);//(Graphics2D)g, virtualToScreen());                         
-        iController.paint((Graphics2D)g); //must reside last in the paint chain   
+        iROIMgr.paint(p);                        
+        iController.paint((Graphics2D)g); // must be the last in the paint chain   
     }
 
     public void setWindow(Window aW) {    
