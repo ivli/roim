@@ -49,34 +49,12 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iAreaInPixels = -1;
         iSeries = null;
     }
-         
-    protected void buildSeriesIfNeeded(OverlayManager aMgr) {
-        if (null == iSeries)
-            iSeries = CurveExtractor.extract(aMgr.getImage(), this, null);
-    }
-       
-    public int getAreaInPixels() {
-        if(iAreaInPixels < 0)
-            calculateAreaInPixels();
+            
+    public int getAreaInPixels() {        
         return iAreaInPixels;
-    }
+    }      
     
-    /*
-    public double getDensity(OverlayManager aMgr) {      
-        return getSeries(aMgr, Measurement.DENSITY).get(aMgr.getFrameNumber());
-    }
-    
-    public double getMinPixel(OverlayManager aMgr) {       
-        return getSeries(aMgr, Measurement.MINPIXEL).get(aMgr.getFrameNumber());
-    }
-    
-    public double getMaxPixel(OverlayManager aMgr) {
-        return getSeries(aMgr, Measurement.MAXPIXEL).get(aMgr.getFrameNumber());
-    }
-    */
-    
-    public Series getSeries(OverlayManager aMgr, Measurement anId) {  
-        buildSeriesIfNeeded(aMgr);
+    public Series getSeries(Measurement anId) {          
         return iSeries.get(anId);
     }
     
@@ -94,22 +72,17 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     void paint(AbstractPainter aD) {
         aD.paint(this);     
     }
-        
-    private void calculateAreaInPixels() {
+  
+    @Override
+    void update(OverlayManager aM) {    
         final Rectangle bnds = getShape().getBounds();
         
         iAreaInPixels = 0;
         for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
             for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) 
                 if (getShape().contains(i, j)) 
-                  ++iAreaInPixels;  
-    }                 
-        
-    @Override
-    void update(OverlayManager aM) {    
-        iAreaInPixels = -1;
-        iSeries = null;   
-        buildSeriesIfNeeded(aM);
+                  ++iAreaInPixels;          
+        iSeries = CurveExtractor.extract(aM.getImage(), this, null);
     }
     
     @Override

@@ -94,7 +94,7 @@ public class ChartView extends JPanel implements ROIChangeListener {
                     assert (0 > col.indexOf(aE.getObject().getName()));
                     
                     final XYSeries s = new XYSeries(aE.getObject().getName(), true, false);
-                    final Series c = ((ROI)aE.getObject()).getSeries(mgr, Measurement.DENSITY);
+                    final Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
 
                     IMultiframeImage img = mgr.getImage();
                     
@@ -114,7 +114,7 @@ public class ChartView extends JPanel implements ROIChangeListener {
                 
                 case MOVED: {  //fall-through                                                                      
                     final int ndx = col.indexOf(aE.getObject().getName());    
-                    Series c = ((ROI)aE.getObject()).getSeries(mgr, Measurement.DENSITY);
+                    Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                     XYSeries s = col.getSeries(ndx); 
                     s.clear();              
                     

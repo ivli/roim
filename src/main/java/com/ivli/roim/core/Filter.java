@@ -26,13 +26,13 @@ import com.ivli.roim.view.ROI;
  * @author likhachev
  */
 public enum Filter {        
-    DENSITY((ROI aR, OverlayManager aM) -> aR.getSeries(aM, Measurement.DENSITY), Measurement.DENSITY),
+    DENSITY((ROI aR) -> aR.getSeries(Measurement.DENSITY), Measurement.DENSITY),
 
-    AREAINPIXELS((ROI aR, OverlayManager aM) -> new Series(Measurement.AREAINPIXELS, aR.getAreaInPixels()), Measurement.AREAINPIXELS),
+    AREAINPIXELS((ROI aR) -> new Series(Measurement.AREAINPIXELS, aR.getAreaInPixels()), Measurement.AREAINPIXELS),
 
-    MINPIXEL((ROI aR, OverlayManager aM) -> aR.getSeries(aM, Measurement.MINPIXEL), Measurement.MINPIXEL),                 
+    MINPIXEL((ROI aR) -> aR.getSeries(Measurement.MINPIXEL), Measurement.MINPIXEL),                 
 
-    MAXPIXEL((ROI aR, OverlayManager aM) -> aR.getSeries(aM, Measurement.MINPIXEL), Measurement.MAXPIXEL);//,                 
+    MAXPIXEL((ROI aR) -> aR.getSeries(Measurement.MINPIXEL), Measurement.MAXPIXEL);//,                 
 
     //AREAINLOCALUNITS((ROI aR, OverlayManager aM) -> aR.getAreaInPixels() * aM.getImage().getPixelSpacing().getX(), 
     //                 Measurement.AREAINLOCALUNITS);

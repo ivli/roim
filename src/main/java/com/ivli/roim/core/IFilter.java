@@ -25,5 +25,5 @@ import com.ivli.roim.view.OverlayManager;
  */
  @FunctionalInterface
 public interface IFilter {        
-    public Series eval(ROI aR, OverlayManager aM);
+    public Series eval(ROI aR);
 }

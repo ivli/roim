@@ -84,7 +84,7 @@ public class ROIManager extends OverlayManager {
         Ruler ruler = new Ruler(s);     
                 
         addObject(ruler);   
-        ruler.update(this);
+        //ruler.update(this);
         ruler.addChangeListener(this);
         
         addObject(new Annotation.Active(ruler.getOperation(), ruler));
@@ -94,7 +94,7 @@ public class ROIManager extends OverlayManager {
     public void createAnnotation(ROI aROI) {    
         Annotation.Static ret = new Annotation.Static(aROI);
         addObject(ret);
-        ret.update(this);
+        //ret.update(this);
         addROIChangeListener(ret);        
     }    
         
@@ -125,25 +125,17 @@ public class ROIManager extends OverlayManager {
             }
             
             @Override
-            protected void buildSeriesIfNeeded(OverlayManager aMgr) {               
+            public void update(OverlayManager aMgr) {               
                 final Measurement f1 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();                
                 final Measurement f2 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();
                 
-                final Series aLhs = ((ConcreteOperand)anOp.getLhs()).getROI().getSeries(aMgr, f1);
-                final Series aRhs = ((ConcreteOperand)anOp.getRhs()).getROI().getSeries(aMgr, f2);
+                final Series aLhs = ((ConcreteOperand)anOp.getLhs()).getROI().getSeries(f1);
+                final Series aRhs = ((ConcreteOperand)anOp.getRhs()).getROI().getSeries(f2);
                     
-                if (null != aLhs && null != aRhs) {
-                 /*   Series density = new Series(f1);
- 
-                    for (int i = 0; i < aLhs.getNumFrames(); ++i) {                    
-                        double r = anOp.getOp().product(new SO(aLhs), new SO(aRhs)).value();
-                        density.add(r);
-                    } 
-                    */
+                if (null != aLhs && null != aRhs) {                
                     iSeries = new SeriesCollection();
                     iSeries.addSeries(anOp.getOp().product(new SO(aLhs), new SO(aRhs)).value());
                 }  
- 
             }
             
             public void ROIChanged(ROIChangeEvent anEvt) {
@@ -196,7 +188,7 @@ public class ROIManager extends OverlayManager {
             createAnnotation((ROI)aR);            
                       
         aR.addChangeListener(this);        
-        aR.update(this);        
+        //aR.update(this);        
     }
     
     public void createRoi(Shape aS, IImageView aV) {                 

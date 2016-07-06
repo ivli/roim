@@ -49,7 +49,7 @@ public class ConcreteOperand implements IOperand, OverlayChangeListener, AutoClo
     
     @Override
     public Series value() {
-        return iF.filter().eval(iRoi, iM);
+        return iF.filter().eval(iRoi);
     }
     
     @Override

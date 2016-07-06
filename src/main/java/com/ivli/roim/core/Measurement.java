@@ -38,7 +38,7 @@ public enum Measurement {
     AREAINLOCALUNITS(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.AREAINLOCALUNITS"), 
                      java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.MILLIMETERS"),
                      "%d"), // NOI18N   
-    DISTANCE(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.AREAINLOCALUNITS"), 
+    DISTANCE(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.DISTANCE"), 
                      java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.MILLIMETERS"),
                      "%d"); // NOI18N 
     

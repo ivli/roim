@@ -83,6 +83,7 @@ public class OverlayManager implements OverlayChangeListener, java.io.Serializab
        
     protected void addObject(Overlay aO) {
         iOverlays.add(aO);
+        aO.update(this);
         notifyROIChanged(aO, ROIChangeEvent.CODE.CREATED, this);  
     }
     
@@ -93,8 +94,9 @@ public class OverlayManager implements OverlayChangeListener, java.io.Serializab
 
             if (bounds.contains(temp.getBounds())) {            
                 aO.move(adX, adY);   
-                notifyROIChanged(aO, ROIChangeEvent.CODE.MOVED, new double[]{adX, adY});
                 aO.update(this);
+                notifyROIChanged(aO, ROIChangeEvent.CODE.MOVED, new double[]{adX, adY});
+                
             }
         }
     }

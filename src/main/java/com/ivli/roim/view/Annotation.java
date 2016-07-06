@@ -35,6 +35,7 @@ import com.ivli.roim.events.ROIChangeListener;
 public abstract class Annotation extends ScreenObject implements ROIChangeListener {              
     protected boolean iMultiline = true; 
     protected final ArrayList<String> iAnnotation;    
+    Overlay iRoi;
     
     Annotation(int aUid, String aName, Shape aShape) {
         super(aUid, aName, aShape);   
@@ -55,14 +56,53 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         
     public abstract Color getColor();
     
-    protected abstract void computeShape(AbstractPainter aP);
+    abstract void makeText(AbstractPainter aP) ;
+    
+    //protected abstract void computeShape(AbstractPainter aP);
     
     @Override
     void paint(AbstractPainter aP) {   
+        makeText(aP);
         computeShape(aP);
         aP.paint(this);    
     } 
-        
+    
+    @Override
+    public void update(OverlayManager aM) {}                           
+      
+    protected void computeShape(AbstractPainter aP) {            
+        double width  = 0;
+        double height = 0;
+
+        ImageView w = aP.getView();
+
+        final java.awt.FontMetrics fm = w.getFontMetrics(w.getFont());
+
+        for (String s : iAnnotation) {
+            Rectangle2D b = fm.getStringBounds(s, w.getGraphics());        
+
+            if (iMultiline) {
+                width = Math.max(width, b.getWidth());
+                height += b.getHeight();
+            } else {
+                width += b.getWidth();
+                height = Math.max(height, b.getHeight());
+            }
+        }
+
+        final Rectangle2D bnds = new Rectangle2D.Double(0, 0, width, height);            
+        final double scaleX = w.screenToVirtual().getScaleX();      
+
+        if (null == iShape) 
+            iShape = new Rectangle2D.Double(iRoi.getShape().getBounds2D().getX(),  
+                                            iRoi.getShape().getBounds2D().getY() - bnds.getHeight() * scaleX, 
+                                            bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                                                
+        else
+            iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), 
+                                            getShape().getBounds2D().getY(),                                                                                        
+                                            bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                                             
+    }                       
+
     public ArrayList<String> getText() {
         return iAnnotation;
     }    
@@ -70,7 +110,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
      * 
      */
     public static class Static extends Annotation {              
-        protected final ROI iRoi;              
+        //protected final ROI iRoi;              
                 
         protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
         
@@ -78,75 +118,37 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
             super(-1, 
                   "ANNOTATION::STATIC", // NOI18N
                   aRoi.getShape() );  
-            iRoi = aRoi;             
+            iRoi = aRoi;     
+            aRoi.addChangeListener(this);
         }
   
         @Override
-        public Color getColor() {return getRoi().getColor();}
+        public Color getColor() {return ((ROI)iRoi).getColor();}
         
         public void setFilters(Filter[] aF) {
             iFilters = aF;
             notify(OverlayChangeEvent.CODE.PRESENTATION, null);
         }  
-                      
-        public ROI getRoi() {return iRoi;}
-
+      
         public Filter[] getFilters() {
             return iFilters;
         }
-                
-        @Override
-        protected void computeShape(AbstractPainter aP) {            
-            double width  = 0;
-            double height = 0;
-
-            ImageView w = aP.getView();
-            
-            final java.awt.FontMetrics fm = w.getFontMetrics(w.getFont());
-
-            for (String s : iAnnotation) {
-                Rectangle2D b = fm.getStringBounds(s, w.getGraphics());        
-
-                if (iMultiline) {
-                    width = Math.max(width, b.getWidth());
-                    height += b.getHeight();
-                } else {
-                    width += b.getWidth();
-                    height = Math.max(height, b.getHeight());
-                }
-            }
-            
-            final Rectangle2D bnds = new Rectangle2D.Double(0, 0, width, height);            
-            final double scaleX = w.screenToVirtual().getScaleX();      
-            
-            if (null == iShape) 
-                iShape = new Rectangle2D.Double(iRoi.getShape().getBounds2D().getX(),  
-                                                iRoi.getShape().getBounds2D().getY() - bnds.getHeight() * scaleX, 
-                                                bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                                                
-            else
-                iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), 
-                                                getShape().getBounds2D().getY(),                                                                                        
-                                                bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                                             
-        }
-                
-        @Override
-        public void update(OverlayManager aM) {     
+              
+        void makeText(AbstractPainter aP) {
             iAnnotation.clear();
             
             for (Filter f : iFilters) {
-                f.filter().eval(iRoi, aM);
-                
-                
-                iAnnotation.add(f.getMeasurement().format(2.3));     
+                iAnnotation.add(f.getMeasurement().format(f.filter().eval((ROI)iRoi).get(aP.getView().getFrameNumber())));     
             }
         }
         
+        //@Override
+       
+        @Override
         public void OverlayChanged(OverlayChangeEvent anEvt) {
             switch (anEvt.getCode()) {                
                 case MOVED: {//if not pinned move the same dX and dY                    
-                    //final double[] deltas = (double[])anEvt.getExtra(); 
-                    ///OverlayManager mgr = (OverlayManager)anEvt.getSource();
-                    //mgr.moveObject(this, deltas[0], deltas[1]);                    
+                                   
                 } break;                 
             }
         }
@@ -163,8 +165,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
                 case MOVED: {//if it is not pinned down then move it the same dX and dY                    
                     final double[] deltas = (double[])anEvt.getExtra(); 
                     OverlayManager mgr = (OverlayManager)anEvt.getSource();
-                    mgr.moveObject(this, deltas[0], deltas[1]); 
-                    update(((OverlayManager)anEvt.getSource()));                   
+                    mgr.moveObject(this, deltas[0], deltas[1]);                                  
                 } ///fall through break;
                 case CHANGED:                      
                 default: //fall-through
@@ -187,25 +188,29 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
      */
     public static class Active extends Annotation {        
         private final IOperation iOp;
-        private final Overlay iR;
+        //private final Overlay iR;
         
         Active(IOperation anOp, Overlay aR) {
             super(-1, "ANNOTATION.ACTIVE", null);                    
             iOp = anOp;       
-            iR = aR;
+            iRoi = aR;
         }   
         
         @Override
         public Color getColor() {
-            return Color.RED;
+             return Color.RED;
         }
         
-        @Override
+        void makeText(AbstractPainter aP) {
+            iAnnotation.clear();            
+            iAnnotation.add(iOp.format(new BaseFormatter(aP.getView().getFrameNumber())));
+        }
+        /*
+            @Override
         protected void computeShape(AbstractPainter aP) {
             final ImageView w = aP.getView();
             
-            iAnnotation.clear();            
-            iAnnotation.add(iOp.format(new BaseFormatter(w.getFrameNumber())));
+           
             
             final Rectangle2D bnds = w.getFontMetrics(w.getFont()).getStringBounds(iAnnotation.get(0), w.getGraphics());        
 
@@ -216,18 +221,14 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
                 posX = r.getX();
                 posY = r.getY();
 
-                if (!(iR instanceof Ruler))                
-                    posY += bnds.getHeight();               
+                //if (!(iR instanceof Ruler))                
+                //    posY += bnds.getHeight();               
             }
 
             iShape = w.screenToVirtual().createTransformedShape(new Rectangle2D.Double(posX, posY, bnds.getWidth(), bnds.getHeight()));  
         }
        
-        @Override
-        public void update(OverlayManager aM) {              
-           // iAnnotation.clear();            
-           // iAnnotation.add(iOp.getCompleteString());
-        }
+        */
         
         @Override
         public void ROIChanged(ROIChangeEvent anEvt) {              
