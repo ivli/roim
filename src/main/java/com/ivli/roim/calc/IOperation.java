@@ -21,8 +21,9 @@ package com.ivli.roim.calc;
  *
  * @author likhachev
  */
-public interface IOperation {   
+public interface IOperation extends IFormattable {   
     public IOperand value();
+    //public String format(AbstractFormatter aFormatter);
     //public String getString();
     //public String getCompleteString();
 }

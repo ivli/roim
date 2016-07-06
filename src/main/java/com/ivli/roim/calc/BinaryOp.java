@@ -41,7 +41,9 @@ public class BinaryOp implements IOperation {
     public IOperand value() {
         return iOp.product(iLhs, iRhs);
     }
-    
+    public String format(AbstractFormatter aF) {
+        return aF.format(this);
+    }
     /*
     public String getString() {
         return iLhs.getString() + " " 

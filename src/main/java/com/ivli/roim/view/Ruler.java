@@ -1,6 +1,7 @@
 
 package com.ivli.roim.view;
 
+import com.ivli.roim.calc.AbstractFormatter;
 import com.ivli.roim.calc.IOperand;
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.calc.Operand;
@@ -56,23 +57,20 @@ public class Ruler extends ScreenObject {
         if (null == a || null == b)
             return; 
         
-        iDistance = a.distance(b);//TODO: * getManager().getImage().getPixelSpacing().getX();
+        iDistance = a.distance(b) * aM.getImage().getPixelSpacing().getX();
         LOG.debug("distance is: {}", iDistance);           
     }       
     
-    IOperation getOperation() {
-        ///update();        
+    IOperation getOperation() {                
         return new IOperation() {
             Ruler iR = Ruler.this;
+            @Override
             public IOperand value() {
                 return new Operand(new Series(Measurement.DISTANCE, iR.iDistance));
             }
-            public String getString() {
-                return String.format("%.1f", iR.iDistance);
-            }
-            
-            public String getCompleteString() {
-                return String.format("%.1f mm", iR.iDistance); 
+            @Override
+            public String format(AbstractFormatter aF) {
+                return aF.format(value());
             }            
         };
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 likhachev
+ * Copyright (C) 2016 likhachev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,28 +17,35 @@
  */
 package com.ivli.roim.calc;
 
-import com.ivli.roim.core.Series;
-
 /**
  *
  * @author likhachev
  */
-public class Operand implements IOperand {
-    protected Series iValue;    
+public class BaseFormatter extends AbstractFormatter {       
+    int iFrame;
     
-    public Operand(Series aVal) {
-        iValue = aVal;        
-    } 
-        
-    public Operand(Operand aVal) {
-        iValue = aVal.value();
-    } 
-    
-    public Operand() {
-        iValue = null;
+    public BaseFormatter(int aFrame) {
+        iFrame = aFrame;
     }
     
-    public Series value() {
-        return iValue;
-    }  
+    @Override
+    public String format(UnaryOp aOp) {
+        return String.format("%f", aOp.iLhs.value().get(iFrame)); 
+    }
+    
+    @Override
+    public String format(BinaryOp aOp) {
+       return String.format("%f", aOp.iLhs.value().get(iFrame)) + 
+              " " + 
+              aOp.iOp.getOperationChar() + 
+              " " +
+              String.format("%f", aOp.iRhs.value().get(iFrame));
+    }
+       
+    @Override
+    public String format(IOperand aOp) {  
+        double val = aOp.value().get(aOp.value().isScalar() ? 0 : iFrame); 
+        return aOp.value().getId().format(val);   
+    }
+    
 }

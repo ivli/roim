@@ -49,25 +49,15 @@ public class ConcreteOperand implements IOperand, OverlayChangeListener, AutoClo
     
     @Override
     public Series value() {
-        return getFilter().filter().eval(iRoi, iM);
+        return iF.filter().eval(iRoi, iM);
     }
     
     @Override
     public void OverlayChanged(OverlayChangeEvent anEvt) {         
     } 
     
-     @Override
+    @Override
     public void close() {
         iRoi.removeChangeListener(this);
-    }
-    
-    /*    
-    public String getString() {
-        return iF.getMeasurement().getString(value());
-    }
-    
-    public String format() {
-        return iF.getMeasurement().format(value());
-    }
-    */
+    }      
 }

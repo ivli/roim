@@ -50,8 +50,8 @@ public enum Filter {
         iF = aF;
     }
 
-    public IFilter filter(){//ROI aRoi, OverlayManager aM) {
-        return iF;// .filter(aRoi, aM);
+    public IFilter filter(){
+        return iF;
     }
 
     public Measurement getMeasurement() {

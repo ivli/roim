@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.view;
 
-import com.ivli.roim.calc.Formatter;
+import com.ivli.roim.calc.BaseFormatter;
 import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
 import java.awt.Color;
@@ -81,6 +81,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
             iRoi = aRoi;             
         }
   
+        @Override
         public Color getColor() {return getRoi().getColor();}
         
         public void setFilters(Filter[] aF) {
@@ -94,6 +95,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
             return iFilters;
         }
                 
+        @Override
         protected void computeShape(AbstractPainter aP) {            
             double width  = 0;
             double height = 0;
@@ -130,10 +132,13 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         @Override
         public void update(OverlayManager aM) {     
             iAnnotation.clear();
-           /*
-            for (Filter f : iFilters)
-                iAnnotation.add(f.getMeasurement().format(f.filter(iRoi, aM)));     
-          */
+            
+            for (Filter f : iFilters) {
+                f.filter().eval(iRoi, aM);
+                
+                
+                iAnnotation.add(f.getMeasurement().format(2.3));     
+            }
         }
         
         public void OverlayChanged(OverlayChangeEvent anEvt) {
@@ -190,15 +195,17 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
             iR = aR;
         }   
         
+        @Override
         public Color getColor() {
             return Color.RED;
         }
         
+        @Override
         protected void computeShape(AbstractPainter aP) {
             final ImageView w = aP.getView();
             
             iAnnotation.clear();            
-            iAnnotation.add(Formatter.getCompleteString(iOp, w.getFrameNumber()));
+            iAnnotation.add(iOp.format(new BaseFormatter(w.getFrameNumber())));
             
             final Rectangle2D bnds = w.getFontMetrics(w.getFont()).getStringBounds(iAnnotation.get(0), w.getGraphics());        
 

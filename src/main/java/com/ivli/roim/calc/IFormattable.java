@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 likhachev
+ * Copyright (C) 2016 likhachev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,28 +17,10 @@
  */
 package com.ivli.roim.calc;
 
-import com.ivli.roim.core.Series;
-
 /**
  *
  * @author likhachev
  */
-public class Operand implements IOperand {
-    protected Series iValue;    
-    
-    public Operand(Series aVal) {
-        iValue = aVal;        
-    } 
-        
-    public Operand(Operand aVal) {
-        iValue = aVal.value();
-    } 
-    
-    public Operand() {
-        iValue = null;
-    }
-    
-    public Series value() {
-        return iValue;
-    }  
+public interface IFormattable {
+    public String format(AbstractFormatter aFormatter);
 }

@@ -34,6 +34,11 @@ public class UnaryOp implements IOperation {
     public IOperand value() {
         return iOp.product(new Operand(), iLhs);
     }
+    
+    @Override
+    public String format(AbstractFormatter aF) {
+        return aF.format(this);
+    }
     /*
     @Override
     public String getString() {

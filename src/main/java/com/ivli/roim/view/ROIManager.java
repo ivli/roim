@@ -84,9 +84,11 @@ public class ROIManager extends OverlayManager {
         Ruler ruler = new Ruler(s);     
                 
         addObject(ruler);   
+        ruler.update(this);
         ruler.addChangeListener(this);
-   
+        
         addObject(new Annotation.Active(ruler.getOperation(), ruler));
+        
     }
     
     public void createAnnotation(ROI aROI) {    
@@ -117,8 +119,7 @@ public class ROIManager extends OverlayManager {
              ROI iLhs = ((ConcreteOperand)anOp.getLhs()).getROI();
              ROI iRhs = ((ConcreteOperand)anOp.getRhs()).getROI();
              
-            {
-               
+            {               
                 iRhs.addChangeListener(this);
                 iLhs.addChangeListener(this);
             }
@@ -195,8 +196,7 @@ public class ROIManager extends OverlayManager {
             createAnnotation((ROI)aR);            
                       
         aR.addChangeListener(this);        
-        aR.update(this);
-        
+        aR.update(this);        
     }
     
     public void createRoi(Shape aS, IImageView aV) {                 
