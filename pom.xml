@@ -4,8 +4,7 @@
     <groupId>com.ivli</groupId>
     <artifactId>roim</artifactId>
     <version>v0.9.3</version>
-    <packaging>jar</packaging>
-    
+    <packaging>jar</packaging>    
     <repositories>
     <repository>
       <id>dcm4che.org</id>
@@ -60,11 +59,11 @@
             <artifactId>dcm4che-imageio</artifactId>
             <version>3.3.7</version>            
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>com.amd</groupId>
             <artifactId>aparapi</artifactId>
             <version>1.0</version>
-        </dependency>
+        </dependency-->
     </dependencies>
     
     <build>

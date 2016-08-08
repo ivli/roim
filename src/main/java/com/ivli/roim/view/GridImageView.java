@@ -29,6 +29,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Range;
+import com.ivli.roim.core.Uid;
 import com.ivli.roim.core.Window;
 
 /**
@@ -43,12 +44,12 @@ public class GridImageView extends ImageView {
     private static final String KCommandShowFrameNumbers = "MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS"; // NOI18N
     private static final String KCommandOptimalLayout = "MNU_CONTEXT_GRIDVIEW.LAYOUT_OPTIMAL"; // NOI18N
     
-    public static GridImageView create(IMultiframeImage aI, int aRows, int aCols) { 
+    public static GridImageView create(IMultiframeImage aI, int aRows, int aCols, ROIManager aMgr) { 
         GridImageView ret = new GridImageView();
         ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         ret.setFit(ImageView.ZoomFit.VISIBLE);
         ret.setController(new GridViewController(ret));
-        ret.setROIMgr(new ROIManager(aI));
+        ret.setROIMgr(null != aMgr ? aMgr : new ROIManager(aI, new Uid(), false));
         ret.setImage(aI);
         ret.setGrid(4, 4);
         return ret;

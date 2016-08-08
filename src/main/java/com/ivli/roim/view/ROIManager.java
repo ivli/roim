@@ -31,6 +31,7 @@ import com.ivli.roim.core.IImageView;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
+import com.ivli.roim.core.Uid;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,25 +41,14 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class ROIManager extends OverlayManager {      
-    private static final boolean ROI_HAS_ANNOTATIONS  = true;
-    private static final boolean CLONE_INHERIT_COLOUR = false;
-       
-    private final static class TUid {
-        int iUid;
-        public static final int UID_INVALID = -1;
-        
-        public TUid() {iUid = 0;}
-        
-        public int getNext() {            
-            return ++iUid;
-        }
-    }
+public class ROIManager extends OverlayManager {                    
     
-    private final static TUid iUid = new TUid();
-    
-    public ROIManager(IMultiframeImage anImage) {
+    private final Uid iUid;// = new TUid();
+    private boolean iAnnotationsAutoCreate;
+    public ROIManager(IMultiframeImage anImage, Uid aUid, boolean aAnnotationsAutoCreate) {
         super (anImage, null);
+        iUid = aUid;
+        iAnnotationsAutoCreate = aAnnotationsAutoCreate;        
     }
      
     /*
@@ -184,7 +174,7 @@ public class ROIManager extends OverlayManager {
         else
             addObject(aR);
         
-        if (ROI_HAS_ANNOTATIONS)    
+        if (iAnnotationsAutoCreate)    
             createAnnotation((ROI)aR);            
                       
         aR.addChangeListener(this);        

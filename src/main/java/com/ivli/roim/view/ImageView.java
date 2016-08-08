@@ -45,6 +45,7 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
 import com.ivli.roim.events.WindowChangeEvent;
@@ -85,7 +86,7 @@ public class ImageView  extends JComponent implements IImageView {
     private EventListenerList iListeners;
 
     public static ImageView create(IMultiframeImage aI) {        
-        return create(aI, new ROIManager(aI));    
+        return create(aI, new ROIManager(aI, new Uid(), false));    
     }
         
     public static ImageView create(IMultiframeImage aI, ROIManager aM) {

@@ -456,7 +456,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         } 
                 
         if (mi.getImageType() != ImageType.STATIC) {     
-            iGrid = GridImageView.create(mi, 4, 4) ;          
+            iGrid = GridImageView.create(mi, 4, 4, null) ;          
             iGrid.setPreferredSize(jPanel6.getSize());                  
             jPanel6.setLayout(new BorderLayout());     
             jPanel6.add(iGrid, BorderLayout.CENTER);   

@@ -23,77 +23,47 @@ package com.ivli.roim.core;
  */
 public enum Measurement {        
     DENSITY(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.DENSITY"), 
-            java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.CTS"), 
-            "%d"), // NOI18N
+            Units.COUNTS), 
     AREAINPIXELS(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.AREA_IN_PIXELS"), 
-                 java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.PIXELS"), 
-                 "%d"), // NOI18N
+                 Units.PIXELS), 
     MINPIXEL(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.MINPIXEL"), 
-             java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.PIXELS"), 
-             "%d"), // NOI18N
+             Units.PIXELS), 
     MAXPIXEL(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.MAXPIXEL"), 
-             java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.PIXELS"), 
-             "%d"), // NOI18N 
-   
+             Units.PIXELS),    
     AREAINLOCALUNITS(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.AREAINLOCALUNITS"), 
-                     java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.MILLIMETERS"),
-                     "%d"), // NOI18N   
+                     Units.M2),  
     DISTANCE(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.DISTANCE"), 
-                     java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.MILLIMETERS"),
-                     "%d"); // NOI18N 
+                     Units.MILLIMETERS); 
+    
+    final static String SEPARATOR = ":";
+    final static String SPACE = " ";
     
     final String iName;
-    final String iUnits;
-    final String iFormat;
+    final Units  iUnits;    
         
-    private Measurement(String aName, String aUnits, String aFormat) {
+    private Measurement(String aName, Units aUnits) {
         iName   = aName;
-        iUnits  = aUnits;
-        iFormat = aFormat;
+        iUnits  = aUnits;        
     }
     
     public String getName() {return iName;}
-    public String getUnits() {return iUnits;}
+    public Units getUnits() {return iUnits;}
 
     public static String[] getAllMeasurements() {            
         java.util.Set<Measurement> so = java.util.EnumSet.allOf(Measurement.class);
 
-        String[] ret = new String[so.size()];//String();
+        String[] ret = new String[so.size()];
         int n = 0;
         for (Measurement o : Measurement.values())
             ret[n++] = o.iName;
         return ret;        
     }
-    
-    public String getFormatString() {
-        return iName + ": " + iFormat + " " + iUnits; // NOI18N 
+                  
+    public String format(int aVal) {               
+        return iName + SEPARATOR + iUnits.format(aVal);
     }
     
-    public String getString(int aInt) {        
-        if (iFormat.equals("%f")) // NOI18N 
-            return String.format(iFormat, (double)aInt);
-        else
-            return String.format(iFormat, aInt);
-    }
-    
-    public String getString(double aDouble) {
-        if (iFormat.equals("%d")) // NOI18N 
-            return String.format(iFormat, (int)aDouble);
-        else
-            return String.format(iFormat, aDouble);
-    }
-        
-    public String format(int aInt) {        
-        if (iFormat.equals("%f")) // NOI18N 
-            return String.format(getFormatString(), (double)aInt);
-        else
-            return String.format(getFormatString(), aInt);
-    }
-    
-    public String format(double aDouble) {
-        if (iFormat.equals("%d")) // NOI18N 
-            return String.format(getFormatString(), (int)aDouble);
-        else
-            return String.format(getFormatString(), aDouble);
+    public String format(double aVal) {
+        return iName + SEPARATOR + iUnits.format(aVal);
     }    
 }

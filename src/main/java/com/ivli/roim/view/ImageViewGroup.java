@@ -18,6 +18,8 @@
 package com.ivli.roim.view;
 
 import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.ImageType;
+import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.ROIChangeListener;
 import java.util.ArrayList;
 
@@ -29,11 +31,13 @@ public class ImageViewGroup {
     IMultiframeImage     iImage;
     ROIManager             iMgr;
     ArrayList<ImageView> iViews;
+    final Uid              iUid;
     
     ImageViewGroup(IMultiframeImage anImage) {
         iImage = anImage;
         iViews = new ArrayList<>();
-        iMgr = new ROIManager(iImage);        
+        iUid = new Uid();
+        iMgr = new ROIManager(iImage, iUid, iImage.getImageType() == ImageType.STATIC);        
     }
     
     public static ImageViewGroup create(IMultiframeImage anImage) {
