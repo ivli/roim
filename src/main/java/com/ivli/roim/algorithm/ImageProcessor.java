@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.algorithm;
 
+import com.ivli.roim.core.IFrameProvider;
 import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFrame;
@@ -81,6 +82,28 @@ public class ImageProcessor {
         rotate(anAngle, 0, iImage.getNumFrames());
     }      
         
+    public IMultiframeImage collapse(int aFrom, int aTo) throws IndexOutOfBoundsException
+    {
+        
+        if (aTo == IFrameProvider.LAST)
+            aTo = iImage.getNumFrames() - 1;
+        
+        if (!iImage.hasAt(aFrom) || !iImage.hasAt(aTo))
+            throw new IndexOutOfBoundsException();
+                
+        IMultiframeImage ret = iImage.createCompatibleImage(1);
+        
+        int[] dst = ret.get(0).getPixelData();
+        
+        for (int i = aFrom; i < aTo/*iImage.getNumFrames()*/; ++i) {
+            int []src = iImage.get(i).getPixelData();
+            
+            for (int j = 0; j < dst.length; ++j)
+                dst[j] += src[j];
+        }        
+        return ret;
+    } 
+    
     public IMultiframeImage collapse(TimeSlice anInterval) {        
         IMultiframeImage ret = iImage.createCompatibleImage(1);
         

@@ -26,14 +26,8 @@ public class TimeSlice implements java.io.Serializable {
     private final Instant iFrom;
     private final Instant iTo;
     
-    public static final TimeSlice FOREWER = new TimeSlice(Instant.ZERO.toLong(), Instant.INFINITE.toLong());
-    /*
-    public TimeSlice() {
-        iFrom = Instant.ZERO.toLong();
-        iTo   = Instant.INFINITE.toLong();  
-    }
-    */
-    
+    public static final TimeSlice INFINITY = new TimeSlice(Instant.ZERO.toLong(), Instant.INFINITE.toLong());
+   
     public TimeSlice(long aFrom, long aTo) {
         iFrom = new Instant(aFrom);
         iTo = new Instant(aTo);

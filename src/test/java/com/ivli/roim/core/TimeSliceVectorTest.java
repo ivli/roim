@@ -265,7 +265,7 @@ public class TimeSliceVectorTest {
         final TimeSliceVector instance = new TimeSliceVector(phi);
         
         {
-        TimeSliceVector temp = instance.slice(TimeSlice.FOREWER);
+        TimeSliceVector temp = instance.slice(TimeSlice.INFINITY);
         
         assertEquals("duration",  instance.duration(),     temp.duration());
         assertEquals("NumPhases", instance.getNumPhases(), temp.getNumPhases());

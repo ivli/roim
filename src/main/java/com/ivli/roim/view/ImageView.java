@@ -259,7 +259,7 @@ public class ImageView  extends JComponent implements IImageView {
             case CINE: 
             case RANGE: break;
             case COMPOSITE:
-                setImage(iModel.processor().collapse(TimeSlice.FOREWER)); break;
+                setImage(iModel.processor().collapse(aM.iFrameFrom, aM.iFrameTo)); break;
             case SLICE:
             case VOLUME:    
         }
