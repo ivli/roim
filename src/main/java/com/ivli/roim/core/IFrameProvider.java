@@ -22,6 +22,9 @@ package com.ivli.roim.core;
  * @author likhachev
  */
 public interface IFrameProvider extends IImage {
+    
+    public final static int FIRST = 0;
+    public final static int LAST = -1;
     /**
      *
      * @param anIndex

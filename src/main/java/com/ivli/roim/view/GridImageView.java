@@ -170,10 +170,15 @@ public class GridImageView extends ImageView {
             Double min = Double.MAX_VALUE;
             Double max = Double.MIN_VALUE;
             
-            for (int n = 0; (iCurrent + n) < iModel.getNumFrames() && n < iRows * iCols; ++n) {             
-                min = Math.min(min, iModel.get(iCurrent + n).getRange().getMin()); 
-                max = Math.max(max, iModel.get(iCurrent + n).getRange().getMax());
+            /* */
+            for (int n = 0; n < iModel.getNumFrames(); ++n) {     
+                Range r = iModel.get(n).getRange();
+                min = Math.min(min, r.getMin()); 
+                max = Math.max(max, r.getMax());
             } 
+           
+            
+            
             
             iVLUT.setWindow(new Window(new Range(min, max))); // frameChanged();
 

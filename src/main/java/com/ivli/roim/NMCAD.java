@@ -426,26 +426,24 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         
         IMultiframeImage mi = ImageFactory.create(aFileName);               
         
-         //IMAGE      
-        ///ROIManager root = new ROIManager();
         iGroup = ImageViewGroup.create(mi);
        
-        iImage = iGroup.createView(); //ImageView.create(mi, root);        
+        iImage = iGroup.createView(ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);        
         //iImage.setPreferredSize(jPanel1.getSize());        
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iImage, BorderLayout.CENTER);
         jPanel1.add(LUTControl.create(iImage), BorderLayout.LINE_END);
         jPanel1.validate(); 
         
-        /* 
+        /* */
         //ImageProcessor ip = mi.processor();
-        //IMultiframeImage sum = ip.collapse(null);
+        ///IMultiframeImage sum = mi.processor().collapse(null);
         ///sum.processor().map(0.18);
-        ImageView sumView = iGroup.createView();//ImageView.create(sum, root);
+        ImageView sumView = iGroup.createView(ImageView.DEFAULT_COMPOSITE_IMAGE_MODE);//ImageView.create(sum, root);
         jPanel3.add(sumView, BorderLayout.CENTER);
         jPanel3.add(LUTControl.create(sumView), BorderLayout.LINE_END);
         jPanel3.validate(); 
-       */
+       
         //CHART        
         if (mi.getImageType() == ImageType.DYNAMIC) {
             iChart = ChartView.create();                    

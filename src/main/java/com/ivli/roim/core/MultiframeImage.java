@@ -76,8 +76,7 @@ public class MultiframeImage extends IMultiframeImage   {
     }
             
     private final PixelBuffer iFrames;
-    
-    
+   
     public IMultiframeImage parent() {return iParent;}
     
     private MultiframeImage(IImageProvider aP) {
@@ -173,7 +172,7 @@ public class MultiframeImage extends IMultiframeImage   {
     
     @Override
     public boolean hasAt(int aFrameNumber) {               
-        return (aFrameNumber >=0 && aFrameNumber < iNumFrames);          
+        return (aFrameNumber >= 0 && aFrameNumber < iNumFrames);          
     }
        
     @Override

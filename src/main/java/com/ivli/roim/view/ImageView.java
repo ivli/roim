@@ -17,6 +17,8 @@
  */
 package com.ivli.roim.view;
 
+
+import com.ivli.roim.core.IFrameProvider;
 import com.ivli.roim.core.IImageView;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -45,6 +47,7 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
@@ -57,8 +60,7 @@ public class ImageView  extends JComponent implements IImageView {
     private static final double DEFAULT_SCALE_X = 1.0;
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
-    
-    
+   
     public enum ZoomFit {       
         NONE,    //no fit        
         VISIBLE, //fit entire image into view      
@@ -85,17 +87,18 @@ public class ImageView  extends JComponent implements IImageView {
          
     private EventListenerList iListeners;
 
-    public static ImageView create(IMultiframeImage aI) {        
-        return create(aI, new ROIManager(aI, new Uid(), false));    
+    public static ImageView create(IMultiframeImage aI, ViewMode aMode) {        
+        return create(aI, aMode, new ROIManager(aI, new Uid(), false));    
     }
         
-    public static ImageView create(IMultiframeImage aI, ROIManager aM) {
+    public static ImageView create(IMultiframeImage aI, ViewMode aMode, ROIManager aM) {
         ImageView ret = new ImageView();
         ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         ret.setFit(ImageView.ZoomFit.VISIBLE);
         ret.setController(new Controller(ret));
         ret.setROIMgr(aM);
         ret.setImage(aI);
+        ret.setViewMode(aMode);
         return ret;    
     }
     
@@ -132,7 +135,136 @@ public class ImageView  extends JComponent implements IImageView {
         addMouseWheelListener(iController);
         addKeyListener(iController);
     }
+    
+    enum VIEWTYPE {
+        DEFAULT, //
+        FRAME, // display single frame of a number 
+        CINE,  // display single frame, can move from first to last
+        RANGE, // display single frame, can move within the range
+        COMPOSITE, // composite frame (a summ of frames within the range)
+        SLICE, // single slice at a number
+        VOLUME // MIP volume
+    }
+
+    public static class ViewMode {
+        public static final ViewMode DEFAULT = new ViewMode(VIEWTYPE.DEFAULT, IFrameProvider.FIRST, IFrameProvider.LAST);
+                
+        public static ViewMode frame(int aFrameNumber) {
+            return new ViewMode(VIEWTYPE.FRAME, aFrameNumber, IFrameProvider.LAST);
+        }
+        
+        public static ViewMode cine() {
+            return new ViewMode(VIEWTYPE.CINE, IFrameProvider.FIRST, IFrameProvider.LAST);
+        }
+        
+        public static ViewMode range(int aFrom, int aTo) {
+            return new ViewMode(VIEWTYPE.RANGE, aFrom, aTo);
+        }
+        
+        public static ViewMode composite(int aSummFrom, int aSummTo) {
+            return new ViewMode(VIEWTYPE.COMPOSITE, aSummFrom, aSummTo);
+        }
+        
+        public static ViewMode slice(int aSliceNumber) {
+            return new ViewMode(VIEWTYPE.FRAME, aSliceNumber, IFrameProvider.LAST);
+        }
+        
+        public static ViewMode volume(int aSliceFrom, int aSliceTo) {
+            return new ViewMode(VIEWTYPE.VOLUME, aSliceFrom, aSliceTo);
+        }
+        
+        public boolean isCompatible(IMultiframeImage aI) {
+           
+            switch (iType) {            
+                case FRAME: 
+                    switch (aI.getImageType()) {
+                        case IMAGE:
+                        case STATIC:
+                        case DYNAMIC:
+                        case GATED:
+                        case WHOLEBODY:
+                            if (aI.hasAt(iFrameFrom))
+                                return true;                   
+                    }                
+                case CINE:  
+                case RANGE:
+                case COMPOSITE:
+                    switch (aI.getImageType()) {                        
+                        case DYNAMIC:
+                        case GATED:     
+                            if (aI.hasAt(iFrameFrom) && aI.hasAt(iFrameTo))
+                                return true;                   
+                    }                
+                
+                case SLICE:    
+                case VOLUME:  
+                    switch (aI.getImageType()) {                        
+                        case VOLUME:
+                        case VOLUME_G:                       
+                            return true;                   
+                    }  
+                case DEFAULT:
+                    return true;
+            }
             
+            return false;
+        }
+        
+        private ViewMode(VIEWTYPE aType, int aF, int aT) {
+            iType = aType;
+            iFrameFrom = aF;
+            iFrameTo = aT;
+        }
+        
+        VIEWTYPE iType;
+        int iFrameFrom;
+        int iFrameTo;
+    }
+    
+    protected ViewMode iMode = ViewMode.DEFAULT;
+    
+    public static final ViewMode DEFAULT_IMAGE_MODE = ViewMode.frame(0);
+    public static final ViewMode DEFAULT_STATIC_IMAGE_MODE = ViewMode.frame(0);
+    public static final ViewMode DEFAULT_DYNAMIC_IMAGE_MODE = ViewMode.cine();
+    public static final ViewMode DEFAULT_VOLUME_IMAGE_MODE = ViewMode.slice(0);
+    public static final ViewMode DEFAULT_COMPOSITE_IMAGE_MODE = ViewMode.composite(IFrameProvider.FIRST, IFrameProvider.LAST);
+    
+    public void setViewMode(ViewMode aM) {
+        if (null != aM && aM.isCompatible(iModel) && aM != DEFAULT_IMAGE_MODE) {
+            iMode = aM;
+        } else {
+            switch (iModel.getImageType()) {
+                case IMAGE:            
+                case STATIC:    
+                case WHOLEBODY:
+                    iMode = DEFAULT_STATIC_IMAGE_MODE; break;
+                case DYNAMIC: 
+                case GATED: 
+                    iMode = DEFAULT_DYNAMIC_IMAGE_MODE; break;
+                case TOMO:
+                case TOMO_G:
+                case VOLUME:
+                case VOLUME_G:
+                    iMode = DEFAULT_VOLUME_IMAGE_MODE; break;
+                //CR/CT
+                case AXIAL:
+                case LOCALIZER:
+                case UNKNOWN:  
+            }
+        } 
+        
+        switch (iMode.iType) {        
+            case DEFAULT:
+            case FRAME:
+            case CINE: 
+            case RANGE: break;
+            case COMPOSITE:
+                setImage(iModel.processor().collapse(TimeSlice.FOREWER)); break;
+            case SLICE:
+            case VOLUME:    
+        }
+    }
+    
     public void setLUT(String aLUT) {         
         iVLUT.setLUT(aLUT);
         invalidateBuffer();
@@ -143,16 +275,15 @@ public class ImageView  extends JComponent implements IImageView {
         //iROIMgr.setView(this);
     }
     
+    @Override
     public void setImage(IMultiframeImage anImage) {                
         iModel = anImage;             
-        iVLUT.setTransform(iModel.getTransform());
-        
-       // if (null != iROIMgr)
-       //     iROIMgr.setView(this);            
-        
-        loadFrame(0);
+        iVLUT.setTransform(iModel.getTransform());  
+        //iMode = 
+        loadFrame(iCurrent);
     }
                  
+    @Override
     public AffineTransform getZoom() {
         return iZoom;
     }    
@@ -280,6 +411,7 @@ public class ImageView  extends JComponent implements IImageView {
                                  wr, true, null);        
     }   
     
+    @Override
     public boolean loadFrame(int aN) {                                
         if (!iModel.hasAt(aN)) {            
             return false;

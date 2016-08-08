@@ -28,7 +28,7 @@ import com.ivli.roim.view.ROIManager;
 public class Roim {
     private IMultiframeImage  iImage;
     private ROIManager iManager;
-    
+         
     public Roim create() {
         Roim ret = new Roim();
 
@@ -36,11 +36,11 @@ public class Roim {
     }
         
     public ImageView createView() {
-        return ImageView.create(iImage, iManager);
+        return ImageView.create(iImage, null, iManager);
     }
     
     
     
-    private Roim(){}
+    private Roim() {}
     
 }

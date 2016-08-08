@@ -69,7 +69,7 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFramePr
 
             @Override
             public ImageFrame next() {
-                return get(_next++);
+                return get(++_next);
             }  
         };
     }

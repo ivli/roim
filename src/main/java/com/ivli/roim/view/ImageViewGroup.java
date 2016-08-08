@@ -45,8 +45,8 @@ public class ImageViewGroup {
         return ret;
     }
     
-    public ImageView createView() {
-        ImageView ret = ImageView.create(iImage, iMgr);
+    public ImageView createView(ImageView.ViewMode aMode) {
+        ImageView ret = ImageView.create(iImage, aMode, iMgr);
         iViews.add(ret);
         return ret;
     }   

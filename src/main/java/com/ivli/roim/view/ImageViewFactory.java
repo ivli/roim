@@ -26,7 +26,7 @@ import com.ivli.roim.core.IMultiframeImage;
  */
 public class ImageViewFactory {
     public static ImageView create(IMultiframeImage aI) {        
-        return ImageView.create(aI);    
+        return ImageView.create(aI, null);    
     }
     
 }
