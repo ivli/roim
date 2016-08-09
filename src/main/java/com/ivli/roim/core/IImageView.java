@@ -20,17 +20,21 @@ package com.ivli.roim.core;
 import com.ivli.roim.view.ROIManager;
 import java.awt.geom.AffineTransform;
 
-
 /**
  *
  * @author likhachev
  */
 public interface IImageView {
+    
     void setImage(IMultiframeImage anImage);
+    
     IMultiframeImage getImage();
+    
     public ImageFrame getFrame();    
     boolean loadFrame(int aN);
+    
     int getFrameNumber();
+    
     void pan(int aX, int aY);
     void zoom(double aStep);
     

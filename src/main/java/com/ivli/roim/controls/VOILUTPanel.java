@@ -55,14 +55,13 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     
     private XYSeries makeHistogram(int aWidth) {  
         if (null == iHist) {
-            HistogramExtractor iHEx = new HistogramExtractor(null);
-            iView.getFrame().extract(iHEx);
-            iHist = iHEx.iHist;
+            ///HistogramExtractor iHEx = new HistogramExtractor(null);
+            iHist = iView.getFrame().processor().histogram(null);//.extract(iHEx);
+            ///iHist = iHEx.iHist;
         }
         
         final String name = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM");
-        XYSeries s = iHist.getSeriesRebinned(name, NO_OF_BINS);
-        return s;
+        return XYSeriesUtilities.convert(name, iHist.rebin(NO_OF_BINS));
     }
     
     @Override

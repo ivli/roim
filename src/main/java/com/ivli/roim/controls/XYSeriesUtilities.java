@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.controls;
 
+import java.util.HashMap;
 import org.jfree.data.xy.XYSeries;
 
 /**
@@ -297,4 +298,15 @@ class XYSeriesUtilities {
         }   
         return aRet;
     }   
+   
+    public static XYSeries convert(final String aName, HashMap<Integer, Integer> aMap){            
+        XYSeries ret = new XYSeries(aName, true, false);
+        
+        aMap.entrySet().stream().forEach((entry) -> { 
+            ret.add((double)entry.getKey(), (double)entry.getValue());
+        });
+                        
+        return ret;
+    }
+        
 }

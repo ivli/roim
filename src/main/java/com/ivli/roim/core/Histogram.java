@@ -18,97 +18,60 @@
 package com.ivli.roim.core;
 
 import java.util.HashMap;
-import org.jfree.data.xy.XYSeries;
 
 /**
  *
  * @author likhachev
  */
-public class Histogram {    
-    HashMap<Integer, Integer> iMap = new HashMap<>();
+public class Histogram extends HashMap<Integer, Integer> {    
+    ///HashMap<Integer, Integer> iMap = new HashMap<>();
    
-    int iMin = Integer.MAX_VALUE;
-    int iMax = Integer.MIN_VALUE;
+    public int iMin = Integer.MAX_VALUE;
+    public int iMax = Integer.MIN_VALUE;    
     
-    /**
-     *
-     * @param aName
-     * @return
-     */
-    public XYSeries getSeries(final String aName){                                           
-        return convert(aName, iMap);
-    }
-      
-    /**
-     *
-     * @param aKey
-     * @return
-     */
-    public Integer get(final Integer aKey) {
-        return iMap.get(aKey);
-    }
-         
-    /**
-     *
-     * @param aKey
-     */
-    public void increment(final Integer aKey) {
-        Integer val = iMap.get(aKey);
-        if (null != val)
-            iMap.put(aKey, ++val);
-        else
-            this.put(aKey, 1);
+    public Histogram() {}
+    
+    public Histogram(int[] aV, int aV0, int aS) {
+        for (int i = 0; i < aV.length; ++i)
+            this.put(aV0+i*aS, aV[i]);    
     }
     
+    public Histogram(int[] aV) {
+        this(aV, 0, 1);  
+    }
+                                 
     /**
      *
      * @param aKey
      * @param aVal
      */
-    public void put(final Integer aKey, final Integer aVal) {
+    public Integer put(final Integer aKey, final Integer aVal) {
         if (aKey > iMax)
             iMax = aKey;
-        else if (aKey < iMin)
+        if (aKey < iMin)
             iMin = aKey;
         
-        iMap.put(aKey, aVal);
+        return super.put(aKey, aVal);
     }
  
+  
     /**
      *
-     * @param aName
-     * @param aMap
-     * @return
-     */
-    protected XYSeries convert(final String aName, HashMap<Integer, Integer> aMap){            
-        XYSeries ret = new XYSeries(aName, true, false);
-        
-        aMap.entrySet().stream().forEach((entry) -> { 
-            ret.add((double)entry.getKey(), (double)entry.getValue());
-        });
-                        
-        return ret;
-    }
-        
-    /**
-     *
-     * @param aName
      * @param aNoOfBins
      * @return
      */
-    public XYSeries getSeriesRebinned(final String aName, final int aNoOfBins) {
-              
-        final int binSize = Math.max(1, (iMax - 0) / aNoOfBins);
+    public Histogram rebin(int aNoOfBins) {              
+        final int binSize = Math.max(1, (iMax-0) / aNoOfBins);
      
-        HashMap<Integer, Integer> reb = new HashMap<>();
+        //HashMap<Integer, Integer> reb = new HashMap<>();
+        Histogram ret = new Histogram();
              
-        for (int i=0; i < aNoOfBins; ++i) {
+        for (int i=0; i<aNoOfBins; ++i) {
             final Integer key = i * binSize; 
             Integer val = get(key);
-            reb.put(key, null != val ? val:0);           
+            ret.put(key, null != val ? val:0);           
         }
         
-        return convert(aName, reb); 
-       
+        return ret;        
     }
 }

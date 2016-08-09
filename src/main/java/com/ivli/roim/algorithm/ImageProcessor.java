@@ -83,8 +83,7 @@ public class ImageProcessor {
     }      
         
     public IMultiframeImage collapse(int aFrom, int aTo) throws IndexOutOfBoundsException
-    {
-        
+    {        
         if (aTo == IFrameProvider.LAST)
             aTo = iImage.getNumFrames() - 1;
         
@@ -105,20 +104,11 @@ public class ImageProcessor {
     } 
     
     public IMultiframeImage collapse(TimeSlice anInterval) {        
-        IMultiframeImage ret = iImage.createCompatibleImage(1);
-        
-        int[] dst = ret.get(0).getPixelData();
-        
-        for (int i = 0; i < iImage.getNumFrames(); ++i) {
-            int []src = iImage.get(i).getPixelData();
-            
-            for (int j = 0; j < dst.length; ++j)
-                dst[j] += src[j];
-        }        
-        return ret;
+        int from = iImage.getTimeSliceVector().frameNumber(anInterval.getFrom());
+        int to = iImage.getTimeSliceVector().frameNumber(anInterval.getTo());        
+        return collapse(from, to);
     }
-    
-    
+        
     public void map(double aKey) {
         for(ImageFrame f:iImage)
             f.processor().map(aKey);

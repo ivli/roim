@@ -17,9 +17,11 @@
  */
 package com.ivli.roim.algorithm;
 
+import com.ivli.roim.core.Histogram;
 import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.ImageFrame;
 import java.awt.Rectangle;
+import java.awt.Shape;
 /**
  *
  * @author likhachev
@@ -156,15 +158,46 @@ public class FrameProcessor {
         return lowerAverage + yFraction * (upperAverage - lowerAverage);
     }
 
-    public double[] histogram(Rectangle aR) {     
-        double [] ret = new double[aR.width];
-
-        for (int i = 0; i < aR.width; ++i)
-            for (int j = aR.y; j < aR.y + aR.height; ++j)
-                ret[i] += iFrame.get(i, j);
+    public Histogram histogram(Shape aR) {             
+        Rectangle r;
+       
+        if (null != aR)
+            r = aR.getBounds(); 
+        else 
+            r = new Rectangle(0, 0, iFrame.getWidth(), iFrame.getHeight());          
+        
+        Histogram ret = new Histogram();
+        
+        for (int i = r.x; i < r.width; ++i) {
+            int v = 0;
+            for (int j = r.y; j < r.y + r.height; ++j) 
+                if (null == aR || aR.contains(i,j))
+                    v += iFrame.get(i, j);
+         
+            ret.put(i, v);
+        }
         
         return ret;
     }
+        
+    public long density(Shape aR) {
+        Rectangle r;
+        
+        if (null != aR)
+            r = aR.getBounds(); 
+        else 
+            r = new Rectangle(0, 0, iFrame.getWidth(), iFrame.getHeight());      
+        
+        long ret = 0;
+        
+        for (int i = r.x; i < r.width; ++i) {
+            int v = 0;
+            for (int j = r.y; j < r.y + r.height; ++j) 
+                if (null == aR || aR.contains(i,j))
+                    ret += iFrame.get(i, j);    
+        }        
+        return ret;    
+    } 
     
     public static final double NORMAL_KEY = 0.18;
     public static final double LOW_KEY    = 0.09;

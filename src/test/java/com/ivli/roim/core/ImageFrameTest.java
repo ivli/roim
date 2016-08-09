@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.core;
 
-import java.awt.image.BufferedImage;
+import com.ivli.roim.algorithm.FrameProcessor;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -35,7 +35,11 @@ public class ImageFrameTest {
     static final int[] SIZES_X = {0, 1, 2, 32, 1024, 2000,   20, 1024};
     static final int[] SIZES_Y = {0, 1, 2, 32, 1024, 2000, 1000,  512};
     
+    ImageFrame f1;
+
+
     public ImageFrameTest() {
+
     }
     
     @BeforeClass
@@ -47,13 +51,13 @@ public class ImageFrameTest {
     }
     
     @Before
-    public void setUp() {
-        
-        
+    public void setUp() {        
+       f1 = new ImageFrame(TestImage32x32.ROWS, TestImage32x32.COLS, TestImage32x32.BUFFER);
     }
     
     @After
     public void tearDown() {
+        f1 = null;
     }
 
     /**
@@ -70,7 +74,7 @@ public class ImageFrameTest {
             int []test = new int[size_x*size_y];
             int []t2 = new int[size_x*size_y];
 
-            for (int i=0;i<test.length; ++i)
+            for (int i=0; i<test.length; ++i)
                 test[i] = (int)(Math.random()*100);
 
             System.arraycopy(test, 0, t2, 0, size_x*size_y);
@@ -271,7 +275,7 @@ public class ImageFrameTest {
     @Test
     public void testSetPixel() {
         System.out.println("setPixel");
-       for (int k = 0; k < SIZES_X.length; ++k) {
+        for (int k = 0; k < SIZES_X.length; ++k) {
             int size_x = SIZES_X[k];
             int size_y = SIZES_Y[k];
         
@@ -360,6 +364,64 @@ public class ImageFrameTest {
 
             assertArrayEquals(test, t2);
         }
+    }
+
+    /**
+     * Test of getRange method, of class ImageFrame.
+     */
+    @Test
+    public void testGetRange() {
+        System.out.println("getRange");
+        ImageFrame instance = f1;
+        Range expResult = new Range(TestImage32x32.MIN, TestImage32x32.MAX);
+        Range result = instance.getRange();
+        assert(expResult.equals(result));        
+    }
+
+    /**
+     * Test of getIden method, of class ImageFrame.
+     */
+    @Test
+    public void testGetIden() {
+        System.out.println("getIden");
+        ImageFrame instance = f1;
+        double expResult = TestImage32x32.TOTAL;
+        double result = instance.getIden();
+        assertEquals(expResult, result, 0.0);       
+    }
+
+    /**
+     * Test of getPixelData method, of class ImageFrame.
+     */
+    @Test
+    public void testGetPixelData() {
+        System.out.println("getPixelData");
+        ImageFrame instance = f1;
+        int[] expResult = TestImage32x32.BUFFER;
+        int[] result = instance.getPixelData();
+        assertArrayEquals(expResult, result);        
+    }
+
+    /**
+     * Test of extract method, of class ImageFrame.
+     */
+    @Test
+    public void testExtract() {
+        System.out.println("extract");
+       
+    }
+
+    /**
+     * Test of processor method, of class ImageFrame.
+     */
+    @Test
+    public void testProcessor() {
+        System.out.println("processor");
+        ImageFrame instance = f1;
+        ///FrameProcessor expResult = null;
+        FrameProcessor result = instance.processor();
+        assertNotNull(result);
+       
     }
   
 }

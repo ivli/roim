@@ -47,4 +47,8 @@ public class Range implements java.io.Serializable {
     public double percentsOf(double aVal) {
         return aVal / range();
     }
+    
+    public boolean equals(Range aO) {
+        return super.equals(aO) || (aO.iMin == iMin && aO.iMax == iMax);
+    }
 }
