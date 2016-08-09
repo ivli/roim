@@ -20,6 +20,7 @@ package com.ivli.roim.algorithm;
 import com.ivli.roim.core.Histogram;
 import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.Measure;
 import java.awt.Rectangle;
 import java.awt.Shape;
 /**
@@ -159,8 +160,7 @@ public class FrameProcessor {
     }
 
     public Histogram histogram(Shape aR) {             
-        Rectangle r;
-       
+        final Rectangle r;       
         if (null != aR)
             r = aR.getBounds(); 
         else 
@@ -168,7 +168,7 @@ public class FrameProcessor {
         
         Histogram ret = new Histogram();
         
-        for (int i = r.x; i < r.width; ++i) {
+        for (int i = r.x; i < r.x + r.width; ++i) {
             int v = 0;
             for (int j = r.y; j < r.y + r.height; ++j) 
                 if (null == aR || aR.contains(i,j))
@@ -180,24 +180,31 @@ public class FrameProcessor {
         return ret;
     }
         
-    public long density(Shape aR) {
-        Rectangle r;
+    public long density(Shape aR) {        
+        return (long)measure(aR).getIden();    
+    } 
+    
+    public Measure measure(Shape aR) {        
+        final Rectangle r;        
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        long den = 0L;
         
         if (null != aR)
             r = aR.getBounds(); 
         else 
             r = new Rectangle(0, 0, iFrame.getWidth(), iFrame.getHeight());      
-        
-        long ret = 0;
-        
-        for (int i = r.x; i < r.width; ++i) {
-            int v = 0;
+              
+        for (int i = r.x; i < r.x + r.width; ++i) {           
             for (int j = r.y; j < r.y + r.height; ++j) 
-                if (null == aR || aR.contains(i,j))
-                    ret += iFrame.get(i, j);    
+                if (null == aR || aR.contains(i,j)) {
+                    final int v = iFrame.get(i, j);  
+                    den += v;  
+                    if (v > max) max = v;
+                    if (v < min) min = v;
+                }
         }        
-        return ret;    
-    } 
+        return new Measure(min, max, den);    
+    }
     
     public static final double NORMAL_KEY = 0.18;
     public static final double LOW_KEY    = 0.09;

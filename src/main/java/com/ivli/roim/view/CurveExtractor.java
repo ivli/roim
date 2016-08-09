@@ -34,8 +34,8 @@ public class CurveExtractor {
         SeriesCollection c = new SeriesCollection();
        
         Series density = new Series(Measurement.DENSITY);
-        Series mins    = new Series(Measurement.MINPIXEL);
-        Series maxs    = new Series(Measurement.MAXPIXEL);
+        Series mins = new Series(Measurement.MINPIXEL);
+        Series maxs = new Series(Measurement.MAXPIXEL);
       
         for (int n = 0; n < anImage.getNumFrames(); ++n) {  
             Shape roi = aRoi.getShape();            
@@ -46,7 +46,7 @@ public class CurveExtractor {
                    roi = AffineTransform.getTranslateInstance(off.getX(), off.getY()).createTransformedShape(roi);               
             }
          
-            final Measure m = measure(anImage.get(n), roi); 
+            final Measure m = anImage.get(n).processor().measure(roi); 
             density.add(m.getIden());   
             mins.add(m.getMin());
             maxs.add(m.getMax());
@@ -69,10 +69,9 @@ public class CurveExtractor {
         
         final TimeSliceVector tsv = anImage.getTimeSliceVector();
         final long smd = tsv.getSmallestDuration();
+        Shape roi = aRoi.getShape(); 
         
         for (int n = 0; n < anImage.getNumFrames(); ++n) {  
-            Shape roi = aRoi.getShape();            
-             
             if (null != anOff) {
                 final FrameOffset off = anOff.get(n);
                 if (off != FrameOffset.ZERO)
@@ -84,7 +83,7 @@ public class CurveExtractor {
              */
             final double norm = (double)tsv.getFrameDuration(n) / (double)smd;
             
-            final Measure m = measure(anImage.get(n), roi); 
+            final Measure m = anImage.get(n).processor().measure(roi); 
             density.add(m.getIden() / norm );   
             mins.add(m.getMin() / norm);
             maxs.add(m.getMax() / norm);
@@ -95,27 +94,5 @@ public class CurveExtractor {
         c.addSeries(maxs);
         
         return c;
-    }    
-   
-    private static Measure measure(final ImageFrame aF, final Shape aShape) throws ArrayIndexOutOfBoundsException {          
-        double min = Double.MAX_VALUE; 
-        double max = Double.MIN_VALUE;
-        double sum = .0;
-        
-        final Rectangle bnds = aShape.getBounds();
-        
-        for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
-            for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) 
-                if (aShape.contains(i, j)) {                   
-                    final int temp = aF.get(i, j);
-
-                    if (temp > max) 
-                        max = temp;
-                    else if (temp < min) 
-                        min = temp;
-                    sum += temp;
-                }
-
-        return new Measure(min, max, sum);
-    }   
+    }       
 }

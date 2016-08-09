@@ -140,11 +140,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         
         iIden = Double.NaN;
     }
-    
-    public void extract(Extractor aEx) {
-        aEx.apply(this);
-    }        
-    
+      
     public FrameProcessor processor(){
         return new FrameProcessor(this);
     }

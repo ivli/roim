@@ -22,7 +22,6 @@ import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import com.ivli.roim.core.Extractor;
 import com.ivli.roim.core.ImageFrame;
 
 import org.apache.logging.log4j.LogManager;

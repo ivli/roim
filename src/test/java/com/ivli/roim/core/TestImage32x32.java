@@ -85,12 +85,12 @@ public class TestImage32x32 {
     public final static Rectangle NORD_WEST_ONE_PIXEL_EAST = new Rectangle(0,1,16,16);
     public final static int       NORD_WEST_ONE_PIXEL_EAST_TOTAL = 4096;  
           
-    public final static Rectangle NORD_WEST_ONE_PIXEL_SOUTH_EAST = new Rectangle(0,0,16,16);
+    public final static Rectangle NORD_WEST_ONE_PIXEL_SOUTH_EAST = new Rectangle(1,1,16,16);
     public final static int       NORD_WEST_ONE_PIXEL_SOUTH_EAST_TOTAL = 4352;  //1,1 -16, 16
      
     public final static Rectangle SOUTH_EAST = new Rectangle(16,16,16,16);
     public final static int SOUTH_EAST_TOTAL = 12032; 
     
     public final static Rectangle ATLANTIC = new Rectangle(10,10,10,10);
-    public final static int ATLANTIC_TOTAL = 2800;        
+    public final static int ATLANTIC_TOTAL = 2900;        
 }

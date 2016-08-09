@@ -169,9 +169,12 @@ public class FrameProcessorTest {
         FrameProcessor instance = f1.processor();
        
         assertEquals(TestImage32x32.TOTAL, instance.density(null));
-        assertEquals(TestImage32x32.NORD_HALF_TOTAL, instance.density(TestImage32x32.NORD_HALF));
+        assertEquals(TestImage32x32.NORD_HALF_TOTAL,  instance.density(TestImage32x32.NORD_HALF));
         assertEquals(TestImage32x32.SOUTH_HALF_TOTAL, instance.density(TestImage32x32.SOUTH_HALF));
-        //assertEquals(TestImage32x32.TOTAL, instance.density(null));
+        assertEquals(TestImage32x32.ATLANTIC_TOTAL,   instance.density(TestImage32x32.ATLANTIC));
+        assertEquals(TestImage32x32.NORD_WEST_ONE_PIXEL_SOUTH_TOTAL, instance.density(TestImage32x32.NORD_WEST_ONE_PIXEL_SOUTH));
+        assertEquals(TestImage32x32.NORD_WEST_ONE_PIXEL_SOUTH_EAST_TOTAL, instance.density(TestImage32x32.NORD_WEST_ONE_PIXEL_SOUTH_EAST));
+        
         //assertEquals(TestImage32x32.TOTAL, instance.density(null));
         //assertEquals(TestImage32x32.TOTAL, instance.density(null));
         
