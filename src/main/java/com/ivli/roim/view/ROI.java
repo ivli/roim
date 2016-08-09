@@ -54,8 +54,15 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         return iAreaInPixels;
     }      
     
-    public Series getSeries(Measurement anId) {          
-        return iSeries.get(anId);
+    public Series getSeries(Measurement anId) { 
+        if (anId != Measurement.AREAINPIXELS) 
+            return iSeries.get(anId);
+        else {
+            Series ret = new Series(Measurement.AREAINPIXELS);
+            ret.add((double)getAreaInPixels());
+            return ret;
+        }
+        
     }
     
     public Color getColor() {

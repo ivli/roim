@@ -26,18 +26,11 @@ import com.ivli.roim.view.ROI;
  * @author likhachev
  */
 public enum Filter {        
-    DENSITY((ROI aR) -> aR.getSeries(Measurement.DENSITY), Measurement.DENSITY),
-
-    AREAINPIXELS((ROI aR) -> new Series(Measurement.AREAINPIXELS, aR.getAreaInPixels()), Measurement.AREAINPIXELS),
-
-    MINPIXEL((ROI aR) -> aR.getSeries(Measurement.MINPIXEL), Measurement.MINPIXEL),                 
-
-    MAXPIXEL((ROI aR) -> aR.getSeries(Measurement.MINPIXEL), Measurement.MAXPIXEL);//,                 
-
-    //AREAINLOCALUNITS((ROI aR, OverlayManager aM) -> aR.getAreaInPixels() * aM.getImage().getPixelSpacing().getX(), 
-    //                 Measurement.AREAINLOCALUNITS);
-
-
+    DENSITY(Measurement.DENSITY, (ROI aR) -> aR.getSeries(Measurement.DENSITY)),
+    AREAINPIXELS(Measurement.AREAINPIXELS, (ROI aR) -> aR.getSeries(Measurement.AREAINPIXELS)),
+    MINPIXEL(Measurement.MINPIXEL, (ROI aR) -> aR.getSeries(Measurement.MINPIXEL)),                 
+    MAXPIXEL(Measurement.MAXPIXEL, (ROI aR) -> aR.getSeries(Measurement.MINPIXEL)),                 
+    AREAINLOCALUNITS(Measurement.AREAINLOCALUNITS, (ROI aR) -> aR.getSeries(Measurement.AREAINLOCALUNITS));   
     /*
      * to be continued
      */
@@ -45,7 +38,7 @@ public enum Filter {
     protected final Measurement iM;
     protected final IFilter     iF;
 
-    private Filter(IFilter aF, Measurement aM) {                         
+    private Filter(Measurement aM, IFilter aF) {                         
         iM = aM;
         iF = aF;
     }

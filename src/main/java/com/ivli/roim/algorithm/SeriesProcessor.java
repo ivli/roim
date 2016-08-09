@@ -62,11 +62,11 @@ public class SeriesProcessor {
     }
     
     static Series add(Series aLhs, Series aRhs) {
-        if (aLhs.getNumFrames() != aRhs.getNumFrames())
+        if (aLhs.size() != aRhs.size())
             return null;
         Series ret = new Series(aLhs.getId());
         
-        for (int i=0; i<aLhs.getNumFrames(); ++i)
+        for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) + aRhs.get(i));
         
         return ret;    
@@ -74,17 +74,17 @@ public class SeriesProcessor {
     
     static Series add(Series aLhs, double aRhs) {       
         Series ret = new Series(aLhs.getId());        
-        for (int i=0; i<aLhs.getNumFrames(); ++i)
+        for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) + aRhs);        
         return ret;    
     }
     
     static Series sub(Series aLhs, Series aRhs) {
-        if (aLhs.getNumFrames() != aRhs.getNumFrames())
+        if (aLhs.size() != aRhs.size())
             return null;
         Series ret = new Series(aLhs.getId());
         
-        for (int i=0; i<aLhs.getNumFrames(); ++i)
+        for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) - aRhs.get(i));
         
         return ret;    
@@ -93,18 +93,18 @@ public class SeriesProcessor {
     static Series sub(Series aLhs, double aRhs) {       
         Series ret = new Series(aLhs.getId());
         
-        for (int i=0; i<aLhs.getNumFrames(); ++i)
+        for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) - aRhs);
         
         return ret;    
     }
     
     static Series mul(Series aLhs, Series aRhs) {
-        if (aLhs.getNumFrames() != aRhs.getNumFrames())
+        if (aLhs.size() != aRhs.size())
             return null;
         Series ret = new Series(aLhs.getId());
         
-        for (int i=0; i<aLhs.getNumFrames(); ++i)
+        for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) * aRhs.get(i));
         
         return ret;    
@@ -113,18 +113,18 @@ public class SeriesProcessor {
     static Series mul(Series aLhs, double aRhs) {        
         Series ret = new Series(aLhs.getId());
         
-        for (int i=0; i<aLhs.getNumFrames(); ++i)
+        for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) * aRhs);
         
         return ret;    
     }
     
     static Series div(Series aLhs, Series aRhs) {
-        if (aLhs.getNumFrames() != aRhs.getNumFrames())
+        if (aLhs.size() != aRhs.size())
             return null;
         Series ret = new Series(aLhs.getId());
         
-        for (int i=0; i<aLhs.getNumFrames(); ++i)
+        for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) / aRhs.get(i));
         
         return ret;    
@@ -133,7 +133,7 @@ public class SeriesProcessor {
     static Series div(Series aLhs, double aRhs) {        
         Series ret = new Series(aLhs.getId());
         
-        for (int i=0; i<aLhs.getNumFrames(); ++i)
+        for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) / aRhs);
         
         return ret;    

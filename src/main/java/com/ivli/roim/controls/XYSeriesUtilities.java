@@ -17,15 +17,14 @@
  */
 package com.ivli.roim.controls;
 
-import java.util.HashMap;
 import org.jfree.data.xy.XYSeries;
 
 /**
  *
  * @author likhachev
  */
-class XYSeriesUtilities {
-     
+class XYSeriesUtilities {  
+    
     static double getDomainValueOfMinimum(XYSeries aS) {
         final double [][] v = aS.toArray();
         double valY = Double.MAX_VALUE;
@@ -147,8 +146,7 @@ class XYSeriesUtilities {
         
         int start;
         int end;
-        
-                           
+                                   
         for (int i = ndx1; i < ndx2; ++i) {
             if (v[1][i] < valY) {
                 valY = v[1][i];
@@ -299,7 +297,7 @@ class XYSeriesUtilities {
         return aRet;
     }   
    
-    public static XYSeries convert(final String aName, HashMap<Integer, Integer> aMap){            
+    public static XYSeries convert(final String aName, java.util.HashMap<Integer, Integer> aMap){            
         XYSeries ret = new XYSeries(aName, true, false);
         
         aMap.entrySet().stream().forEach((entry) -> { 

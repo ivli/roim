@@ -5,9 +5,8 @@
  */
 package com.ivli.roim.controls;
 
-import java.awt.BorderLayout;
+
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -30,8 +30,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.AxisLocation;
-import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.EntityCollection;
 import org.jfree.chart.entity.PlotEntity;
@@ -40,7 +38,6 @@ import org.jfree.chart.event.MarkerChangeEvent;
 import org.jfree.chart.event.MarkerChangeListener;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -90,9 +87,7 @@ public class ChartControl extends ChartPanel {
         }
     }
       
-    ///////////////////////////////////////
-    
-       
+    ///////////////////////////////////////  
     ChartControl(JFreeChart aChart) {
         super(aChart);
     }
@@ -134,7 +129,18 @@ public class ChartControl extends ChartPanel {
         }
         return null;
     }
-            
+  
+    Collection getDomainMarkersForSeries(XYSeries aS) {
+        final XYPlot plot = getChart().getXYPlot();
+        
+        Collection<ValueMarker> all = plot.getDomainMarkers(Layer.FOREGROUND);
+        if (null == all) //fucking JFreeChart it returns null instead of returning an empty Collection            
+            return new ArrayList<>();
+        else
+            return all.stream().filter((Object aI) -> aI instanceof DomainMarker && ((DomainMarker)aI).getXYSeries().equals(aS))
+                           .collect(Collectors.toList());   
+    }
+    
     private ValueMarker findMarker(MouseEvent e) {
         final XYPlot plot = getChart().getXYPlot();
         
@@ -142,8 +148,7 @@ public class ChartControl extends ChartPanel {
         
         if (null == mark || mark.isEmpty())
             return null;
-      
-        
+  
         Point2D p = translateScreenToJava2D(e.getPoint());
         Rectangle2D plotArea = getScreenDataArea();
         
@@ -223,8 +228,8 @@ public class ChartControl extends ChartPanel {
                 
             case FIT_LEFT:   
                  goWest = true;
-            case FIT_RIGHT: {                      
-                double x1 = iMarker.getValue();                
+            case FIT_RIGHT: {                                      
+                
                 List<DomainMarker> list = new ArrayList<>(plot.getDomainMarkers(Layer.FOREGROUND) );
 
                 if (list.isEmpty()) {//TODO: error message box at least 1 marker is necessary                    
@@ -374,7 +379,7 @@ public class ChartControl extends ChartPanel {
             if (iSeries instanceof XYSeries) {               
                 mnu.add(MENUS.ADD.makeItem(this)); 
                 mnu.add(MENUS.EXPORT_CSV.makeItem(this));
-                mnu.add(MENUS.DELETE_ALL.makeItem(this));                         
+                mnu.add(MENUS.DELETE_ALL.makeItem(this));                 
             } else if (iMarker instanceof DomainMarker)  {                
                 JMenu mi1 = new JMenu(MENUS.MOVE_TO_MIN.iText);                             
                 mi1.add(MENUS.MOVE_TO_MIN.makeItem(this));
@@ -388,10 +393,14 @@ public class ChartControl extends ChartPanel {
                 
                 mnu.add(mi2); 
                 mnu.add(MENUS.MOVE_TO_MEDIAN.makeItem(this));
-                JMenu mi3 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.FIT"));                
-                mi3.add(MENUS.FIT_LEFT.makeItem(this));
-                mi3.add(MENUS.FIT_RIGHT.makeItem(this));
-                mnu.add(mi3);                 
+                
+                //if (!getDomainMarkersForSeries(iSeries).isEmpty()) {
+                    JMenu mi3 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.FIT"));                
+                    mi3.add(MENUS.FIT_LEFT.makeItem(this));
+                    mi3.add(MENUS.FIT_RIGHT.makeItem(this));                    
+                    mnu.add(mi3);                 
+                //}
+                
                 mnu.add(MENUS.DELETE.makeItem(this));                             
             }
             

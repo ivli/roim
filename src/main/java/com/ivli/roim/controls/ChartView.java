@@ -98,9 +98,9 @@ public class ChartView extends JPanel implements ROIChangeListener {
 
                     IMultiframeImage img = mgr.getImage();
                     
-                    assert(c.getNumFrames() == img.getTimeSliceVector().getNumFrames());
+                    assert(c.size() == img.getTimeSliceVector().getNumFrames());
 
-                    for (int n = 0; n < c.getNumFrames(); ++n)                                       
+                    for (int n = 0; n < c.size(); ++n)                                       
                         s.add(img.getTimeSliceVector().getSlices().get(n) / 1000., c.get(n));
                   
                     ((XYSeriesCollection)iPlot.getDataset()).addSeries(s); 
@@ -118,7 +118,7 @@ public class ChartView extends JPanel implements ROIChangeListener {
                     XYSeries s = col.getSeries(ndx); 
                     s.clear();              
                     
-                    for (int n = 0; n < c.getNumFrames(); ++n) {
+                    for (int n = 0; n < c.size(); ++n) {
                         long dur = mgr.getImage().getTimeSliceVector().getSlices().get(n) / 1000;
                         s.add(dur, c.get(n));
                     }                   

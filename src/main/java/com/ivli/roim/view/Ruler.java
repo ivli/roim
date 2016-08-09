@@ -65,7 +65,7 @@ public class Ruler extends ScreenObject {
         return new IOperation() {
             Ruler iR = Ruler.this;
             @Override
-            public IOperand value() {
+            public IOperand value() {                
                 return new Operand(new Series(Measurement.DISTANCE, iR.iDistance));
             }
             @Override

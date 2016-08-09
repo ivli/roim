@@ -1,51 +1,33 @@
-/*
- * 
- */
 package com.ivli.roim.core;
 
-import com.ivli.roim.algorithm.SeriesProcessor;
 import java.util.ArrayList;
-        
+import com.ivli.roim.algorithm.SeriesProcessor;
+
 /**
  *
  * @author likhachev
  */
-public class Series {     
+public class Series extends ArrayList<Double> {     
     private final Measurement iId; 
-    private final ArrayList<Double> iData;
-    
     
     public Series(Measurement anId) {        
-        iId = anId; 
-        iData = new ArrayList<> ();
+        iId = anId;        
     }
     
-    public Series(Measurement anId, double aVal) {        
-        this(anId);
-        iData.add(aVal);
-    }
-    
-    public SeriesProcessor processor() {
-        return new SeriesProcessor(this);
-    }
-    
-    public boolean isScalar() {
-        return iData.size() == 1;
+    public Series(Measurement anId, Double aV) {        
+        iId = anId;    
+        add(aV);
     }
     
     public Measurement getId() {
         return iId;
+    }  
+    
+    public boolean isScalar() {
+        return size() == 1;
     }
     
-    public int getNumFrames() {
-        return iData.size();
-    }
-    
-    public double get(int anI) {
-        return iData.get(anI);
-    }
-    
-    public void add(double aV) {
-        iData.add(aV);
-    } 
+    public SeriesProcessor processor() {
+        return new SeriesProcessor(this);
+    }    
 }
