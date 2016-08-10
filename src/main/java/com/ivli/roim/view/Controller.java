@@ -130,7 +130,7 @@ class Controller implements IController {
             case MOUSE_ACTION_LIST: return new BaseActionItem(aX, aY) {
                 public void DoAction(int aX, int aY) {
                     //try {                            
-                        if (iControlled.loadFrame(iX + (int)Math.signum(aX))) {
+                        if (iControlled.setFrameNumber(iX + (int)Math.signum(aX))) {
                             iX += aX; 
                             iControlled.repaint();
                         }

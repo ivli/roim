@@ -56,7 +56,8 @@ import com.ivli.roim.events.WindowChangeListener;
 import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
 
-public class ImageView  extends JComponent implements IImageView {
+public class ImageView extends JComponent implements IImageView {
+
     private static final double DEFAULT_SCALE_X = 1.0;
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
@@ -280,7 +281,7 @@ public class ImageView  extends JComponent implements IImageView {
         iModel = anImage;             
         iVLUT.setTransform(iModel.getTransform());  
         //iMode = 
-        loadFrame(iCurrent);
+        setFrameNumber(iCurrent);
     }
                  
     @Override
@@ -412,7 +413,7 @@ public class ImageView  extends JComponent implements IImageView {
     }   
     
     @Override
-    public boolean loadFrame(int aN) {                                
+    public boolean setFrameNumber(int aN) {                                
         if (!iModel.hasAt(aN)) {            
             return false;
         } else {             

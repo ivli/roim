@@ -18,6 +18,7 @@
 package com.ivli.roim.core;
 
 import com.ivli.roim.view.ROIManager;
+
 import java.awt.geom.AffineTransform;
 
 /**
@@ -26,27 +27,29 @@ import java.awt.geom.AffineTransform;
  */
 public interface IImageView {
     
-    void setImage(IMultiframeImage anImage);
+    public void setImage(IMultiframeImage anImage);
+    public IMultiframeImage getImage();
     
-    IMultiframeImage getImage();
+    public ImageFrame getFrame();
+    public int getFrameNumber();
+    public boolean setFrameNumber(int aN);
     
-    public ImageFrame getFrame();    
-    boolean loadFrame(int aN);
+    public ROIManager getROIMgr();
     
-    int getFrameNumber();
+    public void setWindow(Window aW);
+    public Window getWindow();
     
-    void pan(int aX, int aY);
-    void zoom(double aStep);
+    public void pan(int aX, int aY);
+    public void zoom(double aStep);
     
     public AffineTransform getZoom();
+    public void setInterpolationMethod(Object aM);
     
-    void setWindow(Window aW);
-    Window getWindow();
+    public void reset();
+
+    public AffineTransform virtualToScreen();
+    public AffineTransform screenToVirtual();
     
-    void repaint();
-    ROIManager getROIMgr();
-    public void reset();   
-    
-    AffineTransform virtualToScreen();
-    AffineTransform screenToVirtual();
+    public void repaint();
 }
+

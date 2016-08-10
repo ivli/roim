@@ -161,7 +161,7 @@ public class GridImageView extends ImageView {
     }
     
     @Override
-    public boolean loadFrame(int aN) {                                
+    public boolean setFrameNumber(int aN) {                                
         if (!iModel.hasAt(aN)) {            
             return false;
         } else {        

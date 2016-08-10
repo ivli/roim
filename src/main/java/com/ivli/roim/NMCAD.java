@@ -96,13 +96,11 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jLabel4 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jSplitPane1 = new javax.swing.JSplitPane();
-        jSplitPane2 = new javax.swing.JSplitPane();
+        jPanel5 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -177,8 +175,9 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
 
         jSplitPane1.setDividerLocation(400);
 
-        jSplitPane2.setDividerLocation(400);
-        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel5.setLayout(new java.awt.BorderLayout());
+        jSplitPane1.setRightComponent(jPanel5);
 
         jTabbedPane1.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -198,17 +197,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jPanel4.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
 
-        jSplitPane2.setTopComponent(jTabbedPane1);
-
-        jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel6.setLayout(new java.awt.BorderLayout());
-        jSplitPane2.setRightComponent(jPanel6);
-
-        jSplitPane1.setLeftComponent(jSplitPane2);
-
-        jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel5.setLayout(new java.awt.BorderLayout());
-        jSplitPane1.setRightComponent(jPanel5);
+        jSplitPane1.setTopComponent(jTabbedPane1);
 
         jMenu1.setText(bundle.getString("NMCAD.jMenu1.text")); // NOI18N
 
@@ -415,30 +404,23 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jPanel1.removeAll();
         jPanel3.removeAll();
         jPanel4.removeAll();
-        jPanel5.removeAll();
-        jPanel6.removeAll();
+        jPanel5.removeAll();       
         
         jPanel1.repaint();
         jPanel3.repaint();
         jPanel4.repaint();
-        jPanel5.repaint();
-        jPanel6.repaint();
+        jPanel5.repaint();        
         
         IMultiframeImage mi = ImageFactory.create(aFileName);               
         
         iGroup = ImageViewGroup.create(mi);
        
-        iImage = iGroup.createView(ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);        
-        //iImage.setPreferredSize(jPanel1.getSize());        
+        iImage = iGroup.createView(ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iImage, BorderLayout.CENTER);
         jPanel1.add(LUTControl.create(iImage), BorderLayout.LINE_END);
         jPanel1.validate(); 
-        
-        /* */
-        //ImageProcessor ip = mi.processor();
-        ///IMultiframeImage sum = mi.processor().collapse(null);
-        ///sum.processor().map(0.18);
+                
         ImageView sumView = iGroup.createView(ImageView.DEFAULT_COMPOSITE_IMAGE_MODE);//ImageView.create(sum, root);
         jPanel3.add(sumView, BorderLayout.CENTER);
         jPanel3.add(LUTControl.create(sumView), BorderLayout.LINE_END);
@@ -449,10 +431,10 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
             iChart = ChartView.create();                    
             iChart.setPreferredSize(jPanel5.getPreferredSize());
             jPanel5.add(iChart);      
-            iGroup.addROIChangeListener(iChart);   
-            //sumView.getROIMgr().addROIChangeListener(iChart);             
+            iGroup.addROIChangeListener(iChart);                            
         } 
-                
+        
+        /*        
         if (mi.getImageType() != ImageType.STATIC) {     
             iGrid = GridImageView.create(mi, 4, 4, null) ;          
             iGrid.setPreferredSize(jPanel6.getSize());                  
@@ -460,7 +442,8 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
             jPanel6.add(iGrid, BorderLayout.CENTER);   
             jPanel6.add(LUTControl.create(iGrid), BorderLayout.LINE_END);   
         }        
-               
+        */
+        
         iImage.addFrameChangeListener(this);        
         iImage.addWindowChangeListener(this);
         iImage.addZoomChangeListener(this);
@@ -538,7 +521,9 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        iImage.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        IImageView v = (IImageView)jTabbedPane1.getSelectedComponent();
+        
+        v.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
@@ -720,10 +705,8 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 
