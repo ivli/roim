@@ -346,7 +346,8 @@ public class ChartControl extends ChartPanel {
         }
         
         public void seriesChanged(SeriesChangeEvent sce) {
-            LOG.debug("Series changed!!!");
+            //LOG.debug("Series changed!!!");
+            // it seems I do not need it since marker change would initiate interpolation update 
         }
     }
             
