@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.core.Filter;
 import com.ivli.roim.calc.*;
+import com.ivli.roim.core.IImageView;
 import com.ivli.roim.view.ImageView;
 
 import org.apache.logging.log4j.LogManager;
@@ -37,13 +38,13 @@ public class CalcPanel extends javax.swing.JPanel {
     private final ROITableModel iLeftModel;
     private final ROITableModel iRightModel;
     
-    private final ImageView iView;    
+    private final IImageView iView;    
     private BinaryOp iOp;
     private Filter iF = Filter.DENSITY; 
     /**
      * Creates new form CalcPanel
      */
-    public CalcPanel(ImageView aView) {        
+    public CalcPanel(IImageView aView) {        
         iLeftModel  = new ROITableModel(aView.getROIMgr().getObjects(), false);
         iRightModel = new ROITableModel(aView.getROIMgr().getObjects(), false);
         iView = aView;

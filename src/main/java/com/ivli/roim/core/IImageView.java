@@ -39,6 +39,16 @@ public interface IImageView {
     public void setWindow(Window aW);
     public Window getWindow();
     
+    public enum ZoomFit {       
+        NONE,    //no fit        
+        VISIBLE, //fit entire image into view      
+        WIDTH,   //width      
+        HEIGHT,  //height      
+        PIXELS;  //fit to display image pixel to pixel no matter how big it is
+    }
+        
+    public void setFit(ZoomFit aW);
+    
     public void pan(int aX, int aY);
     public void zoom(double aStep);
     

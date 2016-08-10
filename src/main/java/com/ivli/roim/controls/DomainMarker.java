@@ -10,6 +10,8 @@ import java.awt.Color;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jfree.chart.plot.ValueMarker;
+import org.jfree.data.general.SeriesChangeEvent;
+import org.jfree.data.general.SeriesChangeListener;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.RectangleInsets;
@@ -18,15 +20,17 @@ import org.jfree.ui.RectangleInsets;
  *
  * @author likhachev
  */
-public class DomainMarker extends ValueMarker {        
+public class DomainMarker extends ValueMarker implements SeriesChangeListener {        
     private final XYSeries iSeries;
 
     private ValueMarker iLink;
     
     private static final String LABEL_FORMAT = "%.2f"; //NOI18N
     
-    public enum MOVETO{
-        LEFT, RIGHT, GLOBAL;    
+    public enum MOVETO {
+        LEFT, 
+        RIGHT, 
+        GLOBAL;    
     }
     
     public DomainMarker(XYSeries aSet) {
@@ -36,6 +40,7 @@ public class DomainMarker extends ValueMarker {
     public DomainMarker(double aV, XYSeries aS) {
         super(aV);                        
         iSeries = aS;       
+        iSeries.addChangeListener(this);
         setLabel(String.format(LABEL_FORMAT, aV));
         setLabelAnchor(RectangleAnchor.CENTER);
         setLabelOffset(RectangleInsets.ZERO_INSETS);
@@ -61,6 +66,10 @@ public class DomainMarker extends ValueMarker {
     
     public ValueMarker getLinkedMarker()  {
         return iLink;
+    }
+        
+    public void seriesChanged(SeriesChangeEvent sce) {        
+        setValue(getValue());
     }
     
     public void moveToMaximum(MOVETO aM) {
@@ -97,9 +106,7 @@ public class DomainMarker extends ValueMarker {
         else
            LOG.info("!!!Domain value not found");
     }
-    
-    
-    
+  
     public void moveToMedian(MOVETO aM) {
         double medY = (iSeries.getMaxY() - iSeries.getMinY()) / 2.;
         double val = XYSeriesUtilities.getNearestX(iSeries, medY);

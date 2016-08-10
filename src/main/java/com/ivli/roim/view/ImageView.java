@@ -57,19 +57,10 @@ import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
 
 public class ImageView extends JComponent implements IImageView {
-
     private static final double DEFAULT_SCALE_X = 1.0;
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
-   
-    public enum ZoomFit {       
-        NONE,    //no fit        
-        VISIBLE, //fit entire image into view      
-        WIDTH,   //width      
-        HEIGHT,  //height      
-        PIXELS;  //fit to display image pixel to pixel no matter how big it is
-    }
-    
+       
     protected ZoomFit iFit;             
     protected Object iInterpolation;   
     

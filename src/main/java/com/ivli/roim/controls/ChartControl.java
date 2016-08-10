@@ -38,6 +38,8 @@ import org.jfree.chart.event.MarkerChangeEvent;
 import org.jfree.chart.event.MarkerChangeListener;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.general.SeriesChangeEvent;
+import org.jfree.data.general.SeriesChangeListener;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -175,7 +177,7 @@ public class ChartControl extends ChartPanel {
         super.actionPerformed(e);
         final XYPlot plot = getChart().getXYPlot();
         
-        boolean goWest = false;
+        FITDIR fitDir = FITDIR.FIT_EAST;
          
         switch (MENUS.translate(e.getActionCommand())) {
             case ADD:               
@@ -195,11 +197,8 @@ public class ChartControl extends ChartPanel {
                         pwr.flush(); 
                         pwr.close();
                     } catch (IOException ex) {
-                        
-                    } finally {
-                       
-                    
-                    }
+                        LOG.throwing(ex);
+                    } 
                 } break;
                 
             case MOVE_TO_MAX:                                              
@@ -224,48 +223,30 @@ public class ChartControl extends ChartPanel {
                 plot.getDomainMarkers(Layer.FOREGROUND).clear();
                 iInterpolations.stream().forEach((i) -> {i.close();});           
                 iInterpolations.clear();
-                break;
-                
+                break;                
             case FIT_LEFT:   
-                 goWest = true;
-            case FIT_RIGHT: {                                      
+                 fitDir = FITDIR.FIT_WEST;
+            case FIT_RIGHT: {                                                    
+                Collection mrak = plot.getDomainMarkers(Layer.FOREGROUND);
                 
-                List<DomainMarker> list = new ArrayList<>(plot.getDomainMarkers(Layer.FOREGROUND) );
-
-                if (list.isEmpty()) {//TODO: error message box at least 1 marker is necessary                    
+                if (mrak.isEmpty()) {                  
                     return;                    
-                } else if (list.size() == 1) {
-                    LOG.info(String.format("Fine got just one Marker interpolate till an edge"));                                    
-                    iInterpolations.add(new Interpolation((DomainMarker)list.get(0), goWest));                
-                } else {                  
-                    Collections.sort(list, (DomainMarker aLhs, DomainMarker aRhs) -> {
-                                            if (aLhs == aRhs || aLhs.equals(aRhs))
-                                                return 0;
-                                            if (aLhs.getValue() > aRhs.getValue())
-                                                return 1;
-                                            else
-                                                return -1;
-                                        }
-                                    );                
-
-                    DomainMarker mark2 = null;
-
-                    for(int i = 0; i < list.size(); ++i) {
-                        if (list.get(i) == iMarker) {   
-                            int ndx = goWest ? i-1 : i+1;
-                            if (ndx >= 0 && ndx < list.size())                            
-                                mark2 = list.get(ndx);                        
-                            break;
-                        }                        
-                    }
-
-                    if (null != mark2) {
-                        LOG.debug("Marker found: {}", mark2.getValue());                                    
+                } else if (mrak.size() == 1) { // Fine, got just one Marker interpolate till the last/first point                                                        
+                    iInterpolations.add(new Interpolation((DomainMarker)mrak.iterator().next(), fitDir));                
+                } else {// got plenty ( more than 1 :-) Markers thus range them and find east/west adjacent one to interpolate inbetween    
+                    List<DomainMarker> list = 
+                        (new ArrayList<DomainMarker>(mrak)).stream()
+                                .sorted((DomainMarker aLhs, DomainMarker aRhs) -> {                                                
+                                    return (int)(aLhs.getValue() - aRhs.getValue());})                                                                                            
+                                .collect(Collectors.toList());                
+                    
+                    int ndx = list.indexOf(iMarker);                                            
+                    DomainMarker mark2 = list.get(fitDir == FITDIR.FIT_WEST ? --ndx : ++ndx);                        
+                    
+                    if (null != mark2)                                                      
                         iInterpolations.add(new Interpolation((DomainMarker)iMarker, mark2));    
-                    } else {
-                        LOG.debug("No marker in this direction found so interpolate till the edge");                                    
-                        iInterpolations.add(new Interpolation((DomainMarker)iMarker, goWest));
-                    }
+                     else                                                             
+                        iInterpolations.add(new Interpolation((DomainMarker)iMarker, fitDir));
                 }
             } break;                                
             default:
@@ -278,22 +259,47 @@ public class ChartControl extends ChartPanel {
     List<Interpolation> iInterpolations = new ArrayList<>();
     static int iInterpolationID = 0;
     
-    final class Interpolation implements MarkerChangeListener, AutoCloseable {
+    static enum FITDIR {
+            FIT_WEST,
+            FIT_EAST,            
+            FIT_RANGE
+    }
+    
+    final class Interpolation implements MarkerChangeListener, SeriesChangeListener, AutoCloseable {
         DomainMarker iLhs; 
         DomainMarker iRhs;
         XYSeries     iSeries;                
            
         boolean iExp = true;
-        
-        Interpolation(DomainMarker aLhs, boolean aGoWest) {
-            this(aLhs, new DomainMarker(aLhs.getXYSeries().getDataItem(aGoWest ? 0 : aLhs.getXYSeries().getItemCount() - 1).getXValue(), aLhs.getXYSeries()));
+        FITDIR iFitDir = FITDIR.FIT_RANGE; 
+                        
+        Interpolation(DomainMarker aLhs, FITDIR aDir) {
+            ///this(aLhs, new DomainMarker(aLhs.getXYSeries().getDataItem(aGoWest ? 0 : aLhs.getXYSeries().getItemCount() - 1).getXValue(), aLhs.getXYSeries()));
+            iLhs = aLhs; 
+            iRhs = null;
+            iFitDir = aDir;
+            
+            final double finval = iLhs.getXYSeries().getDataItem(iFitDir == FITDIR.FIT_WEST ? 0 : iLhs.getXYSeries().getItemCount() - 1).getXValue();
+                        
+            iSeries = new XYSeries(String.format(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INTERPOLATION%D"), iInterpolationID++));
+            iLhs.getXYSeries().addChangeListener(this);
+                    
+            XYSeriesUtilities.fit(iLhs.getXYSeries(), iLhs.getValue(), finval, iExp, iSeries);
+            
+            XYSeriesCollection ds = new XYSeriesCollection();
+            ds.addSeries(iSeries);
+            getChart().getXYPlot().setDataset(1, ds);
+            
+            aLhs.addChangeListener(this);
+            ///aRhs.addChangeListener(this);   
         }
                 
         Interpolation(DomainMarker aLhs, DomainMarker aRhs) {
             iLhs = aLhs; 
             iRhs = aRhs;
             iSeries = new XYSeries(String.format(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INTERPOLATION%D"), iInterpolationID++));
-            
+            iLhs.getXYSeries().addChangeListener(this);
+                    
             XYSeriesUtilities.fit(iLhs.getXYSeries(), iLhs.getValue(), iRhs.getValue(), iExp, iSeries);
             
             XYSeriesCollection ds = new XYSeriesCollection();
@@ -326,16 +332,21 @@ public class ChartControl extends ChartPanel {
             iSeries.clear();        
             double left;
             double right;
+            
             if (mce.getMarker() == iLhs){
                 left = ((DomainMarker)mce.getMarker()).getValue();
-                right = iRhs.getValue();
+                right = (null != iRhs) ? iRhs.getValue() : iLhs.getXYSeries().getDataItem(iFitDir == FITDIR.FIT_WEST ? 0 : iLhs.getXYSeries().getItemCount() - 1).getXValue();;
             } else if (mce.getMarker() == iRhs) {
                 left = iLhs.getValue();
                 right = ((DomainMarker)mce.getMarker()).getValue();
             } else 
                 throw new IllegalArgumentException();
             
-            XYSeriesUtilities.fit(iLhs.getXYSeries(), left, right, iExp, iSeries);              
+            iSeries = XYSeriesUtilities.fit(iLhs.getXYSeries(), left, right, iExp, iSeries);              
+        }
+        
+        public void seriesChanged(SeriesChangeEvent sce) {
+            LOG.debug("Series changed!!!");
         }
     }
             

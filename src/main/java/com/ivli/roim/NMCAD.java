@@ -41,16 +41,7 @@ import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
-import com.ivli.roim.events.FrameChangeEvent;
-import com.ivli.roim.events.FrameChangeListener;
-import com.ivli.roim.events.ProgressEvent;
-import com.ivli.roim.events.ProgressListener;
-import com.ivli.roim.events.ROIChangeEvent;
-import com.ivli.roim.events.ROIChangeListener;
-import com.ivli.roim.events.WindowChangeEvent;
-import com.ivli.roim.events.WindowChangeListener;
-import com.ivli.roim.events.ZoomChangeEvent;
-import com.ivli.roim.events.ZoomChangeListener;
+import com.ivli.roim.events.*;
 import com.ivli.roim.view.ImageViewGroup;
 
 import org.apache.logging.log4j.LogManager;
@@ -58,8 +49,8 @@ import org.apache.logging.log4j.Logger;
 
 
 public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
-    private ImageView  iImage;
-    private ImageView  iGrid;    
+    //private ImageView  iImage;
+    //private ImageView  iGrid;    
     private ChartView  iChart; 
     private ImageViewGroup iGroup;
     
@@ -415,10 +406,10 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         
         iGroup = ImageViewGroup.create(mi);
        
-        iImage = iGroup.createView(ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
+        ImageView image = iGroup.createView(ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
         jPanel1.setLayout(new BorderLayout());
-        jPanel1.add(iImage, BorderLayout.CENTER);
-        jPanel1.add(LUTControl.create(iImage), BorderLayout.LINE_END);
+        jPanel1.add(image, BorderLayout.CENTER);
+        jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
         jPanel1.validate(); 
                 
         ImageView sumView = iGroup.createView(ImageView.DEFAULT_COMPOSITE_IMAGE_MODE);//ImageView.create(sum, root);
@@ -444,14 +435,11 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         }        
         */
         
-        iImage.addFrameChangeListener(this);        
-        iImage.addWindowChangeListener(this);
-        iImage.addZoomChangeListener(this);
+        image.addFrameChangeListener(this);        
+        image.addWindowChangeListener(this);
+        image.addZoomChangeListener(this);
         
-        iGroup.addROIChangeListener(this);   
-        //sumView.getROIMgr().addROIChangeListener(this); 
-        
-        
+        iGroup.addROIChangeListener(this);       
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -459,27 +447,21 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }//GEN-LAST:event_jMenuItem2ActionPerformed
           
     private void jMenu2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu2ComponentShown
-        // TODO add your handling code here:
-        if (null == iImage) {
-        
-        } else {
-        
-        }
+     
     }//GEN-LAST:event_jMenu2ComponentShown
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        if(null != iImage) {
-            iImage.reset();        
-        }
+        if(null != jTabbedPane1.getSelectedComponent()) 
+            ((IImageView)jTabbedPane1.getSelectedComponent()).reset();                
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         
-        ImageView view = null;
+        IImageView view = null;
                
         switch(jTabbedPane1.getSelectedIndex()) {
             case 0:
-                view = iImage; break;
+                view = ((IImageView)jTabbedPane1.getSelectedComponent()); break;
             case 2:
               //  pane = iOff; break;
             default: break;    
@@ -498,10 +480,10 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        switch(jTabbedPane1.getSelectedIndex()) {
+        /*switch(jTabbedPane1.getSelectedIndex()) {
             case 0:
                 if (null != iImage) {
-                    /*
+                    
                     VOILUTPanel panel = new VOILUTPanel(iLut, iImage);
                     JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
 
@@ -510,7 +492,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
                     dialog.pack();
                     dialog.setResizable(false);
                     dialog.setVisible(true);
-                    */
+                    
                 } break;
             case 2:
                 //if (null != iOff) 
@@ -518,40 +500,40 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
                 break;
             default: break;    
         }
+*/
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        IImageView v = (IImageView)jTabbedPane1.getSelectedComponent();
-        
-        v.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+       // IImageView v = ((IImageView)jTabbedPane1.getSelectedComponent());        
+        ((IImageView)jTabbedPane1.getSelectedComponent()).setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
-        iImage.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        ((IImageView)jTabbedPane1.getSelectedComponent()).setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
-        iImage.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        ((IImageView)jTabbedPane1.getSelectedComponent()).setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        iImage.setFit(ImageView.ZoomFit.HEIGHT);        
+        ((IImageView)jTabbedPane1.getSelectedComponent()).setFit(ImageView.ZoomFit.HEIGHT);        
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
     private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
-        iImage.setFit(ImageView.ZoomFit.VISIBLE);
+        ((IImageView)jTabbedPane1.getSelectedComponent()).setFit(ImageView.ZoomFit.VISIBLE);
     }//GEN-LAST:event_jMenuItem15ActionPerformed
 
     private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem13ActionPerformed
-        iImage.setFit(ImageView.ZoomFit.WIDTH);
+        ((IImageView)jTabbedPane1.getSelectedComponent()).setFit(IImageView.ZoomFit.WIDTH);
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        ImageView view = null;
+        IImageView view = null;
                
         switch(jTabbedPane1.getSelectedIndex()) {
             case 0:
-                view = iImage; break;
+                view = ((IImageView)jTabbedPane1.getSelectedComponent()); break;
             case 2:
                 //pane = iOff; break;
             default: break;    
@@ -575,7 +557,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }//GEN-LAST:event_jTabbedPane1ComponentShown
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        iImage.setFit(ImageView.ZoomFit.PIXELS);
+        ((IImageView)jTabbedPane1.getSelectedComponent()).setFit(IImageView.ZoomFit.PIXELS);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed

@@ -112,16 +112,20 @@ public class ChartView extends JPanel implements ROIChangeListener {
                     col.removeSeries(ndx);                
                 } break;    
                 
-                case MOVED: {  //fall-through                                                                      
+                case MOVED: {//fall-through                                                                      
                     final int ndx = col.indexOf(aE.getObject().getName());    
                     Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                     XYSeries s = col.getSeries(ndx); 
+                    s.setNotify(false);
                     s.clear();              
-                    
+                   
                     for (int n = 0; n < c.size(); ++n) {
                         long dur = mgr.getImage().getTimeSliceVector().getSlices().get(n) / 1000;
                         s.add(dur, c.get(n));
-                    }                   
+                    }    
+                    s.setNotify(true);
+                    //s.fireSeriesChanged();
+                    
                 } break;
                 case CHANGED: //TODO: fall through
                 case CHANGEDCOLOR: {

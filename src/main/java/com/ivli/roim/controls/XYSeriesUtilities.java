@@ -57,12 +57,14 @@ class XYSeriesUtilities {
      * returns neares X index   
      */
     static int getNearestIndex(final double []aS, double aX) {        
+        if (aS.length > 0) {
         for (int i = 0; i < aS.length - 1; ++i) {        
             if (aX == aS[i] || aX > aS[i] && aX < aS[i+1] || aX < aS[i] && aX > aS[i+1]) 
                 return i;          
         }
         if (aX == aS[aS.length-1])
             return aS.length-1;
+        }
         return -1;
     } 
     /*
@@ -248,7 +250,7 @@ class XYSeriesUtilities {
      * in the case aFrom and/or aTo lie outside the series then method returns extrapolation 
      */        
     public static XYSeries fit(XYSeries aS, double aFrom, double aTo, boolean aExp, XYSeries aRet) {            
-        if (null == aS)
+        if (null == aS || aS.isEmpty())
             throw new IllegalArgumentException("XYSeries cannot be null");
         
         if (aFrom == aTo)
