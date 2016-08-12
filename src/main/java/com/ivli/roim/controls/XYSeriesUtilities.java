@@ -197,9 +197,9 @@ class XYSeriesUtilities {
         return Double.NaN;
     }
     
-     @FunctionalInterface
+    @FunctionalInterface
     interface F {
-        abstract double f(double x);         
+        abstract double f(double anArg);         
     }       
     
     static final F leastsquares(double[] x, double[]y, final int n1, final int n2, boolean exp) {        
