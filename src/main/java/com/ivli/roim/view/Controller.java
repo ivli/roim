@@ -17,13 +17,11 @@
  */
 package com.ivli.roim.view;
 
-import com.ivli.roim.core.IImageView;
-import com.ivli.roim.core.Window;
+
 import java.awt.Graphics2D;
 import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Point;
-
 import java.awt.geom.RectangularShape;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Ellipse2D;
@@ -36,7 +34,9 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JMenu;        
+import javax.swing.JMenu;     
+
+import com.ivli.roim.core.Window;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

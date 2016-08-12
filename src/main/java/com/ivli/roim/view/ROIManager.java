@@ -27,7 +27,6 @@ import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.calc.BinaryOp;
 import com.ivli.roim.calc.ConcreteOperand;
 import com.ivli.roim.calc.IOperand;
-import com.ivli.roim.core.IImageView;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;

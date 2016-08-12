@@ -15,8 +15,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.core;
+package com.ivli.roim.view;
 
+import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.Window;
 import com.ivli.roim.view.ROIManager;
 
 import java.awt.geom.AffineTransform;
@@ -25,8 +28,7 @@ import java.awt.geom.AffineTransform;
  *
  * @author likhachev
  */
-public interface IImageView {
-    
+public interface IImageView {    
     public void setImage(IMultiframeImage anImage);
     public IMultiframeImage getImage();
     
@@ -34,6 +36,7 @@ public interface IImageView {
     public int getFrameNumber();
     public boolean setFrameNumber(int aN);
     
+    public void setROIMgr(ROIManager aR);
     public ROIManager getROIMgr();
     
     public void setWindow(Window aW);
@@ -46,7 +49,12 @@ public interface IImageView {
         HEIGHT,  //height      
         PIXELS;  //fit to display image pixel to pixel no matter how big it is
     }
-        
+    
+    interface bufferMaker {
+        int getVisualWidth();
+        int getVisualHeight();    
+    }
+                
     public void setFit(ZoomFit aW);
     
     public void pan(int aX, int aY);

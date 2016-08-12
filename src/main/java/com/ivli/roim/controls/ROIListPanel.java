@@ -6,7 +6,7 @@
 package com.ivli.roim.controls;
 
 
-import com.ivli.roim.core.IImageView;
+import com.ivli.roim.view.ROIManager;
 import javax.swing.SwingUtilities;
 import java.awt.Window;
 import javax.swing.JPanel;
@@ -16,15 +16,12 @@ import javax.swing.event.TableModelEvent;
  *
  * @author likhachev
  */
-public class ROIListPanel extends JPanel {        
-    private final IImageView iView;               
-    private final ROITableModel iModel;
-    
+public class ROIListPanel extends JPanel {                           
+    private final ROITableModel iModel;    
     private int bi = 0;
         
-    public ROIListPanel(IImageView aView) {        
-        iView = aView;
-        iModel = new ROITableModel(aView.getROIMgr().getObjects(), true);       
+    public ROIListPanel(ROIManager aMgr) {               
+        iModel = new ROITableModel(aMgr.getObjects(), true);      
         
         initComponents();
      

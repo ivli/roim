@@ -50,7 +50,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private final ImageView iView;
     
     private XYSeriesCollection makeLUTCurve(int aWidth) {                    
-        return new XYSeriesCollection(iLUT.getCurve().getSeriesRebinned(iCurveName, NO_OF_BINS, iView.getRange()));
+        return new XYSeriesCollection(XYSeriesUtilities.getSeriesRebinned(iLUT.getCurve(), iCurveName, NO_OF_BINS, iView.getRange()));
     }
     
     private XYSeries makeHistogram(int aWidth) {  

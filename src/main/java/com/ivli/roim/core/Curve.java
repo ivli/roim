@@ -17,26 +17,16 @@
  */
 package com.ivli.roim.core;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import org.jfree.data.xy.XYSeries;
-
 /**
  *
  * @author likhachev
  */
-public class Curve /*extends Histogram*/ {
-    
-    private ArrayList<Integer> iList = new ArrayList<>();
+public class Curve extends java.util.ArrayList<Integer> {    
     private int iMinX = Integer.MAX_VALUE;
     private int iMaxX = Integer.MIN_VALUE;
     private int iMinY = Integer.MAX_VALUE;
     private int iMaxY = Integer.MIN_VALUE;
-    
-    public Integer get(final Integer aNdx) {
-        return iList.get(aNdx);
-    }
-    
+           
     public void put(final Integer aNdx, final Integer aVal) {
         if (aNdx < iMinX)
             iMinX = aNdx;
@@ -47,21 +37,12 @@ public class Curve /*extends Histogram*/ {
             iMinY = aNdx;
         if (aVal > iMaxY)
             iMaxY = aVal;
-        iList.add(aNdx, aVal);
+        
+        super.add(aNdx, aVal);
     }
     
-    public XYSeries getSeriesRebinned(final String aName, int aNoOfBins, Range aR) {     
-  
-        Range r = null != aR ? aR: new Range(iMinX, iMaxX);                
-        final int binSize = Math.max(1, (int)r.range() / aNoOfBins);
-     
-        XYSeries ret = new XYSeries(aName, true, false);
-        for (int i = (int)r.getMin(); i < r.getMax(); i += binSize) {    
-            Integer val = get(i);
-            ret.add(i, val);           
-        }
-        
-        return ret; 
-    }
+    public Range getRangeX() {return new Range(iMinX, iMaxX);}
+    public Range getRangeY() {return new Range(iMinY, iMaxY);}
+   
 
 }

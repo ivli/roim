@@ -24,8 +24,6 @@ import java.util.HashMap;
  * @author likhachev
  */
 public class Histogram extends HashMap<Integer, Integer> {    
-    ///HashMap<Integer, Integer> iMap = new HashMap<>();
-   
     public int iMin = Integer.MAX_VALUE;
     public int iMax = Integer.MIN_VALUE;    
     

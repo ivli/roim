@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class ImageViewGroup {    
     IMultiframeImage     iImage;
     ROIManager             iMgr;
-    ArrayList<ImageView> iViews;
+    ArrayList<IImageView> iViews;
     final Uid              iUid;
     
     ImageViewGroup(IMultiframeImage anImage) {
@@ -40,6 +40,10 @@ public class ImageViewGroup {
         iMgr = new ROIManager(iImage, iUid, iImage.getImageType() == ImageType.STATIC);        
     }
     
+    public ROIManager getROIMgr() {
+        return iMgr;
+    }
+    
     public static ImageViewGroup create(IMultiframeImage anImage) {
         ImageViewGroup ret = new ImageViewGroup(anImage);        
         return ret;
@@ -47,6 +51,12 @@ public class ImageViewGroup {
     
     public ImageView createView(ImageView.ViewMode aMode) {
         ImageView ret = ImageView.create(iImage, aMode, iMgr);
+        iViews.add(ret);
+        return ret;
+    }   
+    
+    public ImageView createGridView() {
+        ImageView ret = GridImageView.create(iImage, 4, 4, iMgr);
         iViews.add(ret);
         return ret;
     }   

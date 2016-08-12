@@ -345,9 +345,8 @@ public class ChartControl extends ChartPanel {
             iSeries = XYSeriesUtilities.fit(iLhs.getXYSeries(), left, right, iExp, iSeries);              
         }
         
-        public void seriesChanged(SeriesChangeEvent sce) {
-            //LOG.debug("Series changed!!!");
-            // it seems I do not need it since marker change would initiate interpolation update 
+        public void seriesChanged(SeriesChangeEvent sce) {           
+            // it seems there's nothing to get done since marker change would fire an update of interpolation 
         }
     }
             

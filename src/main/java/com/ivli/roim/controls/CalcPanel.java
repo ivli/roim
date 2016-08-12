@@ -24,8 +24,8 @@ import javax.swing.event.ListSelectionEvent;
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.core.Filter;
 import com.ivli.roim.calc.*;
-import com.ivli.roim.core.IImageView;
-import com.ivli.roim.view.ImageView;
+import com.ivli.roim.view.IImageView;
+import com.ivli.roim.view.ROIManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,16 +38,17 @@ public class CalcPanel extends javax.swing.JPanel {
     private final ROITableModel iLeftModel;
     private final ROITableModel iRightModel;
     
-    private final IImageView iView;    
+    private final ROIManager iMgr;    
     private BinaryOp iOp;
     private Filter iF = Filter.DENSITY; 
     /**
      * Creates new form CalcPanel
      */
-    public CalcPanel(IImageView aView) {        
-        iLeftModel  = new ROITableModel(aView.getROIMgr().getObjects(), false);
-        iRightModel = new ROITableModel(aView.getROIMgr().getObjects(), false);
-        iView = aView;
+    public CalcPanel(ROIManager aMgr) {      
+        iMgr = aMgr;
+        iLeftModel  = new ROITableModel(iMgr.getObjects(), false);
+        iRightModel = new ROITableModel(iMgr.getObjects(), false);
+        //iView = aView;
         initComponents();
         
         iLeftModel.attach(jTable1);
@@ -80,12 +81,12 @@ public class CalcPanel extends javax.swing.JPanel {
             final ROI iLhs = (ROI)jTable1.getValueAt(jTable1.getSelectedRow(), 0);
             final ROI iRhs = (ROI)jTable2.getValueAt(jTable2.getSelectedRow(), 0);                
             iF = Filter.getFilter((String)jComboBox2.getSelectedItem());
-            iOp = new BinaryOp(new ConcreteOperand(iLhs, iF, iView.getROIMgr()), 
-                                new ConcreteOperand(iRhs, iF, iView.getROIMgr()), 
+            iOp = new BinaryOp(new ConcreteOperand(iLhs, iF, iMgr), 
+                                new ConcreteOperand(iRhs, iF, iMgr), 
                                     (String)jComboBox1.getSelectedItem());
             
                 //!!!!!TODO            
-            jTextField2.setText(iF.getMeasurement().format(iOp.value().value().get(iView.getFrameNumber())));   
+            //jTextField2.setText(iF.getMeasurement().format(iOp.value().value().get(iView.getFrameNumber())));   
             
             return true;
         }
@@ -218,12 +219,12 @@ public class CalcPanel extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         SwingUtilities.getWindowAncestor(this).setVisible(false);
-        iView.repaint();
+        //iView.repaint();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        iView.getROIMgr().createAnnotation(iOp);
-        iView.repaint();
+        iMgr.createAnnotation(iOp);
+        //iView.repaint();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed

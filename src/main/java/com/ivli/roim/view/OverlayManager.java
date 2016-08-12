@@ -18,7 +18,6 @@
 package com.ivli.roim.view;
 
 
-import com.ivli.roim.core.IImageView;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.events.OverlayChangeEvent;

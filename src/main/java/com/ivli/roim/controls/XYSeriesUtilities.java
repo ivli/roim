@@ -17,6 +17,8 @@
  */
 package com.ivli.roim.controls;
 
+import com.ivli.roim.core.Curve;
+import com.ivli.roim.core.Range;
 import org.jfree.data.xy.XYSeries;
 
 /**
@@ -307,6 +309,19 @@ class XYSeriesUtilities {
         });
                         
         return ret;
+    }
+ 
+    public static XYSeries getSeriesRebinned(Curve aC, final String aName, int aNoOfBins, Range aR) {     
+        Range r = null != aR ? aR: aC.getRangeX();                
+        final int binSize = Math.max(1, (int)r.range() / aNoOfBins);
+     
+        XYSeries ret = new XYSeries(aName, true, false);
+        for (int i = (int)r.getMin(); i < r.getMax(); i += binSize) {    
+            Integer val = aC.get(i);
+            ret.add(i, val);           
+        }
+        
+        return ret; 
     }
         
 }

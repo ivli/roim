@@ -29,38 +29,37 @@ import javax.swing.JDialog;
 import javax.swing.UIManager;
 import javax.swing.JFrame;
 import com.ivli.roim.view.ImageView;
-import com.ivli.roim.view.GridImageView;
 import com.ivli.roim.controls.AboutDialog;
 import com.ivli.roim.controls.CalcPanel;
 import com.ivli.roim.controls.ChartView;
 import com.ivli.roim.controls.FileOpenDialog;
 import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.controls.ROIListPanel;
-import com.ivli.roim.core.IImageView;
+import com.ivli.roim.view.IImageView;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
 import com.ivli.roim.events.*;
 import com.ivli.roim.view.ImageViewGroup;
+import javax.swing.JPanel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
 public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
-    //private ImageView  iImage;
-    //private ImageView  iGrid;    
+   
     private ChartView  iChart; 
     private ImageViewGroup iGroup;
     
     /**/
-    private static final void addjustLAF() {
+    private static final void adjustLAF() {
         if (Locale.getDefault().equals(new Locale("ru", "RU"))) { //NOI18N
-            /*  add locale to JFileChooser */            
-            UIManager.put("ColorChooser.okText", "Выбрать");
+            /*  add locale to JColorChooser */            
+            UIManager.put("ColorChooser.okText",     "Выбрать");
             UIManager.put("ColorChooser.cancelText", "Отменить");
-            UIManager.put("ColorChooser.resetText", "Сброс");            
+            UIManager.put("ColorChooser.resetText",  "Сброс");            
         }
     }
     
@@ -80,6 +79,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -138,7 +138,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 140, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 161, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -345,16 +345,16 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSplitPane1)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
+                .addGap(1, 1, 1)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
 
         pack();
@@ -412,11 +412,16 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
         jPanel1.validate(); 
                 
-        ImageView sumView = iGroup.createView(ImageView.DEFAULT_COMPOSITE_IMAGE_MODE);//ImageView.create(sum, root);
+        ImageView sumView = iGroup.createView(ImageView.DEFAULT_COMPOSITE_IMAGE_MODE); //ImageView.create(sum, root);
         jPanel3.add(sumView, BorderLayout.CENTER);
         jPanel3.add(LUTControl.create(sumView), BorderLayout.LINE_END);
         jPanel3.validate(); 
-       
+       /**/
+        ImageView gridView = iGroup.createGridView();//ImageView.create(sum, root);
+        jPanel4.add(gridView, BorderLayout.CENTER);
+        jPanel4.add(LUTControl.create(gridView), BorderLayout.LINE_END);
+        jPanel4.validate(); 
+        
         //CHART        
         if (mi.getImageType() == ImageType.DYNAMIC) {
             iChart = ChartView.create();                    
@@ -456,27 +461,14 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        
-        IImageView view = null;
-               
-        switch(jTabbedPane1.getSelectedIndex()) {
-            case 0:
-                view = ((IImageView)jTabbedPane1.getSelectedComponent()); break;
-            case 2:
-              //  pane = iOff; break;
-            default: break;    
-        }
-                
-        if (null != view) {
-            ROIListPanel panel = new ROIListPanel(view);
-            JDialog dialog = new JDialog(this, "ROI manager", Dialog.ModalityType.APPLICATION_MODAL);
-            dialog.setContentPane(panel);
-            dialog.validate();
-            dialog.pack();
-            dialog.setResizable(true);
-            dialog.setVisible(true);
-            repaint();
-        }
+        ROIListPanel panel = new ROIListPanel(iGroup.getROIMgr());
+        JDialog dialog = new JDialog(this, "ROI manager", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setContentPane(panel);
+        dialog.validate();
+        dialog.pack();
+        dialog.setResizable(true);
+        dialog.setVisible(true);
+        repaint();   
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
@@ -505,50 +497,38 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
        // IImageView v = ((IImageView)jTabbedPane1.getSelectedComponent());        
-        ((IImageView)jTabbedPane1.getSelectedComponent()).setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        ((ImageView)((JPanel)jTabbedPane1.getSelectedComponent()).getComponent(0)).setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
-        ((IImageView)jTabbedPane1.getSelectedComponent()).setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        ((ImageView)((JPanel)jTabbedPane1.getSelectedComponent()).getComponent(0)).setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
-        ((IImageView)jTabbedPane1.getSelectedComponent()).setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        ((ImageView)((JPanel)jTabbedPane1.getSelectedComponent()).getComponent(0)).setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     }//GEN-LAST:event_jMenuItem12ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        ((IImageView)jTabbedPane1.getSelectedComponent()).setFit(ImageView.ZoomFit.HEIGHT);        
+        ((ImageView)((JPanel)jTabbedPane1.getSelectedComponent()).getComponent(0)).setFit(ImageView.ZoomFit.HEIGHT);        
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
     private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
-        ((IImageView)jTabbedPane1.getSelectedComponent()).setFit(ImageView.ZoomFit.VISIBLE);
+        ((ImageView)((JPanel)jTabbedPane1.getSelectedComponent()).getComponent(0)).setFit(ImageView.ZoomFit.VISIBLE);
     }//GEN-LAST:event_jMenuItem15ActionPerformed
 
     private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem13ActionPerformed
-        ((IImageView)jTabbedPane1.getSelectedComponent()).setFit(IImageView.ZoomFit.WIDTH);
+        ((ImageView)((JPanel)jTabbedPane1.getSelectedComponent()).getComponent(0)).setFit(IImageView.ZoomFit.WIDTH);
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        IImageView view = null;
-               
-        switch(jTabbedPane1.getSelectedIndex()) {
-            case 0:
-                view = ((IImageView)jTabbedPane1.getSelectedComponent()); break;
-            case 2:
-                //pane = iOff; break;
-            default: break;    
-        }
-                
-        if (null != view) {
-            CalcPanel panel = new CalcPanel(view);
-            JDialog dialog = new JDialog(this, Dialog.ModalityType.MODELESS);
-            dialog.setContentPane(panel);
-            dialog.validate();
-            dialog.pack();
-            dialog.setResizable(true);
-            dialog.setVisible(true);
-            repaint();
-        }
+        CalcPanel panel = new CalcPanel(iGroup.getROIMgr());
+        JDialog dialog = new JDialog(this, Dialog.ModalityType.MODELESS);
+        dialog.setContentPane(panel);
+        dialog.validate();
+        dialog.pack();
+        dialog.setResizable(true);
+        dialog.setVisible(true);
+        repaint();      
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void jTabbedPane1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jTabbedPane1ComponentShown
@@ -557,7 +537,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }//GEN-LAST:event_jTabbedPane1ComponentShown
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        ((IImageView)jTabbedPane1.getSelectedComponent()).setFit(IImageView.ZoomFit.PIXELS);
+        ((ImageView)((JPanel)jTabbedPane1.getSelectedComponent()).getComponent(0)).setFit(IImageView.ZoomFit.PIXELS);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
@@ -593,7 +573,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
             LOG.error(ex);
         }
                
-        addjustLAF();
+        adjustLAF();
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -656,6 +636,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

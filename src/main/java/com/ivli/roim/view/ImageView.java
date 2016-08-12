@@ -18,8 +18,8 @@
 package com.ivli.roim.view;
 
 
+import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.IFrameProvider;
-import com.ivli.roim.core.IImageView;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -47,7 +47,6 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
@@ -67,7 +66,7 @@ public class ImageView extends JComponent implements IImageView {
     protected Point iOrigin;              
     protected AffineTransform iZoom;    
            
-    protected ROIManager iROIMgr;
+    protected ROIManager iMgr;
     protected VOILut iVLUT;
    
     protected int iCurrent;
@@ -165,8 +164,7 @@ public class ImageView extends JComponent implements IImageView {
             return new ViewMode(VIEWTYPE.VOLUME, aSliceFrom, aSliceTo);
         }
         
-        public boolean isCompatible(IMultiframeImage aI) {
-           
+        public boolean isCompatible(IMultiframeImage aI) {           
             switch (iType) {            
                 case FRAME: 
                     switch (aI.getImageType()) {
@@ -188,7 +186,7 @@ public class ImageView extends JComponent implements IImageView {
                                 return true;                   
                     }                
                 
-                case SLICE:    
+                case SLICE:  ///break;  
                 case VOLUME:  
                     switch (aI.getImageType()) {                        
                         case VOLUME:
@@ -218,8 +216,13 @@ public class ImageView extends JComponent implements IImageView {
     public static final ViewMode DEFAULT_IMAGE_MODE = ViewMode.frame(0);
     public static final ViewMode DEFAULT_STATIC_IMAGE_MODE = ViewMode.frame(0);
     public static final ViewMode DEFAULT_DYNAMIC_IMAGE_MODE = ViewMode.cine();
-    public static final ViewMode DEFAULT_VOLUME_IMAGE_MODE = ViewMode.slice(0);
+    public static final ViewMode DEFAULT_TOMO_IMAGE_MODE = ViewMode.slice(0);
+    public static final ViewMode DEFAULT_VOLUME_IMAGE_MODE = ViewMode.volume(0, -1);
     public static final ViewMode DEFAULT_COMPOSITE_IMAGE_MODE = ViewMode.composite(IFrameProvider.FIRST, IFrameProvider.LAST);
+    
+    public static final ViewMode DEFAULT_DUNAMIC_SECOND_IMAGE_MODE = DEFAULT_COMPOSITE_IMAGE_MODE;    
+    public static final ViewMode DEFAULT_TOMO_SECOND_IMAGE_MODE = DEFAULT_VOLUME_IMAGE_MODE;
+        
     
     public void setViewMode(ViewMode aM) {
         if (null != aM && aM.isCompatible(iModel) && aM != DEFAULT_IMAGE_MODE) {
@@ -234,10 +237,10 @@ public class ImageView extends JComponent implements IImageView {
                 case GATED: 
                     iMode = DEFAULT_DYNAMIC_IMAGE_MODE; break;
                 case TOMO:
-                case TOMO_G:
+                case TOMO_G://TODO: not reconstructed image
                 case VOLUME:
                 case VOLUME_G:
-                    iMode = DEFAULT_VOLUME_IMAGE_MODE; break;
+                    iMode = DEFAULT_TOMO_IMAGE_MODE; break;
                 //CR/CT
                 case AXIAL:
                 case LOCALIZER:
@@ -252,8 +255,13 @@ public class ImageView extends JComponent implements IImageView {
             case RANGE: break;
             case COMPOSITE:
                 setImage(iModel.processor().collapse(aM.iFrameFrom, aM.iFrameTo)); break;
-            case SLICE:
-            case VOLUME:    
+            case SLICE: //TODO:
+                break;
+            case VOLUME: {
+                MIPProjector prj = new MIPProjector(getImage(), getImage().getNumFrames());
+                setImage(prj.getDst());
+                
+            } break;
         }
     }
     
@@ -262,9 +270,9 @@ public class ImageView extends JComponent implements IImageView {
         invalidateBuffer();
     }    
     
+    @Override
     public void setROIMgr(ROIManager aMgr) {
-        iROIMgr = aMgr;  
-        //iROIMgr.setView(this);
+        iMgr = aMgr;  
     }
     
     @Override
@@ -289,7 +297,7 @@ public class ImageView extends JComponent implements IImageView {
     }
     
     public ROIManager getROIMgr() {
-        return iROIMgr;
+        return iMgr;
     } 
         
     public VOILut getLUTMgr() {
@@ -310,11 +318,11 @@ public class ImageView extends JComponent implements IImageView {
         return iInterpolation;
     }
         
-    protected int getVisualWidth() {
+    public int getVisualWidth() {
         return iModel.getWidth();
     }
     
-    protected int getVisualHeight() {
+    public int getVisualHeight() {
         return iModel.getHeight();
     }
         
@@ -410,7 +418,7 @@ public class ImageView extends JComponent implements IImageView {
         } else {             
             iCurrent = aN;   
             iVLUT.setWindow(new Window(iModel.get(iCurrent).getRange()));
-            iROIMgr.update();               
+            iMgr.update();               
                    
             invalidateBuffer();
             notifyFrameChanged();     
@@ -434,7 +442,7 @@ public class ImageView extends JComponent implements IImageView {
     }
              
     public void reset() {
-        iROIMgr.clear();
+        iMgr.clear();
         iOrigin.x = iOrigin.y = 0;
         iZoom.setToScale(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
         iFit = ZoomFit.PIXELS;//Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.PIXELS);
@@ -477,9 +485,7 @@ public class ImageView extends JComponent implements IImageView {
     protected void updateBufferedImage() {                  
         updateScale();               
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
-        AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
-        //BufferedImage src = transform(iModel.get(iCurrent).getBufferedImage(), null);   
-        //BufferedImage src = iPLUT.transform(iVLUT.transform(iBufImage, null), null);
+        AffineTransformOp z = new AffineTransformOp(getZoom(), hts);        
         iBuf2 = iVLUT.transform(iModel.get(iCurrent), iBuf2);
         iBuf = z.filter(iBuf2, iBuf); 
     }
@@ -491,7 +497,7 @@ public class ImageView extends JComponent implements IImageView {
               
         g.drawImage(iBuf, iOrigin.x, iOrigin.y, iBuf.getWidth(), iBuf.getHeight(), null);       
         ROIPainter p = new ROIPainter((Graphics2D)g, virtualToScreen(), this);
-        iROIMgr.paint(p);                        
+        iMgr.paint(p);                        
         iController.paint((Graphics2D)g); // must be the last in the paint chain   
     }
 
