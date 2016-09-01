@@ -47,6 +47,7 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.PresentationLUT;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
@@ -265,8 +266,8 @@ public class ImageView extends JComponent implements IImageView {
         }
     }
     
-    public void setLUT(String aLUT) {         
-        iVLUT.setLUT(aLUT);
+    public void setLUT(String aLUT) {          
+        iVLUT.setLUT(PresentationLUT.create(aLUT));
         invalidateBuffer();
     }    
     

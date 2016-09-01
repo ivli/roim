@@ -42,7 +42,5 @@ public class Curve extends java.util.ArrayList<Integer> {
     }
     
     public Range getRangeX() {return new Range(iMinX, iMaxX);}
-    public Range getRangeY() {return new Range(iMinY, iMaxY);}
-   
-
+    public Range getRangeY() {return new Range(iMinY, iMaxY);} 
 }

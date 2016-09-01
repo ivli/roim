@@ -1,16 +1,12 @@
-
 package com.ivli.roim.view;
 
-
-import com.ivli.roim.io.LutReader;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
+import com.ivli.roim.core.PresentationLUT;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
-import java.io.IOException;
 
 public class VOILut {        
     private static final double LUT_MIN   = .0;
@@ -22,6 +18,7 @@ public class VOILut {
     private static final int  LUT_SIZE = 256;        
     
     private PValueTransform iPVt;
+    private PresentationLUT iPlut;
     private Window iWin;    
     private boolean iInverted;            
     private boolean iLinear; 
@@ -29,64 +26,40 @@ public class VOILut {
      // lut table to convert image space values to greyscale 0-255
     private final int []iBuffer;   
      // lut table to convert greyscale 0-255 to RGB
-    private final int [][]iLutBuffer;
+    ///private final int [][]iLutBuffer;
    
-    public VOILut(PValueTransform aPVT, Window aWin, String aLUTcanBeNull) {
+    public VOILut(PValueTransform aPVT, Window aWin, PresentationLUT aLUT) {
         iInverted = false;
         iLinear = true;
         iPVt = aPVT;
         iBuffer = new int[IMAGESPACE_SIZE];
-        iLutBuffer = new int[LUT_SIZE][3];
-        iWin = aWin;     
-        setLUT(aLUTcanBeNull);        
+        iPlut = (null !=aLUT) ? aLUT : PresentationLUT.create(null);
+        iWin = aWin;                  
     }  
     
-    public VOILut(String aLUTcanBeNull) {
+    public VOILut(PresentationLUT aLUT) {
         iInverted = false;
         iLinear = true;
         iPVt = PValueTransform.DEFAULT_TRANSFORM;        
-        iBuffer = new int[IMAGESPACE_SIZE];
-        iLutBuffer = new int[LUT_SIZE][3];
-        iWin = new Window(0, IMAGESPACE_SIZE);     
-        
-        setLUT(aLUTcanBeNull);        
+        iBuffer = new int[IMAGESPACE_SIZE];       
+        iPlut = (null !=aLUT) ? aLUT : PresentationLUT.create(null);
+        iWin = new Window(0, IMAGESPACE_SIZE);                        
     }  
     
     public void setTransform(PValueTransform aT) {
         if (null != aT)
             iPVt = aT;
-        invalidateLUT();
+        makeLUT();
     }
     
-    public final void setLUT(String aName) { 
-        IndexColorModel mdl;
-    
-        try {
-            if (null != aName)
-                mdl = LutReader.open(aName);   
-            else
-                mdl = LutReader.defaultLUT();            
-        } catch (IOException ex) {
-            mdl = LutReader.defaultLUT();
-        }
-       
-        byte reds[] = new byte[LUT_SIZE];
-        byte greens[] = new byte[LUT_SIZE];
-        byte blues[] = new byte[LUT_SIZE];
-        mdl.getReds(reds);
-        mdl.getGreens(greens);
-        mdl.getBlues(blues);    
-        
-        for (int i = 0; i < LUT_SIZE; ++i) {
-            iLutBuffer[i][0] = (int)(reds[i]); 
-            iLutBuffer[i][1] = (int)(greens[i]);
-            iLutBuffer[i][2] = (int)(blues[i]);
-        }
+    public final void setLUT(PresentationLUT aLUT) { 
+        iPlut = (null !=aLUT) ? aLUT : PresentationLUT.create(null);;
+        makeLUT();
     }
         
     public void setWindow(Window aW) {              
         iWin = aW;    
-        invalidateLUT();
+        makeLUT();
     }
     
     public Window getWindow() {
@@ -95,17 +68,23 @@ public class VOILut {
     
     public void setInverted(boolean aI) {       
         iInverted = aI;    
-        invalidateLUT();   
+        makeLUT();   
     }
     
     public boolean isInverted() {
         return iInverted;
     }
+    
+    public void setLinear(boolean aL) {
+        iLinear = aL;                    
+        makeLUT();            
+    }
 
-    private void invalidateLUT() {    
-        makeLUT();
+    public boolean isLinear() {
+        return iLinear;
     }
     
+    //TODO: rewrite to work with ImageFrame instead of BufferedImage
     public BufferedImage transform(ImageFrame aSrc, BufferedImage aDst) {
         final int width = aSrc.getWidth();
         final int height = aSrc.getHeight();
@@ -117,28 +96,19 @@ public class VOILut {
                       
         for (int y=0; y < height; ++y) 
             for (int x=0; x < width; ++x)                          
-               dst.setPixel(x, y, iLutBuffer[0x0ff & (iBuffer[aSrc.get(x, y)])]);               
+               dst.setPixel(x, y, iPlut.translate(0x0ff & (iBuffer[aSrc.get(x, y)])));               
                 
         return aDst;
     }
    
-    private byte makeLinear(double PV) {                
+    private final byte linVal(double PV) {                
         return (byte)(((PV - iWin.getLevel()) / iWin.getWidth() + .5) * LUT_RANGE + LUT_MIN);
     }  
     
-    private byte makeLogarithmic(double PV) {               
+    private final byte logVal(double PV) {               
         return (byte)(LUT_RANGE/(1 + Math.exp(-4*(PV - iWin.getLevel()) / iWin.getWidth()) + LUT_MIN));
     }
-       
-    public void setLinear(boolean aL) {
-        iLinear = aL;                    
-        invalidateLUT();            
-    }
-
-    public boolean isLinear() {
-        return iLinear;
-    }
-    
+ 
     private void makeLUT() {          
         final byte maxval; 
         final byte minval;    
@@ -150,31 +120,29 @@ public class VOILut {
             minval = GREYSCALES_MIN;
             maxval = GREYSCALES_MAX;
         }
-                            
-        for (int i = 0; i < iBuffer.length; ++i) {          
+       
+        for (int i=0; i<iBuffer.length; ++i) {          
             final double PV = iPVt.transform(i);
                         
             if (PV <= iWin.getBottom()) 
                 iBuffer[i] = minval;
             else if (PV > iWin.getTop()) 
-                    iBuffer[i] = maxval;
+                iBuffer[i] = maxval;
             else {   
-                final byte BV = isLinear() ?  makeLinear(PV) : makeLogarithmic(PV);
+                final byte BV = isLinear() ?  linVal(PV) : logVal(PV);
                
-                if(isInverted())                
+                if (isInverted())                
                     iBuffer[i] = (byte)(GREYSCALES_MAX - BV);
                 else
-                    iBuffer[i] = BV;
+                    iBuffer[i] = BV;                
             }                        
-        }  
-        
-//        iLook = new LookupOp(new ByteLookupTable(0, iBuffer), null);        
+        }        
     }       
     
     public Curve getCurve() {        
         Curve ret = new Curve();        
          
-        for (int i = 0; i < iBuffer.length; ++i)
+        for (int i=0; i<iBuffer.length; ++i)
             ret.put(i, (iBuffer[i] & 0xFF));
                 
         return ret;
