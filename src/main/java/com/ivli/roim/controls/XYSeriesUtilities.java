@@ -17,8 +17,10 @@
  */
 package com.ivli.roim.controls;
 
+import com.ivli.roim.algorithm.Algorithm;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.Range;
+import java.util.function.Function;
 import org.jfree.data.xy.XYSeries;
 
 /**
@@ -197,55 +199,7 @@ class XYSeriesUtilities {
         return Double.NaN;
     }
     
-    @FunctionalInterface
-    interface F {
-        abstract double f(double anArg);         
-    }       
-    
-    static final F leastsquares(double[] x, double[]y, final int n1, final int n2, boolean exp) {        
-        final int length = n2 - n1;
-        double sum1 = .0;
-        double sum2 = .0;
-           
-        /**/
-        if (exp) {
-            for(int i = n1; i < n2; ++i) {              
-                sum1 += x[i];
-                sum2 += (y[i] = Math.log(y[i]));                                              
-            } 
-        } else {        
-            for(int i = n1; i < n2; ++i) {                                                        
-                sum1 += x[i];
-                sum2 += y[i];
-            } 
-        }
-        final double meanX = sum1/(double)length;
-        final double meanY = sum2/(double)length;            
-
-        sum1 = sum2 = .0;
-         //slope = sum((x - mean(x)) * (y' - mean(y')) / sum((x - mean(x))^2) // -B
-        for(int i = n1; i < n2; ++i) { 
-           final double temp = x[i] - meanX;
-           sum1 += temp * (y[i] - meanY);
-           sum2 += temp * temp;
-        }
-
-        final double slope = sum1 / sum2;     
-        
-        //intercept = mean(y' - x * slope) // A
-        final double intercept = meanY - slope*meanX;
-        
-        //double []ret = {slope, intercept};
-        return exp ? 
-                new F() {
-                        public double f(double x) {return Math.exp(slope*x + intercept);}                            
-                        }: 
-                new F() {
-                        public double f(double x) {return slope*x + intercept;}
-                        };            
-    }
-    
-    
+  
     /*
      * performs exponential fit of a given series aS through interval [aFrom, aTo)   
      * uses least squares to find intercept and slope
@@ -266,7 +220,7 @@ class XYSeriesUtilities {
         final double userFrom = Math.min(aFrom, aTo);
         final double userTo = Math.max(aFrom, aTo);
         final double availFrom = Math.max(userFrom, aS.getMinX());
-        final double availTo   = Math.min(userTo, aS.getMaxX());
+        final double availTo = Math.min(userTo, aS.getMaxX());
         
         final int n1 = getNearestIndex(v[0], availFrom);
         final int n2 = getNearestIndex(v[0], availTo);
@@ -274,18 +228,18 @@ class XYSeriesUtilities {
         if (n1 < 0 || n2 < 0 || n2 <= n1)
             throw new IllegalArgumentException(String.format("n1 = %d, n2 = %d", n1, n2));
              
-        final F f = leastsquares(v[0], v[1], n1, n2, aExp);
+        final Function<Double, Double> f = Algorithm.leastsquares(v[0], v[1], n1, n2, aExp ? Algorithm.TYPE.EXPONENTIAL : Algorithm.TYPE.LINEAR);
         
          //interpolate      
         for(int i = n1; i <= n2; ++i) 
-            aRet.add(v[0][i], f.f(v[0][i])); 
+            aRet.add(v[0][i], f.apply(v[0][i])); 
 
          //extrapolate right       
         if (userTo > availTo) {            
             final double step = v[0][v[0].length - 1] - v[0][v[0].length - 2];        
             double d = availTo;
             while (d < userTo) {
-                aRet.add(d, f.f(d)); 
+                aRet.add(d, f.apply(d)); 
                 d += step;
             }
         }
@@ -294,7 +248,7 @@ class XYSeriesUtilities {
             final double step = v[0][1] - v[0][0];        
             double d = availTo;
             while (d > userFrom) {
-                aRet.add(d, f.f(d)); 
+                aRet.add(d, f.apply(d)); 
                 d-=step;
             }
         }   

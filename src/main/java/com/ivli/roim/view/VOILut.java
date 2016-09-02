@@ -7,6 +7,7 @@ import com.ivli.roim.core.PresentationLUT;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.util.function.Function;
 
 public class VOILut {        
     private static final double LUT_MIN   = .0;
@@ -100,15 +101,7 @@ public class VOILut {
                 
         return aDst;
     }
-   
-    private final byte linVal(double PV) {                
-        return (byte)(((PV - iWin.getLevel()) / iWin.getWidth() + .5) * LUT_RANGE + LUT_MIN);
-    }  
-    
-    private final byte logVal(double PV) {               
-        return (byte)(LUT_RANGE/(1 + Math.exp(-4*(PV - iWin.getLevel()) / iWin.getWidth()) + LUT_MIN));
-    }
- 
+      
     private void makeLUT() {          
         final byte maxval; 
         final byte minval;    
@@ -121,6 +114,13 @@ public class VOILut {
             maxval = GREYSCALES_MAX;
         }
        
+        final Function<Double, Integer> F;
+        if(isLinear()) { 
+            F = (Double aV) -> (int)(((aV - iWin.getLevel()) / iWin.getWidth() + .5) * LUT_RANGE + LUT_MIN);
+        } else { 
+            F = (Double aV) -> (int)(LUT_RANGE/(1 + Math.exp(-4*(aV - iWin.getLevel()) / iWin.getWidth()) + LUT_MIN)); 
+        }
+                        
         for (int i=0; i<iBuffer.length; ++i) {          
             final double PV = iPVt.transform(i);
                         
@@ -128,13 +128,11 @@ public class VOILut {
                 iBuffer[i] = minval;
             else if (PV > iWin.getTop()) 
                 iBuffer[i] = maxval;
-            else {   
-                final byte BV = isLinear() ?  linVal(PV) : logVal(PV);
-               
+            else {          
                 if (isInverted())                
-                    iBuffer[i] = (byte)(GREYSCALES_MAX - BV);
+                    iBuffer[i] = (byte)(GREYSCALES_MAX - F.apply(PV));
                 else
-                    iBuffer[i] = BV;                
+                    iBuffer[i] = F.apply(PV);                
             }                        
         }        
     }       

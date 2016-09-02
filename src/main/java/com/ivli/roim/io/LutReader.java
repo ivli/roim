@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * this file is based on the code of ImageJ a public domain Java image processing program
+ * this file is based on the code of ImageJ - public domain Java image processing program
  * The author, Wayne Rasband (wayne@codon.nih.gov), is at the Research Services Branch, 
  * National Institute of Mental Health, Bethesda, Maryland, USA.
  */
