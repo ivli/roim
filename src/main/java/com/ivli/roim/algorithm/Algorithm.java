@@ -30,26 +30,28 @@ public class Algorithm {
         CUBIC,
         EXPONENTIAL
     }
-    
-    public static final Function<Double, Double> leastsquares(double[] x, double[] y, final int n1, final int n2, TYPE aF) {        
-        final int length = n2 - n1;
+    /*
+    return leastsquares fit of a series x, y on the interval n1 n2 
+    */
+    public static final Function<Double, Double> leastsquares(double[] aX, double[] aY, final int aFrom, final int aTo, TYPE aF) {        
+        final int length = aTo - aFrom;
         double sum1 = .0;
         double sum2 = .0;
            
         /**/
         switch (aF) {
             case EXPONENTIAL: {
-                for(int i = n1; i < n2; ++i) {              
-                    sum1 += x[i];
-                    sum2 += (y[i] = Math.log(y[i]));                                              
+                for(int i = aFrom; i < aTo; ++i) {              
+                    sum1 += aX[i];
+                    sum2 += (aY[i] = Math.log(aY[i]));                                              
                 } 
                 };  break;       
 
             case LINEAR: //TODO: fallthrough unless polinomial fit get implemented
             default: {     
-                for(int i = n1; i < n2; ++i) {                                                        
-                      sum1 += x[i];
-                      sum2 += y[i];
+                for(int i = aFrom; i < aTo; ++i) {                                                        
+                    sum1 += aX[i];
+                    sum2 += aY[i];
                 } 
             }; break;
         }
@@ -59,9 +61,9 @@ public class Algorithm {
 
         sum1 = sum2 = .0;
          //slope = sum((x - mean(x)) * (y' - mean(y')) / sum((x - mean(x))^2) // -B
-        for(int i = n1; i < n2; ++i) { 
-           final double temp = x[i] - meanX;
-           sum1 += temp * (y[i] - meanY);
+        for(int i = aFrom; i < aTo; ++i) { 
+           final double temp = aX[i] - meanX;
+           sum1 += temp * (aY[i] - meanY);
            sum2 += temp * temp;
         }
 
@@ -71,16 +73,28 @@ public class Algorithm {
        
         switch (aF) {
             case EXPONENTIAL: {        
-                return new Function<Double, Double>() {
-                    public Double apply(Double x) {return Math.exp(slope*x + intercept);}                            
-                }; 
+                return (Double x) -> Math.exp(slope * x + intercept); 
             }
             case LINEAR: //TODO: fallthrough unless polinomial fit get implemented
             default: {     
-                return new Function<Double, Double>() {
-                    public Double apply(Double x) {return slope*x + intercept;}
-                };
+                return (Double x) -> slope * x + intercept;
             }
         }         
-    }         
+    }
+    
+    
+    /*
+     * returns neares X index   
+     */
+    public static int getNearestIndex(final double []aS, double aX) {        
+        if (aS.length > 0) {
+        for (int i = 0; i < aS.length - 1; ++i) {        
+            if (aX == aS[i] || aX > aS[i] && aX < aS[i+1] || aX < aS[i] && aX > aS[i+1]) 
+                return i;          
+        }
+        if (aX == aS[aS.length-1])
+            return aS.length-1;
+        }
+        return -1;
+    } 
 }

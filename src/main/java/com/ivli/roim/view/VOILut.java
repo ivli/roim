@@ -1,5 +1,6 @@
 package com.ivli.roim.view;
 
+import com.ivli.roim.algorithm.Algorithm;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
@@ -13,8 +14,8 @@ public class VOILut {
     private static final double LUT_MIN   = .0;
     private static final double LUT_MAX   = 255.;
     private static final double LUT_RANGE = LUT_MAX - LUT_MIN;    
-    private static final byte GREYSCALES_MIN = (byte)0x0;
-    private static final byte GREYSCALES_MAX = (byte)0xff;
+    private static final int GREYSCALES_MIN = 0;
+    private static final int GREYSCALES_MAX = 255;
     private static final int  IMAGESPACE_SIZE = 65536;
     private static final int  LUT_SIZE = 256;        
     
@@ -97,12 +98,40 @@ public class VOILut {
                       
         for (int y=0; y < height; ++y) 
             for (int x=0; x < width; ++x)                          
-               dst.setPixel(x, y, iPlut.translate(0x0ff & (iBuffer[aSrc.get(x, y)])));               
+               dst.setPixel(x, y, iPlut.translate(iBuffer[aSrc.get(x, y)]));               
                 
         return aDst;
     }
       
-    private void makeLUT() {          
+    private int linVal(double PV) {  
+        if (PV <= iWin.getBottom()) 
+            return GREYSCALES_MIN;
+        else if (PV > iWin.getTop()) 
+            return GREYSCALES_MAX;
+        else  
+            return (int)(LUT_RANGE *((PV - iWin.getLevel()) / iWin.getWidth() + .5) + LUT_MIN);
+    }  
+    
+    private int logVal(double aV) {               
+        return (int)(LUT_RANGE /(1 + Math.exp(-4 * (aV - iWin.getLevel()) / (iWin.getWidth()))) + LUT_MIN);
+    }
+ 
+    private void makeLUT() {             
+        for (int i=0; i<iBuffer.length; ++i) {          
+            final double PV = iPVt.transform(i);
+            
+            if (!isLinear()){    
+                iBuffer[i] = logVal(PV);
+            } else {                              
+                if (!isInverted())                
+                    iBuffer[i] = linVal(PV);  
+                else
+                    iBuffer[i] = (GREYSCALES_MAX - linVal(PV));                                                                                                   
+            }   
+        }
+    }       
+    /*
+    private void makeLUT2() {          
         final byte maxval; 
         final byte minval;    
         
@@ -113,30 +142,25 @@ public class VOILut {
             minval = GREYSCALES_MIN;
             maxval = GREYSCALES_MAX;
         }
-       
-        final Function<Double, Integer> F;
-        if(isLinear()) { 
-            F = (Double aV) -> (int)(((aV - iWin.getLevel()) / iWin.getWidth() + .5) * LUT_RANGE + LUT_MIN);
-        } else { 
-            F = (Double aV) -> (int)(LUT_RANGE/(1 + Math.exp(-4*(aV - iWin.getLevel()) / iWin.getWidth()) + LUT_MIN)); 
-        }
+               
+        final double[] x = {iWin.getBottom() + .5, iWin.getTop()};
+        final double[] y = {.5, 255.};
+        final Function<Double, Double> F1 = Algorithm.leastsquares(x, y, 0, x.length, isLinear() ? Algorithm.TYPE.LINEAR:Algorithm.TYPE.EXPONENTIAL);        
+        final Function<Double, Double> F = isInverted() ? (Double a)->GREYSCALES_MAX - F1.apply(a) : F1;
                         
         for (int i=0; i<iBuffer.length; ++i) {          
             final double PV = iPVt.transform(i);
-                        
+              /*          
             if (PV <= iWin.getBottom()) 
                 iBuffer[i] = minval;
             else if (PV > iWin.getTop()) 
                 iBuffer[i] = maxval;
-            else {          
-                if (isInverted())                
-                    iBuffer[i] = (byte)(GREYSCALES_MAX - F.apply(PV));
-                else
-                    iBuffer[i] = F.apply(PV);                
-            }                        
+            else {                          
+                iBuffer[i] = (int)Math.round(F.apply(PV));                
+          //  }                        
         }        
     }       
-    
+    */
     public Curve getCurve() {        
         Curve ret = new Curve();        
          

@@ -57,20 +57,7 @@ class XYSeriesUtilities {
   
         return valX;
     }
-    /*
-     * returns neares X index   
-     */
-    static int getNearestIndex(final double []aS, double aX) {        
-        if (aS.length > 0) {
-        for (int i = 0; i < aS.length - 1; ++i) {        
-            if (aX == aS[i] || aX > aS[i] && aX < aS[i+1] || aX < aS[i] && aX > aS[i+1]) 
-                return i;          
-        }
-        if (aX == aS[aS.length-1])
-            return aS.length-1;
-        }
-        return -1;
-    } 
+    
     /*
      * returns maximum Y value left or right of aX   
      */
@@ -79,7 +66,7 @@ class XYSeriesUtilities {
         double valY = Double.MIN_VALUE;
         double valX = Double.NaN;
         
-         final int ndx = getNearestIndex(v[0], aX);
+         final int ndx = Algorithm.getNearestIndex(v[0], aX);
         
         if (ndx < 0 || ndx >  v[0].length)
             return Double.NaN;
@@ -110,7 +97,7 @@ class XYSeriesUtilities {
         double valY = Double.MAX_VALUE;
         double valX = Double.NaN;
         
-        final int ndx = getNearestIndex(v[0], aX);
+        final int ndx = Algorithm.getNearestIndex(v[0], aX);
         
         if (ndx < 0 || ndx >  v[0].length)
             return Double.NaN;
@@ -141,8 +128,8 @@ class XYSeriesUtilities {
         double valY = Double.MAX_VALUE;
         double valX = Double.NaN;
         
-        final int ndx1 = getNearestIndex(v[0], aFrom);
-        final int ndx2 = getNearestIndex(v[0], aTo);
+        final int ndx1 = Algorithm.getNearestIndex(v[0], aFrom);
+        final int ndx2 = Algorithm.getNearestIndex(v[0], aTo);
         
         if (ndx1 < 0 || ndx1 >  v[0].length)
             return Double.NaN;
@@ -166,7 +153,7 @@ class XYSeriesUtilities {
     static double getNearestX(XYSeries aS, double aV) {
         final double [][] v = aS.toArray();
        
-        int ndx = getNearestIndex(v[1], aV); //illegal use
+        int ndx = Algorithm.getNearestIndex(v[1], aV); //illegal use
         
         if (ndx >= 0 && ndx < aS.getItemCount()) 
             return v[0][ndx] ;
@@ -201,7 +188,7 @@ class XYSeriesUtilities {
     
   
     /*
-     * performs exponential fit of a given series aS through interval [aFrom, aTo)   
+     * fits given series aS on the interval [aFrom, aTo)   
      * uses least squares to find intercept and slope
      * in the case aFrom and/or aTo lie outside the series then method returns extrapolation 
      */        
@@ -213,7 +200,7 @@ class XYSeriesUtilities {
             throw new IllegalArgumentException("aFrom cannot be equal to aTo");
         
         if (null == aRet)
-            aRet = new XYSeries("INTRPOLATION" + aS.getKey().toString());
+            aRet = new XYSeries("INTERPOLATION" + aS.getKey().toString());
 
         final double [][] v = aS.toArray();
                 
@@ -222,8 +209,8 @@ class XYSeriesUtilities {
         final double availFrom = Math.max(userFrom, aS.getMinX());
         final double availTo = Math.min(userTo, aS.getMaxX());
         
-        final int n1 = getNearestIndex(v[0], availFrom);
-        final int n2 = getNearestIndex(v[0], availTo);
+        final int n1 = Algorithm.getNearestIndex(v[0], availFrom);
+        final int n2 = Algorithm.getNearestIndex(v[0], availTo);
         
         if (n1 < 0 || n2 < 0 || n2 <= n1)
             throw new IllegalArgumentException(String.format("n1 = %d, n2 = %d", n1, n2));
