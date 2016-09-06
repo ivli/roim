@@ -108,7 +108,7 @@ public class VOILut {
         else if (PV > iWin.getTop()) 
             return GREYSCALES_MAX;
         else  
-            return (int)(LUT_RANGE *((PV - iWin.getLevel()) / iWin.getWidth() + .5) + LUT_MIN);
+            return (int)(LUT_RANGE *((PV - iWin.getLevel()) / iWin.getWidth()+ .5) + LUT_MIN);
     }  
     
     private int logVal(double aV) {               
@@ -129,37 +129,7 @@ public class VOILut {
             }   
         }
     }       
-    /*
-    private void makeLUT2() {          
-        final byte maxval; 
-        final byte minval;    
-        
-        if (isInverted()) {
-            maxval = GREYSCALES_MIN;
-            minval = GREYSCALES_MAX;
-        } else {
-            minval = GREYSCALES_MIN;
-            maxval = GREYSCALES_MAX;
-        }
-               
-        final double[] x = {iWin.getBottom() + .5, iWin.getTop()};
-        final double[] y = {.5, 255.};
-        final Function<Double, Double> F1 = Algorithm.leastsquares(x, y, 0, x.length, isLinear() ? Algorithm.TYPE.LINEAR:Algorithm.TYPE.EXPONENTIAL);        
-        final Function<Double, Double> F = isInverted() ? (Double a)->GREYSCALES_MAX - F1.apply(a) : F1;
-                        
-        for (int i=0; i<iBuffer.length; ++i) {          
-            final double PV = iPVt.transform(i);
-              /*          
-            if (PV <= iWin.getBottom()) 
-                iBuffer[i] = minval;
-            else if (PV > iWin.getTop()) 
-                iBuffer[i] = maxval;
-            else {                          
-                iBuffer[i] = (int)Math.round(F.apply(PV));                
-          //  }                        
-        }        
-    }       
-    */
+   
     public Curve getCurve() {        
         Curve ret = new Curve();        
          

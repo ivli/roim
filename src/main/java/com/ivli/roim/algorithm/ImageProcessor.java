@@ -22,7 +22,7 @@ import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.TimeSlice;
-import com.amd.aparapi.*;
+import com.amd.aparapi.Kernel;
 
 /**
  *
@@ -113,7 +113,7 @@ public class ImageProcessor {
             
             for (int j = 0; j < dst.length; ++j)
                 dst[j] += src[j];
-           ///Aparapi.
+            
             
         }        
         return ret;
