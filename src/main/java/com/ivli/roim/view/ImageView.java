@@ -61,23 +61,24 @@ public class ImageView extends JComponent implements IImageView {
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
        
-    protected ZoomFit iFit;             
-    protected Object iInterpolation;   
+    protected ZoomFit iFit;      //fit into the window method       
+    protected Object iInterpolation; //interpolation method   
     
-    protected Point iOrigin;              
-    protected AffineTransform iZoom;    
-           
-    protected ROIManager iMgr;
-    protected VOILut iVLUT;
+    protected Point iOrigin; //image point [0,0] on the window implements panoramic transform 
+    protected AffineTransform iZoom; //zoom factor relating to original image size
+               
+    protected VOILut iVLUT; //VOI LUT combines W/L and Presentation LUT 
    
-    protected int iCurrent;
-    protected IMultiframeImage iModel;                     
-    protected IController iController; 
+    protected int iCurrent; //frame that is currently shown
+    protected IMultiframeImage iModel; //the image   
     
-    protected BufferedImage iBuf; //offscreen buffer 
-    protected BufferedImage iBuf2; //pre zoomed image      
-         
-    private EventListenerList iListeners;
+    protected IController iController; //Controller of MVC 
+    protected ROIManager iMgr; //
+    
+    protected BufferedImage iBuf2; //pre processed image of original size       
+    protected BufferedImage iBuf;  //offscreen buffer made of a iBuf2 after zoom and pan   
+        
+    private EventListenerList iListeners; //
 
     public static ImageView create(IMultiframeImage aI, ViewMode aMode) {        
         return create(aI, aMode, new ROIManager(aI, new Uid(), false));    
@@ -90,27 +91,31 @@ public class ImageView extends JComponent implements IImageView {
         ret.setController(new Controller(ret));
         ret.setROIMgr(aM);
         ret.setImage(aI);
-        ret.setViewMode(aMode);
+        ret.setViewMode(aMode);         
+        ret.addComponentListener(new ComponentListener() {    
+            @Override
+            public void componentResized(ComponentEvent e) {
+                ret.invalidateBuffer();
+                ret.notifyZoomChanged();
+                ret.iZoomStep = Math.min(ret.getFrame().getWidth(), ret.getFrame().getHeight()) / Settings.get(Settings.KEY_ZOOM_STEP_FACTOR, 10.);
+            }                                               
+            @Override
+            public void componentHidden(ComponentEvent e) {}
+            @Override
+            public void componentMoved(ComponentEvent e) {}
+            @Override
+            public void componentShown(ComponentEvent e) {}                    
+        });  
+        
         return ret;    
     }
     
     protected ImageView() {                                
+        iCurrent = 0; 
         iOrigin = new Point(0, 0);              
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);          
-        iVLUT = new VOILut(null);        
-        iCurrent = 0;              
-        iListeners = new EventListenerList(); 
-        
-        addComponentListener(new ComponentListener() {    
-            public void componentResized(ComponentEvent e) {
-                invalidateBuffer();
-                notifyZoomChanged();
-                iZoomStep = Math.min(getFrame().getWidth(), getFrame().getHeight()) / Settings.get(Settings.KEY_ZOOM_STEP_FACTOR, 10.);
-            }                                               
-            public void componentHidden(ComponentEvent e) {}
-            public void componentMoved(ComponentEvent e) {}
-            public void componentShown(ComponentEvent e) {}                    
-        });           
+        iVLUT = new VOILut(null);                             
+        iListeners = new EventListenerList();        
     }
       
     final void setController(IController aC) {
@@ -121,14 +126,14 @@ public class ImageView extends JComponent implements IImageView {
             removeKeyListener(iController);
         }
         
-        iController  = aC;
+        iController = aC;
         addMouseListener(iController);
         addMouseMotionListener(iController);
         addMouseWheelListener(iController);
         addKeyListener(iController);
     }
     
-    enum VIEWTYPE {
+    enum VIEWMODE {
         DEFAULT, //
         FRAME, // display single frame of a number 
         CINE,  // display single frame, can move from first to last
@@ -139,30 +144,30 @@ public class ImageView extends JComponent implements IImageView {
     }
 
     public static class ViewMode {
-        public static final ViewMode DEFAULT = new ViewMode(VIEWTYPE.DEFAULT, IFrameProvider.FIRST, IFrameProvider.LAST);
+        public static final ViewMode DEFAULT = new ViewMode(VIEWMODE.DEFAULT, IFrameProvider.FIRST, IFrameProvider.LAST);
                 
         public static ViewMode frame(int aFrameNumber) {
-            return new ViewMode(VIEWTYPE.FRAME, aFrameNumber, IFrameProvider.LAST);
+            return new ViewMode(VIEWMODE.FRAME, aFrameNumber, IFrameProvider.LAST);
         }
         
         public static ViewMode cine() {
-            return new ViewMode(VIEWTYPE.CINE, IFrameProvider.FIRST, IFrameProvider.LAST);
+            return new ViewMode(VIEWMODE.CINE, IFrameProvider.FIRST, IFrameProvider.LAST);
         }
         
         public static ViewMode range(int aFrom, int aTo) {
-            return new ViewMode(VIEWTYPE.RANGE, aFrom, aTo);
+            return new ViewMode(VIEWMODE.RANGE, aFrom, aTo);
         }
         
         public static ViewMode composite(int aSummFrom, int aSummTo) {
-            return new ViewMode(VIEWTYPE.COMPOSITE, aSummFrom, aSummTo);
+            return new ViewMode(VIEWMODE.COMPOSITE, aSummFrom, aSummTo);
         }
         
         public static ViewMode slice(int aSliceNumber) {
-            return new ViewMode(VIEWTYPE.FRAME, aSliceNumber, IFrameProvider.LAST);
+            return new ViewMode(VIEWMODE.FRAME, aSliceNumber, IFrameProvider.LAST);
         }
         
         public static ViewMode volume(int aSliceFrom, int aSliceTo) {
-            return new ViewMode(VIEWTYPE.VOLUME, aSliceFrom, aSliceTo);
+            return new ViewMode(VIEWMODE.VOLUME, aSliceFrom, aSliceTo);
         }
         
         public boolean isCompatible(IMultiframeImage aI) {           
@@ -201,13 +206,13 @@ public class ImageView extends JComponent implements IImageView {
             return false;
         }
         
-        private ViewMode(VIEWTYPE aType, int aF, int aT) {
+        private ViewMode(VIEWMODE aType, int aF, int aT) {
             iType = aType;
             iFrameFrom = aF;
             iFrameTo = aT;
         }
         
-        VIEWTYPE iType;
+        VIEWMODE iType;
         int iFrameFrom;
         int iFrameTo;
     }
