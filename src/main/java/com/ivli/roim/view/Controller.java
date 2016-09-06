@@ -380,10 +380,10 @@ class Controller implements IController {
                         return false;
                     }
                     public void DoPaint(Graphics2D gc) {                       
-                           final java.awt.Rectangle bn = iShape.getBounds();  
-                           final int w = gc.getClipBounds().width;
-                           gc.drawLine(0, bn.y, w, bn.y);                           
-                           gc.drawLine(0, bn.y+bn.height, w, bn.y + bn.height);                       
+                        final java.awt.Rectangle bn = iShape.getBounds();  
+                        final int w = gc.getClipBounds().width;
+                        gc.drawLine(0, bn.y, w, bn.y);                           
+                        gc.drawLine(0, bn.y+bn.height, w, bn.y + bn.height);                       
                     }
                 }; break;
                             

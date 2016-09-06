@@ -11,7 +11,12 @@
       <url>http://www.dcm4che.org/maven2</url>
      </repository>
     </repositories>
-    <dependencies>              
+    <dependencies>  
+        <dependency>
+            <groupId>org.jocl</groupId>
+            <artifactId>jocl</artifactId>
+            <version>2.0.0</version>
+        </dependency>            
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
@@ -64,6 +69,7 @@
             <artifactId>aparapi</artifactId>
             <version>1.0</version>
         </dependency-->
+        
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>

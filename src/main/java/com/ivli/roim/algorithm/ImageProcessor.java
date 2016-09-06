@@ -22,6 +22,7 @@ import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.TimeSlice;
+import com.amd.aparapi.*;
 
 /**
  *
@@ -40,19 +41,32 @@ public class ImageProcessor {
         iInterpol = aI ? InterpolationMethod.INTERPOLATION_BILINEAR : InterpolationMethod.INTERPOLATION_NONE;  
     }
     
-    public void flipVert(int aFrom, int aTo) {         
-        if (aFrom < 0 || aTo > iImage.getNumFrames())
-            throw new IllegalArgumentException("wrong frame number");
-      
+    private boolean safeTestArgs(int aFrom, int aTo) {        
+        return (iImage.hasAt(aFrom) && iImage.hasAt(aTo));
+    }
+    
+     private void testArgs(int aFrom, int aTo) {       
+        if (!safeTestArgs(aFrom, aTo))
+            throw new IllegalArgumentException("wrong frame number");        
+    }
+     
+    public void flipVert(int aFrom, int aTo) {    
+        if (aTo == IFrameProvider.LAST)
+            aTo = iImage.getNumFrames() - 1;
+        
+        testArgs(aFrom, aTo);
+                  
         for (int i = aFrom; i < aTo; ++i) {
             FrameProcessor fp = new FrameProcessor(iImage.get(i), iInterpol);
             fp.flipVert();
         }
     }
     
-    public void flipHorz(int aFrom, int aTo) {          
-        if (aFrom < 0 || aTo > iImage.getNumFrames())
-            throw new IllegalArgumentException("wrong frame number");
+    public void flipHorz(int aFrom, int aTo) {    
+        if (aTo == IFrameProvider.LAST)
+            aTo = iImage.getNumFrames() - 1;
+        
+        testArgs(aFrom, aTo);
                       
         for (int i = aFrom; i < aTo; ++i) {
             FrameProcessor fp = new FrameProcessor(iImage.get(i), iInterpol);
@@ -60,9 +74,11 @@ public class ImageProcessor {
         }
     }
          
-    public void rotate(final double anAngle, int aFrom, int aTo) {             
-        if (aFrom < 0 || aTo > iImage.getNumFrames())
-            throw new IllegalArgumentException("wrong frame number");
+    public void rotate(final double anAngle, int aFrom, int aTo) {   
+        if (aTo == IFrameProvider.LAST)
+            aTo = iImage.getNumFrames() - 1;
+        
+        testArgs(aFrom, aTo);
                     
         for (int i = aFrom; i < aTo; ++i) {
             FrameProcessor fp = new FrameProcessor(iImage.get(i), iInterpol);
@@ -82,23 +98,23 @@ public class ImageProcessor {
         rotate(anAngle, 0, iImage.getNumFrames());
     }      
         
-    public IMultiframeImage collapse(int aFrom, int aTo) throws IndexOutOfBoundsException
-    {        
+    public IMultiframeImage collapse(int aFrom, int aTo) {      
         if (aTo == IFrameProvider.LAST)
             aTo = iImage.getNumFrames() - 1;
         
-        if (!iImage.hasAt(aFrom) || !iImage.hasAt(aTo))
-            throw new IndexOutOfBoundsException();
+        testArgs(aFrom, aTo);
                 
         IMultiframeImage ret = iImage.createCompatibleImage(1);
         
         int[] dst = ret.get(0).getPixelData();
         
-        for (int i = aFrom; i < aTo/*iImage.getNumFrames()*/; ++i) {
+        for (int i = aFrom; i <= aTo; ++i) {
             int []src = iImage.get(i).getPixelData();
             
             for (int j = 0; j < dst.length; ++j)
                 dst[j] += src[j];
+           ///Aparapi.
+            
         }        
         return ret;
     } 

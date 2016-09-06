@@ -15,12 +15,11 @@ public class Window implements java.io.Serializable {
      * 
      */
     protected double iLevel;
-
+    
     /**
      *
      */
     protected double iWidth;
-
    
     /**
      * 

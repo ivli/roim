@@ -371,7 +371,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         if (null != aF) 
             fn = aF;
         else {
-            FileOpenDialog dlg = new FileOpenDialog("Choice file", "*.dcm", "Medical image in DICOM format");
+            FileOpenDialog dlg = new FileOpenDialog("Choice file", "*.dcm", "a DICOM image");
             if(!dlg.DoModal(this, true))
                 return;
             else

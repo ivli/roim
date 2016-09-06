@@ -16,20 +16,17 @@ public class VOILut {
     private static final double LUT_RANGE = LUT_MAX - LUT_MIN;    
     private static final int GREYSCALES_MIN = 0;
     private static final int GREYSCALES_MAX = 255;
-    private static final int  IMAGESPACE_SIZE = 65536;
-    private static final int  LUT_SIZE = 256;        
-    
+    private static final int IMAGESPACE_SIZE = 65536;
+    private static final int LUT_SIZE = 256;        
+    private static final double SIGMOID_SKEW = -8;
     private PValueTransform iPVt;
     private PresentationLUT iPlut;
     private Window iWin;    
     private boolean iInverted;            
     private boolean iLinear; 
     
-     // lut table to convert image space values to greyscale 0-255
     private final int []iBuffer;   
-     // lut table to convert greyscale 0-255 to RGB
-    ///private final int [][]iLutBuffer;
-   
+       
     public VOILut(PValueTransform aPVT, Window aWin, PresentationLUT aLUT) {
         iInverted = false;
         iLinear = true;
@@ -87,20 +84,22 @@ public class VOILut {
     }
     
     //TODO: rewrite to work with ImageFrame instead of BufferedImage
-    public BufferedImage transform(ImageFrame aSrc, BufferedImage aDst) {
+    public BufferedImage transform(ImageFrame aSrc, BufferedImage aDst) {        
         final int width = aSrc.getWidth();
-        final int height = aSrc.getHeight();
-                        
-        if (null == aDst || aDst.getWidth() != width || aDst.getHeight() != height || aDst.getType() != BufferedImage.TYPE_INT_RGB) 
-            aDst = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        final int height = aSrc.getHeight();   
         
-        final WritableRaster dst = aDst.getRaster();        
+        if (aDst != null && (aDst.getWidth() != width || aDst.getHeight() != height || aDst.getType() != BufferedImage.TYPE_INT_RGB))
+            throw new IllegalArgumentException("Destination image must either be of the same dimentions or null");
+             
+        BufferedImage ret = null != aDst ? aDst : new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        
+        final WritableRaster dst = ret.getRaster();        
                       
         for (int y=0; y < height; ++y) 
             for (int x=0; x < width; ++x)                          
                dst.setPixel(x, y, iPlut.translate(iBuffer[aSrc.get(x, y)]));               
                 
-        return aDst;
+        return ret;
     }
       
     private int linVal(double PV) {  
@@ -113,7 +112,7 @@ public class VOILut {
     }  
     
     private int logVal(double aV) {               
-        return (int)(LUT_RANGE /(1 + Math.exp(-4 * (aV - iWin.getLevel()) / (iWin.getWidth()))) + LUT_MIN);
+        return (int)(LUT_RANGE /(1 + Math.exp(SIGMOID_SKEW * (aV - iWin.getLevel()) / (iWin.getWidth()))) + LUT_MIN);
     }
  
     private void makeLUT() {             
