@@ -16,17 +16,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package com.ivli.roim.core;
-
+import com.ivli.roim.io.LutReader;
 /**
  *
  * @author likhachev
  */
 public class PresentationLUT {
-    final int LUT_SIZE = 256;
-    private final int [][] iBuffer;
+    
+    private final int [][] iRGBBuffer;
     
     PresentationLUT(){
-        iBuffer = new int[LUT_SIZE][3];
+        iRGBBuffer = new int[LutReader.TABLE_SIZE][3];
     }
     
     static public PresentationLUT create(String aName) {
@@ -38,26 +38,26 @@ public class PresentationLUT {
     public void open(String aName) {
         java.awt.image.IndexColorModel mdl;
     
-        if (null == (mdl = com.ivli.roim.io.LutReader.open(aName)))
-            mdl = com.ivli.roim.io.LutReader.defaultLUT();            
+        if (null == (mdl = LutReader.open(aName)))
+            mdl = LutReader.defaultLUT();            
        
-        byte reds[] = new byte[LUT_SIZE];
-        byte greens[] = new byte[LUT_SIZE];
-        byte blues[] = new byte[LUT_SIZE];
+        byte reds[] = new byte[LutReader.TABLE_SIZE];
+        byte greens[] = new byte[LutReader.TABLE_SIZE];
+        byte blues[] = new byte[LutReader.TABLE_SIZE];
         
         mdl.getReds(reds);
         mdl.getGreens(greens);
         mdl.getBlues(blues);    
         
-        for (int i = 0; i < LUT_SIZE; ++i) {
-            iBuffer[i][0] = (int)(reds[i]); 
-            iBuffer[i][1] = (int)(greens[i]);
-            iBuffer[i][2] = (int)(blues[i]);
+        for (int i = 0; i < LutReader.TABLE_SIZE; ++i) {
+            iRGBBuffer[i][0] = (int)(reds[i]); 
+            iRGBBuffer[i][1] = (int)(greens[i]);
+            iRGBBuffer[i][2] = (int)(blues[i]);
         }
     }
     
     public int[] translate(int aNdx) {
-        return iBuffer[aNdx];
+        return iRGBBuffer[aNdx];
     }
     
 }

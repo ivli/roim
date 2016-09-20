@@ -44,15 +44,17 @@ public final class LutReader {
     /*11*/   java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_BUILTIN_TYPE_REDGREEN")
     };
         
+    public static final int TABLE_SIZE = 256;
+    
     public static final String[] getInstalledLUT() {
         return BUILTIN_LUTS;
     } 
 	    
     public static final IndexColorModel defaultLUT() {
-        final int lutSize = 256;        
-        byte [] reds = new byte[lutSize]; 
-        byte [] greens = new byte[lutSize]; 
-        byte [] blues = new byte[lutSize];
+              
+        byte [] reds = new byte[TABLE_SIZE]; 
+        byte [] greens = new byte[TABLE_SIZE]; 
+        byte [] blues = new byte[TABLE_SIZE];
 
         int nColors = grays(reds, greens, blues);
         
@@ -62,11 +64,11 @@ public final class LutReader {
     public static final IndexColorModel open(String arg) {     
         if (null == arg)
             return null;
-        final int lutSize = 256;
+        
         int nColors;
-        byte [] reds = new byte[lutSize]; 
-        byte [] greens = new byte[lutSize]; 
-        byte [] blues = new byte[lutSize];
+        byte [] reds = new byte[TABLE_SIZE]; 
+        byte [] greens = new byte[TABLE_SIZE]; 
+        byte [] blues = new byte[TABLE_SIZE];
         
         if (arg.equals(BUILTIN_LUTS[0]))
             nColors = grays(reds, greens, blues);
@@ -113,6 +115,7 @@ public final class LutReader {
         int[] r = {0,0,1,25,49,73,98,122,146,162,173,184,195,207,217,229,240,252,255,255,255,255,255,255,255,255,255,255,255,255,255,255};
         int[] g = {0,0,0,0,0,0,0,0,0,0,0,0,0,14,35,57,79,101,117,133,147,161,175,190,205,219,234,248,255,255,255,255};
         int[] b = {0,61,96,130,165,192,220,227,210,181,151,122,93,64,35,5,0,0,0,0,0,0,0,0,0,0,0,35,98,160,223,255};
+        
         for (int i=0; i<r.length; i++) {
             reds[i] = (byte)r[i];
             greens[i] = (byte)g[i];
@@ -222,10 +225,8 @@ public final class LutReader {
                 if (length > 768L)
                     size = openBinaryLut(fi, false, reds, greens, blues); // attempt to read NIH Image LUT
                 if (size == 0 && (length==0||length==768L||length==970L))
-                    size = openBinaryLut(fi, true, reds, greens, blues); // otherwise read raw LUT
-                if (size == 0 && length>768L)
-                    size = openTextLut(fi, reds, greens, blues);
-                if (size == 0) {
+                    size = openBinaryLut(fi, true, reds, greens, blues); // otherwise read raw LUT                
+                if (size == 0 || size == 0 && length>768L) {
                     LOG.error("Unsupported LUT format");
                     throw new IOException("Unsupported LUT format");
                 }
@@ -238,9 +239,8 @@ public final class LutReader {
    
     /** Opens an NIH Image LUT or a 768 byte binary LUT. */
     private static int openBinaryLut(File fi, boolean raw, byte[] reds, byte[] greens, byte[] blues) throws IOException {
-
         DataInputStream f = new DataInputStream(new FileInputStream(fi));
-        int nColors = 256;
+        int nColors = TABLE_SIZE;
         if (!raw) {
             // attempt to read 32 byte NIH Image LUT header
             int id = f.readInt();
@@ -255,62 +255,36 @@ public final class LutReader {
             long fill1 = f.readLong();
             long fill2 = f.readLong();
             int filler = f.readInt();
+            LOG.info(fi.getName() + id+" "+version+" "+nColors);
         }
-        //IJ.write(id+" "+version+" "+nColors);
+        
         f.read(reds, 0, nColors);
         f.read(greens, 0, nColors);
         f.read(blues, 0, nColors);
-        //if (nColors<256)
-        //	interpolate(reds, greens, blues, nColors);
+        
+        if (nColors < 256)
+            extrapolate(reds, greens, blues, nColors);
+        
         f.close();
         return nColors;
     }
 
-    private static final int openTextLut(File fi, byte[] reds, byte[] greens, byte[] blues) throws IOException {
-       /*  
-            TextReader tr = new TextReader();
-            tr.hideErrorMessages();
-            ImageProcessor ip = tr.open(directory+fileName);
-            if (ip==null)
-                    return 0;
-            int width = ip.getWidth();
-            int height = ip.getHeight();
-            if (width<3||width>4||height<256||height>258) 
-                    return 0; 
-            int x = width==4?1:0; 
-            int y = height>256?1:0;
-            ip.setRoi(x, y, 3, 256);
-            ip = ip.crop();
-            for (int i=0; i<256; i++) {
-                    reds[i] = (byte)ip.getPixelValue(0,i);
-                    greens[i] = (byte)ip.getPixelValue(1,i);
-                    blues[i] = (byte)ip.getPixelValue(2,i);
-            }
-            return 256;
-       */
-        return 0;
-    }
+  
+   // private static final IndexColorModel openLut(File path) throws IOException {
+   //         return openLut(new FileInputStream(path));
+   // }
 
-    /** Opens the specified ImageJ LUT and returns
-            it as an IndexColorModel. Since 1.43t. */
-    private static final IndexColorModel openLut(File path) throws IOException {
-            return openLut(new FileInputStream(path));
+    private static final IndexColorModel openLut(File aFileName) throws IOException {
+        DataInputStream f = new DataInputStream(new FileInputStream(aFileName));
+        byte[] reds = new byte[TABLE_SIZE]; 
+        byte[] greens = new byte[TABLE_SIZE]; 
+        byte[] blues = new byte[TABLE_SIZE];
+        f.read(reds, 0, 256);
+        f.read(greens, 0, 256);
+        f.read(blues, 0, 256);
+        f.close();
+        return new IndexColorModel(8, 256, reds, greens, blues);
     }
-
-    /** Opens an ImageJ LUT using an InputStream
-            and returns it as an IndexColorModel. Since 1.43t. */
-    private static final IndexColorModel openLut(InputStream stream) throws IOException {
-            DataInputStream f = new DataInputStream(stream);
-            byte[] reds = new byte[256]; 
-            byte[] greens = new byte[256]; 
-            byte[] blues = new byte[256];
-            f.read(reds, 0, 256);
-            f.read(greens, 0, 256);
-            f.read(blues, 0, 256);
-            f.close();
-            return new IndexColorModel(8, 256, reds, greens, blues);
-    }
-
     
     private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }
