@@ -19,7 +19,7 @@ package com.ivli.roim.calc;
 
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.core.Filter;
-import com.ivli.roim.core.Series;
+import com.ivli.roim.core.ISeries;
 import com.ivli.roim.events.OverlayChangeEvent;
 import com.ivli.roim.events.OverlayChangeListener;
 import com.ivli.roim.view.OverlayManager;
@@ -48,7 +48,7 @@ public class ConcreteOperand implements IOperand, OverlayChangeListener, AutoClo
     public Filter getFilter() {return iF;}    
     
     @Override
-    public Series value() {
+    public ISeries value() {
         return iF.filter().eval(iRoi);
     }
     

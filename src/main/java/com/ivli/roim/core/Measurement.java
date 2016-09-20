@@ -33,7 +33,8 @@ public enum Measurement {
     AREAINLOCALUNITS(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.AREAINLOCALUNITS"), 
                      Units.M2),  
     DISTANCE(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MEASUREMENT.DISTANCE"), 
-                     Units.MILLIMETERS); 
+                     Units.MILLIMETERS), 
+    UNDEFINED("",Units.DIMENTIONLESS);
     
     final static String SEPARATOR = ":";
     final static String SPACE = " ";

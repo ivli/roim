@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 likhachev
+ * Copyright (C) 2016 likhachev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,11 +17,29 @@
  */
 package com.ivli.roim.core;
 
+import com.ivli.roim.algorithm.SeriesProcessor;
+
 /**
  *
  * @author likhachev
  */
- @FunctionalInterface
-public interface IFilter {        
-    public ISeries eval(com.ivli.roim.view.ROI aR);
+public abstract class ISeries {
+    protected final Measurement iID; 
+    
+    protected ISeries(Measurement anID) {
+        iID = anID;
+    }
+        
+    public Measurement getId() {
+        return iID;
+    }
+    
+    public abstract boolean isScalar();    
+    public abstract int size();    
+    public abstract double get(int anIndex);    
+    public abstract void add(double aV);   
+    
+    public SeriesProcessor processor() {
+        return new SeriesProcessor(this);
+    }
 }

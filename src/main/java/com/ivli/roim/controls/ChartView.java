@@ -19,6 +19,7 @@ package com.ivli.roim.controls;
 
 
 import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.ISeries;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JPanel;
@@ -94,7 +95,7 @@ public class ChartView extends JPanel implements ROIChangeListener {
                     assert (0 > col.indexOf(aE.getObject().getName()));
                     
                     final XYSeries s = new XYSeries(aE.getObject().getName(), true, false);
-                    final Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
+                    final ISeries c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
 
                     IMultiframeImage img = mgr.getImage();
                     
@@ -114,7 +115,7 @@ public class ChartView extends JPanel implements ROIChangeListener {
                 
                 case MOVED: {//fall-through                                                                      
                     final int ndx = col.indexOf(aE.getObject().getName());    
-                    Series c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
+                    ISeries c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
                     XYSeries s = col.getSeries(ndx); 
                     s.setNotify(false);
                     s.clear();              

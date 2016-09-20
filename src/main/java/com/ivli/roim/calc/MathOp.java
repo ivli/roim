@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.calc;
 
-import com.ivli.roim.algorithm.SeriesProcessor;
+import com.ivli.roim.core.Scalar;
 
 /**
  *
@@ -103,7 +103,7 @@ public abstract class MathOp {
                 return new MathOp(OP.CHSIGN) {            
                     @Override
                     public IOperand product(IOperand aLhs, IOperand aRhs) {
-                        return new Operand(aLhs.value().processor().add(-1.0));
+                        return new Operand(aLhs.value().processor().add(new Scalar(-1.0)));
                 }};                                 
             case ADDITION: 
                 return new MathOp(OP.ADDITION) {

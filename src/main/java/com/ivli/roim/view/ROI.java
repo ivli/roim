@@ -17,15 +17,15 @@
  */
 package com.ivli.roim.view;
 
+import com.ivli.roim.core.ISeries;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import com.ivli.roim.core.Measurement;
-import com.ivli.roim.core.Series;
+import com.ivli.roim.core.Scalar;
 import com.ivli.roim.core.SeriesCollection;
 import com.ivli.roim.events.OverlayChangeEvent;
-import com.ivli.roim.events.ROIChangeEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,15 +54,11 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         return iAreaInPixels;
     }      
     
-    public Series getSeries(Measurement anId) { 
+    public ISeries getSeries(Measurement anId) { 
         if (anId != Measurement.AREAINPIXELS) 
             return iSeries.get(anId);
-        else {
-            Series ret = new Series(Measurement.AREAINPIXELS);
-            ret.add((double)getAreaInPixels());
-            return ret;
-        }
-        
+        else             
+            return new Scalar(Measurement.AREAINPIXELS, getAreaInPixels());               
     }
     
     public Color getColor() {

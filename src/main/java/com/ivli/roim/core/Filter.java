@@ -17,9 +17,7 @@
  */
 package com.ivli.roim.core;
 
-import com.ivli.roim.view.OverlayManager;
 import com.ivli.roim.view.ROI;
-
 
 /**
  *

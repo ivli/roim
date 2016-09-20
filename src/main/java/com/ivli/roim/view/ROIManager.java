@@ -28,6 +28,7 @@ import com.ivli.roim.calc.BinaryOp;
 import com.ivli.roim.calc.ConcreteOperand;
 import com.ivli.roim.calc.IOperand;
 import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.ISeries;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
 import com.ivli.roim.core.Uid;
@@ -96,11 +97,11 @@ public class ROIManager extends OverlayManager {
     
     void createSurrogateROI(BinaryOp anOp) {               
         final class SO implements IOperand {
-            Series iV; 
-            SO(Series aV) {
+            ISeries iV; 
+            SO(ISeries aV) {
                 iV = aV;
             } 
-            public Series value() {return iV;}
+            public ISeries value() {return iV;}
             public String getString() {return "";}
         } 
         
@@ -118,8 +119,8 @@ public class ROIManager extends OverlayManager {
                 final Measurement f1 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();                
                 final Measurement f2 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();
                 
-                final Series aLhs = ((ConcreteOperand)anOp.getLhs()).getROI().getSeries(f1);
-                final Series aRhs = ((ConcreteOperand)anOp.getRhs()).getROI().getSeries(f2);
+                final ISeries aLhs = ((ConcreteOperand)anOp.getLhs()).getROI().getSeries(f1);
+                final ISeries aRhs = ((ConcreteOperand)anOp.getRhs()).getROI().getSeries(f2);
                     
                 if (null != aLhs && null != aRhs) {                
                     iSeries = new SeriesCollection();

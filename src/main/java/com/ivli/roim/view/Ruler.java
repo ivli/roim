@@ -6,7 +6,7 @@ import com.ivli.roim.calc.IOperand;
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.calc.Operand;
 import com.ivli.roim.core.Measurement;
-import com.ivli.roim.core.Series;
+import com.ivli.roim.core.Scalar;
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -66,7 +66,7 @@ public class Ruler extends ScreenObject {
             Ruler iR = Ruler.this;
             @Override
             public IOperand value() {                
-                return new Operand(new Series(Measurement.DISTANCE, iR.iDistance));
+                return new Operand(new Scalar(Measurement.DISTANCE, iR.iDistance));
             }
             @Override
             public String format(AbstractFormatter aF) {

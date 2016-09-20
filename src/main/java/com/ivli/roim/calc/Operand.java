@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.calc;
 
+import com.ivli.roim.core.ISeries;
 import com.ivli.roim.core.Series;
 
 /**
@@ -24,9 +25,9 @@ import com.ivli.roim.core.Series;
  * @author likhachev
  */
 public class Operand implements IOperand {
-    protected Series iValue;    
+    protected ISeries iValue;    
     
-    public Operand(Series aVal) {
+    public Operand(ISeries aVal) {
         iValue = aVal;        
     } 
         
@@ -38,7 +39,7 @@ public class Operand implements IOperand {
         iValue = null;
     }
     
-    public Series value() {
+    public ISeries value() {
         return iValue;
     }  
 }

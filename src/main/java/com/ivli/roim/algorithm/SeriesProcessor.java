@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.algorithm;
 
+import com.ivli.roim.core.ISeries;
 import com.ivli.roim.core.Series;
 
 /**
@@ -25,46 +26,32 @@ import com.ivli.roim.core.Series;
  */
 public class SeriesProcessor {
     
-    Series iSeries;
+    ISeries iSeries;
     
-    public SeriesProcessor(Series aS) {iSeries = aS;}
+    public SeriesProcessor(ISeries aS) {iSeries = aS;}
     
-    public Series add(Series aS) {
+    public ISeries add(ISeries aS) {
         return SeriesProcessor.add(iSeries, aS);
     }
-    
-    public Series add(double aS) {
-        return SeriesProcessor.add(iSeries, aS);
-    }
-    
-    public Series sub(Series aS) {
+  
+    public ISeries sub(ISeries aS) {
         return SeriesProcessor.sub(iSeries, aS);
     }
-    
-    public Series sub(double aS) {
-        return SeriesProcessor.sub(iSeries, aS);
-    }
-    
-     public Series mul(Series aS) {
+  
+     public ISeries mul(ISeries aS) {
         return SeriesProcessor.mul(iSeries, aS);
     }
+   
     
-    public Series mul(double aS) {
-        return SeriesProcessor.mul(iSeries, aS);
-    }
-    
-    public Series div(Series aS) {
+    public ISeries div(ISeries aS) {
         return SeriesProcessor.div(iSeries, aS);
     }
     
-    public Series div(double aS) {
-        return SeriesProcessor.div(iSeries, aS);
-    }
-    
-    static Series add(Series aLhs, Series aRhs) {
+    static ISeries add(ISeries aLhs, ISeries aRhs) {
         if (aLhs.size() != aRhs.size())
             return null;
-        Series ret = new Series(aLhs.getId());
+        
+        ISeries ret = new Series(aLhs.getId());
         
         for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) + aRhs.get(i));
@@ -72,14 +59,14 @@ public class SeriesProcessor {
         return ret;    
     }
     
-    static Series add(Series aLhs, double aRhs) {       
+    static Series add(ISeries aLhs, double aRhs) {       
         Series ret = new Series(aLhs.getId());        
         for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) + aRhs);        
         return ret;    
     }
     
-    static Series sub(Series aLhs, Series aRhs) {
+    static Series sub(ISeries aLhs, ISeries aRhs) {
         if (aLhs.size() != aRhs.size())
             return null;
         Series ret = new Series(aLhs.getId());
@@ -90,7 +77,7 @@ public class SeriesProcessor {
         return ret;    
     }
     
-    static Series sub(Series aLhs, double aRhs) {       
+    static Series sub(ISeries aLhs, double aRhs) {       
         Series ret = new Series(aLhs.getId());
         
         for (int i=0; i<aLhs.size(); ++i)
@@ -99,7 +86,7 @@ public class SeriesProcessor {
         return ret;    
     }
     
-    static Series mul(Series aLhs, Series aRhs) {
+    static Series mul(ISeries aLhs, ISeries aRhs) {
         if (aLhs.size() != aRhs.size())
             return null;
         Series ret = new Series(aLhs.getId());
@@ -110,7 +97,7 @@ public class SeriesProcessor {
         return ret;    
     }
     
-    static Series mul(Series aLhs, double aRhs) {        
+    static Series mul(ISeries aLhs, double aRhs) {        
         Series ret = new Series(aLhs.getId());
         
         for (int i=0; i<aLhs.size(); ++i)
@@ -119,7 +106,7 @@ public class SeriesProcessor {
         return ret;    
     }
     
-    static Series div(Series aLhs, Series aRhs) {
+    static Series div(ISeries aLhs, ISeries aRhs) {
         if (aLhs.size() != aRhs.size())
             return null;
         Series ret = new Series(aLhs.getId());
@@ -130,7 +117,7 @@ public class SeriesProcessor {
         return ret;    
     }
                
-    static Series div(Series aLhs, double aRhs) {        
+    static Series div(ISeries aLhs, double aRhs) {        
         Series ret = new Series(aLhs.getId());
         
         for (int i=0; i<aLhs.size(); ++i)

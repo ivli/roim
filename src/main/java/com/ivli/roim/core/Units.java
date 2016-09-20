@@ -22,6 +22,7 @@ package com.ivli.roim.core;
  * @author likhachev
  */
 public enum Units {
+    DIMENTIONLESS("","", "%02d"),
     ///TIME
     HOUR("Hour", "h", "%02d"),
     MINUTE("Minute", "m", "%02d"),
