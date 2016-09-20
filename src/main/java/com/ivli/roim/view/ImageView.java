@@ -133,7 +133,7 @@ public class ImageView extends JComponent implements IImageView {
         addKeyListener(iController);
     }
     
-    enum VIEWMODE {
+    enum VIEWMODETYPE {
         DEFAULT, //
         FRAME, // display single frame of a number 
         CINE,  // display single frame, can move from first to last
@@ -144,30 +144,30 @@ public class ImageView extends JComponent implements IImageView {
     }
 
     public static class ViewMode {
-        public static final ViewMode DEFAULT = new ViewMode(VIEWMODE.DEFAULT, IFrameProvider.FIRST, IFrameProvider.LAST);
+        public static final ViewMode DEFAULT = new ViewMode(VIEWMODETYPE.DEFAULT, IFrameProvider.FIRST, IFrameProvider.LAST);
                 
         public static ViewMode frame(int aFrameNumber) {
-            return new ViewMode(VIEWMODE.FRAME, aFrameNumber, IFrameProvider.LAST);
+            return new ViewMode(VIEWMODETYPE.FRAME, aFrameNumber, IFrameProvider.LAST);
         }
         
         public static ViewMode cine() {
-            return new ViewMode(VIEWMODE.CINE, IFrameProvider.FIRST, IFrameProvider.LAST);
+            return new ViewMode(VIEWMODETYPE.CINE, IFrameProvider.FIRST, IFrameProvider.LAST);
         }
         
         public static ViewMode range(int aFrom, int aTo) {
-            return new ViewMode(VIEWMODE.RANGE, aFrom, aTo);
+            return new ViewMode(VIEWMODETYPE.RANGE, aFrom, aTo);
         }
         
         public static ViewMode composite(int aSummFrom, int aSummTo) {
-            return new ViewMode(VIEWMODE.COMPOSITE, aSummFrom, aSummTo);
+            return new ViewMode(VIEWMODETYPE.COMPOSITE, aSummFrom, aSummTo);
         }
         
         public static ViewMode slice(int aSliceNumber) {
-            return new ViewMode(VIEWMODE.FRAME, aSliceNumber, IFrameProvider.LAST);
+            return new ViewMode(VIEWMODETYPE.FRAME, aSliceNumber, IFrameProvider.LAST);
         }
         
         public static ViewMode volume(int aSliceFrom, int aSliceTo) {
-            return new ViewMode(VIEWMODE.VOLUME, aSliceFrom, aSliceTo);
+            return new ViewMode(VIEWMODETYPE.VOLUME, aSliceFrom, aSliceTo);
         }
         
         public boolean isCompatible(IMultiframeImage aI) {           
@@ -206,13 +206,13 @@ public class ImageView extends JComponent implements IImageView {
             return false;
         }
         
-        private ViewMode(VIEWMODE aType, int aF, int aT) {
+        private ViewMode(VIEWMODETYPE aType, int aF, int aT) {
             iType = aType;
             iFrameFrom = aF;
             iFrameTo = aT;
         }
         
-        VIEWMODE iType;
+        VIEWMODETYPE iType;
         int iFrameFrom;
         int iFrameTo;
     }

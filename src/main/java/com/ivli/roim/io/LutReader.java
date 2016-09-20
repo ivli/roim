@@ -27,9 +27,6 @@ import java.io.DataInputStream;
 import java.awt.Color;
 import java.awt.image.IndexColorModel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public final class LutReader {
     
     private static final String BUILTIN_LUTS[] = {
@@ -62,13 +59,15 @@ public final class LutReader {
         return new IndexColorModel(8, nColors, reds, greens, blues);
     } 
     
-    static final public IndexColorModel open(String arg) throws IOException {        
+    public static final IndexColorModel open(String arg) {     
+        if (null == arg)
+            return null;
         final int lutSize = 256;
         int nColors;
         byte [] reds = new byte[lutSize]; 
         byte [] greens = new byte[lutSize]; 
         byte [] blues = new byte[lutSize];
-
+        
         if (arg.equals(BUILTIN_LUTS[0]))
             nColors = grays(reds, greens, blues);
         else if (arg.equals(BUILTIN_LUTS[1]))
@@ -93,11 +92,16 @@ public final class LutReader {
                 nColors = primaryColor(6, reds, greens, blues);
         else if (arg.equals(BUILTIN_LUTS[11]))
                 nColors = redGreen(reds, greens, blues);
-        else            
+        else   
+            try {
                 nColors = openLut(new File(arg), false, reds, greens, blues);
+            } catch (IOException ex) {
+                LOG.error(ex);
+                return null;
+            }
         
         if (nColors > 0) {
-            if (nColors<256)
+            if (nColors < 256)
                 nColors = extrapolate(reds, greens, blues, nColors);
 
             return new IndexColorModel(8, nColors, reds, greens, blues);
@@ -105,7 +109,7 @@ public final class LutReader {
         return null;
     }
 
-    private static final int fire(byte[] reds, byte[] greens, byte[] blues) {
+    private static int fire(byte[] reds, byte[] greens, byte[] blues) {
         int[] r = {0,0,1,25,49,73,98,122,146,162,173,184,195,207,217,229,240,252,255,255,255,255,255,255,255,255,255,255,255,255,255,255};
         int[] g = {0,0,0,0,0,0,0,0,0,0,0,0,0,14,35,57,79,101,117,133,147,161,175,190,205,219,234,248,255,255,255,255};
         int[] b = {0,61,96,130,165,192,220,227,210,181,151,122,93,64,35,5,0,0,0,0,0,0,0,0,0,0,0,35,98,160,223,255};
@@ -117,7 +121,7 @@ public final class LutReader {
         return r.length;
     }
 
-    private static final int grays(byte[] reds, byte[] greens, byte[] blues) {
+    private static int grays(byte[] reds, byte[] greens, byte[] blues) {
         for (int i=0; i<256; i++) {
             reds[i] = (byte)i;
             greens[i] = (byte)i;
@@ -126,7 +130,7 @@ public final class LutReader {
         return 256;
     }
 
-    private static final int primaryColor(int color, byte[] reds, byte[] greens, byte[] blues) {
+    private static int primaryColor(int color, byte[] reds, byte[] greens, byte[] blues) {
         for (int i=0; i<256; i++) {
             if ((color&4)!=0)
                 reds[i] = (byte)i;
@@ -138,7 +142,7 @@ public final class LutReader {
         return 256;
     }
 
-    private static final int ice(byte[] reds, byte[] greens, byte[] blues) {
+    private static int ice(byte[] reds, byte[] greens, byte[] blues) {
         int[] r = {0,0,0,0,0,0,19,29,50,48,79,112,134,158,186,201,217,229,242,250,250,250,250,251,250,250,250,250,251,251,243,230};
         int[] g = {156,165,176,184,190,196,193,184,171,162,146,125,107,93,81,87,92,97,95,93,93,90,85,69,64,54,47,35,19,0,4,0};
         int[] b = {140,147,158,166,170,176,209,220,234,225,236,246,250,251,250,250,245,230,230,222,202,180,163,142,123,114,106,94,84,64,26,27};
@@ -150,7 +154,7 @@ public final class LutReader {
         return r.length;
     }
 
-    private static final int spectrum(byte[] reds, byte[] greens, byte[] blues) {
+    private static int spectrum(byte[] reds, byte[] greens, byte[] blues) {
         final int sz = 256;
         for (int i=0; i<sz; i++) {
             Color c = Color.getHSBColor(i/255f, 1f, 1f);
@@ -161,7 +165,7 @@ public final class LutReader {
         return sz;
     }
 
-    private static final int rgb332(byte[] reds, byte[] greens, byte[] blues) {
+    private static int rgb332(byte[] reds, byte[] greens, byte[] blues) {
         Color c;
         for (int i=0; i<256; i++) {
             reds[i] = (byte)(i&0xe0);
@@ -171,7 +175,7 @@ public final class LutReader {
         return 256;
     }
 
-    private static final int redGreen(byte[] reds, byte[] greens, byte[] blues) {
+    private static int redGreen(byte[] reds, byte[] greens, byte[] blues) {
         for (int i=0; i<128; i++) {
             reds[i] = (byte)(i*2);
             greens[i] = (byte)0;
@@ -185,7 +189,7 @@ public final class LutReader {
         return 256;
     }
 
-    private static final int extrapolate(byte[] reds, byte[] greens, byte[] blues, int nColors) {
+    private static int extrapolate(byte[] reds, byte[] greens, byte[] blues, int nColors) {
         byte[] r = new byte[nColors]; 
         byte[] g = new byte[nColors]; 
         byte[] b = new byte[nColors];
@@ -210,7 +214,7 @@ public final class LutReader {
     }
 
     /** Opens an NIH Image LUT, 768 byte binary LUT or text LUT from a file or URL. */
-    private static final int openLut(File fi, boolean isURL, byte[] reds, byte[] greens, byte[] blues) throws IOException {                   
+    private static int openLut(File fi, boolean isURL, byte[] reds, byte[] greens, byte[] blues) throws IOException {                   
             final long length = fi.length();
             int size = 0; 
             
@@ -233,7 +237,7 @@ public final class LutReader {
     }
    
     /** Opens an NIH Image LUT or a 768 byte binary LUT. */
-    private static final int openBinaryLut(File fi, boolean raw, byte[] reds, byte[] greens, byte[] blues) throws IOException {
+    private static int openBinaryLut(File fi, boolean raw, byte[] reds, byte[] greens, byte[] blues) throws IOException {
 
         DataInputStream f = new DataInputStream(new FileInputStream(fi));
         int nColors = 256;
@@ -307,5 +311,6 @@ public final class LutReader {
             return new IndexColorModel(8, 256, reds, greens, blues);
     }
 
-    private static final Logger LOG = LogManager.getLogger();
+    
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }

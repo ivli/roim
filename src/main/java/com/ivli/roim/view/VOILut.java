@@ -32,7 +32,7 @@ public class VOILut {
         iLinear = true;
         iPVt = aPVT;
         iBuffer = new int[IMAGESPACE_SIZE];
-        iPlut = (null !=aLUT) ? aLUT : PresentationLUT.create(null);
+        iPlut = (null != aLUT) ? aLUT : PresentationLUT.create(null);
         iWin = aWin;                  
     }  
     

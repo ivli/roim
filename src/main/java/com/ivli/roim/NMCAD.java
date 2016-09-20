@@ -367,31 +367,30 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
     }//GEN-LAST:event_jMenuItem1ActionPerformed
      
     private void openImage(String aF) {   
-        final String fn;
-        if (null != aF) 
-            fn = aF;
-        else {
-            FileOpenDialog dlg = new FileOpenDialog("Choice file", "*.dcm", "a DICOM image");
+        String fn;
+        
+        if (null == (fn = aF)) {        
+            FileOpenDialog dlg = new FileOpenDialog("Choice file", "*.dcm", "DICOM image file");
             if(!dlg.DoModal(this, true))
                 return;
             else
                 fn = dlg.getFileName();
         }
-        try {  
-            File f = new File(fn);                 
-            if (f.exists() && !f.isDirectory()) {
-                initPanels(fn);
-                setTitle(fn);
-            } else {
-                JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + fn);                   
-            }                     
-        } catch (Exception ex) {            
-            LOG.error(ex);           
+        
+        File f = new File(fn);                 
+        if (f.exists() && !f.isDirectory()) {             
+            initPanels(ImageFactory.create(fn));
+            setTitle(fn);
+        } else {
             JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + fn);                   
-        }         
+        }                     
+       // } catch (NullPointerException ex) {            
+       //     LOG.error(ex);           
+       //     JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + fn);                   
+       // }         
     }
         
-    private void initPanels(final String aFileName) {         
+    private void initPanels(IMultiframeImage anImage){//final String aFileName) {         
         jPanel1.removeAll();
         jPanel3.removeAll();
         jPanel4.removeAll();
@@ -400,11 +399,9 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jPanel1.repaint();
         jPanel3.repaint();
         jPanel4.repaint();
-        jPanel5.repaint();        
+        jPanel5.repaint();                   
         
-        IMultiframeImage mi = ImageFactory.create(aFileName);               
-        
-        iGroup = ImageViewGroup.create(mi);
+        iGroup = ImageViewGroup.create(anImage);
        
         ImageView image = iGroup.createView(ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
         jPanel1.setLayout(new BorderLayout());
@@ -423,7 +420,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jPanel4.validate(); 
         
         //CHART        
-        if (mi.getImageType() == ImageType.DYNAMIC) {
+        if (anImage.getImageType() == ImageType.DYNAMIC) {
             iChart = ChartView.create();                    
             iChart.setPreferredSize(jPanel5.getPreferredSize());
             jPanel5.add(iChart);      

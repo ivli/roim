@@ -17,10 +17,6 @@
  */
 package com.ivli.roim.core;
 
-import com.ivli.roim.io.LutReader;
-import java.awt.image.IndexColorModel;
-import java.io.IOException;
-
 /**
  *
  * @author likhachev
@@ -40,16 +36,10 @@ public class PresentationLUT {
     }
             
     public void open(String aName) {
-        IndexColorModel mdl;
+        java.awt.image.IndexColorModel mdl;
     
-        try {
-            if (null != aName)
-                mdl = LutReader.open(aName);   
-            else
-                mdl = LutReader.defaultLUT();            
-        } catch (IOException ex) {
-            mdl = LutReader.defaultLUT();
-        }
+        if (null == (mdl = com.ivli.roim.io.LutReader.open(aName)))
+            mdl = com.ivli.roim.io.LutReader.defaultLUT();            
        
         byte reds[] = new byte[LUT_SIZE];
         byte greens[] = new byte[LUT_SIZE];
@@ -69,4 +59,5 @@ public class PresentationLUT {
     public int[] translate(int aNdx) {
         return iBuffer[aNdx];
     }
+    
 }
