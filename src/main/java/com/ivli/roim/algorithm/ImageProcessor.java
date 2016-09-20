@@ -87,15 +87,15 @@ public class ImageProcessor {
     }
     
     public void flipVert() {
-        flipVert(0, iImage.getNumFrames());
+        flipVert(0, IFrameProvider.LAST);
     }
     
     public void flipHorz() {
-        flipHorz(0, iImage.getNumFrames());
+        flipHorz(0, IFrameProvider.LAST);
     }
             
     public void rotate(final double anAngle) {
-        rotate(anAngle, 0, iImage.getNumFrames());
+        rotate(anAngle, 0, IFrameProvider.LAST);
     }      
         
     public IMultiframeImage collapse(int aFrom, int aTo) {      
