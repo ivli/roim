@@ -27,7 +27,9 @@ import com.ivli.roim.core.Series;
 public class SeriesProcessor {    
     private ISeries iSeries;
     
-    public SeriesProcessor(ISeries aS) {iSeries = aS;}
+    public SeriesProcessor(ISeries aS) {
+        iSeries = aS;
+    }
     
     public ISeries add(ISeries aS) {
         return SeriesProcessor.add(iSeries, aS);
@@ -56,14 +58,7 @@ public class SeriesProcessor {
         
         return ret;    
     }
-    
-    static ISeries add(ISeries aLhs, double aRhs) {       
-        Series ret = new Series(aLhs.getId());        
-        for (int i=0; i<aLhs.size(); ++i)
-            ret.add(aLhs.get(i) + aRhs);        
-        return ret;    
-    }
-    
+       
     static ISeries sub(ISeries aLhs, ISeries aRhs) {
         if (aLhs.size() != aRhs.size() && !aRhs.isScalar())
             return null;
@@ -74,16 +69,7 @@ public class SeriesProcessor {
         
         return ret;    
     }
-    
-    static ISeries sub(ISeries aLhs, double aRhs) {       
-        Series ret = new Series(aLhs.getId());
-        
-        for (int i=0; i<aLhs.size(); ++i)
-            ret.add(aLhs.get(i) - aRhs);
-        
-        return ret;    
-    }
-    
+       
     static ISeries mul(ISeries aLhs, ISeries aRhs) {
         if (aLhs.size() != aRhs.size() && !aRhs.isScalar())
             return null;
@@ -93,16 +79,7 @@ public class SeriesProcessor {
             ret.add(aLhs.get(i) * aRhs.get(i));
         
         return ret;    
-    }
-    
-    static ISeries mul(ISeries aLhs, double aRhs) {        
-        Series ret = new Series(aLhs.getId());
-        
-        for (int i=0; i<aLhs.size(); ++i)
-            ret.add(aLhs.get(i) * aRhs);
-        
-        return ret;    
-    }
+    }       
     
     static ISeries div(ISeries aLhs, ISeries aRhs) {       
         if (aLhs.size() != aRhs.size() && !aRhs.isScalar())
@@ -115,13 +92,5 @@ public class SeriesProcessor {
         
         return ret;    
     }
-               
-    static ISeries div(ISeries aLhs, double aRhs) {        
-        Series ret = new Series(aLhs.getId());
-        
-        for (int i=0; i<aLhs.size(); ++i)
-            ret.add(aLhs.get(i) / aRhs);
-        
-        return ret;    
-    }        
+                   
 }

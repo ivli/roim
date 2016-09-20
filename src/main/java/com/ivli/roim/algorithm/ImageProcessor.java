@@ -114,7 +114,6 @@ public class ImageProcessor {
             for (int j = 0; j < dst.length; ++j)
                 dst[j] += src[j];
             
-            
         }        
         return ret;
     } 
