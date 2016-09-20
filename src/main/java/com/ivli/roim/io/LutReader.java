@@ -50,8 +50,7 @@ public final class LutReader {
         return BUILTIN_LUTS;
     } 
 	    
-    public static final IndexColorModel defaultLUT() {
-              
+    public static final IndexColorModel defaultLUT() {              
         byte [] reds = new byte[TABLE_SIZE]; 
         byte [] greens = new byte[TABLE_SIZE]; 
         byte [] blues = new byte[TABLE_SIZE];
