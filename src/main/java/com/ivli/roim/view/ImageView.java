@@ -266,7 +266,7 @@ public class ImageView extends JComponent implements IImageView {
             case VOLUME: {
                 MIPProjector prj = new MIPProjector(getImage(), getImage().getNumFrames());
                 setImage(prj.getDst());
-                
+                prj.project();
             } break;
         }
     }
