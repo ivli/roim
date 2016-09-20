@@ -222,7 +222,7 @@ public class ImageView extends JComponent implements IImageView {
     public static final ViewMode DEFAULT_IMAGE_MODE = ViewMode.frame(0);
     public static final ViewMode DEFAULT_STATIC_IMAGE_MODE = ViewMode.frame(0);
     public static final ViewMode DEFAULT_DYNAMIC_IMAGE_MODE = ViewMode.cine();
-    public static final ViewMode DEFAULT_TOMO_IMAGE_MODE = ViewMode.slice(0);
+    public static final ViewMode DEFAULT_TOMO_IMAGE_MODE = ViewMode.volume(0, -1);
     public static final ViewMode DEFAULT_VOLUME_IMAGE_MODE = ViewMode.volume(0, -1);
     public static final ViewMode DEFAULT_COMPOSITE_IMAGE_MODE = ViewMode.composite(IFrameProvider.FIRST, IFrameProvider.LAST);
     
