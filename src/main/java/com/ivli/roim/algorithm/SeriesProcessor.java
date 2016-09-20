@@ -24,9 +24,8 @@ import com.ivli.roim.core.Series;
  *
  * @author likhachev
  */
-public class SeriesProcessor {
-    
-    ISeries iSeries;
+public class SeriesProcessor {    
+    private ISeries iSeries;
     
     public SeriesProcessor(ISeries aS) {iSeries = aS;}
     
@@ -41,14 +40,13 @@ public class SeriesProcessor {
      public ISeries mul(ISeries aS) {
         return SeriesProcessor.mul(iSeries, aS);
     }
-   
-    
+      
     public ISeries div(ISeries aS) {
         return SeriesProcessor.div(iSeries, aS);
     }
     
     static ISeries add(ISeries aLhs, ISeries aRhs) {
-        if (aLhs.size() != aRhs.size())
+        if (aLhs.size() != aRhs.size() && !aRhs.isScalar())
             return null;
         
         ISeries ret = new Series(aLhs.getId());
@@ -59,15 +57,15 @@ public class SeriesProcessor {
         return ret;    
     }
     
-    static Series add(ISeries aLhs, double aRhs) {       
+    static ISeries add(ISeries aLhs, double aRhs) {       
         Series ret = new Series(aLhs.getId());        
         for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) + aRhs);        
         return ret;    
     }
     
-    static Series sub(ISeries aLhs, ISeries aRhs) {
-        if (aLhs.size() != aRhs.size())
+    static ISeries sub(ISeries aLhs, ISeries aRhs) {
+        if (aLhs.size() != aRhs.size() && !aRhs.isScalar())
             return null;
         Series ret = new Series(aLhs.getId());
         
@@ -77,7 +75,7 @@ public class SeriesProcessor {
         return ret;    
     }
     
-    static Series sub(ISeries aLhs, double aRhs) {       
+    static ISeries sub(ISeries aLhs, double aRhs) {       
         Series ret = new Series(aLhs.getId());
         
         for (int i=0; i<aLhs.size(); ++i)
@@ -86,8 +84,8 @@ public class SeriesProcessor {
         return ret;    
     }
     
-    static Series mul(ISeries aLhs, ISeries aRhs) {
-        if (aLhs.size() != aRhs.size())
+    static ISeries mul(ISeries aLhs, ISeries aRhs) {
+        if (aLhs.size() != aRhs.size() && !aRhs.isScalar())
             return null;
         Series ret = new Series(aLhs.getId());
         
@@ -97,7 +95,7 @@ public class SeriesProcessor {
         return ret;    
     }
     
-    static Series mul(ISeries aLhs, double aRhs) {        
+    static ISeries mul(ISeries aLhs, double aRhs) {        
         Series ret = new Series(aLhs.getId());
         
         for (int i=0; i<aLhs.size(); ++i)
@@ -106,9 +104,10 @@ public class SeriesProcessor {
         return ret;    
     }
     
-    static Series div(ISeries aLhs, ISeries aRhs) {
-        if (aLhs.size() != aRhs.size())
+    static ISeries div(ISeries aLhs, ISeries aRhs) {       
+        if (aLhs.size() != aRhs.size() && !aRhs.isScalar())
             return null;
+        
         Series ret = new Series(aLhs.getId());
         
         for (int i=0; i<aLhs.size(); ++i)
@@ -117,13 +116,12 @@ public class SeriesProcessor {
         return ret;    
     }
                
-    static Series div(ISeries aLhs, double aRhs) {        
+    static ISeries div(ISeries aLhs, double aRhs) {        
         Series ret = new Series(aLhs.getId());
         
         for (int i=0; i<aLhs.size(); ++i)
             ret.add(aLhs.get(i) / aRhs);
         
         return ret;    
-    }
-        
+    }        
 }

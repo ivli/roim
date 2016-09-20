@@ -34,11 +34,36 @@ public abstract class ISeries {
         return iID;
     }
     
-    public abstract boolean isScalar();    
-    public abstract int size();    
-    public abstract double get(int anIndex);    
-    public abstract void add(double aV);   
+    /**
+     *
+     * @return whether this object holds a scalar value or a series    
+     */
+    public abstract boolean isScalar();
     
+    /**
+     *
+     * @return if this object holds a scalar value it always returns 1 otherwise a size of the series    
+     */
+    public abstract int size();  
+    
+    /**
+     *
+     * @return  in the case of a series it returns series value at a given index
+     *          for scalars it always returns it's value parameter anIndex is ignored
+     */
+    public abstract double get(int anIndex); 
+    
+    /**   
+     * 
+     * @param aV appends given value to the end of the series
+     *           for scalars it always changes it's value to provided one 
+     */
+    public abstract void add(double aV);    
+    
+    /**
+     *
+     * @return object of the SeriesProcessor class that provides base means of math manipulations  
+     */
     public SeriesProcessor processor() {
         return new SeriesProcessor(this);
     }
