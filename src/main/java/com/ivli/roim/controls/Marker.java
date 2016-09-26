@@ -30,19 +30,23 @@ class Marker {
     protected boolean iVert;
     protected int     iPos; 
     protected Image   iImage;
-
+    protected int iSize;
+    protected static final int DEFAULT_MARKER_SIZE = 4;
+    
     Marker(final String anImageFileName, boolean aVertical) {    
         iVert = aVertical;
         iPos = 0;                              
         try {                       
-            iImage = javax.imageio.ImageIO.read(ClassLoader.getSystemResource(anImageFileName));//"images/knob_bot.png")); //NOI18N                                   
+            iImage = javax.imageio.ImageIO.read(ClassLoader.getSystemResource(anImageFileName)); //"images/knob_bot.png")); //NOI18N                                   
          } catch (IOException ex) {              
-             //LOG.error("FATAL!!!", ex); //NOI18N               
-         }         
+           //  LOG.error("FATAL!!!", ex); //NOI18N               
+         }  
+        
+        iSize = null != iImage ? (iVert ? iImage.getHeight(null) : iImage.getWidth(null)) : DEFAULT_MARKER_SIZE;
     }
 
-    int getMarkerHeight() {
-        return iImage.getHeight(null);
+    int getMarkerSize() {
+        return iSize;
     }
 
     void setPosition(int aPos) {           
@@ -53,15 +57,19 @@ class Marker {
         return iPos;
     }             
 
-    boolean contains(int aVal) {
-        final int ypos = iPos;//getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;
-        final int height = (null != iImage) ? iImage.getHeight(null) : 4;
-        return aVal < ypos + height && aVal > ypos  /*- half_height*/;
+    boolean contains(int aVal) {                         
+        return aVal < iPos + iSize && aVal > iPos  /*- half ranget*/;        
     }
 
-    void draw(Graphics aGC, Rectangle aRect) {                                                   
-        final int ypos = aRect.height - getMarkerHeight() - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);
-        aGC.drawImage(iImage, 0, ypos, null);                
+    void draw(Graphics aGC, Rectangle aRect) {  
+        int xpos=0, ypos=0;
+        if (iVert) {
+            ypos = aRect.height - getMarkerSize() - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);             
+        } else {
+            xpos = iPos;
+        }
+        
+        aGC.drawImage(iImage, xpos, ypos, null);   
 /*
         if (MARKERS_DISPLAY_WL_VALUES) {
             final double val = MARKERS_DISPLAY_PERCENT ? screenToImage(iPos) * 100.0 / iRange.range() : screenToImage(iPos);

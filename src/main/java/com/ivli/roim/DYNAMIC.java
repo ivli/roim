@@ -48,7 +48,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
+public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
    
     private ChartView  iChart; 
     private ImageViewGroup iGroup;
@@ -63,7 +63,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         }
     }
     
-    public NMCAD() {         
+    public DYNAMIC() {         
         LOG.info("-->Entering application"); // NOI18N       
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("images/khibiny.png")).getImage());
       
@@ -121,15 +121,15 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
-        jLabel1.setText(bundle.getString("NMCAD.jLabel1.text")); // NOI18N
+        jLabel1.setText(bundle.getString("DYNAMIC.jLabel1.text")); // NOI18N
 
-        jLabel2.setText(bundle.getString("NMCAD.jLabel2.text")); // NOI18N
+        jLabel2.setText(bundle.getString("DYNAMIC.jLabel2.text")); // NOI18N
 
-        jLabel3.setText(bundle.getString("NMCAD.jLabel3.text")); // NOI18N
+        jLabel3.setText(bundle.getString("DYNAMIC.jLabel3.text")); // NOI18N
 
-        jLabel4.setText(bundle.getString("NMCAD.jLabel4.text")); // NOI18N
+        jLabel4.setText(bundle.getString("DYNAMIC.jLabel4.text")); // NOI18N
 
-        jLabel6.setText(bundle.getString("NMCAD.jLabel6.text")); // NOI18N
+        jLabel6.setText(bundle.getString("DYNAMIC.jLabel6.text")); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -179,20 +179,20 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setPreferredSize(new java.awt.Dimension(597, 600));
         jPanel1.setVerifyInputWhenFocusTarget(false);
-        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("DYNAMIC.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
 
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel3.setLayout(new java.awt.BorderLayout());
-        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("DYNAMIC.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
 
         jPanel4.setLayout(new java.awt.BorderLayout());
-        jTabbedPane1.addTab(bundle.getString("NMCAD.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
+        jTabbedPane1.addTab(bundle.getString("DYNAMIC.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
 
         jSplitPane1.setTopComponent(jTabbedPane1);
 
-        jMenu1.setText(bundle.getString("NMCAD.jMenu1.text")); // NOI18N
+        jMenu1.setText(bundle.getString("DYNAMIC.jMenu1.text")); // NOI18N
 
-        jMenuItem2.setText(bundle.getString("NMCAD.jMenuItem2.text")); // NOI18N
+        jMenuItem2.setText(bundle.getString("DYNAMIC.jMenuItem2.text")); // NOI18N
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
@@ -201,7 +201,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         jMenu1.add(jMenuItem2);
         jMenu1.add(jSeparator2);
 
-        jMenuItem1.setText(bundle.getString("NMCAD.jMenuItem1.text")); // NOI18N
+        jMenuItem1.setText(bundle.getString("DYNAMIC.jMenuItem1.text")); // NOI18N
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -211,14 +211,14 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText(bundle.getString("NMCAD.jMenu2.text")); // NOI18N
+        jMenu2.setText(bundle.getString("DYNAMIC.jMenu2.text")); // NOI18N
         jMenu2.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
                 jMenu2ComponentShown(evt);
             }
         });
 
-        jMenuItem3.setText(bundle.getString("NMCAD.jMenuItem3.text")); // NOI18N
+        jMenuItem3.setText(bundle.getString("DYNAMIC.jMenuItem3.text")); // NOI18N
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem3ActionPerformed(evt);
@@ -226,7 +226,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         });
         jMenu2.add(jMenuItem3);
 
-        jMenuItem7.setText(bundle.getString("NMCAD.jMenuItem7.text")); // NOI18N
+        jMenuItem7.setText(bundle.getString("DYNAMIC.jMenuItem7.text")); // NOI18N
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
@@ -234,7 +234,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         });
         jMenu2.add(jMenuItem7);
 
-        jMenuItem8.setText(bundle.getString("NMCAD.jMenuItem8.text")); // NOI18N
+        jMenuItem8.setText(bundle.getString("DYNAMIC.jMenuItem8.text")); // NOI18N
         jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem8ActionPerformed(evt);
@@ -244,11 +244,11 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
 
         jMenuBar1.add(jMenu2);
 
-        jMenu4.setText(bundle.getString("NMCAD.jMenu4.text")); // NOI18N
+        jMenu4.setText(bundle.getString("DYNAMIC.jMenu4.text")); // NOI18N
 
-        jMenu3.setText(bundle.getString("NMCAD.jMenu3.text")); // NOI18N
+        jMenu3.setText(bundle.getString("DYNAMIC.jMenu3.text")); // NOI18N
 
-        jMenuItem10.setText(bundle.getString("NMCAD.jMenuItem10.text")); // NOI18N
+        jMenuItem10.setText(bundle.getString("DYNAMIC.jMenuItem10.text")); // NOI18N
         jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem10ActionPerformed(evt);
@@ -256,7 +256,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         });
         jMenu3.add(jMenuItem10);
 
-        jMenuItem11.setText(bundle.getString("NMCAD.jMenuItem11.text")); // NOI18N
+        jMenuItem11.setText(bundle.getString("DYNAMIC.jMenuItem11.text")); // NOI18N
         jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem11ActionPerformed(evt);
@@ -264,7 +264,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         });
         jMenu3.add(jMenuItem11);
 
-        jMenuItem12.setText(bundle.getString("NMCAD.jMenuItem12.text")); // NOI18N
+        jMenuItem12.setText(bundle.getString("DYNAMIC.jMenuItem12.text")); // NOI18N
         jMenuItem12.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem12ActionPerformed(evt);
@@ -274,9 +274,9 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
 
         jMenu4.add(jMenu3);
 
-        jMenu5.setText(bundle.getString("NMCAD.jMenu5.text")); // NOI18N
+        jMenu5.setText(bundle.getString("DYNAMIC.jMenu5.text")); // NOI18N
 
-        jMenuItem13.setText(bundle.getString("NMCAD.jMenuItem13.text")); // NOI18N
+        jMenuItem13.setText(bundle.getString("DYNAMIC.jMenuItem13.text")); // NOI18N
         jMenuItem13.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem13ActionPerformed(evt);
@@ -284,7 +284,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         });
         jMenu5.add(jMenuItem13);
 
-        jMenuItem14.setText(bundle.getString("NMCAD.jMenuItem14.text")); // NOI18N
+        jMenuItem14.setText(bundle.getString("DYNAMIC.jMenuItem14.text")); // NOI18N
         jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem14ActionPerformed(evt);
@@ -292,7 +292,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         });
         jMenu5.add(jMenuItem14);
 
-        jMenuItem15.setText(bundle.getString("NMCAD.jMenuItem15.text")); // NOI18N
+        jMenuItem15.setText(bundle.getString("DYNAMIC.jMenuItem15.text")); // NOI18N
         jMenuItem15.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem15ActionPerformed(evt);
@@ -300,7 +300,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         });
         jMenu5.add(jMenuItem15);
 
-        jMenuItem5.setText(bundle.getString("NMCAD.jMenuItem5.text")); // NOI18N
+        jMenuItem5.setText(bundle.getString("DYNAMIC.jMenuItem5.text")); // NOI18N
         jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem5ActionPerformed(evt);
@@ -310,7 +310,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
 
         jMenu4.add(jMenu5);
 
-        jMenuItem4.setText(bundle.getString("NMCAD.jMenuItem4.text")); // NOI18N
+        jMenuItem4.setText(bundle.getString("DYNAMIC.jMenuItem4.text")); // NOI18N
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem4ActionPerformed(evt);
@@ -320,11 +320,11 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
 
         jMenuBar1.add(jMenu4);
 
-        jMenu6.setText(bundle.getString("NMCAD.jMenu6.text")); // NOI18N
+        jMenu6.setText(bundle.getString("DYNAMIC.jMenu6.text")); // NOI18N
         jMenu6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jMenu6.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
-        jMenuItem6.setText(bundle.getString("NMCAD.jMenuItem6.text")); // NOI18N
+        jMenuItem6.setText(bundle.getString("DYNAMIC.jMenuItem6.text")); // NOI18N
         jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem6ActionPerformed(evt);
@@ -575,7 +575,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                NMCAD nmc = new NMCAD();
+                DYNAMIC nmc = new DYNAMIC();
                 if (args.length > 0)
                     nmc.openImage(args[0]);
                 nmc.setVisible(true);

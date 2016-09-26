@@ -10,7 +10,6 @@ import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.Cursor;
 
-import java.awt.geom.Rectangle2D;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -18,8 +17,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,11 +55,10 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     private static final boolean WEDGE_EXTEND_WHEN_FOCUSED = false;      
     
     private static final int NUMBER_OF_SHADES = 255;    
-    private static final int VGAP_DEFAULT = 4;
-    private static final int INACTIVE_BAR_WIDTH  = 32 / (WEDGE_EXTEND_WHEN_FOCUSED ? 2 : 1); //when mouse is out    
-    private static final int ACTIVATED_BAR_WIDTH = 32; //mouse inside
-    private static final int LEFT_GAP  = 2;  //reserve border at left & right
-    private static final int RIGHT_GAP = 2;
+          
+    private final int BAR_WIDTH = 32; //mouse inside
+    private final int LEFT_GAP  = 2;  //reserve border at left & right
+    private final int RIGHT_GAP = 2;
     
     private final int TOP_GAP;  //reserve a half of marker height at window's top & bottom 
     private final int BOTTOM_GAP;
@@ -90,11 +86,11 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     }
     
     protected LUTControl() { 
-        iTop    = new Marker("images/knob_bot.png", true);  
-        iBottom = new Marker("images/knob_bot.png", true);  
+        iTop    = new Marker("images/knob_horz.png", true);  
+        iBottom = new Marker("images/knob_horz.png", true);  
         iList = new EventListenerList();
-        TOP_GAP = iTop.getMarkerHeight()/2;
-        BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used 
+        TOP_GAP = iTop.getMarkerSize()/2;
+        BOTTOM_GAP = iBottom.getMarkerSize()/2; //to the case images of different height are used 
         iRange  = null;        
         iCanShowDialog = true;        
     }
@@ -398,17 +394,17 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     
     @Override
     public Dimension getMinimumSize() {
-        return new Dimension(ACTIVATED_BAR_WIDTH, NUMBER_OF_SHADES + (TOP_GAP + BOTTOM_GAP));
+        return new Dimension(BAR_WIDTH, NUMBER_OF_SHADES + (TOP_GAP + BOTTOM_GAP));
     }
     
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(ACTIVATED_BAR_WIDTH, NUMBER_OF_SHADES + (TOP_GAP + BOTTOM_GAP));
+        return new Dimension(BAR_WIDTH, NUMBER_OF_SHADES + (TOP_GAP + BOTTOM_GAP));
     }
     
     @Override
     public Dimension getMaximumSize() {
-        return new Dimension(ACTIVATED_BAR_WIDTH, Short.MAX_VALUE);
+        return new Dimension(BAR_WIDTH, Short.MAX_VALUE);
     }
     
     
@@ -510,6 +506,6 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         mnu.show(this, aX, aY);
     }   
 
-    private static final Logger LOG = LogManager.getLogger();
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }
 

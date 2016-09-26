@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.core;
 
+import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -48,6 +49,10 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         iPhases.add(PhaseInformation.ONESHOT);
         iSlices = new ArrayList(); 
         fillSlicesArray();        
+    }
+    
+    public ArrayList<PhaseInformation> getPhaseVector() {
+        return iPhases;
     }
     
     public long getSmallestDuration() {
@@ -100,6 +105,10 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
     //returns avector of frames' end times for instance having single phase image of 3 1s frames it would return a list of <1000, 2000, 3000>    
     public ArrayList<Long> getSlices() {
         return iSlices;
+    }
+    
+    public long getPhaseDuration(int aPhaseNumber) {
+        return iPhases.get(aPhaseNumber).duration();
     }
     
     public long getFrameDuration(int aFrameNumber) {
@@ -193,10 +202,13 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         }
     }
     
+    /**
+     *
+     * @return total image duration
+     */
     public long duration() { // does it make sense to cache this field
         long ret = 0L;
-        for (PhaseInformation p : iPhases)
-            ret += p.duration();
+        ret = iPhases.stream().map((p) -> p.duration()).reduce(ret, (accumulator, _item) -> accumulator + _item);
         return ret;
     }
        

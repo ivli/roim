@@ -17,16 +17,22 @@
  */
 package com.ivli.roim.controls;
 
-import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.Window;
+import com.ivli.roim.core.Instant;
+import com.ivli.roim.core.PhaseInformation;
+import com.ivli.roim.core.TimeSliceVector;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
-import com.ivli.roim.events.WindowChangeListener;
+
 import com.ivli.roim.view.ActionItem;
 import com.ivli.roim.view.ImageView;
+import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -45,49 +51,88 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     
     private static final int MARKER_CURSOR = Cursor.HAND_CURSOR;    
     private static final int WINDOW_CURSOR = Cursor.N_RESIZE_CURSOR;                           
-    private static final int LEFT_GAP  = 2;  //reserve border at left & right
-    private static final int RIGHT_GAP = 2; 
-    private final int TOP_GAP;  //reserve a half of marker height at window's top & bottom 
-    private final int BOTTOM_GAP;
+    private final int LEFT_GAP;  //reserve border at left & right
+    private final int RIGHT_GAP; 
+    private final int TOP_GAP  = 2;  //reserve a half of marker height at window's top & bottom 
+    private final int BOTTOM_GAP  = 2;
     
-    private final Marker iTop;
-    private final Marker iBottom;
-    private ActionItem iAction;
+    private final Marker iMarker;    
+    private ActionItem   iAction;
     private BufferedImage iBuf;
-      
-    private boolean iCanShowDialog;
+          
     private ImageView  iView;       
-        
+     
+    private static final boolean DRAW_PHASES_LEGEND = true;
     
     FrameControl() {
-        iTop = new Marker("images/knob_bot.png", false);
-        iBottom = new Marker("images/knob_bot.png", false);
-        TOP_GAP = iTop.getMarkerHeight()/2;
-        BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used 
+        iMarker = new Marker("images/knob_vert.png", false);        
+        LEFT_GAP  = iMarker.getMarkerSize()/2;
+        RIGHT_GAP = iMarker.getMarkerSize()/2; //to the case images of different height are used 
     }
     
      public static FrameControl create(ImageView aV) {
         FrameControl ret = new FrameControl();
-       // ret.construct(aV);
-        aV.addFrameChangeListener(ret);
-       // aV.addWindowChangeListener(ret); 
+        ret.construct(aV);
+        aV.addFrameChangeListener(ret);       
         return ret;
     }
     
+    private long millisPerPixel = 1;
+    
+    private void construct(ImageView aW) {    
+        iView = aW;    
+     
+        addComponentListener(new ComponentListener() {    
+            public void componentResized(ComponentEvent e) {   
+                TimeSliceVector tsv = aW.getImage().getTimeSliceVector();                
+                millisPerPixel = tsv.duration() / getActiveBarWidth();
+                
+                LOG.debug("duration=" + tsv.duration() + ", width=" + getActiveBarWidth() + ", millis per pixel=" + millisPerPixel);
+                makeBuffer();
+                repaint();
+            }                                               
+            public void componentHidden(ComponentEvent e) {}
+            public void componentMoved(ComponentEvent e) {}
+            public void componentShown(ComponentEvent e) {}                    
+        });
+              
+        addMouseMotionListener(this);
+        addMouseListener(this);  
+        addMouseWheelListener(this);   
+    }
+  
     @Override
     public void actionPerformed(ActionEvent e) {
         assert (null != iView);
     }
     
     @Override
-    public void frameChanged(FrameChangeEvent anE) {                   
-        makeBuffer();                 
+    public void frameChanged(FrameChangeEvent anE) {                           
+        iMarker.setPosition((int)(iView.getImage().getTimeSliceVector().frameStarts(anE.getFrame()) / millisPerPixel));
+        repaint();
     }   
+    
+    @Override
+    public Dimension getMinimumSize() {
+        return new Dimension(256, 32);
+    }
+    
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(Short.MAX_VALUE, 32);
+    }
+    
+    @Override
+    public Dimension getMaximumSize() {
+        return new Dimension(Short.MAX_VALUE, 32);
+    }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
-        if (null != iAction) 
+    public void mouseDragged(MouseEvent e) {       
+        if (null != iAction) {
             iAction.action(e.getX(), e.getY());
+            repaint();
+        }
     }
 
     @Override
@@ -101,42 +146,45 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     
     @Override
     public void mouseMoved(MouseEvent e) {
-        final int ypos = getHeight() - e.getPoint().y;
+        final int xpos = e.getPoint().x;
 
-        if (iTop.contains(ypos) || iBottom.contains(ypos))
-            setCursor(java.awt.Cursor.getPredefinedCursor(MARKER_CURSOR));
-        else if (ypos < iTop.getPosition() && ypos > iBottom.getPosition())
-            setCursor(java.awt.Cursor.getPredefinedCursor(WINDOW_CURSOR));
+        if (iMarker.contains(xpos))
+            setCursor(java.awt.Cursor.getPredefinedCursor(MARKER_CURSOR));        
         else 
             setCursor(java.awt.Cursor.getDefaultCursor());                                     
     }
-       
+    
+    final void setMarkerPosition(int aPos) {
+        if (null == iView)
+            iMarker.setPosition(aPos);
+        else
+            iView.setFrameNumber(iView.getImage().getTimeSliceVector().frameNumber(new Instant(millisPerPixel*aPos)));        
+    }
+    
     @Override
-    public void mousePressed(MouseEvent e) {        
-        final int ypos = getHeight() - e.getPoint().y;
+    public void mousePressed(MouseEvent e) {               
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            final int xpos = e.getPoint().x;
+            //hit marker icon then get ready to drag
+            if (iMarker.contains(xpos)) {  
 
-        if (iTop.contains(ypos) || iBottom.contains(ypos) || iTop.getPosition() + 4 > ypos && iBottom.getPosition() - 4 < ypos) {  
-            iAction = new ActionItem(e.getX(), e.getY()) {
+                iAction = new ActionItem(e.getX(), e.getY()) {
+                    protected void DoAction(int aX, int aY) { 
+                        if (aX >= LEFT_GAP && aX < getActiveBarWidth() + RIGHT_GAP) {
+                            setMarkerPosition(aX - LEFT_GAP);
+                            //repaint();
+                        }
+                    }   
 
-                boolean first = true;
-                final boolean iMoveTop = iTop.contains(ypos);    
-
-                final boolean iMoveBoth = !(iMoveTop || iBottom.contains(ypos)) && iTop.getPosition() > ypos && iBottom.getPosition() < ypos;  
-
-                protected void DoAction(int aX, int aY) {
-                    
-
-                }   
-
-                protected boolean DoWheel(int aX) {
-                    final Window win = new Window(iView.getWindow());                     
-
-                    return false;
-                }
-            };                
-        } 
-        else if (SwingUtilities.isLeftMouseButton(e)) {
-            //iAction = NewAction(iLeftAction, e.getX(), e.getY());
+                    protected boolean DoWheel(int aX) {                    
+                        return false;
+                    }
+                };    
+            //don't hit but still within active rectangle - just move marker            
+            } else if (xpos >= LEFT_GAP && xpos < getActiveBarWidth() + RIGHT_GAP) {
+                setMarkerPosition(xpos - LEFT_GAP);
+                //repaint();
+            }              
         }
         else if (SwingUtilities.isMiddleMouseButton(e)) {
             //iAction = NewAction(iMiddleAction, e.getX(), e.getY());
@@ -149,10 +197,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
 
     @Override
     public void mouseReleased(MouseEvent e) {                    
-        iAction = null;  
-        if (!getBounds().contains(e.getPoint())){
-           
-        }
+        iAction = null;          
     }
 
     @Override
@@ -178,26 +223,56 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
             directChangeWindow(new Window(iRange));         
 */
     }
-
-    private  ImageFrame iBackFrame;
     
-    private void makeBuffer() {
-        final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
-        final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
+    final static Color rainbow[] = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.CYAN};
+   
+    private void makeBuffer() {             
+        if (null == iBuf)
+            iBuf = new BufferedImage(getActiveBarWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         
-        if (width <=0 || height <=0) {
-           iBackFrame = null;
-           return;
-        }
-            
-        iBackFrame = new ImageFrame(width, height);
-        //final double ratio = iRange.range() / height;
+        Graphics g = iBuf.getGraphics();
+               
+        g.setColor(Color.LIGHT_GRAY);              
+        g.fillRect(0, 0, iBuf.getWidth(), iBuf.getHeight());
         
-        for (int i = 0; i < width; ++i) {                  
-            for (int j = 0; j < height; ++j) {                                     
-                iBackFrame.setPixel(i, j, 0);
-            }                      
+        if (DRAW_PHASES_LEGEND && null != iView && iView.getImage().getTimeSliceVector().getNumPhases() > 1) {
+            int xstart = 0;
+            int width = 0;
+            for(int i =0; i < iView.getImage().getTimeSliceVector().getNumPhases(); ++i) {
+                width = (int) (iView.getImage().getTimeSliceVector().getPhaseDuration(i) / millisPerPixel) - 1;
+                g.setColor(rainbow[i]);
+                g.drawRect(xstart, 0, width, getHeight()-TOP_GAP);
+                xstart += width + 1;
+            }
         }
     }
     
+    int getActiveBarWidth() {
+        return getWidth() - (iReserveSpaceRight ? 2*(RIGHT_GAP + LEFT_GAP) : (RIGHT_GAP + LEFT_GAP));
+    }
+    
+    private final boolean iReserveSpaceRight = true; 
+    
+    @Override
+    public void paintComponent(Graphics g) {                          
+        final Color old = g.getColor();
+               
+        g.setColor(Color.LIGHT_GRAY);  
+                  
+        
+        if (iReserveSpaceRight)
+            g.draw3DRect(getWidth() - 32, 0, getWidth(), getHeight(), true);       
+        
+        //g.fillRect(0, 0, getActiveBarWidth(), getHeight());
+        g.drawImage(iBuf, LEFT_GAP, TOP_GAP, getActiveBarWidth(), getHeight() - (TOP_GAP + BOTTOM_GAP), null);    
+        g.draw3DRect(0, 0, getWidth(), getHeight(), true);    
+        
+        if (null != iMarker) 
+            iMarker.draw(g, getBounds());        
+        
+        
+        g.setColor(old);
+    }
+     
+   private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();    
 }
