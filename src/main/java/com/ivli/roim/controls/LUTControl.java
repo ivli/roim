@@ -51,7 +51,7 @@ import com.ivli.roim.events.WindowChangeListener;
  *
  * @author likhachev
  */
-public class LUTControl extends JComponent implements  WindowChangeListener, FrameChangeListener, ActionListener, 
+public class LUTControl extends JComponent implements WindowChangeListener, FrameChangeListener, ActionListener, 
                                                           MouseMotionListener, MouseListener, MouseWheelListener {    
     private static final boolean MARKERS_DISPLAY_WL_VALUES = false;
     private static final boolean MARKERS_DISPLAY_PERCENT   = false;
@@ -80,8 +80,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
       
     private boolean iCanShowDialog;
     private ImageView  iView;                 
-    
-    
+        
     public static LUTControl create(ImageView aV) {
         LUTControl ret = new LUTControl();
         ret.construct(aV);
@@ -91,8 +90,8 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
     }
     
     protected LUTControl() { 
-        iTop = new Marker(true);  
-        iBottom = new Marker(false);  
+        iTop    = new Marker("images/knob_bot.png", true);  
+        iBottom = new Marker("images/knob_bot.png", true);  
         iList = new EventListenerList();
         TOP_GAP = iTop.getMarkerHeight()/2;
         BOTTOM_GAP = iBottom.getMarkerHeight()/2; //to the case images of different height are used 
@@ -309,6 +308,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         }                
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {                    
         iAction = null;  
         if (!getBounds().contains(e.getPoint())){
@@ -316,6 +316,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         }
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {        
         //iActive = true;
         if (null == iAction) {
@@ -323,11 +324,13 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         }
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
         if (null == iAction) {           
         }
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {    
         if (SwingUtilities.isRightMouseButton(e)) 
             showPopupMenu(e.getX(), e.getY());
@@ -374,8 +377,8 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         g.draw3DRect(0, 0, getWidth(), getHeight(), true);       
         
         if (null != iTop && null != iBottom) {
-            iTop.draw(g);
-            iBottom.draw(g);
+            iTop.draw(g, getBounds());
+            iBottom.draw(g, getBounds());
         }
         
         g.setColor(clr);
@@ -408,62 +411,7 @@ public class LUTControl extends JComponent implements  WindowChangeListener, Fra
         return new Dimension(ACTIVATED_BAR_WIDTH, Short.MAX_VALUE);
     }
     
-    final class Marker {
-        int     iPos;        
-        boolean iTop;
-        Image  iKnob;
-
-        Marker(boolean aTop) {           
-            iPos = 0;                       
-            iTop = aTop;
-            
-            try {               
-                if (iTop) 
-                    iKnob = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/knob_bot.png")); //NOI18N
-                else
-                    iKnob = javax.imageio.ImageIO.read(ClassLoader.getSystemResource("images/knob_bot.png")); //NOI18N                                   
-                
-             } catch (IOException ex) {              
-                 LOG.error("FATAL!!!", ex); //NOI18N               
-             }         
-        }
-        
-        int getMarkerHeight() {
-            return iKnob.getHeight(null);
-        }
-            
-        void setPosition(int aPos) {           
-            iPos = aPos;
-        } 
-        
-        int getPosition() {
-            return iPos;
-        }             
-        
-        boolean contains(int aVal) {
-            final int ypos = iPos;//getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;
-            final int height = (null != iKnob) ? iKnob.getHeight(null) : 4;
-            return aVal < ypos + height && aVal > ypos  /*- half_height*/;
-        }
-            
-        void draw(Graphics aGC) {                                                   
-            final int ypos = getHeight() - (TOP_GAP + BOTTOM_GAP) - iPos;// + ((iName == "top") ? TOP_GAP : BOTTOM_GAP);
-            aGC.drawImage(iKnob, 0, ypos, null);                
-                
-            if (MARKERS_DISPLAY_WL_VALUES) {
-                final double val = MARKERS_DISPLAY_PERCENT ? screenToImage(iPos) * 100.0 / iRange.range() : screenToImage(iPos);
-                final String out = String.format("%.0f", Math.abs(val)); //NOI18N
-                final Rectangle2D sb = aGC.getFontMetrics().getStringBounds(out, aGC);    
-                final int height = (null != iKnob) ? iKnob.getHeight(null) : 4;
-                
-                aGC.setColor(Color.BLACK);    
-                aGC.drawString(out, (int)(getWidth()/2 - sb.getWidth()/2), 
-                              (int)(getHeight() - iPos - height / 2 + sb.getHeight() / 2 )
-                              );
-            }           
-        }         
-    }        
-       
+    
     private static final String KCommandTriggerLinear = "COMMAND_LUTCONTROL_TRIGGER_LINEAR"; // NOI18N
     private static final String KCommandTriggerDirect = "COMMAND_LUTCONTROL_TRIGGER_DIRECT"; // NOI18N
     private static final String KCommandShowDialog    = "COMMAND_LUTCONTROL_SHOW_DIALOG";    // NOI18N

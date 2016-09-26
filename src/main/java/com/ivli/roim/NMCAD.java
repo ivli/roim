@@ -416,7 +416,7 @@ public class NMCAD extends JFrame implements FrameChangeListener, WindowChangeLi
        /**/
         ImageView gridView = iGroup.createGridView();//ImageView.create(sum, root);
         jPanel4.add(gridView, BorderLayout.CENTER);
-        jPanel4.add(LUTControl.create(gridView), BorderLayout.LINE_END);
+        jPanel4.add(LUTControl.create(gridView), BorderLayout.PAGE_END);
         jPanel4.validate(); 
         
         //CHART        

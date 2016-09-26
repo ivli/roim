@@ -26,16 +26,19 @@ import com.ivli.roim.algorithm.ImageProcessor;
  * 
  */
 public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFrameProvider, Cloneable {          
+    
     /**
      *    
      * @return ImageProcessor - providing means of image manipulations
      */
     public abstract ImageProcessor processor();
+    
     /**
      *    
      * @return parent image or null for the root image
      */
     public abstract IMultiframeImage parent();
+    
     /**
      *
      * @param aFrameNumber
@@ -43,7 +46,6 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFramePr
      */
     public abstract boolean hasAt(int aFrameNumber);
     
-   
     /**
      * Creates a multiframe image with physical characteristics of original but Z or time axis whose lenght is set in the first parementer
      * frames are zeroed out  

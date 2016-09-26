@@ -67,15 +67,14 @@ public interface IImage {
     TimeSliceVector getTimeSliceVector();            
     /**
      *
-     * @return minimal pixel value in serie 
+     * @return minimal pixel value 
      */
     double getMin();  
     /**
      *
-     * @return maximal pixel value in serie 
+     * @return maximal pixel value  
      */
     double getMax();
     
-    PValueTransform getTransform();        
-     
+    PValueTransform getTransform();             
 }
