@@ -107,8 +107,22 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         return iSlices;
     }
     
+    /**
+     *
+     * @param aPhaseNumber a number of the phase
+     * @return total duration of the phase
+     */
     public long getPhaseDuration(int aPhaseNumber) {
         return iPhases.get(aPhaseNumber).duration();
+    }
+    
+    /**
+     *
+     * @param aPhaseNumber a number of the phase
+     * @return  number of frames in phase 
+     */
+    public long getPhaseFrames(int aPhaseNumber) {
+        return iPhases.get(aPhaseNumber).iNumberOfFrames;
     }
     
     public long getFrameDuration(int aFrameNumber) {
