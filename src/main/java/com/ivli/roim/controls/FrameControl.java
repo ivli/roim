@@ -249,31 +249,18 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
                
         g.setColor(Color.LIGHT_GRAY);              
         g.fillRect(0, 0, iBuf.getWidth(), iBuf.getHeight());
+        
         if (DRAW_PHASES_LEGEND && null != iView && iView.getImage().getTimeSliceVector().getNumPhases() > 1) {
             final TimeSliceVector tsv = iView.getImage().getTimeSliceVector();
-            if (iTimeWiseScale) {           
-                int xstart = 0;
-                int width = 0;
-                for(int i =0; i < tsv.getNumPhases(); ++i) {
-                    width = (int) (tsv.getPhaseDuration(i) / conversion) - 1;
-                    g.setColor(RAINBOW[i%RAINBOW.length]);
-                    g.drawRect(xstart, 0, width, getHeight() - TOP_GAP);
-                    xstart += width + 1;
-                }
-            } else {                               
-                //LOG.debug("getNumFrames=" + tsv.getNumFrames() + ", getActiveBarWidth=" + getActiveBarWidth() + ", pixelsPerFrame=" + pixelsPerFrame); 
-                int xstart = 0;
-                int width = 0;
-                for(int i =0; i < tsv.getNumPhases(); ++i) {
-                    LOG.debug("getPhaseFrames (" + i + ")=" + tsv.getPhaseFrames(i));
-                    width = (int) (tsv.getPhaseFrames(i) / conversion) - 1;
-                    g.setColor(RAINBOW[i%RAINBOW.length]);
-                    g.drawRect(xstart, 0, width, getHeight() - TOP_GAP);
-                    xstart += width + 1;
-                }
-            
-            
-            }
+            int xstart = 0;
+            int width = 0;
+            for(int i =0; i < tsv.getNumPhases(); ++i) {
+                width = iTimeWiseScale ? (int) (tsv.getPhaseDuration(i) / conversion) - 1 :
+                                         (int) (tsv.getPhaseFrames(i) / conversion) - 1;
+                g.setColor(RAINBOW[i%RAINBOW.length]);
+                g.drawRect(xstart, 0, width, getHeight() - TOP_GAP);
+                xstart += width + 1;
+            }           
         } 
     }
     
@@ -307,14 +294,12 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     private static final String KCOMMAND_TIMEWISE_SCALE="KCOMMAND_TIMEWISE_SCALE"; 
     
     void showPopupMenu(int aX, int aY) {
-        final JPopupMenu mnu = new JPopupMenu("FC_CONTEXT_MENU_TITLE");     //NOI18N    
+        final JPopupMenu mnu = new JPopupMenu("FC_CONTEXT_MENU_TITLE"); //NOI18N    
         JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem("FC_MENU.TIMEWISE_SCALE");
         mi11.addActionListener(this);
         mi11.setState(iTimeWiseScale);
-        mi11.setActionCommand(KCOMMAND_TIMEWISE_SCALE);
-        
+        mi11.setActionCommand(KCOMMAND_TIMEWISE_SCALE);        
         mnu.add(mi11);
- 
         mnu.show(this, aX, aY);
     }
     
