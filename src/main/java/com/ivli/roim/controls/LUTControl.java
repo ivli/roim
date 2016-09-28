@@ -1,23 +1,13 @@
 package com.ivli.roim.controls;
 
-import java.io.IOException;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Frame;
-import java.awt.Image;
 import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.Cursor;
-
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -28,9 +18,18 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.EventListenerList;
+import javax.swing.JToolTip;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
 
 import com.ivli.roim.view.ActionItem;
 import com.ivli.roim.view.ImageView;
@@ -44,18 +43,23 @@ import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
 import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
+
 /**
  *
  * @author likhachev
  */
 public class LUTControl extends JComponent implements WindowChangeListener, FrameChangeListener, ActionListener, 
                                                           MouseMotionListener, MouseListener, MouseWheelListener {    
-    private static final boolean MARKERS_DISPLAY_WL_VALUES = false;
+    
+    
+    
     private static final boolean MARKERS_DISPLAY_PERCENT   = false;
     private static final boolean WEDGE_EXTEND_WHEN_FOCUSED = false;      
     
     private static final int NUMBER_OF_SHADES = 255;    
-          
+         
+    
+    
     private final int BAR_WIDTH = 32; //mouse inside
     private final int LEFT_GAP  = 2;  //reserve border at left & right
     private final int RIGHT_GAP = 2;
@@ -67,7 +71,9 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     private static final int WINDOW_CURSOR = Cursor.N_RESIZE_CURSOR;                           
    
     protected final EventListenerList iList;
-      
+    
+    private boolean iAnnotateMarker = true;
+    
     private Range iRange;    
     private final Marker iTop;
     private final Marker iBottom;
@@ -216,8 +222,9 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (null != iAction) 
-            iAction.action(e.getX(), e.getY());
+        if (null != iAction) {
+            iAction.action(e.getX(), e.getY());           
+        }
     }
 
     @Override
@@ -239,8 +246,10 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     public void mouseMoved(MouseEvent e) {
         final int ypos = getHeight() - e.getPoint().y;
 
-        if (iTop.contains(ypos) || iBottom.contains(ypos))
+        if (iTop.contains(ypos) || iBottom.contains(ypos)) {
             setCursor(java.awt.Cursor.getPredefinedCursor(MARKER_CURSOR));
+            //updateMarkerAnnotation(e.getLocationOnScreen(), iTop.contains(ypos) ? "top" : "bot");
+        }
         else if (ypos < iTop.getPosition() && ypos > iBottom.getPosition())
             setCursor(java.awt.Cursor.getPredefinedCursor(WINDOW_CURSOR));
         else 
@@ -265,12 +274,13 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
 
                     if (iMoveTop) {               
                        win.setTop(win.getTop() - delta);
-                      // iTop.move(iTop.getPosition() + aX - iX);
+                       updateMarkerAnnotation(new Point(aX, aY), String.format("%.0f", win.getTop()));
                     } else if (iMoveBoth) {
                         win.setLevel(win.getLevel() - delta);
-                    } else {   
-                      // iBottom.move(iBottom.getPosition() + aX - iX); 
+                        updateMarkerAnnotation(new Point(aX, aY), String.format("%.0f-\n%.0f", win.getTop(), win.getBottom()));
+                    } else {                         
                        win.setBottom(win.getBottom() - delta);
+                       updateMarkerAnnotation(new Point(aX, aY), String.format("%.0f", win.getBottom()));
                     }
 
                     if (iRange.contains(win)) 
@@ -311,19 +321,41 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
            
         }
     }
-
+    
+    private Popup popup = null;
+    private JToolTip iTip = new JToolTip();
+    
+    private void updateMarkerAnnotation(Point aPosition, String aText) {
+        if (null != popup) {
+            popup.hide();
+            popup = null;
+        }
+        
+        if (iAnnotateMarker && iActive && null != aPosition && null != aText) {  
+            iTip.setTipText(aText);
+            PopupFactory popupFactory = PopupFactory.getSharedInstance();
+            Point pt = new Point(getLocationOnScreen());            
+            //Point pt = new Point(aPosition); 
+            SwingUtilities.convertPointToScreen(aPosition, this);
+            int x = pt.x;// + iMarker.getPosition();// .e.getXOnScreen();
+            int y = aPosition.y - iTip.getHeight();//e.getYOnScreen();
+            popup = popupFactory.getPopup(this, iTip, x, y);
+            popup.show();
+        }
+    }
+    
+    private boolean iActive = false;
+    
     @Override
     public void mouseEntered(MouseEvent e) {        
-        //iActive = true;
-        if (null == iAction) {
-           
-        }
+        iActive = true;
+        //updateMarkerAnnotation();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        if (null == iAction) {           
-        }
+        iActive = false;
+        updateMarkerAnnotation(null, null);
     }
 
     @Override
