@@ -130,8 +130,8 @@ class Controller implements IController {
             case MOUSE_ACTION_LIST: return new BaseActionItem(aX, aY) {
                 public void DoAction(int aX, int aY) {
                     //try {                            
-                        if (iControlled.setFrameNumber(iX + (int)Math.signum(aX))) {
-                            iX += aX; 
+                        if (iControlled.setFrameNumber(iControlled.getFrameNumber() + 1 * (int)Math.signum(aX))) {
+                            //iX += aX; 
                             iControlled.repaint();
                         }
                     //} catch (IndexOutOfBoundsException ex) {

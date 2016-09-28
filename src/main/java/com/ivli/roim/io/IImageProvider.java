@@ -17,14 +17,24 @@
  */
 package com.ivli.roim.io;
 
-import com.ivli.roim.core.IImage;
 import java.io.IOException;
 
 /**
  *  
  * @author likhachev
+ * @see com.ivli.roim.core.IImage
+ * 
  */
-public interface IImageProvider extends IImage {                  
+public interface IImageProvider extends com.ivli.roim.core.IImage {                  
     
-    public int[] readFrame(int anIndex, int [] aBuffer) throws IndexOutOfBoundsException, IOException;
+    /**
+     * 
+     * @param anIndex frame index must belong to range {@code 0 >= anIndex < getNumFrames() } otherwise <i>IndexOutOfBoundsException</i>
+     * @param aBuffer preallocated buffer of appropriate size {@code getImageDataType().bufferSize(getWidth(), getHeight());},
+     *                a null value is permitted then it returns newly allocated buffer  
+     * @return a buffer containing an image frame referred by <i>anIndex</i> as an array of pixels 
+     * @throws IndexOutOfBoundsException 
+     * @throws IOException 
+     */
+    public int[] readFrame(int anIndex, int [] aBuffer) throws IndexOutOfBoundsException, java.io.IOException;
 }

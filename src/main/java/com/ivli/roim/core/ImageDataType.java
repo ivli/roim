@@ -37,4 +37,8 @@ public enum ImageDataType {
         iColoured = aColoured;
         iHasAlpha = aHasAlpha;        
     }
+    
+    public int bufferSize(int aRows, int aCols) {
+        return iDataSize * aRows * aCols;
+    }
 }
