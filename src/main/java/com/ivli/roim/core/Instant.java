@@ -57,11 +57,28 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
         return INFINITE.iInstant == this.iInstant; 
     }           
     
-    private static final String SUFFIX_MILLIS  = "mS";
-    private static final String SUFFIX_SECONDS = "S";
-    private static final String SUFFIX_MINUTES = "m";
-    private static final String SUFFIX_HOURS   = "H";
-    private static final String STR_TIME_ZERO  = "0 " + SUFFIX_MILLIS;
+    private static final String SUFFIX_MILLIS  = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INSTANT.SUFFIX_MILLIS");
+    private static final String SUFFIX_SECONDS = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INSTANT.SUFFIX_SECONDS");
+    private static final String SUFFIX_MINUTES = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INSTANT.SUFFIX_MINUTES");
+    private static final String SUFFIX_HOURS   = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INSTANT.SUFFIX_HOURS");
+        
+    private static final String FORMAT_MILLIS  = "%d"; //NOI18N
+    private static final String FORMAT_SECONDS = "%2d"; //NOI18N
+    private static final String FORMAT_MINUTES = "%2d"; //NOI18N
+    private static final String FORMAT_HOURS   = "%2d"; //NOI18N
+    private static final String FORMAT_SEPARATOR = ":"; //NOI18N
+    
+    private static final String FORMAT_MS = FORMAT_MILLIS + SUFFIX_MILLIS;
+    private static final String FORMAT_SS_MS = FORMAT_SECONDS + FORMAT_SEPARATOR + FORMAT_MS;
+    private static final String FORMAT_MM_SS_MS = FORMAT_MINUTES + FORMAT_SEPARATOR + FORMAT_SS_MS;
+    private static final String FORMAT_HH_MM_SS_MS = FORMAT_HOURS + FORMAT_SEPARATOR + FORMAT_MM_SS_MS;    
+    private static final String FORMAT_SS = FORMAT_SECONDS + SUFFIX_SECONDS;    
+    private static final String FORMAT_MM_SS = FORMAT_MINUTES + FORMAT_SEPARATOR + FORMAT_SS;
+    private static final String FORMAT_HH_MM_SS = FORMAT_HOURS + FORMAT_SEPARATOR + FORMAT_MM_SS;   
+    private static final String FORMAT_MM = FORMAT_MINUTES + SUFFIX_MINUTES;
+    private static final String FORMAT_HH_MM = FORMAT_HOURS + FORMAT_MM;
+    private static final String FORMAT_HH = FORMAT_HOURS + SUFFIX_HOURS;
+    private static final String FORMAT_STUB  = "--"; //NOI18N
     
     private static String format(long theMillis) {                       
         final long hours   = theMillis / MILLIS_IN_HOUR;        
@@ -71,28 +88,28 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
                
         if (0L != millis) {
             if (0L == hours && 0L == minutes && 0L == seconds)
-                return String.format("%d " + SUFFIX_MILLIS, millis);               
+                return String.format(FORMAT_MS, millis);               
             else if (0L == hours && 0L == minutes)
-                return String.format("%2d:%d " + SUFFIX_MILLIS, seconds, millis);                
+                return String.format(FORMAT_SS_MS, seconds, millis);                
             else if (0L == hours)
-                return String.format("%2d:%2d:%d " + SUFFIX_MILLIS, minutes, seconds, millis);
+                return String.format(FORMAT_MM_SS_MS, minutes, seconds, millis);
             else
-                return String.format("%2d:%2d:%2d:%3d " + SUFFIX_MILLIS, hours, minutes, seconds, millis);                  
+                return String.format(FORMAT_HH_MM_SS_MS, hours, minutes, seconds, millis);                  
         } else if (0L != seconds) {             
             if (0L == hours && 0L == minutes)
-                return String.format("%2d " + SUFFIX_SECONDS, seconds);
+                return String.format(FORMAT_SS, seconds);
             else if (0L == hours)
-                return String.format("%2d:%2d " + SUFFIX_SECONDS, minutes, seconds);
+                return String.format(FORMAT_MM_SS, minutes, seconds);
             else
-                return String.format("%2d:%2d:%2d " + SUFFIX_SECONDS, hours, minutes, seconds);                
+                return String.format(FORMAT_HH_MM_SS, hours, minutes, seconds);                
         } else if (0L != minutes) {                  
             if (0L == hours)               
-                return String.format("%2d " + SUFFIX_MINUTES, minutes);                     
+                return String.format(FORMAT_MM, minutes);                     
             else
-                return String.format("%2d:%2d " + SUFFIX_MINUTES, hours, minutes);                
+                return String.format(FORMAT_HH_MM, hours, minutes);                
         } else if (0L != hours)            
-            return String.format("%2d " + SUFFIX_HOURS, hours);        
+            return String.format(FORMAT_HH, hours);        
         else
-           return String.format(STR_TIME_ZERO);
+           return String.format(FORMAT_STUB);
     }    
 }

@@ -30,7 +30,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -83,15 +82,13 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     private double conversion = 1.; // holds a value used to conversion pixels to time or pixels to frame number and vice versa
      
     FrameControl() {
-        iMarker = new Marker("images/knob_cone_vert.png", false);        
+        iMarker = new Marker("images/knob_cone_vert.png", false);    //NOI18N    
         LEFT_GAP  = iMarker.getMarkerSize()/2;
         RIGHT_GAP = iMarker.getMarkerSize()/2; //to the case images of different height are used 
         
         if(iAnnotateMarker) {
             iTip = new JToolTip();
-            iTip.setComponent(this);
-            iTip.setTipText("tool tip text");
-            
+            iTip.setComponent(this);            
         }
     }
     
@@ -110,7 +107,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         
         ///iMarker.setPosition(iView.);
         updateMarker(iView.getFrameNumber());
-        LOG.debug("duration=" + tsv.duration() + ", width=" + getActiveBarWidth() + ", millis per pixel=" + conversion);
+        LOG.debug("duration=" + tsv.duration() + ", width=" + getActiveBarWidth() + ", millis per pixel=" + conversion); //NOI18N
                 
     }
     
@@ -142,13 +139,8 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
             popup = null;
         }
         
-        if (iAnnotateMarker && iActive) {
-            iTip.setLocation(0,0);
-            iTip.setVisible(true);
-            iTip.repaint();
-            PopupFactory popupFactory = PopupFactory.getSharedInstance();
-            Rectangle r = getBounds();
-           
+        if (iAnnotateMarker && iActive) {            
+            PopupFactory popupFactory = PopupFactory.getSharedInstance();           
             Point pt = new Point(getLocationOnScreen()); 
             //SwingUtilities.convertPointToScreen(pt, this);
             int x = pt.x + iMarker.getPosition();// .e.getXOnScreen();
@@ -161,14 +153,14 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     protected void updateMarker(int aFrameNumber) {
         
         if (iTimeWiseScale) {
-                double moment = iView.getImage().getTimeSliceVector().frameStarts(aFrameNumber);
+                long moment = iView.getImage().getTimeSliceVector().frameStarts(aFrameNumber);
                 iMarker.setPosition((int)(moment / conversion));
                 if (iAnnotateMarker)
-                   iTip.setTipText(String.format("%f", moment));
+                   iTip.setTipText((new Instant(moment)).format());
         } else {
                 iMarker.setPosition((int)(aFrameNumber / conversion));
                 if (iAnnotateMarker)
-                   iTip.setTipText(String.format("%d", aFrameNumber));
+                   iTip.setTipText(String.format("%d", aFrameNumber)); //NOI18N
         }
         
         updateMarkerAnnotation();        
@@ -353,13 +345,13 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     void showPopupMenu(int aX, int aY) {
         final JPopupMenu mnu = new JPopupMenu("FC_CONTEXT_MENU_TITLE"); //NOI18N  
         
-        JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem("FC_MENU.KCOMMAND_TIMEWISE_SCALE");
+        JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("FC_MENU.KCOMMAND_TIMEWISE_SCALE"));
         mi11.addActionListener(this);
         mi11.setState(iTimeWiseScale);
         mi11.setActionCommand(KCOMMAND_TIMEWISE_SCALE);        
         mnu.add(mi11);
         
-        JCheckBoxMenuItem mi12 = new JCheckBoxMenuItem("FC_MENU.KCOMMAND_ANNOTATE_MARKER");
+        JCheckBoxMenuItem mi12 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("FC_MENU.KCOMMAND_ANNOTATE_MARKER"));
         mi12.addActionListener(this);
         mi12.setState(iAnnotateMarker);
         mi12.setActionCommand(KCOMMAND_ANNOTATE_MARKER);        

@@ -167,6 +167,10 @@ public class Window implements java.io.Serializable {
         iLevel *= aFactor;
     }
     
+    public double percentsOf(double aValue) {      
+        return aValue / iWidth * 100.;        
+    }
+    
     @Override
     public String toString(){return String.format("[%.1f, %.1f]", getLevel(), getWidth());} //NOI18N
 }

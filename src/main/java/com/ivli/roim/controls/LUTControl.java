@@ -53,7 +53,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     
     
     
-    private static final boolean MARKERS_DISPLAY_PERCENT   = false;
+    
     private static final boolean WEDGE_EXTEND_WHEN_FOCUSED = false;      
     
     private static final int NUMBER_OF_SHADES = 255;    
@@ -73,6 +73,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     protected final EventListenerList iList;
     
     private boolean iAnnotateMarker = true;
+    private boolean iAnnotationShowPercents = true;
     
     private Range iRange;    
     private final Marker iTop;
@@ -92,8 +93,8 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     }
     
     protected LUTControl() { 
-        iTop    = new Marker("images/knob_horz.png", true);  
-        iBottom = new Marker("images/knob_horz.png", true);  
+        iTop    = new Marker("images/knob_horz.png", true);  //NOI18N
+        iBottom = new Marker("images/knob_horz.png", true);  //NOI18N
         iList = new EventListenerList();
         TOP_GAP = iTop.getMarkerSize()/2;
         BOTTOM_GAP = iBottom.getMarkerSize()/2; //to the case images of different height are used 
@@ -112,7 +113,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
             public void ancestorAdded(AncestorEvent event) {}
 
             public void ancestorRemoved(AncestorEvent event){        
-                LOG.debug("Deregistered");
+                LOG.debug("Deregistered"); //NOI18N
                 aParent.removeWindowChangeListener(LUTControl.this);            
             }
 
@@ -248,7 +249,6 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
 
         if (iTop.contains(ypos) || iBottom.contains(ypos)) {
             setCursor(java.awt.Cursor.getPredefinedCursor(MARKER_CURSOR));
-            //updateMarkerAnnotation(e.getLocationOnScreen(), iTop.contains(ypos) ? "top" : "bot");
         }
         else if (ypos < iTop.getPosition() && ypos > iBottom.getPosition())
             setCursor(java.awt.Cursor.getPredefinedCursor(WINDOW_CURSOR));
@@ -273,14 +273,14 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
                     final Window win = new Window(iView.getWindow());                     
 
                     if (iMoveTop) {               
-                       win.setTop(win.getTop() - delta);
-                       updateMarkerAnnotation(new Point(aX, aY), String.format("%.0f", win.getTop()));
+                        win.setTop(win.getTop() - delta);                        
+                        updateMarkerAnnotation(new Point(aX, aY), win.getTop());
                     } else if (iMoveBoth) {
                         win.setLevel(win.getLevel() - delta);
-                        updateMarkerAnnotation(new Point(aX, aY), String.format("%.0f-\n%.0f", win.getTop(), win.getBottom()));
+                        updateMarkerAnnotation(new Point(aX, aY), win.getWidth());
                     } else {                         
-                       win.setBottom(win.getBottom() - delta);
-                       updateMarkerAnnotation(new Point(aX, aY), String.format("%.0f", win.getBottom()));
+                        win.setBottom(win.getBottom() - delta);
+                        updateMarkerAnnotation(new Point(aX, aY), win.getBottom());
                     }
 
                     if (iRange.contains(win)) 
@@ -324,21 +324,24 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     
     private Popup popup = null;
     private JToolTip iTip = new JToolTip();
-    
-    private void updateMarkerAnnotation(Point aPosition, String aText) {
+    //TOD: aWhat's value means: 1 - top, 2 - bottom, 3 - both :-))) tooooo stupid
+    private void updateMarkerAnnotation(Point aPosition, double aVal) {
         if (null != popup) {
             popup.hide();
             popup = null;
         }
         
-        if (iAnnotateMarker && iActive && null != aPosition && null != aText) {  
-            iTip.setTipText(aText);
+        if (iAnnotateMarker && iActive && null != aPosition) {
+            String text = !iAnnotationShowPercents ? String.format("%.0f", aVal): //NOI18N
+                           String.format("%.0f%%", iView.getRange().percentsOf(aVal)); //NOI18N
+            //LOG.debug("value = " + aVal + ", width = " + iView.getRange(). getRange().getWidth());
+            iTip.setTipText(text);
             PopupFactory popupFactory = PopupFactory.getSharedInstance();
             Point pt = new Point(getLocationOnScreen());            
-            //Point pt = new Point(aPosition); 
+            
             SwingUtilities.convertPointToScreen(aPosition, this);
-            int x = pt.x;// + iMarker.getPosition();// .e.getXOnScreen();
-            int y = aPosition.y - iTip.getHeight();//e.getYOnScreen();
+            int x = pt.x;
+            int y = aPosition.y - iTip.getHeight();
             popup = popupFactory.getPopup(this, iTip, x, y);
             popup.show();
         }
@@ -355,7 +358,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     @Override
     public void mouseExited(MouseEvent e) {
         iActive = false;
-        updateMarkerAnnotation(null, null);
+        updateMarkerAnnotation(null, .0);
     }
 
     @Override
@@ -440,30 +443,34 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     }
     
     
-    private static final String KCommandTriggerLinear = "COMMAND_LUTCONTROL_TRIGGER_LINEAR"; // NOI18N
-    private static final String KCommandTriggerDirect = "COMMAND_LUTCONTROL_TRIGGER_DIRECT"; // NOI18N
-    private static final String KCommandShowDialog    = "COMMAND_LUTCONTROL_SHOW_DIALOG";    // NOI18N
-    private static final String KCommandChangeLUT     = "COMMAND_LUTCONTROL_CHANGE_LUT";     // NOI18N    
+    private static final String KCOMMAND_TRIGGER_LINEAR = "LUTCONTROL.KCOMMAND_TRIGGER_LINEAR"; // NOI18N
+    private static final String KCOMMAND_TRIGGER_DIRECT = "LUTCONTROL.KCOMMAND_TRIGGER_DIRECT"; // NOI18N
+    private static final String KCOMMAND_SHOW_DIALOG    = "LUTCONTROL.KCOMMAND_SHOW_DIALOG";    // NOI18N
+    private static final String KCOMMAND_CHANGE_LUT     = "LUTCONTROL.KCOMMAND_CHANGE_LUT";     // NOI18N    
+    private static final String KCOMMAND_ANNOTATE_MARKER = "LUTCONTROL.KCOMMAND_ANNOTATE_MARKER";     // NOI18N 
+    private static final String KCOMMAND_ANNOTATE_PERCENTS = "LUTCONTROL.KCOMMAND_ANNOTATE_PERCENTS";     // NOI18N 
     
     public void actionPerformed(ActionEvent e) {
-        assert (null != iView);
-        
-        LOG.info(e.getActionCommand() +  e.paramString()); // NOI18N
-        
-        switch (e.getActionCommand()) {             
-            case KCommandTriggerLinear: 
+        switch (e.getActionCommand()) {    
+            case KCOMMAND_ANNOTATE_MARKER: 
+                iAnnotateMarker = !iAnnotateMarker;
+                break;
+            case KCOMMAND_ANNOTATE_PERCENTS: 
+                iAnnotationShowPercents = !iAnnotationShowPercents;
+                break;
+            case KCOMMAND_TRIGGER_LINEAR: 
                 iView.setLinear(!iView.isLinear());
                 invalidateBuffer();
                 //iView.repaint();
                 repaint();
                 break;
-            case KCommandTriggerDirect: 
+            case KCOMMAND_TRIGGER_DIRECT: 
                 iView.setInverted(!iView.isInverted());
                 invalidateBuffer();
                 ///iView.repaint();
                 repaint();
                 break;
-            case KCommandShowDialog:    /**    TODO: refactor the dialog     **/                     
+            case KCOMMAND_SHOW_DIALOG:    /**    TODO: refactor the dialog     **/                     
                 VOILUTPanel panel = new VOILUTPanel(this, this.iView);
                 
                 javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
@@ -473,9 +480,9 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
                 dialog.setResizable(false);
                 dialog.setVisible(true);                 
                 break;
-            case KCommandChangeLUT:
+            case KCOMMAND_CHANGE_LUT:
                 FileDialog fd = new FileDialog((Frame)null , java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.CHOOSE_LUT_FILE"), FileDialog.LOAD);
-                fd.setDirectory(Settings.get(Settings.KEY_DEFAULT_FOLDER_LUT, System.getProperty("user.home")));
+                fd.setDirectory(Settings.get(Settings.KEY_DEFAULT_FOLDER_LUT, System.getProperty("user.home"))); //NOI18N
                 fd.setFile(Settings.get(Settings.KEY_FILE_SUFFIX_LUT, Settings.DEFAULT_FILE_SUFFIX_LUT));
                 fd.setVisible(true);
                   
@@ -498,24 +505,24 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     }
     
     void showPopupMenu(int aX, int aY) {
-        final JPopupMenu mnu = new JPopupMenu("WL_CONTEXT_MENU_TITLE");     //NOI18N    
+        final JPopupMenu mnu = new JPopupMenu("WL_CONTEXT_MENU_TITLE"); //NOI18N    
         JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.TRIGGER_LOGARITHMIC"));
         mi11.addActionListener(this);
         mi11.setState(!iView.isLinear());
-        mi11.setActionCommand(KCommandTriggerLinear);
+        mi11.setActionCommand(KCOMMAND_TRIGGER_LINEAR);
         
         mnu.add(mi11);
 
         JCheckBoxMenuItem mi12 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.TRIGGER_DIRECT_INVERSE"));
         mi12.addActionListener(this);
-        mi12.setActionCommand(KCommandTriggerDirect); 
+        mi12.setActionCommand(KCOMMAND_TRIGGER_DIRECT); 
         mi12.setState(iView.isInverted());
         mnu.add(mi12);
         
         if (iCanShowDialog) {
             JMenuItem mi13 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.SHOW_DIALOG"));
             mi13.addActionListener(this);
-            mi13.setActionCommand(KCommandShowDialog); 
+            mi13.setActionCommand(KCOMMAND_SHOW_DIALOG); 
             mnu.add(mi13);
         }
         
@@ -532,8 +539,20 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         
         JMenuItem mi14 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.CHOOSE_LUT_FILE"));
         mi14.addActionListener(this);
-        mi14.setActionCommand(KCommandChangeLUT); 
+        mi14.setActionCommand(KCOMMAND_CHANGE_LUT); 
         mnu.add(mi14);
+                
+        JCheckBoxMenuItem mi15 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.KCOMMAND_ANNOTATE_MARKER"));
+        mi15.addActionListener(this);
+        mi15.setActionCommand(KCOMMAND_ANNOTATE_MARKER); 
+        mi15.setState(iAnnotateMarker);
+        mnu.add(mi15);
+        
+        JCheckBoxMenuItem mi16 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.KCOMMAND_ANNOTATE_PERCENTS"));
+        mi16.addActionListener(this);
+        mi16.setActionCommand(KCOMMAND_ANNOTATE_PERCENTS); 
+        mi16.setState(iAnnotationShowPercents);
+        mnu.add(mi16);
         
         mnu.show(this, aX, aY);
     }   

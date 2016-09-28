@@ -43,6 +43,7 @@ public class VIEWER extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -58,9 +59,10 @@ public class VIEWER extends javax.swing.JFrame {
             .addGap(0, 462, Short.MAX_VALUE)
         );
 
-        jMenu1.setText("File");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
+        jMenu1.setText(bundle.getString("DYNAMIC.jMenu1.text")); // NOI18N
 
-        jMenuItem1.setText("Open File");
+        jMenuItem1.setText(bundle.getString("DYNAMIC.jMenuItem2.text")); // NOI18N
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -68,9 +70,17 @@ public class VIEWER extends javax.swing.JFrame {
         });
         jMenu1.add(jMenuItem1);
 
+        jMenuItem2.setText(bundle.getString("DYNAMIC.jMenuItem1.text")); // NOI18N
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Edit");
+        jMenu2.setText(bundle.getString("DYNAMIC.jMenu2.text")); // NOI18N
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -121,6 +131,12 @@ public class VIEWER extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+         // TODO add your handling code here:
+        LOG.info("<--BYE, BYE...");// NOI18N
+        dispose();
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -159,11 +175,14 @@ public class VIEWER extends javax.swing.JFrame {
         });
     }
 
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

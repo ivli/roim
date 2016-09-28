@@ -45,7 +45,7 @@ public class Range implements java.io.Serializable {
     }
             
     public double percentsOf(double aVal) {
-        return aVal / range();
+        return aVal / range() * 100.;
     }
     
     public boolean equals(Range aO) {
