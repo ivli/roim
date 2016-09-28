@@ -29,6 +29,8 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -41,10 +43,12 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JToolTip;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
+//import javax.swing.ToolTipManager;
 
 /**
  *
@@ -65,20 +69,27 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     private BufferedImage iBuf;
           
     private ImageView  iView;       
-    
+    JToolTip iTip;
      //TODO: rewrite to be configured at instantiation
     private static final boolean DRAW_PHASES_LEGEND = true;
    
-    private static final boolean ANNOTATE_MARKER = false; 
+    private static final boolean iAnnotateMarker = true; 
     private static final boolean DRAW_FRAME_MINIATURES = true;
        
     private boolean iTimeWiseScale = false; 
-     private double conversion = 1; // holds a value used to conversion pixels to time or pixels to frame number and vice versa
+    private double conversion = 1.; // holds a value used to conversion pixels to time or pixels to frame number and vice versa
      
     FrameControl() {
         iMarker = new Marker("images/knob_cone_vert.png", false);        
         LEFT_GAP  = iMarker.getMarkerSize()/2;
         RIGHT_GAP = iMarker.getMarkerSize()/2; //to the case images of different height are used 
+        
+        if(iAnnotateMarker) {
+            iTip = new JToolTip();
+            iTip.setComponent(this);
+            iTip.setTipText("tool tip text");
+            
+        }
     }
     
     public static FrameControl create(ImageView aV) {
@@ -93,7 +104,9 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         TimeSliceVector tsv = iView.getImage().getTimeSliceVector();                
                 conversion = iTimeWiseScale ? (double)tsv.duration() / (double)getActiveBarWidth() :
                                               (double)tsv.getNumFrames() / (double)getActiveBarWidth();
-                
+        
+        ///iMarker.setPosition(iView.);
+        updateMarker(iView.getFrameNumber());
         LOG.debug("duration=" + tsv.duration() + ", width=" + getActiveBarWidth() + ", millis per pixel=" + conversion);
                 
     }
@@ -117,14 +130,50 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         addMouseListener(this);  
         addMouseWheelListener(this);   
     }
-  
+    
+    boolean iActive = false;
+   
+    private void updateMarkerAnnotation() {
+        if (null != popup) {
+            popup.hide();
+            popup = null;
+        }
+        
+        if (iAnnotateMarker && iActive) {
+            iTip.setLocation(0,0);
+            iTip.setVisible(true);
+            iTip.repaint();
+            PopupFactory popupFactory = PopupFactory.getSharedInstance();
+            Rectangle r = getBounds();
+           
+            Point pt = new Point(getLocationOnScreen()); 
+            //SwingUtilities.convertPointToScreen(pt, this);
+            int x = pt.x + iMarker.getPosition();// .e.getXOnScreen();
+            int y = pt.y - 8;//e.getYOnScreen();
+            popup = popupFactory.getPopup(this, iTip, x, y);
+            popup.show();
+        }
+    }
+    
+    protected void updateMarker(int aFrameNumber) {
+        
+        if (iTimeWiseScale) {
+                double moment = iView.getImage().getTimeSliceVector().frameStarts(aFrameNumber);
+                iMarker.setPosition((int)(moment / conversion));
+                if (iAnnotateMarker)
+                   iTip.setTipText(String.format("%f", moment));
+        } else {
+                iMarker.setPosition((int)(aFrameNumber / conversion));
+                if (iAnnotateMarker)
+                   iTip.setTipText(String.format("%d", aFrameNumber));
+        }
+        
+        updateMarkerAnnotation();        
+    } 
     
     @Override
     public void frameChanged(FrameChangeEvent anE) {       
-        if (iTimeWiseScale)
-            iMarker.setPosition((int)(iView.getImage().getTimeSliceVector().frameStarts(anE.getFrame()) / conversion));
-        else
-            iMarker.setPosition((int)(anE.getFrame() / conversion));
+        updateMarker(anE.getFrame());
         repaint();
     }   
     
@@ -160,6 +209,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         }            
     } 
     
+    Popup popup = null;
     @Override
     public void mouseMoved(MouseEvent e) {
         final int xpos = e.getPoint().x;
@@ -167,10 +217,12 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         if (iMarker.contains(xpos))
             setCursor(java.awt.Cursor.getPredefinedCursor(MARKER_CURSOR));        
         else 
-            setCursor(java.awt.Cursor.getDefaultCursor());                                     
+            setCursor(java.awt.Cursor.getDefaultCursor());       
+        
+        
     }
     
-    final void setMarkerPosition(int aPos) {
+    final void setFrameByPosition(int aPos) {
         if (null == iView)
             iMarker.setPosition(aPos);
         else {
@@ -191,7 +243,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
                 iAction = new ActionItem(e.getX(), e.getY()) {
                     protected void DoAction(int aX, int aY) { 
                         if (aX >= LEFT_GAP && aX < getActiveBarWidth() + RIGHT_GAP) {
-                            setMarkerPosition(aX - LEFT_GAP);
+                            setFrameByPosition(aX - LEFT_GAP);
                             //repaint();
                         }
                     }   
@@ -202,7 +254,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
                 };    
             //don't hit but still within active rectangle - just move marker            
             } else if (xpos >= LEFT_GAP && xpos < getActiveBarWidth() + RIGHT_GAP) {
-                setMarkerPosition(xpos - LEFT_GAP);
+                setFrameByPosition(xpos - LEFT_GAP);
                 //repaint();
             }              
         }
@@ -220,17 +272,19 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         iAction = null;          
     }
 
+    
     @Override
-    public void mouseEntered(MouseEvent e) {        
-        //iActive = true;
-        if (null == iAction) {
-           
-        }
+    public void mouseEntered(MouseEvent e) {                       
+        iActive = true;
+        updateMarkerAnnotation();
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
-        if (null == iAction) {           
+    public void mouseExited(MouseEvent e) {        
+        iActive = false;
+        if (null != popup){
+            popup.hide();
+            popup = null;
         }
     }
 
@@ -257,7 +311,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
             for(int i =0; i < tsv.getNumPhases(); ++i) {
                 width = iTimeWiseScale ? (int) (tsv.getPhaseDuration(i) / conversion) - 1 :
                                          (int) (tsv.getPhaseFrames(i) / conversion) - 1;
-                g.setColor(Colorer.getColor(i));//RAINBOW[i%RAINBOW.length]);
+                g.setColor(Colorer.getColor(i));
                 g.drawRect(xstart, 0, width, getHeight() - TOP_GAP);
                 xstart += width + 1;
             }           
@@ -291,7 +345,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         g.setColor(old);
     }
      
-    private static final String KCOMMAND_TIMEWISE_SCALE="KCOMMAND_TIMEWISE_SCALE"; 
+    private static final String KCOMMAND_TIMEWISE_SCALE = "KCOMMAND_TIMEWISE_SCALE"; 
     
     void showPopupMenu(int aX, int aY) {
         final JPopupMenu mnu = new JPopupMenu("FC_CONTEXT_MENU_TITLE"); //NOI18N    
@@ -308,6 +362,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         switch (e.getActionCommand()) {    
             case KCOMMAND_TIMEWISE_SCALE:
                 setTimeWise(!iTimeWiseScale);
+                updateMarker(iView.getFrameNumber());
                 makeBuffer();
                 repaint();
                 break;
@@ -316,5 +371,5 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     }
     
     
-   private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();    
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();    
 }
