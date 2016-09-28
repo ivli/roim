@@ -25,29 +25,26 @@ import java.util.Map;
  *
  * @author likhachev
  */
-public class Colorer {    
-    private static final Color [] COLORS = new Color[] {Color.RED, Color.PINK, Color.ORANGE, 
-                                                        Color.YELLOW, Color.GREEN, Color.MAGENTA,
-                                                        Color.CYAN, Color.BLUE, Color.GRAY
-                                                       };
-    
+public class Colorer {             
+    private final static Color[] RAINBOW = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.MAGENTA};    
     private static final Map <Class, Integer> iHash = new HashMap();
     
-    static synchronized Color getNextColor(Object aO) {        
-        int ret = 0;
+    public static synchronized Color getNextColor(Object aO) {        
+        int ndx = 0;
         
-        if (iHash.containsKey(aO.getClass())) {
-            int ndx = iHash.get(aO.getClass()) + 1;
-            if (ndx >= COLORS.length)
-                ret = 0;
-            else
-                ret = ndx;
-        }
-        
-        iHash.put(aO.getClass(), ret);
-        
-        return COLORS[ret];
+        if (iHash.containsKey(aO.getClass())) 
+            ndx = iHash.get(aO.getClass()) + 1;            
+                
+        iHash.put(aO.getClass(), ndx);
+        LOG.debug("Colorer class=" + aO.getClass().getCanonicalName() + ", index=" + ndx);
+        return RAINBOW[ndx%RAINBOW.length];
+    }
+    
+    public static Color getColor(Integer anIndex) {
+        return RAINBOW[anIndex%RAINBOW.length];
     }
     
     private Colorer() {}
+         
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }

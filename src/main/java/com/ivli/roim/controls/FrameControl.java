@@ -22,6 +22,7 @@ import com.ivli.roim.core.TimeSliceVector;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
 import com.ivli.roim.view.ActionItem;
+import com.ivli.roim.view.Colorer;
 import com.ivli.roim.view.ImageView;
 
 import java.awt.Color;
@@ -238,8 +239,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         if (SwingUtilities.isRightMouseButton(e)) 
             showPopupMenu(e.getX(), e.getY());        
     }
-    
-    final static Color[] RAINBOW = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.CYAN};
+   
    
     private void makeBuffer() {             
         if (null == iBuf)
@@ -257,7 +257,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
             for(int i =0; i < tsv.getNumPhases(); ++i) {
                 width = iTimeWiseScale ? (int) (tsv.getPhaseDuration(i) / conversion) - 1 :
                                          (int) (tsv.getPhaseFrames(i) / conversion) - 1;
-                g.setColor(RAINBOW[i%RAINBOW.length]);
+                g.setColor(Colorer.getColor(i));//RAINBOW[i%RAINBOW.length]);
                 g.drawRect(xstart, 0, width, getHeight() - TOP_GAP);
                 xstart += width + 1;
             }           

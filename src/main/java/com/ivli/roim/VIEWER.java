@@ -11,6 +11,7 @@ import com.ivli.roim.view.*;
 import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
+import com.ivli.roim.core.ImageType;
 import java.awt.BorderLayout;
 import java.awt.FileDialog;
 import java.io.File;
@@ -99,13 +100,22 @@ public class VIEWER extends javax.swing.JFrame {
         fd.setVisible(true);
 
         if (null != fd.getFile()) {         
-            IMultiframeImage dcm = ImageFactory.create(fd.getDirectory() + fd.getFile());
-                                 
+            jPanel1.removeAll();
+            
+            IMultiframeImage dcm = ImageFactory.create(fd.getDirectory() + fd.getFile());                                 
             ImageView image = ImageView.create(dcm, ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
             jPanel1.setLayout(new BorderLayout());
             jPanel1.add(image, BorderLayout.CENTER);
             jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
-            jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);
+            switch (dcm.getImageType()){
+                case DYNAMIC:
+                case GATED:
+                    jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);
+                    break;
+                default:
+                    break;
+            }
+                       
             jPanel1.validate();
             jPanel1.repaint();
         }

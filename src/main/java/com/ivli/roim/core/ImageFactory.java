@@ -34,4 +34,6 @@ public class ImageFactory {
             return null;
         }
     }
+    
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }
