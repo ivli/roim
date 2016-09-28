@@ -70,13 +70,16 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
           
     private ImageView  iView;       
     JToolTip iTip;
+    
      //TODO: rewrite to be configured at instantiation
     private static final boolean DRAW_PHASES_LEGEND = true;
    
-    private static final boolean iAnnotateMarker = true; 
     private static final boolean DRAW_FRAME_MINIATURES = true;
        
     private boolean iTimeWiseScale = false; 
+    private boolean iAnnotateMarker = true; 
+    
+    
     private double conversion = 1.; // holds a value used to conversion pixels to time or pixels to frame number and vice versa
      
     FrameControl() {
@@ -293,8 +296,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         if (SwingUtilities.isRightMouseButton(e)) 
             showPopupMenu(e.getX(), e.getY());        
     }
-   
-   
+      
     private void makeBuffer() {             
         if (null == iBuf)
             iBuf = new BufferedImage(getActiveBarWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -308,7 +310,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
             final TimeSliceVector tsv = iView.getImage().getTimeSliceVector();
             int xstart = 0;
             int width = 0;
-            for(int i =0; i < tsv.getNumPhases(); ++i) {
+            for(int i = 0; i < tsv.getNumPhases(); ++i) {
                 width = iTimeWiseScale ? (int) (tsv.getPhaseDuration(i) / conversion) - 1 :
                                          (int) (tsv.getPhaseFrames(i) / conversion) - 1;
                 g.setColor(Colorer.getColor(i));
@@ -345,15 +347,24 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         g.setColor(old);
     }
      
-    private static final String KCOMMAND_TIMEWISE_SCALE = "KCOMMAND_TIMEWISE_SCALE"; 
+    private static final String KCOMMAND_TIMEWISE_SCALE = "KCOMMAND_TIMEWISE_SCALE";  //NOI18N
+    private static final String KCOMMAND_ANNOTATE_MARKER = "KCOMMAND_ANNOTATE_MARKER"; //NOI18N 
     
     void showPopupMenu(int aX, int aY) {
-        final JPopupMenu mnu = new JPopupMenu("FC_CONTEXT_MENU_TITLE"); //NOI18N    
-        JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem("FC_MENU.TIMEWISE_SCALE");
+        final JPopupMenu mnu = new JPopupMenu("FC_CONTEXT_MENU_TITLE"); //NOI18N  
+        
+        JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem("FC_MENU.KCOMMAND_TIMEWISE_SCALE");
         mi11.addActionListener(this);
         mi11.setState(iTimeWiseScale);
         mi11.setActionCommand(KCOMMAND_TIMEWISE_SCALE);        
         mnu.add(mi11);
+        
+        JCheckBoxMenuItem mi12 = new JCheckBoxMenuItem("FC_MENU.KCOMMAND_ANNOTATE_MARKER");
+        mi12.addActionListener(this);
+        mi12.setState(iAnnotateMarker);
+        mi12.setActionCommand(KCOMMAND_ANNOTATE_MARKER);        
+        mnu.add(mi12);
+        
         mnu.show(this, aX, aY);
     }
     
@@ -366,10 +377,13 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
                 makeBuffer();
                 repaint();
                 break;
+            case KCOMMAND_ANNOTATE_MARKER:
+                iAnnotateMarker = !iAnnotateMarker;
+                updateMarkerAnnotation();               
+                break;
             default: break;    
         }
     }
-    
-    
+        
     private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();    
 }
