@@ -19,14 +19,16 @@ import java.awt.Rectangle;
  */
 public class CurveExtractor {    
     public static SeriesCollection extract(IMultiframeImage anImage, ROI aRoi, FrameOffsetVector anOff) {
-        switch (anImage.getImageType()) {
+        switch (anImage.getImageType()) {            
+            case TOMO:
+            case TOMO_G:
+            case VOLUME:       
+            case VOLUME_G:    
+                return extract_tomo(anImage, aRoi, anOff);
             case STATIC:
             case DYNAMIC:
-                return extract_dynamic(anImage, aRoi, anOff);
-            case TOMO:
-            case VOLUME:
-            default:    
-                return extract_tomo(anImage, aRoi, anOff);
+            default: 
+                return extract_dynamic(anImage, aRoi, anOff);    
         }
     }
     

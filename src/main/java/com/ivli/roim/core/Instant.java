@@ -61,13 +61,13 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
     private static final String SUFFIX_SECONDS = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INSTANT.SUFFIX_SECONDS");
     private static final String SUFFIX_MINUTES = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INSTANT.SUFFIX_MINUTES");
     private static final String SUFFIX_HOURS   = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INSTANT.SUFFIX_HOURS");
-        
+    private static final String FORMAT_SEPARATOR = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INSTANT.FORMAT_SEPARATOR");   
+    
     private static final String FORMAT_MILLIS  = "%d"; //NOI18N
     private static final String FORMAT_SECONDS = "%2d"; //NOI18N
     private static final String FORMAT_MINUTES = "%2d"; //NOI18N
     private static final String FORMAT_HOURS   = "%2d"; //NOI18N
-    private static final String FORMAT_SEPARATOR = ":"; //NOI18N
-    
+         
     private static final String FORMAT_MS = FORMAT_MILLIS + SUFFIX_MILLIS;
     private static final String FORMAT_SS_MS = FORMAT_SECONDS + FORMAT_SEPARATOR + FORMAT_MS;
     private static final String FORMAT_MM_SS_MS = FORMAT_MINUTES + FORMAT_SEPARATOR + FORMAT_SS_MS;
@@ -76,7 +76,7 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
     private static final String FORMAT_MM_SS = FORMAT_MINUTES + FORMAT_SEPARATOR + FORMAT_SS;
     private static final String FORMAT_HH_MM_SS = FORMAT_HOURS + FORMAT_SEPARATOR + FORMAT_MM_SS;   
     private static final String FORMAT_MM = FORMAT_MINUTES + SUFFIX_MINUTES;
-    private static final String FORMAT_HH_MM = FORMAT_HOURS + FORMAT_MM;
+    private static final String FORMAT_HH_MM = FORMAT_HOURS + FORMAT_SEPARATOR + FORMAT_MM;
     private static final String FORMAT_HH = FORMAT_HOURS + SUFFIX_HOURS;
     private static final String FORMAT_STUB  = "--"; //NOI18N
     

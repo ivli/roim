@@ -24,11 +24,8 @@ import javax.swing.event.ListSelectionEvent;
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.core.Filter;
 import com.ivli.roim.calc.*;
-import com.ivli.roim.view.IImageView;
 import com.ivli.roim.view.ROIManager;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 /**
  *
  * @author likhachev
@@ -46,8 +43,8 @@ public class CalcPanel extends javax.swing.JPanel {
      */
     public CalcPanel(ROIManager aMgr) {      
         iMgr = aMgr;
-        iLeftModel  = new ROITableModel(iMgr.getObjects(), false);
-        iRightModel = new ROITableModel(iMgr.getObjects(), false);
+        iLeftModel  = new ROITableModel(iMgr, 0, false);
+        iRightModel = new ROITableModel(iMgr, 0, false);
         //iView = aView;
         initComponents();
         
@@ -244,5 +241,6 @@ public class CalcPanel extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 
- private static final Logger LOG = LogManager.getLogger();
+ 
+ private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }

@@ -40,8 +40,7 @@ import javax.swing.event.EventListenerList;
  */
 public class OverlayManager implements OverlayChangeListener, java.io.Serializable {  
     private static final long serialVersionUID = 42L;    
-    
-   /// transient protected IImageView iView; 
+      
     private final IMultiframeImage iImage;
     private final HashSet<Overlay> iOverlays;        
     private final EventListenerList iList;

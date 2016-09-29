@@ -19,6 +19,7 @@ package com.ivli.roim.core;
 
 
 
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,8 +46,25 @@ public class TimeSliceVectorTest {
     
     static final int TOTAL_NO_OF_FRAMES  = NO_OF_FRAMES[0]+NO_OF_FRAMES[1]+NO_OF_FRAMES[2];
      
+    //median frame ordinal since phase
+    static final int N1 = NO_OF_FRAMES[0] / 2; 
+    static final int N2 = NO_OF_FRAMES[1] / 2;
+    static final int N3 = NO_OF_FRAMES[2] / 2;
+    //median frame ordinal since image
+    static final int M1 = 0 + N1;
+    static final int M2 = NO_OF_FRAMES[0] + N2;
+    static final int M3 = NO_OF_FRAMES[0] + NO_OF_FRAMES[1] + N3;
+    //median frames instant since phase
+    static final long L1 = N1 * FRAME_DURATION[0];
+    static final long L2 = N2 * FRAME_DURATION[1];
+    static final long L3 = N3 * FRAME_DURATION[2];
+    //median frames instant since phase
+    static final long I1 = 0 + L1;
+    static final long I2 = NO_OF_FRAMES[0] * FRAME_DURATION[0] + L2;
+    static final long I3 = NO_OF_FRAMES[0] * FRAME_DURATION[0] + NO_OF_FRAMES[1] * FRAME_DURATION[1] + L3;
      
-    java.util.ArrayList<PhaseInformation> phi = null;
+    
+    ArrayList<PhaseInformation> phi = null;
     
     
     public TimeSliceVectorTest() {
@@ -98,50 +116,6 @@ public class TimeSliceVectorTest {
         assertTrue(positive);
         assertFalse(negative);
      
-    }
-
-    /**
-     * Test of noOfFrames method, of class TimeSliceVector.
-     */
-    @Test
-    public void testNoOfFrames() {
-        System.out.println("noOfFrames");
-        TimeSliceVector instance = new TimeSliceVector(phi);
-        
-        int result = instance.getNumFrames();
-        assertEquals(TOTAL_NO_OF_FRAMES, result);
-        
-    }
-
-    /**
-     * Test of noOfPhases method, of class TimeSliceVector.
-     */
-    @Test
-    public void testNoOfPhases() {
-        System.out.println("noOfPhases");  
-        TimeSliceVector instance = new TimeSliceVector(phi);    
-       
-        int result = instance.getNumPhases();
-        assertEquals(TOTAL_NO_OF_PHASES, result);
-       
-    }
-
-    /**
-     * Test of phaseDuration method, of class TimeSliceVector.
-     */
-    @Test
-    public void testPhaseDuration() {
-        System.out.println("phaseDuration");
-        boolean result = true;//new int[TOTAL_NO_OF_PHASES];
-        
-        TimeSliceVector instance = new TimeSliceVector(phi);
-        
-        for (int i=0; i < TOTAL_NO_OF_PHASES && result; ++i) {
-            result = (instance.phaseDuration(i) == PHASE_DURATION[i]);
-        }
-        
-        assertTrue(result);
- 
     }
 
     /**
@@ -248,7 +222,7 @@ public class TimeSliceVectorTest {
             expResult     += NO_OF_FRAMES[i];
             uSecFromStart += PHASE_DURATION[i];          
             
-            int result = instance.frameNumber(new Instant(uSecFromStart - 1));
+            int result = instance.frameNumber(uSecFromStart - 1);
             
             assertEquals(expResult - 1, result);    
         }
@@ -337,6 +311,209 @@ public class TimeSliceVectorTest {
                  
                 assertEquals(msg, newNoOfFrames, instance.getNumFrames());
              }
+    }
+
+    /**
+     * Test of getPhaseVector method, of class TimeSliceVector.
+     */
+    @Test
+    public void testGetPhaseVector() {
+        System.out.println("getPhaseVector");
+        
+    }
+
+    /**
+     * Test of getSmallestDuration method, of class TimeSliceVector.
+     */
+    @Test
+    public void testGetSmallestDuration() {
+        System.out.println("getSmallestDuration");
+       
+    }
+
+    /**
+     * Test of toString method, of class TimeSliceVector.
+     */
+    @Test
+    public void testToString() {
+        System.out.println("toString");
+        
+    }
+
+    /**
+     * Test of getSlices method, of class TimeSliceVector.
+     */
+    @Test
+    public void testGetSlices() {
+        System.out.println("getSlices");
+        TimeSliceVector instance = new TimeSliceVector(phi);
+       
+        ArrayList<Long> result = instance.getSlices();
+        assertEquals(result, result);        
+    }
+
+    /**
+     * Test of getPhaseDuration method, of class TimeSliceVector.
+     */
+    @Test
+    public void testGetPhaseDuration() {
+        System.out.println("getPhaseDuration");
+        
+        TimeSliceVector instance = new TimeSliceVector(phi);
+        
+        
+        assertEquals(PHASE_DURATION[0], instance.getPhaseDuration(0));
+        assertEquals(PHASE_DURATION[1], instance.getPhaseDuration(1));
+        assertEquals(PHASE_DURATION[2], instance.getPhaseDuration(2));        
+    }
+
+    /**
+     * Test of getPhaseFrames method, of class TimeSliceVector.
+     */
+    @Test
+    public void testGetPhaseFrames() {
+        System.out.println("getPhaseFrames");
+        int aPhaseNumber = 0;
+        TimeSliceVector instance = new TimeSliceVector(phi);
+        
+        assertEquals(NO_OF_FRAMES[0], instance.getPhaseFrames(0));
+        assertEquals(NO_OF_FRAMES[1], instance.getPhaseFrames(1));
+        assertEquals(NO_OF_FRAMES[2], instance.getPhaseFrames(2));
+    }
+
+    /**
+     * Test of getFrameDuration method, of class TimeSliceVector.
+     */
+    @Test
+    public void testGetFrameDuration() {
+        System.out.println("getFrameDuration");
+        
+        TimeSliceVector instance = new TimeSliceVector(phi);
+        
+        assertEquals(instance.getFrameDuration(M1), FRAME_DURATION[0]);
+        assertEquals(instance.getFrameDuration(M2), FRAME_DURATION[1]);
+        assertEquals(instance.getFrameDuration(M3), FRAME_DURATION[2]);
+    }
+
+    /**
+     * Test of getNumberOfFrames method, of class TimeSliceVector.
+     */
+    @Test
+    public void testGetNumberOfFrames() {
+        System.out.println("getNumberOfFrames");
+       
+        TimeSliceVector instance = new TimeSliceVector(phi);
+       
+        assertEquals(instance.getNumberOfFrames(M1), NO_OF_FRAMES[0]);
+        assertEquals(instance.getNumberOfFrames(M2), NO_OF_FRAMES[1]);
+        assertEquals(instance.getNumberOfFrames(M3), NO_OF_FRAMES[2]);
+        
+    }
+
+    /**
+     * Test of getSlice method, of class TimeSliceVector.
+     */
+    @Test
+    public void testGetSlice() {
+        System.out.println("getSlice");
+        int FN = 0;
+        TimeSliceVector instance = new TimeSliceVector(phi);
+        TimeSlice expResult = new TimeSlice(FRAME_DURATION[0] * FN, FRAME_DURATION[0] * (FN + 1));
+        TimeSlice result = instance.getSlice(FN);
+        assertEquals(0, expResult.compareTo(result));
+       
+    }
+
+    /**
+     * Test of getNumFrames method, of class TimeSliceVector.
+     */
+    @Test
+    public void testGetNumFrames() {
+       System.out.println("noOfFrames");
+        TimeSliceVector instance = new TimeSliceVector(phi);
+        
+        int result = instance.getNumFrames();
+        assertEquals(TOTAL_NO_OF_FRAMES, result);
+    }
+
+    /**
+     * Test of getNumPhases method, of class TimeSliceVector.
+     */
+    @Test
+    public void testGetNumPhases() {
+         System.out.println("noOfPhases");  
+        TimeSliceVector instance = new TimeSliceVector(phi);    
+       
+        int result = instance.getNumPhases();
+        assertEquals(TOTAL_NO_OF_PHASES, result);
+    }
+
+    /**
+     * Test of framesToPhase method, of class TimeSliceVector.
+     */
+    @Test
+    public void testFramesToPhase() {
+        System.out.println("framesToPhase");
+       
+        TimeSliceVector instance = new TimeSliceVector(phi);
+        
+        assertEquals(0, instance.framesToPhase(0));
+        assertEquals(NO_OF_FRAMES[0], instance.framesToPhase(1));
+        assertEquals(NO_OF_FRAMES[0] + NO_OF_FRAMES[1], instance.framesToPhase(2));
+       
+    }
+    
+    /**
+     * Test of frameStarts method, of class TimeSliceVector.
+     */
+    @Test
+    public void testFrameStarts() {
+        System.out.println("frameStarts");
+        
+        TimeSliceVector instance = new TimeSliceVector(phi);
+       
+       
+        assertEquals(instance.frameStarts(M1), I1);
+        assertEquals(instance.frameStarts(M2), I2);
+        assertEquals(instance.frameStarts(M3), I3);
+    }
+
+    /**
+     * Test of duration method, of class TimeSliceVector.
+     */
+    @Test
+    public void testDuration() {
+        System.out.println("duration");
+        TimeSliceVector instance = new TimeSliceVector(phi);
+        long expResult = SERIES_DURATION;
+        long result = instance.duration();
+        assertEquals(expResult, result);       
+    }
+
+    /**
+     * Test of sincePhase method, of class TimeSliceVector.
+     */
+    @Test
+    public void testSincePhase() {        
+        TimeSliceVector instance = new TimeSliceVector(phi);       
+        assertEquals(instance.sincePhase(I1), L1);
+        assertEquals(instance.sincePhase(I2), L2);
+        assertEquals(instance.sincePhase(I3), L3);
+    }
+
+    /**
+     * Test of compareTo method, of class TimeSliceVector.
+     */
+    @Test
+    public void testCompareTo() {
+        System.out.println("compareTo");
+        TimeSliceVector i1 = new TimeSliceVector(phi);
+        TimeSliceVector i2 = new TimeSliceVector(phi);
+        TimeSliceVector i3 = new TimeSliceVector();
+      
+        assertTrue(i1.compareTo(i2) == 0);
+        assertTrue(i1.compareTo(i3) != 0);
+        
     }
     
 }

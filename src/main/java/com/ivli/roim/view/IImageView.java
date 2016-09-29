@@ -33,7 +33,9 @@ public interface IImageView {
     public IMultiframeImage getImage();
     
     public ImageFrame getFrame();
+    
     public int getFrameNumber();
+    
     public boolean setFrameNumber(int aN);
     
     public void setROIMgr(ROIManager aR);

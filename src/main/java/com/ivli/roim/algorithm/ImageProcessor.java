@@ -119,8 +119,8 @@ public class ImageProcessor {
     } 
     
     public IMultiframeImage collapse(TimeSlice anInterval) {        
-        int from = iImage.getTimeSliceVector().frameNumber(anInterval.getFrom());
-        int to = iImage.getTimeSliceVector().frameNumber(anInterval.getTo());        
+        int from = iImage.getTimeSliceVector().frameNumber(anInterval.getFrom().toLong());
+        int to = iImage.getTimeSliceVector().frameNumber(anInterval.getTo().toLong());        
         return collapse(from, to);
     }
         

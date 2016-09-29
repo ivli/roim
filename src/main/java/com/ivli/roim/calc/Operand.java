@@ -18,7 +18,6 @@
 package com.ivli.roim.calc;
 
 import com.ivli.roim.core.ISeries;
-import com.ivli.roim.core.Series;
 
 /**
  *

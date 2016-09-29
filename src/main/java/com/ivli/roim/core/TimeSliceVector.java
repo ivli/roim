@@ -17,10 +17,8 @@
  */
 package com.ivli.roim.core;
 
-import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 /**
  *
  * @author likhachev
@@ -82,8 +80,8 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
     public TimeSliceVector slice(TimeSlice aS) {        
         ArrayList<PhaseInformation> phases =  new ArrayList();
         
-        final int frameTo = (0 == aS.getTo().compareTo(Instant.INFINITE)) ? getNumFrames() - 1 : frameNumber(aS.getTo()) - 1;
-        final int frameFrom = frameNumber(aS.getFrom());           
+        final int frameTo = (0 == aS.getTo().compareTo(Instant.INFINITE)) ? getNumFrames() - 1 : frameNumber(aS.getTo().toLong()) - 1;
+        final int frameFrom = frameNumber(aS.getFrom().toLong());           
         final int phaseFrom = phaseFrame(frameFrom);
         final int phaseTo   = phaseFrame(frameTo);               
         
@@ -116,6 +114,7 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         return iPhases.get(aPhaseNumber).duration();
     }
     
+        
     /**
      *
      * @param aPhaseNumber a number of the phase
@@ -167,10 +166,6 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         return iPhases.size();   
     }
     
-    public long phaseDuration(int aPhase) {
-        return iPhases.get(aPhase).iFrameDuration * iPhases.get(aPhase).iNumberOfFrames;
-    }
-    
     //returns phase number by frame
     public int phaseFrame(int aFrameNumber) {        
         if (aFrameNumber < 0 || aFrameNumber > getNumFrames())
@@ -185,6 +180,7 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         
         throw new IllegalArgumentException("bad FrameNumber");        
     }
+    
      //returns number of frames before phase aPhaseNumber
     public int framesToPhase(int aPhaseNumber) {
         int ret = 0;
@@ -199,15 +195,11 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         long ret = 0L;
         
         for (int i = 0; i < iPhases.size() && i < aPhaseNumber; ++i)             
-            ret += phaseDuration(i);    
+            ret += getPhaseDuration(i);    
         
         return ret;
     }
-            
-    public long frameLapse(int aStart, int aEnd) {    
-        return frameStarts(aEnd) - frameStarts(aStart);                 
-    } 
-    
+                
     public long frameStarts(int aFrameNumber) {
         if (0 == aFrameNumber)
             return 0L;
@@ -230,7 +222,8 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         if (uSec < -1L || uSec > duration())
             throw new IllegalArgumentException("bad uSecFromStart");
     }
-      //get phase number by time in uSec -returns 0, 1, 2 etc
+    
+    //get phase number by time in uSec -returns 0, 1, 2 etc
     public int phaseNumber(long uSecFromStart) {        
         testTimeArgument(uSecFromStart);
            
@@ -247,9 +240,24 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         return n - 1;
     }
     
-     //get frame ordinal by time in uSec
-    public int frameNumber(Instant aI) {   
-        final long uSecFromStart = aI.toLong();
+    /**
+     *
+     * @param aI the time instant
+     * @return time elapsed since current phase has begun
+     */
+    public long sincePhase(long aI) {
+    //    int n = frameNumber(aI);
+        int p = phaseNumber(aI);
+        return aI - phaseStarts(p);
+    }
+        
+    /**
+     *
+     * @param aI the time instant
+     * @return frame number to whom this instant belongs
+     */
+    public int frameNumber(long aI) {   
+        final long uSecFromStart = aI;//.toLong();
         
         testTimeArgument(uSecFromStart);
                 
@@ -292,6 +300,6 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
         if (getNumPhases() == aV.getNumPhases() && getNumFrames() == aV.getNumFrames())
             return 0;
         
-        return ((Long)duration()).compareTo(aV.duration()) ; //how to                
+        return ((Long)duration()).compareTo(aV.duration()); //how to                
     }
 }

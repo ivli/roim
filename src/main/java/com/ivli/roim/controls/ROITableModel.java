@@ -17,8 +17,10 @@
  */
 package com.ivli.roim.controls;
 
+import com.ivli.roim.core.Measurement;
 import com.ivli.roim.view.Overlay;
 import com.ivli.roim.view.ROI;
+import com.ivli.roim.view.ROIManager;
 import java.awt.Color;
 import java.awt.Component;
 
@@ -39,7 +41,7 @@ import javax.swing.table.TableModel;
  * @author likhachev
  */
 public class ROITableModel extends DefaultTableModel {
-    private static final String KCommandInvokeColourPicker = "COMMAND_INVOKE_COLOUR_PICKER_DIALOG"; // NOI18N    
+    private static final String KCOMMAND_INVOKE_COLOUR_PICKER = "ROI_TABLE_MODEL.KCOMMAND_INVOKE_COLOUR_PICKER"; // NOI18N    
                 
     protected final Class[]   iClasses;                                                   
     protected final String[]  iColumns;            
@@ -52,10 +54,10 @@ public class ROITableModel extends DefaultTableModel {
     public final static int TABLE_COLUMN_COUNTS = 4;
     public final static int TABLE_COLUMN_COLOR = 5;
     
-    ROITableModel(Iterator<Overlay> aList, boolean canEdit) {     
+    ROITableModel(ROIManager aMgr, int aActiveFrame, boolean canEdit) {     
      
-        iColumns = new String[]{"OBJ", // NOI18N - holds an object reference  
-                                " ",
+        iColumns = new String[]{"OBJ", //NOI18N - placeholder for a reference to the object   
+                                " ", //NOI18N
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.NAME"), 
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.PIXELS"), 
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.DENSITY"), 
@@ -63,12 +65,12 @@ public class ROITableModel extends DefaultTableModel {
                                
                                };
 
-        iClasses = new Class [] {java.lang.Object.class,  // a reference to ROI object - hidden
-                                 java.lang.Boolean.class,   // add to a curve list
-                                 java.lang.String.class,  // name - can be editable
+        iClasses = new Class [] {java.lang.Object.class, // a reference to ROI object - hidden
+                                 java.lang.Boolean.class, // add to a curve list
+                                 java.lang.String.class,  // name - editable
                                  java.lang.Integer.class, // area in pixels
-                                 java.lang.Integer.class, // density
-                                 java.awt.Color.class     // colour - can be editable                                 
+                                 java.lang.Integer.class, // density TOD: perhaps oughta be configurable ???
+                                 java.awt.Color.class     // colour - editable                                 
                                 };
 
         iEditable = new boolean [] {false, 
@@ -82,11 +84,13 @@ public class ROITableModel extends DefaultTableModel {
         
         setDataVector (new Object [][] {}, iColumns); 
         
+        Iterator<Overlay> aList = aMgr.getObjects();
+        
         while (aList.hasNext()) {
             Overlay o = aList.next();
             if (o instanceof ROI) {       
                 final ROI r = (ROI)o;                   
-                addRow(new Object[]{o, false, r.getName(), r.getAreaInPixels(), 0/*r.getDensity()*/, r.getColor()});                                        
+                addRow(new Object[]{o, false, r.getName(), r.getAreaInPixels(), r.getSeries(Measurement.DENSITY).get(aActiveFrame), r.getColor()});                                        
             }
         }
          
@@ -156,7 +160,7 @@ public class ROITableModel extends DefaultTableModel {
 
         public ColorEditor() {
             button = new JButton();
-            button.setActionCommand(KCommandInvokeColourPicker);
+            button.setActionCommand(KCOMMAND_INVOKE_COLOUR_PICKER);
             button.addActionListener(this);
             button.setBorderPainted(false);
 
@@ -175,7 +179,7 @@ public class ROITableModel extends DefaultTableModel {
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (KCommandInvokeColourPicker.equals(e.getActionCommand())) {
+            if (KCOMMAND_INVOKE_COLOUR_PICKER.equals(e.getActionCommand())) {
                 //The user has clicked the cell, so
                 //bring up the dialog.
                 button.setBackground(currentColor);
@@ -212,7 +216,7 @@ public class ROITableModel extends DefaultTableModel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                        boolean hasFocus, int row, int column) {
             JButton button = new JButton();
-            button.setActionCommand(KCommandInvokeColourPicker);      
+            button.setActionCommand(KCOMMAND_INVOKE_COLOUR_PICKER);      
             button.setBorderPainted(false);            
             button.setBackground((Color)value);
             return button;

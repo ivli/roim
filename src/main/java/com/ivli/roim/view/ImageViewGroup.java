@@ -28,10 +28,10 @@ import java.util.ArrayList;
  * @author likhachev
  */
 public class ImageViewGroup {    
-    IMultiframeImage     iImage;
-    ROIManager             iMgr;
+    IMultiframeImage iImage;
+    ROIManager iMgr;
     ArrayList<IImageView> iViews;
-    final Uid              iUid;
+    final Uid iUid;
     
     ImageViewGroup(IMultiframeImage anImage) {
         iImage = anImage;

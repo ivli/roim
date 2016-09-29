@@ -44,7 +44,7 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }
     
     public ROI(int anID, String aName, Shape aS, Color aC) {
-        super(anID, null == aName ?  String.format("ROI%d", anID):aName, aS);         
+        super(anID, null == aName ? String.format("ROI%d", anID):aName, aS);         
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);          
         iAreaInPixels = -1;
         iSeries = null;
@@ -55,10 +55,17 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     }      
     
     public ISeries getSeries(Measurement anId) { 
-        if (anId != Measurement.AREAINPIXELS) 
-            return iSeries.get(anId);
-        else             
-            return new Scalar(Measurement.AREAINPIXELS, getAreaInPixels());               
+        ISeries ret;
+        if (anId != Measurement.AREAINPIXELS) {
+            ret = iSeries.get(anId);
+            if (null == ret) {
+                
+            }
+        } else {             
+            ret = new Scalar(Measurement.AREAINPIXELS, getAreaInPixels());               
+        }
+        
+        return ret;
     }
     
     public Color getColor() {

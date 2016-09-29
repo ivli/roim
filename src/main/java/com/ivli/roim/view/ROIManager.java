@@ -32,6 +32,7 @@ import com.ivli.roim.core.ISeries;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Series;
 import com.ivli.roim.core.Uid;
+
 import java.lang.reflect.InvocationTargetException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,7 +44,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ROIManager extends OverlayManager {                    
     
-    private final Uid iUid;// = new TUid();
+    private final Uid iUid;
     private boolean iAnnotationsAutoCreate;
     public ROIManager(IMultiframeImage anImage, Uid aUid, boolean aAnnotationsAutoCreate) {
         super (anImage, null);
@@ -156,7 +157,7 @@ public class ROIManager extends OverlayManager {
             ret.iShape = aR.getShape();
             
         } catch (InstantiationException|IllegalAccessException|NoSuchMethodException|InvocationTargetException ex) {
-            LOG.debug("failed to clone object {}, due to {}", aR, ex);
+            LOG.debug("failed to clone object {}, due to {}", aR, ex); //NOI18N
             return null;
         }
         

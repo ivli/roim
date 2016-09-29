@@ -462,7 +462,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        ROIListPanel panel = new ROIListPanel(iGroup.getROIMgr());
+        ROIListPanel panel = new ROIListPanel(iGroup);
         JDialog dialog = new JDialog(this, "ROI manager", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setContentPane(panel);
         dialog.validate();

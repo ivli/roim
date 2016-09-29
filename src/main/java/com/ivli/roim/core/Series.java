@@ -15,13 +15,19 @@ public class Series extends ISeries {
     }
     
     @Override
-    public int size() {return iData.size();}
+    public int size() {
+        return iData.size();
+    }
     
     @Override
-    public double get(int anIndex) {return iData.get(anIndex);}
+    public double get(int anIndex) {
+        return iData.get(anIndex);
+    }
     
     @Override
-    public void add(double aV) {iData.add(aV);}
+    public void add(double aV) {
+        iData.add(aV);
+    }
     
     @Override
     public boolean isScalar() {

@@ -6,7 +6,8 @@
 package com.ivli.roim.controls;
 
 
-import com.ivli.roim.view.ROIManager;
+import com.ivli.roim.view.IImageView;
+import com.ivli.roim.view.ImageViewGroup;
 import javax.swing.SwingUtilities;
 import java.awt.Window;
 import javax.swing.JPanel;
@@ -20,9 +21,17 @@ public class ROIListPanel extends JPanel {
     private final ROITableModel iModel;    
     private int bi = 0;
         
-    public ROIListPanel(ROIManager aMgr) {               
-        iModel = new ROITableModel(aMgr.getObjects(), true);      
-        
+    public ROIListPanel(ImageViewGroup aVG) {
+        iModel = new ROITableModel(aVG.getROIMgr(), -1, true);      
+        construct();     
+    }
+    
+    public ROIListPanel(IImageView aV) {               
+        iModel = new ROITableModel(aV.getROIMgr(), aV.getFrameNumber(), true);      
+        construct();       
+    }
+    
+    private void construct() {    
         initComponents();
      
         iModel.attach(jTable1);   
@@ -43,9 +52,8 @@ public class ROIListPanel extends JPanel {
                 jButton6.setEnabled(b);
                 jButton7.setEnabled(b);                  
             }        
-        });
-    }
-
+        });    
+    } 
 
     /**
      * This method is called from within the constructor to initialize the form.

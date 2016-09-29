@@ -72,13 +72,15 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     JToolTip iTip;
     
      //TODO: rewrite to be configured at instantiation
-    private static final boolean DRAW_PHASES_LEGEND = true;
+    
    
     private static final boolean DRAW_FRAME_MINIATURES = true;
        
+    private boolean iDrawPhases = true;
     private boolean iTimeWiseScale = false; 
     private boolean iAnnotateMarker = true; 
-        
+    private boolean iTimeSincePhase = true;
+    
     private double conversion = 1.; // holds a value used to conversion pixels to time or pixels to frame number and vice versa
      
     FrameControl() {
@@ -154,8 +156,10 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         if (iTimeWiseScale) {
                 long moment = iView.getImage().getTimeSliceVector().frameStarts(aFrameNumber);
                 iMarker.setPosition((int)(moment / conversion));
-                if (iAnnotateMarker)
-                   iTip.setTipText((new Instant(moment)).format());
+                if (iAnnotateMarker) {
+                   Instant t =  new Instant(!iTimeSincePhase ? moment: iView.getImage().getTimeSliceVector().sincePhase(moment)); 
+                   iTip.setTipText(t.format());
+                }
         } else {
                 iMarker.setPosition((int)(aFrameNumber / conversion));
                 if (iAnnotateMarker)
@@ -221,7 +225,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
             iMarker.setPosition(aPos);
         else {
             if (iTimeWiseScale)
-                iView.setFrameNumber(iView.getImage().getTimeSliceVector().frameNumber(new Instant((long)(conversion*(double)aPos))));     
+                iView.setFrameNumber(iView.getImage().getTimeSliceVector().frameNumber((long)(conversion*(double)aPos)));     
             else
                iView.setFrameNumber((int)(conversion*(double)aPos));             
         }
@@ -297,7 +301,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         g.setColor(Color.LIGHT_GRAY);              
         g.fillRect(0, 0, iBuf.getWidth(), iBuf.getHeight());
         
-        if (DRAW_PHASES_LEGEND && null != iView && iView.getImage().getTimeSliceVector().getNumPhases() > 1) {
+        if (iDrawPhases && null != iView && iView.getImage().getTimeSliceVector().getNumPhases() > 1) {
             final TimeSliceVector tsv = iView.getImage().getTimeSliceVector();
             int xstart = 0;
             int width = 0;

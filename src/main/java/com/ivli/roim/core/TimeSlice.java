@@ -22,7 +22,7 @@ import java.time.Duration;
  *
  * @author likhachev
  */
-public class TimeSlice implements java.io.Serializable {    
+public class TimeSlice implements java.io.Serializable, Comparable<TimeSlice> {    
     private final Instant iFrom;
     private final Instant iTo;
     
@@ -52,6 +52,14 @@ public class TimeSlice implements java.io.Serializable {
     
     public Duration duration() {    
         return Duration.ofMillis(length());
+    }
+       
+    @Override
+    public int compareTo(TimeSlice o) {
+        if (o == this || (iFrom == o.iFrom && iTo == o.iTo))
+            return 0;       
+        else 
+            return duration().compareTo(o.duration());
     }
    
 }
