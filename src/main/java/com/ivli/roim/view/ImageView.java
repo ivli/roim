@@ -424,7 +424,7 @@ public class ImageView extends JComponent implements IImageView {
         } else {             
             iCurrent = aN;   
             iVLUT.setWindow(new Window(iModel.get(iCurrent).getRange()));
-            iMgr.update();               
+            //iMgr.update();               
                    
             invalidateBuffer();
             notifyFrameChanged();     

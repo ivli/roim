@@ -179,12 +179,14 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setPreferredSize(new java.awt.Dimension(597, 600));
         jPanel1.setVerifyInputWhenFocusTarget(false);
+        jPanel1.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab(bundle.getString("DYNAMIC.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
 
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel3.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab(bundle.getString("DYNAMIC.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
 
+        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel4.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab(bundle.getString("DYNAMIC.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
 
@@ -396,10 +398,12 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jPanel4.removeAll();
         jPanel5.removeAll();       
         
+        /*
         jPanel1.repaint();
         jPanel3.repaint();
         jPanel4.repaint();
         jPanel5.repaint();                   
+        */
         
         iGroup = ImageViewGroup.create(anImage);
        
@@ -416,7 +420,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
        /**/
         ImageView gridView = iGroup.createGridView();//ImageView.create(sum, root);
         jPanel4.add(gridView, BorderLayout.CENTER);
-        jPanel4.add(LUTControl.create(gridView), BorderLayout.PAGE_END);
+        jPanel4.add(LUTControl.create(gridView), BorderLayout.LINE_END);
         jPanel4.validate(); 
         
         //CHART        

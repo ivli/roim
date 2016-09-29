@@ -51,15 +51,7 @@ import com.ivli.roim.events.WindowChangeListener;
 public class LUTControl extends JComponent implements WindowChangeListener, FrameChangeListener, ActionListener, 
                                                           MouseMotionListener, MouseListener, MouseWheelListener {    
     
-    
-    
-    
-    private static final boolean WEDGE_EXTEND_WHEN_FOCUSED = false;      
-    
     private static final int NUMBER_OF_SHADES = 255;    
-         
-    
-    
     private final int BAR_WIDTH = 32; //mouse inside
     private final int LEFT_GAP  = 2;  //reserve border at left & right
     private final int RIGHT_GAP = 2;
@@ -369,7 +361,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
             directChangeWindow(new Window(iRange));         
     }
 
-    private  ImageFrame iBackFrame;
+    private ImageFrame iBackFrame;
     
     private void makeBuffer() {
         final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
@@ -441,14 +433,13 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     public Dimension getMaximumSize() {
         return new Dimension(BAR_WIDTH, Short.MAX_VALUE);
     }
-    
-    
-    private static final String KCOMMAND_TRIGGER_LINEAR = "LUTCONTROL.KCOMMAND_TRIGGER_LINEAR"; // NOI18N
-    private static final String KCOMMAND_TRIGGER_DIRECT = "LUTCONTROL.KCOMMAND_TRIGGER_DIRECT"; // NOI18N
-    private static final String KCOMMAND_SHOW_DIALOG    = "LUTCONTROL.KCOMMAND_SHOW_DIALOG";    // NOI18N
-    private static final String KCOMMAND_CHANGE_LUT     = "LUTCONTROL.KCOMMAND_CHANGE_LUT";     // NOI18N    
-    private static final String KCOMMAND_ANNOTATE_MARKER = "LUTCONTROL.KCOMMAND_ANNOTATE_MARKER";     // NOI18N 
-    private static final String KCOMMAND_ANNOTATE_PERCENTS = "LUTCONTROL.KCOMMAND_ANNOTATE_PERCENTS";     // NOI18N 
+   
+    private static final String KCOMMAND_TRIGGER_LINEAR = "LUTCONTROL.KCOMMAND_TRIGGER_LINEAR"; //NOI18N
+    private static final String KCOMMAND_TRIGGER_DIRECT = "LUTCONTROL.KCOMMAND_TRIGGER_DIRECT"; //NOI18N
+    private static final String KCOMMAND_SHOW_DIALOG    = "LUTCONTROL.KCOMMAND_SHOW_DIALOG";    //NOI18N
+    private static final String KCOMMAND_CHANGE_LUT     = "LUTCONTROL.KCOMMAND_CHANGE_LUT";     //NOI18N    
+    private static final String KCOMMAND_ANNOTATE_MARKER = "LUTCONTROL.KCOMMAND_ANNOTATE_MARKER"; //NOI18N 
+    private static final String KCOMMAND_ANNOTATE_PERCENTS = "LUTCONTROL.KCOMMAND_ANNOTATE_PERCENTS"; //NOI18N 
     
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {    

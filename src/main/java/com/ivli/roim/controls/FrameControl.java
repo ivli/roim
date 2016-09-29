@@ -58,6 +58,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     
     private static final int MARKER_CURSOR = Cursor.HAND_CURSOR;    
     private static final int WINDOW_CURSOR = Cursor.N_RESIZE_CURSOR;                           
+    
     private final int LEFT_GAP;  //reserve border at left & right
     private final int RIGHT_GAP; 
     private final int TOP_GAP  = 2;  //reserve a half of marker height at window's top & bottom 
@@ -77,8 +78,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
        
     private boolean iTimeWiseScale = false; 
     private boolean iAnnotateMarker = true; 
-    
-    
+        
     private double conversion = 1.; // holds a value used to conversion pixels to time or pixels to frame number and vice versa
      
     FrameControl() {
@@ -107,8 +107,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         
         ///iMarker.setPosition(iView.);
         updateMarker(iView.getFrameNumber());
-        LOG.debug("duration=" + tsv.duration() + ", width=" + getActiveBarWidth() + ", millis per pixel=" + conversion); //NOI18N
-                
+        LOG.debug("duration=" + tsv.duration() + ", width=" + getActiveBarWidth() + ", millis per pixel=" + conversion); //NOI18N                
     }
     
     private void construct(ImageView aW) {    
