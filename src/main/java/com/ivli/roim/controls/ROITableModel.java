@@ -43,46 +43,40 @@ import javax.swing.table.TableModel;
 public class ROITableModel extends DefaultTableModel {
     private static final String KCOMMAND_INVOKE_COLOUR_PICKER = "ROI_TABLE_MODEL.KCOMMAND_INVOKE_COLOUR_PICKER"; // NOI18N    
                 
-    protected final Class[]   iClasses;                                                   
-    protected final String[]  iColumns;            
-    protected final boolean[] iEditable;
+   
               
     public final static int TABLE_COLUMN_OBJECT = 0;
     public final static int TABLE_COLUMN_CHECK  = 1;
     public final static int TABLE_COLUMN_NAME   = 2;
     public final static int TABLE_COLUMN_PIXELS = 3;
     public final static int TABLE_COLUMN_COUNTS = 4;
-    public final static int TABLE_COLUMN_COLOR = 5;
+    public final static int TABLE_COLUMN_COLOR  = 5;
     
-    ROITableModel(ROIManager aMgr, int aActiveFrame, boolean canEdit) {     
-     
-        iColumns = new String[]{"OBJ", //NOI18N - placeholder for a reference to the object   
+    private final static String DEFAULT_COLUMN_NAMES[] = {"OBJ", //NOI18N - placeholder for a reference to the object   
                                 " ", //NOI18N
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.NAME"), 
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.PIXELS"), 
                                 java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.DENSITY"), 
-                                java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.COLOUR"),
-                               
+                                java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_TABLE_HEADER.COLOUR"),                               
                                };
-
-        iClasses = new Class [] {java.lang.Object.class, // a reference to ROI object - hidden
-                                 java.lang.Boolean.class, // add to a curve list
+    
+    private static final Class DEFAULT_COLUMN_CLASSES[] = {java.lang.Object.class, // a reference to ROI object - hidden
+                                 java.lang.Boolean.class, // add to a list of curves
                                  java.lang.String.class,  // name - editable
                                  java.lang.Integer.class, // area in pixels
                                  java.lang.Integer.class, // density TOD: perhaps oughta be configurable ???
                                  java.awt.Color.class     // colour - editable                                 
                                 };
-
-        iEditable = new boolean [] {false, 
-                                    canEdit, 
-                                    canEdit,
-                                    false, 
-                                    false, 
-                                    canEdit                                    
-                                   };
-       
-        
-        setDataVector (new Object [][] {}, iColumns); 
+    
+   
+    private static final boolean DEFAULT_PRIVILEGES_READONLY[] = {false,false, false,false,false,false};    
+    private static final boolean DEFAULT_PRIVILEGES_EDITABLE[] = {false, true,true,false,false,true};  
+          
+    private final boolean iEditable;
+    
+    ROITableModel(ROIManager aMgr, int aActiveFrame, boolean aEditable) {          
+        iEditable = aEditable;// ? DEFAULT_PRIVILEGES_EDITABLE : DEFAULT_PRIVILEGES_READONLY;
+        setDataVector (new Object [][] {}, DEFAULT_COLUMN_NAMES); 
         
         Iterator<Overlay> aList = aMgr.getObjects();
         
@@ -90,7 +84,10 @@ public class ROITableModel extends DefaultTableModel {
             Overlay o = aList.next();
             if (o instanceof ROI) {       
                 final ROI r = (ROI)o;                   
-                addRow(new Object[]{o, false, r.getName(), r.getAreaInPixels(), r.getSeries(Measurement.DENSITY).get(aActiveFrame), r.getColor()});                                        
+                addRow(new Object[]{o, false, r.getName(), r.getAreaInPixels(), 
+                    // use average value for multiframes
+                    -1 == aActiveFrame ? r.getSeries(Measurement.DENSITY).processor().avg() : r.getSeries(Measurement.DENSITY).get(aActiveFrame), 
+                    r.getColor()});                                        
             }
         }
          
@@ -117,12 +114,12 @@ public class ROITableModel extends DefaultTableModel {
     
     @Override
     public Class getColumnClass(int columnIndex) {
-        return iClasses [columnIndex];
+        return DEFAULT_COLUMN_CLASSES[columnIndex];
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return iEditable [columnIndex];
+        return iEditable ? DEFAULT_PRIVILEGES_EDITABLE[columnIndex] : DEFAULT_PRIVILEGES_READONLY[columnIndex];
     }
         
     /**
@@ -131,23 +128,30 @@ public class ROITableModel extends DefaultTableModel {
      */
     public void attach(javax.swing.JTable aTable) {        
         aTable.setModel(this); 
+        aTable.setAutoCreateRowSorter(true);
+        aTable.setDefaultEditor(Color.class, new ColorEditor());
+        aTable.setDefaultRenderer(Color.class, new MyRenderer());    
+        ///aTable.s
         
         //unconditionally make "OBJ" column invisible
         aTable.getColumnModel().getColumn(TABLE_COLUMN_OBJECT).setMinWidth(0);
         aTable.getColumnModel().getColumn(TABLE_COLUMN_OBJECT).setPreferredWidth(0);
         aTable.getColumnModel().getColumn(TABLE_COLUMN_OBJECT).setMaxWidth(0);            
         
-        if (!iEditable[1]) {
+        if (!iEditable) {
             aTable.getColumnModel().getColumn(TABLE_COLUMN_CHECK).setMinWidth(0);
             aTable.getColumnModel().getColumn(TABLE_COLUMN_CHECK).setPreferredWidth(0);
             aTable.getColumnModel().getColumn(TABLE_COLUMN_CHECK).setMaxWidth(0);   
-        } else {
-            
+        } else {            
+            aTable.getColumnModel().getColumn(TABLE_COLUMN_CHECK).setPreferredWidth(16);
+            aTable.getColumnModel().getColumn(TABLE_COLUMN_CHECK).setResizable(false); 
+            aTable.getColumnModel().getColumn(TABLE_COLUMN_CHECK).sizeWidthToFit();
         }
         
-        aTable.setAutoCreateRowSorter(true);
-        aTable.setDefaultEditor(Color.class, new ColorEditor());
-        aTable.setDefaultRenderer(Color.class, new MyRenderer());    
+        aTable.getColumnModel().getColumn(TABLE_COLUMN_NAME).sizeWidthToFit();
+        aTable.getColumnModel().getColumn(TABLE_COLUMN_PIXELS).sizeWidthToFit();
+        
+                       
     }
 
     final class ColorEditor extends javax.swing.AbstractCellEditor

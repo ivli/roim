@@ -18,7 +18,7 @@
 package com.ivli.roim.core;
 
 /**
- *
+ * 
  * @author likhachev
  */
 public class Instant implements java.io.Serializable, Comparable<Instant> {      
@@ -34,7 +34,7 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
     public static final Instant HOUR     = new Instant(MILLIS_IN_HOUR);
     public static final Instant INFINITE = new Instant(-1L);
     
-    protected long iInstant; 
+    protected final long iInstant; //time in milliseconds
      
     public Instant(long aI) {
         iInstant = aI;
@@ -50,7 +50,10 @@ public class Instant implements java.io.Serializable, Comparable<Instant> {
             
     @Override
     public int compareTo(Instant o) {
-        return ((Long)iInstant).compareTo(o.iInstant);
+        if (o == this)
+            return 0;
+        else
+            return ((Long)iInstant).compareTo((Long)o.iInstant);
     }
     
     public boolean isInfinite() {
