@@ -41,9 +41,7 @@ import javax.swing.table.TableModel;
  * @author likhachev
  */
 public class ROITableModel extends DefaultTableModel {
-    private static final String KCOMMAND_INVOKE_COLOUR_PICKER = "ROI_TABLE_MODEL.KCOMMAND_INVOKE_COLOUR_PICKER"; // NOI18N    
-                
-   
+    private static final String KCOMMAND_INVOKE_COLOUR_PICKER = "ROI_TABLE_MODEL.KCOMMAND_INVOKE_COLOUR_PICKER"; // NOI18N     
               
     public final static int TABLE_COLUMN_OBJECT = 0;
     public final static int TABLE_COLUMN_CHECK  = 1;
@@ -130,7 +128,8 @@ public class ROITableModel extends DefaultTableModel {
         aTable.setModel(this); 
         aTable.setAutoCreateRowSorter(true);
         aTable.setDefaultEditor(Color.class, new ColorEditor());
-        aTable.setDefaultRenderer(Color.class, new MyRenderer());    
+        aTable.setDefaultRenderer(Color.class, new MyRenderer());  
+        ///aTable.getTableHeader().
         ///aTable.s
         
         //unconditionally make "OBJ" column invisible

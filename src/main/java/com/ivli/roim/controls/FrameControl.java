@@ -47,7 +47,6 @@ import javax.swing.JToolTip;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
-//import javax.swing.ToolTipManager;
 
 /**
  *
@@ -79,7 +78,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     private boolean iDrawPhases = true;
     private boolean iTimeWiseScale = false; 
     private boolean iAnnotateMarker = true; 
-    private boolean iTimeSincePhase = true;
+    private boolean iTimeSincePhase = false;
     
     private double conversion = 1.; // holds a value used to conversion pixels to time or pixels to frame number and vice versa
      
@@ -117,8 +116,8 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
      
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {   
-                setTimeWise(iTimeWiseScale);
-                
+                iBuf = null; 
+                setTimeWise(iTimeWiseScale);                
                 makeBuffer();
                 repaint();
             }                                               
@@ -306,8 +305,8 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
             int xstart = 0;
             int width = 0;
             for(int i = 0; i < tsv.getNumPhases(); ++i) {
-                width = iTimeWiseScale ? (int) (tsv.getPhaseDuration(i) / conversion) - 1 :
-                                         (int) (tsv.getPhaseFrames(i) / conversion) - 1;
+                width = iTimeWiseScale ? (int) ((double)tsv.getPhaseDuration(i) / conversion) - 1 :
+                                         (int) ((double)tsv.getPhaseFrames(i) / conversion) - 1;
                 g.setColor(Colorer.getColor(i));
                 g.drawRect(xstart, 0, width, getHeight() - TOP_GAP);
                 xstart += width + 1;
@@ -344,6 +343,7 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
      
     private static final String KCOMMAND_TIMEWISE_SCALE = "KCOMMAND_TIMEWISE_SCALE";  //NOI18N
     private static final String KCOMMAND_ANNOTATE_MARKER = "KCOMMAND_ANNOTATE_MARKER"; //NOI18N 
+    private static final String KCOMMAND_SINCE_PHASE = "KCOMMAND_SINCE_PHASE"; //NOI18N 
     
     void showPopupMenu(int aX, int aY) {
         final JPopupMenu mnu = new JPopupMenu("FC_CONTEXT_MENU_TITLE"); //NOI18N  
@@ -359,6 +359,12 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         mi12.setState(iAnnotateMarker);
         mi12.setActionCommand(KCOMMAND_ANNOTATE_MARKER);        
         mnu.add(mi12);
+        
+        JCheckBoxMenuItem mi13 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("FC_MENU.KCOMMAND_SINCE_PHASE"));
+        mi13.addActionListener(this);
+        mi13.setState(iTimeSincePhase);
+        mi13.setActionCommand(KCOMMAND_SINCE_PHASE);        
+        mnu.add(mi13);
         
         mnu.show(this, aX, aY);
     }
@@ -376,6 +382,10 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
                 iAnnotateMarker = !iAnnotateMarker;
                 updateMarkerAnnotation();               
                 break;
+             case KCOMMAND_SINCE_PHASE:
+                iTimeSincePhase = !iTimeSincePhase;
+                updateMarkerAnnotation();               
+                break;                    
             default: break;    
         }
     }
