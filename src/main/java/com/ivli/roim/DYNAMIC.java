@@ -33,6 +33,7 @@ import com.ivli.roim.controls.AboutDialog;
 import com.ivli.roim.controls.CalcPanel;
 import com.ivli.roim.controls.ChartView;
 import com.ivli.roim.controls.FileOpenDialog;
+import com.ivli.roim.controls.FrameControl;
 import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.controls.ROIListPanel;
 import com.ivli.roim.view.IImageView;
@@ -397,20 +398,14 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jPanel3.removeAll();
         jPanel4.removeAll();
         jPanel5.removeAll();       
-        
-        /*
-        jPanel1.repaint();
-        jPanel3.repaint();
-        jPanel4.repaint();
-        jPanel5.repaint();                   
-        */
-        
+       
         iGroup = ImageViewGroup.create(anImage);
        
         ImageView image = iGroup.createView(ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(image, BorderLayout.CENTER);
         jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
+        jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);
         jPanel1.validate(); 
                 
         ImageView sumView = iGroup.createView(ImageView.DEFAULT_COMPOSITE_IMAGE_MODE); //ImageView.create(sum, root);

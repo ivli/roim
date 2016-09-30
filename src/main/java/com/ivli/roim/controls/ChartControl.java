@@ -57,11 +57,11 @@ public class ChartControl extends ChartPanel {
         DELETE(           "MARKER_CMD_MARKER_DELETE",     java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MARKER_DELETE")),
         DELETE_ALL(       "MARKER_CMD_DELETE_ALL",        java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MARKER_DELETE_ALL")),
         MOVE_TO_MIN(      "MARKER_CMD_MOVE_TO_MIN",       java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MOVE_TO_MIN")),
-        MOVE_TO_MIN_LEFT( "MARKER_CMD_MOVE_TO_MIN_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MOVE_TO_MIN_LEFT")),
-        MOVE_TO_MIN_RIGHT("MARKER_CMD_MOVE_TO_MIN_RIGHT", java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MOVE_TO_MIN_RIGHT")),
+       // MOVE_TO_MIN_LEFT( "MARKER_CMD_MOVE_TO_MIN_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MOVE_TO_MIN_LEFT")),
+       // MOVE_TO_MIN_RIGHT("MARKER_CMD_MOVE_TO_MIN_RIGHT", java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MOVE_TO_MIN_RIGHT")),
         MOVE_TO_MAX(      "MARKER_CMD_MOVE_TO_MAX",       java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX")),
-        MOVE_TO_MAX_LEFT( "MARKER_CMD_MOVE_TO_MAX_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX_LEFT")),
-        MOVE_TO_MAX_RIGHT("MARKER_CMD_MOVE_TO_MAX_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX_RIGHT")),
+       // MOVE_TO_MAX_LEFT( "MARKER_CMD_MOVE_TO_MAX_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX_LEFT")),
+       // MOVE_TO_MAX_RIGHT("MARKER_CMD_MOVE_TO_MAX_LEFT",  java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MOVE_TO_MAX_RIGHT")),
         MOVE_TO_MEDIAN(   "MARKER_CMD_MOVE_TO_MEDIAN",    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.MOVE_TO_MEDIAN")),
         FIT_LEFT(         "MARKER_CMD_FIT_LEFT",          java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.FIT_LEFT")),
         FIT_RIGHT(        "MARKER_CMD_FIT_RIGHT",         java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MARKER_COMMAND.FIT_RIGHT"));
@@ -200,22 +200,18 @@ public class ChartControl extends ChartPanel {
                         LOG.throwing(ex);
                     } 
                 } break;
-                
             case MOVE_TO_MAX:                                              
-                ((DomainMarker)iMarker).moveToMaximum(DomainMarker.MOVETO.GLOBAL); break;    
-            case MOVE_TO_MAX_LEFT:    
-                ((DomainMarker)iMarker).moveToMaximum(DomainMarker.MOVETO.LEFT); break;
-            case MOVE_TO_MAX_RIGHT:                                              
-                ((DomainMarker)iMarker).moveToMaximum(DomainMarker.MOVETO.RIGHT); break;            
+                iMarker.setValue(XYSeriesUtilities.getDomainValueOfMaximum(((DomainMarker)iMarker).getXYSeries())); break;//((DomainMarker)iMarker).moveToMaximum(DomainMarker.MOVETO.GLOBAL)); break;                           
             case MOVE_TO_MIN:                 
-                ((DomainMarker)iMarker).moveToMinimum(DomainMarker.MOVETO.GLOBAL); break;
-            case MOVE_TO_MIN_LEFT:                 
-                ((DomainMarker)iMarker).moveToMinimum(DomainMarker.MOVETO.LEFT); break;
-            case MOVE_TO_MIN_RIGHT:                 
-                ((DomainMarker)iMarker).moveToMinimum(DomainMarker.MOVETO.RIGHT); break;
-            case MOVE_TO_MEDIAN:                 
-                ((DomainMarker)iMarker).moveToMedian(DomainMarker.MOVETO.GLOBAL); break;
-                
+                iMarker.setValue(XYSeriesUtilities.getDomainValueOfMinimum(((DomainMarker)iMarker).getXYSeries())); break;            
+            case MOVE_TO_MEDIAN:  {               
+                iMarker.setValue(XYSeriesUtilities.getDomainValueOfMaximum(((DomainMarker)iMarker).getXYSeries())); 
+                double medY = (iSeries.getMaxY() - iSeries.getMinY()) / 2.;
+                double val = XYSeriesUtilities.getNearestX(iSeries, medY);
+
+                if (Double.isFinite(val))
+                    iMarker.setValue(val);
+                }; break;                
             case DELETE:
                 removeMarker((DomainMarker)iMarker);
                 break;
@@ -394,13 +390,13 @@ public class ChartControl extends ChartPanel {
             } else if (iMarker instanceof DomainMarker)  {                
                 JMenu mi1 = new JMenu(MENUS.MOVE_TO_MIN.iText);                             
                 mi1.add(MENUS.MOVE_TO_MIN.makeItem(this));
-                mi1.add(MENUS.MOVE_TO_MIN_LEFT.makeItem(this));
-                mi1.add(MENUS.MOVE_TO_MIN_RIGHT.makeItem(this));
+              //  mi1.add(MENUS.MOVE_TO_MIN_LEFT.makeItem(this));
+              //  mi1.add(MENUS.MOVE_TO_MIN_RIGHT.makeItem(this));
                 mnu.add(mi1);
                 JMenu mi2 = new JMenu(MENUS.MOVE_TO_MAX.iText);
                 mi2.add(MENUS.MOVE_TO_MAX.makeItem(this));
-                mi2.add(MENUS.MOVE_TO_MAX_LEFT.makeItem(this));
-                mi2.add(MENUS.MOVE_TO_MAX_RIGHT.makeItem(this));
+              //  mi2.add(MENUS.MOVE_TO_MAX_LEFT.makeItem(this));
+              //  mi2.add(MENUS.MOVE_TO_MAX_RIGHT.makeItem(this));
                 
                 mnu.add(mi2); 
                 mnu.add(MENUS.MOVE_TO_MEDIAN.makeItem(this));

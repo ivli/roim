@@ -7,8 +7,6 @@ package com.ivli.roim.controls;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.data.general.SeriesChangeEvent;
 import org.jfree.data.general.SeriesChangeListener;
@@ -20,19 +18,13 @@ import org.jfree.ui.RectangleInsets;
  *
  * @author likhachev
  */
-public class DomainMarker extends ValueMarker implements SeriesChangeListener {        
+class DomainMarker extends ValueMarker implements SeriesChangeListener {        
     private final XYSeries iSeries;
 
     private ValueMarker iLink;
     
     private static final String LABEL_FORMAT = "%.2f"; //NOI18N
-    
-    public enum MOVETO {
-        LEFT, 
-        RIGHT, 
-        GLOBAL;    
-    }
-    
+       
     public DomainMarker(XYSeries aSet) {
         this((aSet.getMaxX() - aSet.getMinX()) / 2., aSet);
     }
@@ -70,53 +62,7 @@ public class DomainMarker extends ValueMarker implements SeriesChangeListener {
         
     public void seriesChanged(SeriesChangeEvent sce) {        
         setValue(getValue());
-    }
-    
-    public void moveToMaximum(MOVETO aM) {
-        double val = Double.NaN;
-        switch (aM) {
-            case GLOBAL: 
-                val = XYSeriesUtilities.getDomainValueOfMaximum(iSeries); break;
-            case LEFT:
-                val = XYSeriesUtilities.getDomainValueOfMaximum(iSeries, this.getValue(), true); break;
-            case RIGHT:
-                val = XYSeriesUtilities.getDomainValueOfMaximum(iSeries, this.getValue(), false); break;
-        } 
-        
-        if (Double.isFinite(val))
-            setValue(val);
-        else
-           LOG.debug("!!!Domain value not found");
-    }
-    
-    public void moveToMinimum(MOVETO aM) {
-        //setValue(XYSeriesUtilities.getDomainValueOfMinimum(iSeries));
-        double val = Double.NaN;
-        switch (aM) {
-            case GLOBAL: 
-                val = XYSeriesUtilities.getDomainValueOfMinimum(iSeries); break;
-            case LEFT:
-                val = XYSeriesUtilities.getDomainValueOfMinimum(iSeries, this.getValue(), true); break;
-            case RIGHT:
-                val = XYSeriesUtilities.getDomainValueOfMinimum(iSeries, this.getValue(), false); break;
-        }
-        
-        if (Double.isFinite(val))
-            setValue(val);
-        else
-           LOG.info("!!!Domain value not found");
-    }
-  
-    public void moveToMedian(MOVETO aM) {
-        double medY = (iSeries.getMaxY() - iSeries.getMinY()) / 2.;
-        double val = XYSeriesUtilities.getNearestX(iSeries, medY);
-        
-        if (Double.isFinite(val))
-            setValue(val);
-        else
-           LOG.info("!!!Domain value not found");
-    }
-    
+    }   
         
     @Override
     public void setValue(double aVal) {
@@ -135,7 +81,7 @@ public class DomainMarker extends ValueMarker implements SeriesChangeListener {
         }        
     }  
     
-    private static final Logger LOG = LogManager.getLogger();
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }
 
 
