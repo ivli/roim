@@ -43,9 +43,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     public static final int PINNABLE   = RESIZABLE << 0x1;
     public static final int HASMENU    = PINNABLE  << 0x1;  
     public static final int HASCUSTOMMENU = HASMENU << 0x1;  
-        
-    //transient private final ROIManager iMgr; 
-    
+   
     protected final int iUid;
     protected Shape   iShape;
     protected String  iName;
@@ -53,7 +51,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     protected boolean iPinned = false;
     protected boolean iVisible = true;
     
-    private final EventListenerList iListeners;        
+    private transient final EventListenerList iListeners;        
             
     protected Overlay(int anID) {
         this(anID, null, null);

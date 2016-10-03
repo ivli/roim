@@ -27,8 +27,6 @@ import com.ivli.roim.core.Scalar;
 import com.ivli.roim.core.SeriesCollection;
 import com.ivli.roim.events.OverlayChangeEvent;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {             
     private Color iColor;          
@@ -118,5 +116,5 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iShape = tx.createTransformedShape(iShape);
     }      
        
-    private static final Logger LOG = LogManager.getLogger();
+   // private static final transient org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }

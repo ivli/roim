@@ -75,7 +75,8 @@ public class ROITableModel extends DefaultTableModel {
     ROITableModel(ROIManager aMgr, int aActiveFrame, boolean aEditable) {          
         iEditable = aEditable;// ? DEFAULT_PRIVILEGES_EDITABLE : DEFAULT_PRIVILEGES_READONLY;
         setDataVector (new Object [][] {}, DEFAULT_COLUMN_NAMES); 
-        
+        rebuild(aMgr, aActiveFrame);
+        /*
         Iterator<Overlay> aList = aMgr.getObjects();
         
         while (aList.hasNext()) {
@@ -88,7 +89,8 @@ public class ROITableModel extends DefaultTableModel {
                     r.getColor()});                                        
             }
         }
-         
+        */
+        
         addTableModelListener((TableModelEvent e) -> {
             final int row = e.getFirstRow();
             final int col = e.getColumn();
@@ -108,6 +110,22 @@ public class ROITableModel extends DefaultTableModel {
                 }                                
             }
         });
+    }
+    
+    void rebuild(ROIManager aMgr, int aActiveFrame) {
+    
+        Iterator<Overlay> aList = aMgr.getObjects();
+        
+        while (aList.hasNext()) {
+            Overlay o = aList.next();
+            if (o instanceof ROI) {       
+                final ROI r = (ROI)o;                   
+                addRow(new Object[]{o, false, r.getName(), r.getAreaInPixels(), 
+                    // use average value for multiframes
+                    -1 == aActiveFrame ? r.getSeries(Measurement.DENSITY).processor().avg() : r.getSeries(Measurement.DENSITY).get(aActiveFrame), 
+                    r.getColor()});                                        
+            }
+        }
     }
     
     @Override

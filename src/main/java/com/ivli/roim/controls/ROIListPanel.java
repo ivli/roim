@@ -8,8 +8,17 @@ package com.ivli.roim.controls;
 
 import com.ivli.roim.view.IImageView;
 import com.ivli.roim.view.ImageViewGroup;
+import com.ivli.roim.view.Overlay;
+import com.ivli.roim.view.ROIManager;
+import java.awt.FileDialog;
 import javax.swing.SwingUtilities;
 import java.awt.Window;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.event.TableModelEvent;
 
@@ -20,14 +29,18 @@ import javax.swing.event.TableModelEvent;
 public class ROIListPanel extends JPanel {                           
     private final ROITableModel iModel;    
     private int bi = 0;
-        
-    public ROIListPanel(ImageViewGroup aVG) {
-        iModel = new ROITableModel(aVG.getROIMgr(), -1, true);      
+
+    private final ROIManager iMgr;
+    
+    public ROIListPanel(ImageViewGroup aV) {
+        iModel = new ROITableModel(aV.getROIMgr(), -1, true);      
+        iMgr = aV.getROIMgr();
         construct();     
     }
     
     public ROIListPanel(IImageView aV) {               
-        iModel = new ROITableModel(aV.getROIMgr(), aV.getFrameNumber(), true);      
+        iModel = new ROITableModel(aV.getROIMgr(), aV.getFrameNumber(), true); 
+        iMgr = aV.getROIMgr();
         construct();       
     }
     
@@ -48,9 +61,9 @@ public class ROIListPanel extends JPanel {
                 
                 final boolean b = bi > 0;
                                     
-                jButton5.setEnabled(b);
-                jButton6.setEnabled(b);
-                jButton7.setEnabled(b);                  
+                jButtonDelete.setEnabled(b);
+                //jButton6.setEnabled(b);
+                jButtonShowHideCurve.setEnabled(b);                  
             }        
         });    
     } 
@@ -67,9 +80,10 @@ public class ROIListPanel extends JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        jButtonDelete = new javax.swing.JButton();
+        jButtonShowHideCurve = new javax.swing.JButton();
+        jButtonSelectAll = new javax.swing.JButton();
+        jButtonSaveLoad = new javax.swing.JButton();
 
         jTable1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jTable1.setModel(iModel);
@@ -84,70 +98,130 @@ public class ROIListPanel extends JPanel {
             }
         });
 
-        jButton5.setText("Delete");
-        jButton5.setEnabled(false);
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        jButtonDelete.setText(bundle.getString("MNU_ROI_OPERATIONS.DELETE")); // NOI18N
+        jButtonDelete.setEnabled(false);
+        jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                jButtonDeleteActionPerformed(evt);
             }
         });
 
-        jButton6.setText("Hide curve");
-        jButton6.setEnabled(false);
+        jButtonShowHideCurve.setText("Show curve");
+        jButtonShowHideCurve.setEnabled(false);
 
-        jButton7.setText("Show curve");
-        jButton7.setEnabled(false);
+        jButtonSelectAll.setText(bundle.getString("SELECT_ALL")); // NOI18N
+        jButtonSelectAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSelectAllActionPerformed(evt);
+            }
+        });
+
+        jButtonSaveLoad.setText(bundle.getString("ROI_DLG.SAVE_LOADLOAD")); // NOI18N
+        jButtonSaveLoad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSaveLoadActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton5)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 147, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(15, 15, 15))
+                        .addComponent(jButtonSaveLoad)
+                        .addGap(49, 49, 49)
+                        .addComponent(jButtonDelete)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonShowHideCurve)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(15, 15, 15))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButtonSelectAll)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                .addComponent(jButtonSelectAll)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6)
-                    .addComponent(jButton7))
+                    .addComponent(jButtonSaveLoad)
+                    .addComponent(jButtonDelete)
+                    .addComponent(jButtonShowHideCurve))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-       Window w = SwingUtilities.getWindowAncestor(this);
-       w.setVisible(false);
+        Window w = SwingUtilities.getWindowAncestor(this);
+        w.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
+    private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
+        for (int i = iModel.getRowCount()-1; i >= 0; --i)             
+            if((boolean)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_CHECK)) {
+                iMgr.deleteObject((Overlay)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_OBJECT));
+                iModel.removeRow(i);
+            }    
+    }//GEN-LAST:event_jButtonDeleteActionPerformed
+
+    private void jButtonSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSelectAllActionPerformed
+        for (int i = 0; i < iModel.getRowCount(); ++i)             
+            iModel.setValueAt(!(boolean)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_CHECK), i, ROITableModel.TABLE_COLUMN_CHECK);        
+    }//GEN-LAST:event_jButtonSelectAllActionPerformed
+
+    private void jButtonSaveLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveLoadActionPerformed
+        ArrayList<Overlay> sel = new ArrayList<>();
+        
+        for (int i = iModel.getRowCount() - 1; i >= 0; --i)             
+            if((boolean)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_CHECK))                 
+                sel.add((Overlay)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_OBJECT));
+               
+        FileDialog fd = new FileDialog((JDialog)null, "Choose", sel.isEmpty()? FileDialog.LOAD:FileDialog.SAVE);     
+       
+        fd.setVisible(true);
+
+        if (null == fd.getFile()) return;
+        
+        if (!sel.isEmpty()) {                             
+            try(FileOutputStream fos = new FileOutputStream(fd.getFile())){
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(sel);            
+            } catch (java.io.IOException ex) {
+                LOG.catching(ex);
+            }   
+        } else {        
+            try(FileInputStream fis = new FileInputStream(fd.getFile())){
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                sel = (ArrayList<Overlay>)ois.readObject();
+                for (Overlay o:sel) 
+                    iMgr.cloneObject(o);                
+                iModel.rebuild(iMgr, -1);
+                
+            } catch (java.io.IOException|ClassNotFoundException ex) {
+                LOG.catching(ex);
+            }   
+
+        }
+    }//GEN-LAST:event_jButtonSaveLoadActionPerformed
     
-  
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
             
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButtonDelete;
+    private javax.swing.JButton jButtonSaveLoad;
+    private javax.swing.JButton jButtonSelectAll;
+    private javax.swing.JButton jButtonShowHideCurve;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
