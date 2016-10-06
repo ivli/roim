@@ -49,52 +49,21 @@
             </a>Welcome to ROI-master GitHub Pages.
         </h3>
 
-<p>The Roim (ROI-master) is a java class library aimed to speed up creation of biomedical image processing applications. 
-It is designed to be vendor neutral and support most used modalities. 
-This development was inspired by <a href="https://imagej.nih.gov/ij/">ImageJ</a> image viewer, it's usage to process NM images.  
-It is well known images of Nuclear Medicine (NM) differ from images of other modalities. 
-In NM images pixel value represents a number of events (scintillations at a particular spatial location) accumulated through given time interval.<br>
-Usually, NM images have rather low resolution 1024x1024 pixels or less while physical pixel size rarely exceeds few to few millimetres.
-Quite often images suffer from poor  <abbr title="Signal to Noise Ratio">SNR</abbr>. 
-NM images are typically 3 dimensional where third dimension is either time or space i.e. present process or volume. However, 2D and 4D
-images are also exist.
-Taking all aforementioned into account it is obvious NM images hardly can be processed by means of common image visualization tools.
-Dedicated tool shall employ specific image processing to enhance visual perception, offer great flexibility in tuning: colourization, filtering, smoothing, tresholding, etc.  
-Otoh, all the calculations have to be done using original pixel values (perhaps on subpixel level).
-The library is designed around  <abbr title="Model View Controller">MVC</abbr> pattern where the core element is
-<br>The<span class="t">ImageView class</span> - it is a lightweight control capable of displaying medical images. 
-Also there is a set of <span class="t">Controllers</span> associated to different kinds of images. 
-And, <span class="t">MultiframeImage</span> class - encapsulating actual image, despite of image modality, storage, etc.
-There are several classes providing core image processing functionalities. 
-The program implements several pixel interpolation algorithms including bicubic and is capable of reading standard <abbr title="LookUp Table">LUT</abbr> palettes in 768 bit NIH format 
-and there is a number of built in <span class="t">LUTs</span>.  
-The latest release supports images in DICOM format with raw or uncompressed <span class="t">JPEG</span> data only. <br>
-The program does not make any difference of image modality as long as photometric interpretation is <span class="t">MONOCHROME</span> or <span class="t">MONOCHROME2</span> 
-and pixel data are 8-16 bits.
-Following imaging modalities are supported <abbr title="Computed Radiology">CR</abbr>/<abbr title="Computer Tomography">CT</abbr>/<abbr title="Nuclear Medicine">NM</abbr>
-<br>Reconstructed tomographic images displayed using <abbr title="Maximum Intensity Projections">MIP</abbr> algorithm.
-The application has tabbed design. There are three tabs: image viewer, curve viewer and multi-image viewer. 
-The processing model is built around <abbr title="Region of Interest">ROI</abbr> concept. ROIs of following kinds are implemented:  
-<ul><li>elliptic, <li>rectangular, <li>free form. </ul>  
-It is possible to extract statistics: integral density (sum of pixel values), area (in pixels and millimetres), min/max/avg values.
-ROI set on a multiframe images(<span class="t">DYNAMIC</span>) will automatically be propagated to all its frames 
-thus giving a possibility to extract all aforementioned statistics out of entire image and build curves.
-There are several tools and associated widgets:
-<br><span class="t">W/L control</span> - a standard element to control parameters of visual window (width and level). 
-<br><span class="t">ROI editor</span> - it lets changing ROI's name, colour and include\exclude them from charting. 
-<br><span class="t">ROI calculator</span> - offers base algebraic operations on ROIs and results are also can be sent to charts. 
-<br><span class="t">Chart view</span> - based on <a href="http://www.jfree.org/jfreechart/">JFreeChart</a> it offers a number of ways of
-presenting acquired data. It naturally supports scaling/zooming/pan and other operations applied to the set of curves.
-Using markers it is possible to extract, compare and extrapolate experimental data using linear and exponential fit.
-Markers can automatically be positioned to curve minimum and maximum (local and global).
-Finally, it is possible to save curves to CSV - file, for the sake of analysis by means of an external tool. 
-
-In order to illustrate capabilities of this class library the small application is included. It has tabbed design. 
-<br>The first page is designed to display source image, adjust image size, position, LUT, W/L to better visual perception and let the user set ROI correctly.
-ImageView has there the central role. 
-<br>The second tab displays is ChartView 
-<br>The last tab displays a matrix of frames (temporal or transversal slices for tomographic mages). It is just another instance of ImageView class.
-<br>The program is written in Java (tm) and tested to run on Windows and Linux .
+<p>
+##1. Introduction
+Roim is a class library designed to help implementing software for processing nuclear medicine (hereinafter NM) data. 
+This development was inspired by <a href="https://imagej.nih.gov/ij/">ImageJ</a> image viewer and written in Java.
+It is designed to be vendor neutral and shall support most of modalities. Among tested are NM/DR/DXR/CT/PET/MR.
+It has implementations for a set of controls, screen primitives and algorithms to extract, process and display biomedical information hidden in study files. 
+<br>These include: 
+- regions of interest (hereinafter ROI) of rectangular, elliptic and free form shape - once ROI is created it can be moved, reshaped, deleted, pinned, etc and a set of characteristics can be measured. Among them area (in pixels and cm), integral density (i.e. arithmetic sum of pixel values), min/max/avg pixel. For the case multiframe image - often seen in NM - this information will be extracted out of all the frames and then one will have a possibility to build and display curves like "density over time";
+- measure - it is meant for extracting geometrical information of the images;
+- profile - a tool to display density profile over a rectangular area of an image;
+Beyound aforementioned tools there is a number of instruments to adjust visualization parameters W/L and apply presentation LUT (a dozen of most popular ones is built into and there exists a possibility to load LUT from files in NIH format). Frame selection bar provides a mechanism of navigating through multiframe/multi-phase images in either terms of frames or time (milliseconds).   
+- Using ROI calculator it is possible to apply basic maths to measurements. For instance: one of often necessary operation is subtraction of background counts of counts measured from a ROI. Then, the resulting series can be sent to chart control.
+- Chart control is built around <a href=http://www.jfree.org/jfreechart/>JFreeChart</a> library and is designated to visualize series as curves, extract numeric information and finally there is an instrument to fit experimental data with linear or exponential polynomials using least squares method. It is not seldom acquisition ends earlier than a particular event takes place for instance half excretion  a time in the case of renal obstruction, however, using this tool it is possible to extrapolate the experimental data thus get in many cases acceptable approximation of missing parameter.
+The library employs <a href=http://www.dcm4che.org/>DCM4CHE</a> library to handle DICOM data and <a href=https://aparapi.github.io/>aparapi</a> to engage GPU into data processing. 
+Finally the library includes several applications for the sake of illustration of the basic concepts and principles behind the design.  
 
 <br>visit <a href="https://github.com/ivli/roim/wiki">Roim wiki</a> for details on how to build Roim and crate applications using it.
 <br>
