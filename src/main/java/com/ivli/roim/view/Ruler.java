@@ -7,6 +7,7 @@ import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.calc.Operand;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Scalar;
+import com.ivli.roim.core.Uid;
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -22,7 +23,7 @@ public class Ruler extends ScreenObject {
     private double iDistance;
     
     Ruler(Shape aR) {         
-        super(-1, "RULER",  aR);            
+        super(Uid.getNext(), "RULER",  aR);            
     }
           
     @Override

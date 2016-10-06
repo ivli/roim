@@ -17,67 +17,50 @@
  */
 package com.ivli.roim.view;
 
-import java.awt.Color;
 import java.awt.Shape;
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import com.ivli.roim.core.ImageFrame;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.ivli.roim.core.Histogram;
+import com.ivli.roim.core.ImageFrame;
+import com.ivli.roim.core.Uid;
 /**
  *
  * @author likhachev
  */
-public class Profile extends ScreenObject {   
-    public static final Color BLUEVIOLET = new Color(0.5411765f, 0.16862746f, 0.8862745f);
-    public static final Color VIOLET     = new Color(0.93333334f, 0.50980395f, 0.93333334f);
+public class Profile extends ScreenObject {      
+    private boolean    iShow = true;    
+    private boolean    iNormalize = false;
+    private Histogram  iHist;
+    private ImageFrame iFrame;
+    private int iFrameNumber;
     
-    private boolean  iShow = true;    
-    private boolean  iNormalize = false;
-    private double[] iHist;
     
-    public Profile(Rectangle2D aS) {
-        super(-1, "PROFILE", (Shape)aS); //NOI18N 
-        ///iHist = getManager().getFrame().processor().histogram(iShape.getBounds()); 
+    public Profile(Rectangle2D aS, IImageView aF) {
+        super(Uid.getNext(), "PROFILE", (Shape)aS); //NOI18N 
+        iFrameNumber = aF.getFrameNumber();
+        iFrame = aF.getFrame();        
+        iHist = iFrame.processor().histogram(iShape.getBounds()); 
     }
     
     @Override
     int getCaps() {
-        return MOVEABLE | SELECTABLE | HASMENU;
+        return MOVEABLE | SELECTABLE | HASMENU | FRAMESCOPE;
     }
-    
-    /*    */
+        
     @Override
     public void paint(AbstractPainter aP) {
         aP.paint(this);
     } 
  
     @Override
-    public void update(OverlayManager aM) {
-        //TODO!!!!!
-        ///iHist = aM.getFrame().processor().histogram(iShape.getBounds());      
+    public void update(OverlayManager aM) {        
+        iHist = iFrame.processor().histogram(iShape.getBounds());      
     }            
     
-    @Override
-    public void move(double adX, double adY) {             
-        final Rectangle2D r = iShape.getBounds2D();
-        
-        Shape temp = AffineTransform.getTranslateInstance(.0, adY).createTransformedShape(
-                                 new Rectangle2D.Double(r.getX(), r.getY(), r.getWidth(), Math.max(1.0, r.getHeight() + adX))
-                              );  
-        
-        ///TODO:!!!
-        
-        //Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, getManager().getImage().getWidth(), getManager().getImage().getHeight());
-        
-        //if (bounds.contains(temp.getBounds())) {
-        //    iShape = temp;
-           /// update();
-        //}
-    }  
-          
+    public int getFrameNumber() {
+        return iFrameNumber;
+    }
+    
     public boolean normalize() {
         return iNormalize = !iNormalize; 
     }
@@ -90,9 +73,7 @@ public class Profile extends ScreenObject {
          iShow = aS; 
     }
     
-    public double[] getHistogram() {
+    public Histogram getHistogram() {
          return iHist;
-    }
-    
-        private static final Logger LOG = LogManager.getLogger();
+    }        
 }

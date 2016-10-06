@@ -81,7 +81,7 @@ public class ImageView extends JComponent implements IImageView {
     private EventListenerList iListeners; //
 
     public static ImageView create(IMultiframeImage aI, ViewMode aMode) {        
-        return create(aI, aMode, new ROIManager(aI, new Uid(), false));    
+        return create(aI, aMode, new ROIManager(aI, Uid.getNext(), false));    
     }
         
     public static ImageView create(IMultiframeImage aI, ViewMode aMode, ROIManager aM) {
@@ -89,7 +89,8 @@ public class ImageView extends JComponent implements IImageView {
         ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         ret.setFit(ImageView.ZoomFit.VISIBLE);
         ret.setController(new Controller(ret));
-        ret.setROIMgr(aM);
+        ret.iMgr = new ROIManager(aM);
+        
         ret.setImage(aI);
         ret.setViewMode(aMode);         
         ret.addComponentListener(new ComponentListener() {    
@@ -107,6 +108,7 @@ public class ImageView extends JComponent implements IImageView {
             public void componentShown(ComponentEvent e) {}                    
         });  
         
+        ret.addFrameChangeListener(ret.iMgr);
         return ret;    
     }
     

@@ -25,6 +25,7 @@ import java.awt.geom.AffineTransform;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Scalar;
 import com.ivli.roim.core.SeriesCollection;
+import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 
 
@@ -37,12 +38,12 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     @Override
     int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU|PINNABLE;}
     
-    public ROI(int anID) {
+    public ROI(Uid anID) {
         this(anID, null , null, Colorer.getNextColor(ROI.class));                 
     }
     
-    public ROI(int anID, String aName, Shape aS, Color aC) {
-        super(anID, null == aName ? String.format("ROI%d", anID):aName, aS);         
+    public ROI(Uid anID, String aName, Shape aS, Color aC) {
+        super(anID, null == aName ? String.format("ROI%d", anID.getLong()):aName, aS);         
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);          
         iAreaInPixels = -1;
         iSeries = null;

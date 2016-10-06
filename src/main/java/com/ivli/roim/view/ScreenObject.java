@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.view;
 
+import com.ivli.roim.core.Uid;
 import java.awt.Shape;
 
 /**
@@ -24,7 +25,7 @@ import java.awt.Shape;
  * @author likhachev
  */
 public abstract class ScreenObject extends Overlay {    
-             protected ScreenObject(int aUid, String aName, Shape aShape) {
-                super(aUid, aName, aShape);
+             protected ScreenObject(Uid anUid, String aName, Shape aShape) {
+                super(anUid, aName, aShape);
              }
 }

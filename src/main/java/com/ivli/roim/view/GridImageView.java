@@ -41,7 +41,7 @@ public class GridImageView extends ImageView {
         ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         ret.setFit(ImageView.ZoomFit.VISIBLE);
         ret.setController(new GridViewController(ret));
-        ret.setROIMgr(null != aMgr ? aMgr : new ROIManager(aI, new Uid(), false));
+        ret.setROIMgr(null != aMgr ? aMgr : new ROIManager(aI, Uid.getNext(), false));
         ret.setImage(aI);
         ret.setGrid(aRows, aCols);
         return ret;

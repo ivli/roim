@@ -21,16 +21,27 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public class Uid {
-    public static final int UID_INVALID = -1;
-    private static final int DEFAULT_INITIAL_VALUE = 0;
-    private int iUid;
-
-    public Uid() {
-        iUid = DEFAULT_INITIAL_VALUE;
+public class Uid implements Comparable<Uid> {
+    private static final long INVALID_VALUE = -1L;
+    private static final long DEFAULT_INITIAL_VALUE = 0L;
+    private static long iGlobalUid = DEFAULT_INITIAL_VALUE;
+    
+    public static final Uid INVALID = new Uid(INVALID_VALUE); 
+    
+    private final long iUid;
+    
+    private Uid(long anId) {
+        iUid = anId;
+    }
+    
+    public long getLong() {return iUid;}
+    
+    public synchronized static Uid getNext() {            
+        return new Uid(++iGlobalUid);
     }
 
-    public int getNext() {            
-        return iUid++;
+    @Override
+    public int compareTo(Uid o) {
+        return (int)(this.iUid - o.iUid);
     }
 }

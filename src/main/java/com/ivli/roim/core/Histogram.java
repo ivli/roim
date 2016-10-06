@@ -27,8 +27,7 @@ public class Histogram extends HashMap<Integer, Integer> {
     public int iMin = Integer.MAX_VALUE;
     public int iMax = Integer.MIN_VALUE;    
     
-    public Histogram() {}
-    
+        
     public Histogram(int[] aV, int aV0, int aS) {
         for (int i = 0; i < aV.length; ++i)
             this.put(aV0+i*aS, aV[i]);    
@@ -37,7 +36,9 @@ public class Histogram extends HashMap<Integer, Integer> {
     public Histogram(int[] aV) {
         this(aV, 0, 1);  
     }
-                                 
+    
+    public Histogram() 
+    {}
     /**
      *
      * @param aKey
@@ -61,10 +62,10 @@ public class Histogram extends HashMap<Integer, Integer> {
     public Histogram rebin(int aNoOfBins) {              
         final int binSize = Math.max(1, (iMax-0) / aNoOfBins);
      
-        //HashMap<Integer, Integer> reb = new HashMap<>();
+        
         Histogram ret = new Histogram();
              
-        for (int i=0; i<aNoOfBins; ++i) {
+        for (int i=0; i < aNoOfBins; ++i) {
             final Integer key = i * binSize; 
             Integer val = get(key);
             ret.put(key, null != val ? val:0);           
@@ -72,4 +73,7 @@ public class Histogram extends HashMap<Integer, Integer> {
         
         return ret;        
     }
+    
+    public double min() {return iMin;}
+    public double max() {return iMax;}
 }

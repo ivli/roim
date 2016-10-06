@@ -36,7 +36,7 @@ public class ImageViewGroup {
     ImageViewGroup(IMultiframeImage anImage) {
         iImage = anImage;
         iViews = new ArrayList<>();
-        iUid = new Uid();
+        iUid = Uid.getNext();
         iMgr = new ROIManager(iImage, iUid, iImage.getImageType() == ImageType.STATIC);        
     }
     

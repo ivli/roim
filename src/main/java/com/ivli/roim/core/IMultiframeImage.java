@@ -50,13 +50,13 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFramePr
      * Creates a multiframe image with physical characteristics of original but Z or time axis whose lenght is set in the first parementer
      * frames are zeroed out  
      * @param aNoOfFrames - a number of frames
-     * @return - a multiframe image of the same physical dimensions   
+     * @return  a multiframe image of the same physical dimensions   
      */
     public abstract IMultiframeImage createCompatibleImage(int aNoOfFrames); 
     
     /**
      * Returns a deep copy of original image    
-     * @return - a multiframe image   
+     * @return  a multiframe image   
      */
     public abstract IMultiframeImage duplicate(); 
     

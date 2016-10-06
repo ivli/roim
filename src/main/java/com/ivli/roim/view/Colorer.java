@@ -25,9 +25,13 @@ import java.util.Map;
  *
  * @author likhachev
  */
-public class Colorer {             
-    private final static Color[] RAINBOW = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, Color.MAGENTA};    
+public class Colorer {  
+    public static final Color BLUEVIOLET = new Color(0.5411765f, 0.16862746f, 0.8862745f);
+    public static final Color VIOLET     = new Color(0.93333334f, 0.50980395f, 0.93333334f);
+    
+    private final static Color[] RAINBOW = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, VIOLET};    
     private static final Map <Class, Integer> iHash = new HashMap();
+    
     
     public static synchronized Color getNextColor(Object aO) {        
         int ndx = 0;

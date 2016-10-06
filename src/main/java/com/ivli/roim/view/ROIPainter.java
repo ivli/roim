@@ -17,7 +17,6 @@
  */
 package com.ivli.roim.view;
 
-import static com.ivli.roim.view.Profile.BLUEVIOLET;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -26,7 +25,7 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-
+import com.ivli.roim.core.Histogram;
 /**
  *
  * @author likhachev
@@ -39,8 +38,10 @@ public class ROIPainter extends AbstractPainter {
         super(aGC, aT, aV);
     }
     
+    @Override
     public void paint(Overlay aO) {}
     
+    @Override
     public void paint(ROI aO) {
         if (aO.isEmphasized()) {
             iGC.setColor(EMPHASIZED_COLOR);
@@ -52,11 +53,12 @@ public class ROIPainter extends AbstractPainter {
         iGC.draw(iTrans.createTransformedShape(aO.getShape()));             
     }
     
+    @Override
     public void paint(Profile aO) { 
         final Rectangle bn = iTrans.createTransformedShape(aO.getShape()).getBounds();          
         final Color tmp = iGC.getColor();
         
-        iGC.setColor(BLUEVIOLET);
+        iGC.setColor(Colorer.BLUEVIOLET);
         iGC.drawLine(bn.x, bn.y, bn.x+bn.width, bn.y);                           
         
         iGC.setColor(java.awt.Color.RED);
@@ -65,11 +67,12 @@ public class ROIPainter extends AbstractPainter {
         iGC.setColor(tmp);
         /**/
         if (aO.isShowHistogram()) {
-            double min = Double.MAX_VALUE;
-            double max = Double.MIN_VALUE;
-            double [] h = aO.getHistogram();
-
-            for (double d : h) {
+            
+            Histogram h = aO.getHistogram();
+            double min = h.min(); //Double.MAX_VALUE;
+            double max = h.max(); //Double.MIN_VALUE;
+            
+            for (double d : h.values()) {
                 min = Math.min(min, d);
                 max = Math.max(max, d);
             }
@@ -81,10 +84,11 @@ public class ROIPainter extends AbstractPainter {
             final double scale = Math.min(aO.getShape().getBounds().getY()/(4*range), bounds.getHeight()/(4*range));                                              
             Path2D.Double s = new Path2D.Double();        
             //int n = 0;
-            s.moveTo(0, aO.getShape().getBounds().getY() - h[0] * scale);
+            //Integer set[]=h.values();
+            s.moveTo(0, aO.getShape().getBounds().getY() - h.get(0) * scale);
 
-            for (int n = 1; n < h.length; ++n) 
-                s.lineTo(n, aO.getShape().getBounds().getY() - h[n] * scale);
+            for (int n = 1; n < h.size(); ++n) 
+                s.lineTo(n, aO.getShape().getBounds().getY() - h.get(n) * scale);
 
             iGC.setXORMode(Color.WHITE);             
             iGC.draw(iTrans.createTransformedShape(s));                
@@ -92,12 +96,14 @@ public class ROIPainter extends AbstractPainter {
         }
     }
   
+    @Override
     public void paint(Ruler aO) {
         final Shape rect = iTrans.createTransformedShape(aO.getShape());                           
         iGC.setColor(Color.YELLOW);       
         iGC.draw(rect);       
     }   
     
+    @Override
     public void paint(Annotation aO) {        
         final Rectangle2D temp = iTrans.createTransformedShape(aO.getShape()).getBounds();     
         iGC.setColor(aO.getColor());

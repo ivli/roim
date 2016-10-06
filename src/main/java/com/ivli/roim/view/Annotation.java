@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.core.Filter;
+import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 
@@ -37,7 +38,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
     protected final ArrayList<String> iAnnotation;    
     Overlay iRoi;
     
-    Annotation(int aUid, String aName, Shape aShape) {
+    Annotation(Uid aUid, String aName, Shape aShape) {
         super(aUid, aName, aShape);   
         iAnnotation = new ArrayList<>();
     }
@@ -115,8 +116,8 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
         
         public Static(ROI aRoi) {
-            super(-1, 
-                  "ANNOTATION::STATIC", // NOI18N
+            super(Uid.getNext(), 
+                  "ANNOTATION::STATIC", //NOI18N
                   aRoi.getShape() );  
             iRoi = aRoi;     
             aRoi.addChangeListener(this);
@@ -191,7 +192,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         //private final Overlay iR;
         
         Active(IOperation anOp, Overlay aR) {
-            super(-1, "ANNOTATION.ACTIVE", null);                    
+            super(Uid.getNext(), "ANNOTATION.ACTIVE", null);                    
             iOp = anOp;       
             iRoi = aR;
         }   

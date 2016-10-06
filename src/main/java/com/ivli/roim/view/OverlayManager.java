@@ -17,13 +17,6 @@
  */
 package com.ivli.roim.view;
 
-
-import com.ivli.roim.core.IMultiframeImage;
-import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.events.OverlayChangeEvent;
-import com.ivli.roim.events.OverlayChangeListener;
-import com.ivli.roim.events.ROIChangeEvent;
-import com.ivli.roim.events.ROIChangeListener;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -32,17 +25,22 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.Iterator;
 import javax.swing.event.EventListenerList;
-
-
+import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.events.FrameChangeEvent;
+import com.ivli.roim.events.FrameChangeListener;
+import com.ivli.roim.events.OverlayChangeEvent;
+import com.ivli.roim.events.OverlayChangeListener;
+import com.ivli.roim.events.ROIChangeEvent;
+import com.ivli.roim.events.ROIChangeListener;
 /**
  *
  * @author likhachev
  */
-public class OverlayManager implements OverlayChangeListener, java.io.Serializable {  
+public class OverlayManager implements OverlayChangeListener, FrameChangeListener, java.io.Serializable {  
     private static final long serialVersionUID = 42L;    
       
-    private final IMultiframeImage iImage;
-    private final HashSet<Overlay> iOverlays;        
+    private final IMultiframeImage  iImage;
+    private final HashSet<Overlay>  iOverlays;        
     private final EventListenerList iList;
         
     protected final OverlayManager iParent;
@@ -93,8 +91,7 @@ public class OverlayManager implements OverlayChangeListener, java.io.Serializab
             if (bounds.contains(temp.getBounds())) {            
                 aO.move(adX, adY);   
                 aO.update(this);
-                notifyROIChanged(aO, ROIChangeEvent.CODE.MOVED, new double[]{adX, adY});
-                
+                notifyROIChanged(aO, ROIChangeEvent.CODE.MOVED, new double[]{adX, adY});                
             }
         }
     }
@@ -152,6 +149,12 @@ public class OverlayManager implements OverlayChangeListener, java.io.Serializab
         
         //notifyROIChanged(anEvt.getObject(), anEvt.getCode(), anEvt.getExtra());
     }
-        
+
+    @Override
+    public void frameChanged(FrameChangeEvent anEvt) {       
+        for (Overlay o:iOverlays) 
+            if (0 != (o.getCaps() & Overlay.FRAMESCOPE) ) 
+                o.setVisible(((Profile)o).getFrameNumber() == anEvt.getFrame());                   
+    }        
 }
 

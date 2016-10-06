@@ -18,6 +18,7 @@
 package com.ivli.roim.view;
 
 
+import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -43,8 +44,9 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     public static final int PINNABLE   = RESIZABLE << 0x1;
     public static final int HASMENU    = PINNABLE  << 0x1;  
     public static final int HASCUSTOMMENU = HASMENU << 0x1;  
-   
-    protected final int iUid;
+    public static final int FRAMESCOPE = HASCUSTOMMENU << 0x1;
+           
+    protected final Uid iUid;
     protected Shape   iShape;
     protected String  iName;
     protected boolean iEmphasized = false;
@@ -53,18 +55,18 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     
     private transient final EventListenerList iListeners;        
             
-    protected Overlay(int anID) {
+    protected Overlay(Uid anID) {
         this(anID, null, null);
     }
     
-    protected Overlay(int anID, String aName, Shape aShape) {
+    protected Overlay(Uid anID, String aName, Shape aShape) {
         iUid   = anID;
         iShape = aShape;         
         iName  = (null != aName)? aName : String.format("OVERLAY%d", anID); //NOI18N                  
         iListeners = new EventListenerList();   
     }
                
-    public int getID() {
+    public Uid getID() {
         return iUid;
     }
        
@@ -126,7 +128,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     
     abstract void update(OverlayManager aRM);  
         
-    abstract int  getCaps();         
+    abstract int getCaps();         
     abstract void paint(AbstractPainter aP);  
             
     interface IFlip {
