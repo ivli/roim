@@ -50,18 +50,22 @@
         </h3>
 
 <p>
-##1. Introduction
-Roim is a class library designed to help implementing software for processing nuclear medicine (hereinafter NM) data. 
+<h3>1. Introduction </h3>
+Roim is a class library designed to help implementing software for processing nuclear medicine (hereinafter <b>NM</b>) data. 
 This development was inspired by <a href="https://imagej.nih.gov/ij/">ImageJ</a> image viewer and written in Java.
 It is designed to be vendor neutral and shall support most of modalities. Among tested are NM/DR/DXR/CT/PET/MR.
 It has implementations for a set of controls, screen primitives and algorithms to extract, process and display biomedical information hidden in study files. 
 <br>These include: 
-- regions of interest (hereinafter ROI) of rectangular, elliptic and free form shape - once ROI is created it can be moved, reshaped, deleted, pinned, etc and a set of characteristics can be measured. Among them area (in pixels and cm), integral density (i.e. arithmetic sum of pixel values), min/max/avg pixel. For the case multiframe image - often seen in NM - this information will be extracted out of all the frames and then one will have a possibility to build and display curves like "density over time";
-- measure - it is meant for extracting geometrical information of the images;
-- profile - a tool to display density profile over a rectangular area of an image;
+<ul style="list-style-type:disc">
+<li>regions of interest (hereinafter <b>ROI</b>) of rectangular, elliptic and free form shape - once ROI is created it can be moved, reshaped, deleted, pinned, etc 
+and a set of characteristics can be measured. Among them area (in pixels and cm), integral density (i.e. arithmetic sum of pixel values), min/max/avg pixel. 
+In the case of multiframe image - often seen in NM - this information will be extracted out of all the frames and then one will have a possibility to build and display curves like "density over time";
+<li>Ruler - it is meant for extracting geometrical information of the images;
+<li>Profile - a tool to display density profile over a rectangular area of an image;
 Beyound aforementioned tools there is a number of instruments to adjust visualization parameters W/L and apply presentation LUT (a dozen of most popular ones is built into and there exists a possibility to load LUT from files in NIH format). Frame selection bar provides a mechanism of navigating through multiframe/multi-phase images in either terms of frames or time (milliseconds).   
-- Using ROI calculator it is possible to apply basic maths to measurements. For instance: one of often necessary operation is subtraction of background counts of counts measured from a ROI. Then, the resulting series can be sent to chart control.
-- Chart control is built around <a href=http://www.jfree.org/jfreechart/>JFreeChart</a> library and is designated to visualize series as curves, extract numeric information and finally there is an instrument to fit experimental data with linear or exponential polynomials using least squares method. It is not seldom acquisition ends earlier than a particular event takes place for instance half excretion  a time in the case of renal obstruction, however, using this tool it is possible to extrapolate the experimental data thus get in many cases acceptable approximation of missing parameter.
+<li>Using ROI calculator it is possible to apply basic maths to measurements. For instance: one of often necessary operation is subtraction of background counts of counts measured from a ROI. Then, the resulting series can be sent to chart control.
+<li>Chart control is built around <a href=http://www.jfree.org/jfreechart/>JFreeChart</a> library and is designated to visualize series as curves, extract numeric information and finally there is an instrument to fit experimental data with linear or exponential polynomials using least squares method. It is not seldom acquisition ends earlier than a particular event takes place for instance half excretion  a time in the case of renal obstruction, however, using this tool it is possible to extrapolate the experimental data thus get in many cases acceptable approximation of missing parameter.
+</ul>
 The library employs <a href=http://www.dcm4che.org/>DCM4CHE</a> library to handle DICOM data and <a href=https://aparapi.github.io/>aparapi</a> to engage GPU into data processing. 
 Finally the library includes several applications for the sake of illustration of the basic concepts and principles behind the design.  
 
