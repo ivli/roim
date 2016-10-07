@@ -63,7 +63,7 @@ In the case of multiframe image - often seen in NM - this information will be ex
 <li>Ruler - it is meant for extracting geometrical information of the images;
 <li>Profile - a tool to display density profile over a rectangular area of an image;
 </ul>
-Beyound aforementioned tools there is a number of instruments to adjust visualization parameters W/L and apply presentation LUT (a dozen of most popular ones is built into and there exists a possibility to load LUT from files in NIH format). 
+Beyond aforementioned tools there is a number of instruments to adjust visualization parameters W/L (Window Width and Level) and apply presentation LUT (a dozen of most popular ones is built into and there exists a possibility to load LUT from files in NIH format). 
 Frame selection bar provides a mechanism of navigating through multiframe/multi-phase images in either terms of frames or time (milliseconds).   
 <ul style="list-style-type:disc">
 <li>Using ROI calculator it is possible to apply basic maths to measurements. For instance: one of often necessary operation is subtraction of background counts of counts measured from a ROI. 
@@ -87,11 +87,14 @@ The screen is split into two parts left one is tab control displaying image as a
 Right is occupied by chart control displaying activity curves of two ROIs and extrapolation of one of them.        
 
 <h3>3. LUT</h3>
-The picture below shows LUT con
+The picture below shows LUT control in the action with open menu. A number of options are available to made reading as much comfortable as possible.
+Beyond selection of LUT it is possible to use logarithmic function to translate image pixels to screen luminosity (actually sigmoid is used), inverted scales 
+and yet there is a form displaying image's histogram accompanied with live W/L translation curve. Window width and level can be adjusted using control using knobs on the bar control, 
+displayed values are either in arbitrary units or percent.              
 <img src="images/LUTControl.png" alt="LUT control - main screen" style="width:640px;height:448px;">
 
 
-<br>Please visit <a href="https://github.com/ivli/roim/wiki">Roim wiki</a> for further details on building and crating applications using roim.
+<br>Please visit <a href="https://github.com/ivli/roim/wiki">Roim wiki</a> for further details.
 <br>
 <br>
 
