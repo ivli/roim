@@ -20,7 +20,6 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -43,6 +42,11 @@ import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
 import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
+import static java.awt.image.BufferedImage.TYPE_INT_RGB;
+import java.awt.image.IndexColorModel;
+import java.awt.image.WritableRaster;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 
 /**
  *
@@ -518,9 +522,22 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         }
         
         JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.OPEN_BUILTIN_LUT"));
-               
+        
+        
+       
         for (String s : LutReader.getInstalledLUT()) {
-            JMenuItem mit = new JMenuItem(s);
+            
+            IndexColorModel icm = LutReader.open(s);
+            BufferedImage buf = new BufferedImage(256, 16, TYPE_INT_RGB);
+            WritableRaster r = buf.getRaster();
+            
+            for (int i = 0; i < 255; ++i) {
+                int[] components={0,0,0};
+                for(int j = 0; j < 15; ++j)
+                    r.setPixel(i, j, icm.getComponents(i, components, 0));
+            }
+            
+            JMenuItem mit = new JMenuItem(s, new ImageIcon(buf));            
             mit.addActionListener(this);
             mit.setActionCommand(s); 
             m1.add(mit);

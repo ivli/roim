@@ -21,7 +21,8 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public class Uid implements Comparable<Uid> {
+public class Uid implements Comparable<Uid>, java.io.Serializable {
+    private static final long serialVersionUID = 42L;
     private static final long INVALID_VALUE = -1L;
     private static final long DEFAULT_INITIAL_VALUE = 0L;
     private static long iGlobalUid = DEFAULT_INITIAL_VALUE;

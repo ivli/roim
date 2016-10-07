@@ -18,8 +18,7 @@
 package com.ivli.roim.view;
 
 
-import com.ivli.roim.algorithm.MIPProjector;
-import com.ivli.roim.core.IFrameProvider;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -55,13 +54,15 @@ import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
 import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
+import com.ivli.roim.algorithm.MIPProjector;
+import com.ivli.roim.core.IFrameProvider;
 
 public class ImageView extends JComponent implements IImageView {
     private static final double DEFAULT_SCALE_X = 1.0;
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
        
-    protected ZoomFit iFit;      //fit into the window method       
+    protected ZoomFit iFit;      //a method of initial fitting into the window       
     protected Object iInterpolation; //interpolation method   
     
     protected Point iOrigin; //image point [0,0] on the window implements panoramic transform 
@@ -78,7 +79,7 @@ public class ImageView extends JComponent implements IImageView {
     protected BufferedImage iBuf2; //pre processed image of original size       
     protected BufferedImage iBuf;  //offscreen buffer made of a iBuf2 after zoom and pan   
         
-    private EventListenerList iListeners; //
+    private final EventListenerList iListeners; //
 
     public static ImageView create(IMultiframeImage aI, ViewMode aMode) {        
         return create(aI, aMode, new ROIManager(aI, Uid.getNext(), false));    

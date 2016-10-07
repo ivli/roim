@@ -149,15 +149,13 @@ public class ROIManager extends OverlayManager {
     }
     
     public Overlay cloneObject(Overlay aR) {             
-        Overlay ret;
+        Overlay ret=null;
         
         try {
-            ret = aR.getClass().getConstructor(int.class).newInstance(iUid.getNext());             
-            ret.iShape = aR.getShape();
-            
+            ret = aR.getClass().getConstructor(Uid.class).newInstance(iUid.getNext());             
+            ret.iShape = aR.getShape();            
         } catch (InstantiationException|IllegalAccessException|NoSuchMethodException|InvocationTargetException ex) {
-            LOG.debug("failed to clone object {}, due to {}", aR, ex); //NOI18N
-            return null;
+            LOG.catching(ex); //NOI18N            
         }
         
         if (ret instanceof ROI)
@@ -175,7 +173,7 @@ public class ROIManager extends OverlayManager {
             addObject(aR);
         
         if (iAnnotationsAutoCreate)    
-            createAnnotation((ROI)aR);            
+            createAnnotation(aR);            
                       
         aR.addChangeListener(this);                   
     }

@@ -62,6 +62,8 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     }
     
     public void update() {
+        if (null != iParent)
+            iParent.update();
         iOverlays.stream().forEach((o) -> {
             o.update(this);
         });
@@ -83,8 +85,10 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
         notifyROIChanged(aO, ROIChangeEvent.CODE.CREATED, this);  
     }
     
-    public void moveObject(Overlay aO, double adX, double adY) {                         
-        if (!aO.isPinned()) {          
+    public void moveObject(Overlay aO, double adX, double adY) {   
+        if (null != iParent && iParent.iOverlays.contains(aO)) {
+            iParent.moveObject(aO, adX, adY);
+        } else if (!aO.isPinned()) {                  
             Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(aO.getShape());        
             Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, iImage.getWidth(), iImage.getHeight());
 
@@ -103,13 +107,19 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
             if (o.isSelectable() && o.intersects(temp)) 
                 return o;                                   
         }
-                
+        
+        if (null != iParent)
+            return iParent.findObject(aP, aV);
+        
         return null;
     }
                
     public boolean deleteObject(Overlay aO) {
-        notifyROIChanged(aO, ROIChangeEvent.CODE.DELETED, this);        
-        return iOverlays.remove(aO);   
+        if (iOverlays.remove(aO) || null != iParent && iParent.deleteObject(aO)) {
+            notifyROIChanged(aO, ROIChangeEvent.CODE.DELETED, this);        
+            return true;
+        }
+        return false;
     }
         
     public Iterator<Overlay> getObjects() {        

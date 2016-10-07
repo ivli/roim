@@ -21,7 +21,6 @@ package com.ivli.roim.io;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.DataInputStream;
 import java.awt.Color;

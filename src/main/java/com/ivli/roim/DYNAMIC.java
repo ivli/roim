@@ -99,7 +99,6 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
@@ -220,14 +219,6 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
                 jMenu2ComponentShown(evt);
             }
         });
-
-        jMenuItem3.setText(bundle.getString("DYNAMIC.jMenuItem3.text")); // NOI18N
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem3);
 
         jMenuItem7.setText(bundle.getString("DYNAMIC.jMenuItem7.text")); // NOI18N
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
@@ -467,30 +458,6 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         repaint();   
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        /*switch(jTabbedPane1.getSelectedIndex()) {
-            case 0:
-                if (null != iImage) {
-                    
-                    VOILUTPanel panel = new VOILUTPanel(iLut, iImage);
-                    JDialog dialog = new JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
-
-                    dialog.setContentPane(panel);
-                    dialog.validate();
-                    dialog.pack();
-                    dialog.setResizable(false);
-                    dialog.setVisible(true);
-                    
-                } break;
-            case 2:
-                //if (null != iOff) 
-                //    iOff.showLUTDialog(); 
-                break;
-            default: break;    
-        }
-*/
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
-
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
        // IImageView v = ((IImageView)jTabbedPane1.getSelectedComponent());        
         ((ImageView)((JPanel)jTabbedPane1.getSelectedComponent()).getComponent(0)).setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -653,7 +620,6 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
