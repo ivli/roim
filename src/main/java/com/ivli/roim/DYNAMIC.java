@@ -64,6 +64,10 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         }
     }
     
+    { //ensure localisation            
+        adjustLAF();        
+    }
+    
     public DYNAMIC() {         
         LOG.info("-->Entering application"); // NOI18N       
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("images/khibiny.png")).getImage());
@@ -359,7 +363,10 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         String fn;
         
         if (null == (fn = aF)) {        
-            FileOpenDialog dlg = new FileOpenDialog("Choice file", "*.dcm", "DICOM image file");
+            FileOpenDialog dlg = new FileOpenDialog(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CHOICE_FILE_TO_OPEN"), 
+                                                    "*.dcm", //NOI18N 
+                                                    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("DICOM_FILE_TITLE")
+                                                    );
             if(!dlg.DoModal(this, true))
                 return;
             else
@@ -530,9 +537,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             LOG.error(ex);
         }
-               
-        adjustLAF();
-        
+       
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {

@@ -33,7 +33,7 @@ import javax.swing.filechooser.FileFilter;
 public class FileOpenDialog { 
     private final static boolean USE_SYSTEM_FILE_DIALOG = false;
     
-    private static final void addjustLAF() {
+    private static final void adjustLAF() {
         if (Locale.getDefault().equals(new Locale("ru", "RU"))) { //NOI18N
             /*  add locale to JFileChooser */
             UIManager.put("FileChooser.lookInLabelText", "Папка");
@@ -67,7 +67,11 @@ public class FileOpenDialog {
             UIManager.put("FileChooser.readOnly", Boolean.TRUE);   
         }
     }
- 
+    
+    { //ensure localisation 
+        adjustLAF();
+    }
+    
     private final String iTitle;
     private final String iFileExtension; 
     private final String iFileDescription;
