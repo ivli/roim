@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.ivli</groupId>
   <artifactId>roim</artifactId>
-  <version>v0.9.3</version>
+  <version>v0.9.5</version>
   <scm>
     <connection>scm:git:git@github.com:ivli/roim.git</connection>
     <developerConnection>scm:git:git@github.com:ivli/roim.git</developerConnection>
@@ -61,7 +61,7 @@
                   </artifactSet>
                   <transformers>
                     <transformer>
-                      <mainClass>com.ivli.roim.NMCAD</mainClass>
+                      <mainClass>com.ivli.roim.DYNAMIC</mainClass>
                     </transformer>
                   </transformers>
                 </configuration>
@@ -83,7 +83,7 @@
                 <index>true</index>
                 <manifest>
                   <addClasspath>true</addClasspath>
-                  <mainClass>com.ivli.roim.NMCAD</mainClass>
+                  <mainClass>com.ivli.roim.DYNAMIC</mainClass>
                 </manifest>
                 <manifestEntries>
                   <mode>development</mode>

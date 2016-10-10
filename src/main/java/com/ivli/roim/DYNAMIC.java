@@ -92,7 +92,6 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -185,10 +184,6 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel3.setLayout(new java.awt.BorderLayout());
         jTabbedPane1.addTab(bundle.getString("DYNAMIC.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
-
-        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel4.setLayout(new java.awt.BorderLayout());
-        jTabbedPane1.addTab(bundle.getString("DYNAMIC.jPanel4.TabConstraints.tabTitle"), jPanel4); // NOI18N
 
         jSplitPane1.setTopComponent(jTabbedPane1);
 
@@ -387,7 +382,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     private void initPanels(IMultiframeImage anImage){//final String aFileName) {         
         jPanel1.removeAll();
         jPanel3.removeAll();
-        jPanel4.removeAll();
+      //  jPanel4.removeAll();
         jPanel5.removeAll();       
        
         iGroup = ImageViewGroup.create(anImage);
@@ -403,12 +398,12 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jPanel3.add(sumView, BorderLayout.CENTER);
         jPanel3.add(LUTControl.create(sumView), BorderLayout.LINE_END);
         jPanel3.validate(); 
-       /**/
+       /*
         ImageView gridView = iGroup.createGridView();//ImageView.create(sum, root);
         jPanel4.add(gridView, BorderLayout.CENTER);
         jPanel4.add(LUTControl.create(gridView), BorderLayout.LINE_END);
         jPanel4.validate(); 
-        
+        */
         //CHART        
         if (anImage.getImageType() == ImageType.DYNAMIC) {
             iChart = ChartView.create();                    
@@ -494,11 +489,6 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         repaint();      
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
-    private void jTabbedPane1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jTabbedPane1ComponentShown
-        // TODO add your handling code here:
-        LOG.info(evt);
-    }//GEN-LAST:event_jTabbedPane1ComponentShown
-
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         ((ImageView)((JPanel)jTabbedPane1.getSelectedComponent()).getComponent(0)).setFit(IImageView.ZoomFit.PIXELS);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
@@ -507,6 +497,11 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         AboutDialog dlg = new AboutDialog(this);
         dlg.setVisible(true);
     }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jTabbedPane1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jTabbedPane1ComponentShown
+        // TODO add your handling code here:
+        LOG.info(evt);
+    }//GEN-LAST:event_jTabbedPane1ComponentShown
 
     /**
      * @param args the command line arguments
@@ -628,7 +623,6 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;

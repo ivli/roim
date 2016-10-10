@@ -201,8 +201,11 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (null != iAction)
             iAction.wheel(e.getWheelRotation());
-        else {
-         
+        else {              
+            if (null != iView)
+                iView.setFrameNumber(iView.getFrameNumber() + e.getWheelRotation());
+            else
+                iMarker.setPosition(iMarker.getPosition() + e.getWheelRotation());
         }            
     } 
     
@@ -220,13 +223,14 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     }
     
     final void setFrameByPosition(int aPos) {
+        LOG.debug("set frame position = " + aPos );
         if (null == iView)
             iMarker.setPosition(aPos);
         else {
             if (iTimeWiseScale)
                 iView.setFrameNumber(iView.getImage().getTimeSliceVector().frameNumber((long)(conversion*(double)aPos)));     
             else
-               iView.setFrameNumber((int)(conversion*(double)aPos));             
+                iView.setFrameNumber((int)(conversion*(double)aPos));             
         }
     }
     
@@ -245,7 +249,8 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
                         }
                     }   
 
-                    protected boolean DoWheel(int aX) {                    
+                    protected boolean DoWheel(int aX) {   
+                        ////setFrameByPosition(aX);
                         return false;
                     }
                 };    
