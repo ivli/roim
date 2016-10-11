@@ -28,7 +28,6 @@ import com.ivli.roim.core.SeriesCollection;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 
-
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {             
     private Color iColor;          
     private int iAreaInPixels;   

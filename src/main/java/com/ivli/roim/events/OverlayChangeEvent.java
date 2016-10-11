@@ -25,10 +25,12 @@ import com.ivli.roim.view.Overlay;
  */
 public class OverlayChangeEvent extends java.util.EventObject {  
     public enum CODE {
-        MOVED, //extra => double [] {adX, adY}
-        COLOR, // color has been changed
-        NAME,  //name has been changed      
-        PRESENTATION //other specifis proterties have been changed, such as Multi/Single - line, Filters etc
+        CREATED,       
+        DELETED, 
+        MOVED,       // extra => double [] {adX, adY}
+        COLOR,       // color has been changed
+        NAME,        // name has been changed, extra => oldName      
+        PRESENTATION // other specifis proterties have been changed, such as Multi/Single - line, Filters etc
     }
     
     private final CODE    iCode; //what happened

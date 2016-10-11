@@ -26,19 +26,6 @@
           <aggregate>true</aggregate>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
   <profiles>
@@ -57,7 +44,14 @@
                 </goals>
                 <configuration>
                   <artifactSet>
-                    <excludes />
+                    <excludes>
+                      <exclude>classworlds:classworlds</exclude>
+                      <exclude>junit:junit</exclude>
+                      <exclude>jmock:*</exclude>
+                      <exclude>*:xml-apis</exclude>
+                      <exclude>org.apache.maven:lib:tests</exclude>
+                      <exclude>log4j:log4j:jar:</exclude>
+                    </excludes>
                   </artifactSet>
                   <transformers>
                     <transformer>
@@ -120,78 +114,6 @@
         <exclusion>
           <artifactId>hamcrest-core</artifactId>
           <groupId>org.hamcrest</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-java</artifactId>
-      <version>2.44.0</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>selenium-chrome-driver</artifactId>
-          <groupId>org.seleniumhq.selenium</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>selenium-htmlunit-driver</artifactId>
-          <groupId>org.seleniumhq.selenium</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>selenium-firefox-driver</artifactId>
-          <groupId>org.seleniumhq.selenium</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>selenium-ie-driver</artifactId>
-          <groupId>org.seleniumhq.selenium</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>selenium-safari-driver</artifactId>
-          <groupId>org.seleniumhq.selenium</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>selenium-support</artifactId>
-          <groupId>org.seleniumhq.selenium</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>webbit</artifactId>
-          <groupId>org.webbitserver</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.opera</groupId>
-      <artifactId>operadriver</artifactId>
-      <version>1.5</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>selenium-remote-driver</artifactId>
-          <groupId>org.seleniumhq.selenium</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>operalaunchers</artifactId>
-          <groupId>com.opera</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>protobuf-java</artifactId>
-          <groupId>com.google.protobuf</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>guava</artifactId>
-          <groupId>com.google.guava</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-jxpath</artifactId>
-          <groupId>commons-jxpath</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-exec</artifactId>
-          <groupId>org.apache.commons</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>ini4j</artifactId>
-          <groupId>org.ini4j</groupId>
         </exclusion>
       </exclusions>
     </dependency>

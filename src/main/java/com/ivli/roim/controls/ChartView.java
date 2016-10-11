@@ -18,8 +18,6 @@
 package com.ivli.roim.controls;
 
 
-import com.ivli.roim.core.IMultiframeImage;
-import com.ivli.roim.core.ISeries;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JPanel;
@@ -33,20 +31,16 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import com.ivli.roim.core.Measurement;
-import com.ivli.roim.core.Series;
 import com.ivli.roim.view.ROI;
 import com.ivli.roim.events.ROIChangeEvent;
 import com.ivli.roim.events.ROIChangeListener;
 import com.ivli.roim.view.OverlayManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.ISeries;
 
-
-
-/**
- *
- * @author likhachev
- */
+/*
+  * @author likhachev
+  */
 public class ChartView extends JPanel implements ROIChangeListener {                   
     private XYPlot     iPlot;
     private JFreeChart iJfc;    
@@ -137,6 +131,8 @@ public class ChartView extends JPanel implements ROIChangeListener {
 
                 case CHANGEDNAME: {
                     assert (aE.getExtra() instanceof String);
+                    LOG.debug("ROI" + (String)aE.getExtra() + "name changed to " + aE.getObject().getName());
+                    
                     final int ndx = col.indexOf(((String)aE.getExtra())); 
                     
                     col.getSeries(ndx).setKey(aE.getObject().getName());
@@ -156,5 +152,5 @@ public class ChartView extends JPanel implements ROIChangeListener {
             }  
         }
     }
-    private final static Logger LOG = LogManager.getLogger();
+    private final static org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }

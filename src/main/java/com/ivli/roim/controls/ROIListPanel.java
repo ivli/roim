@@ -5,7 +5,6 @@
  */
 package com.ivli.roim.controls;
 
-
 import com.ivli.roim.view.IImageView;
 import com.ivli.roim.view.ImageViewGroup;
 import com.ivli.roim.view.Overlay;

@@ -11,12 +11,7 @@
       <url>http://www.dcm4che.org/maven2</url>
      </repository>
     </repositories>
-    <dependencies>  
-        <dependency>
-            <groupId>org.jocl</groupId>
-            <artifactId>jocl</artifactId>
-            <version>2.0.0</version>
-        </dependency>            
+    <dependencies>          
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
@@ -63,27 +58,7 @@
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-imageio</artifactId>
             <version>3.3.7</version>            
-        </dependency>
-        
-        
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <scope>test</scope>
-            <version>2.44.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.opera</groupId>
-            <artifactId>operadriver</artifactId>
-            <scope>test</scope>
-            <version>1.5</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.seleniumhq.selenium</groupId>
-                    <artifactId>selenium-remote-driver</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        </dependency>        
     </dependencies>
     
     <build>
@@ -105,21 +80,7 @@
                 <configuration>     
                     <aggregate>true</aggregate>    
                 </configuration>
-            </plugin> 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                  <execution>
-                    <id>attach-sources</id>
-                    <phase>verify</phase>
-                    <goals>
-                      <goal>jar-no-fork</goal>
-                    </goals>
-                  </execution>
-                </executions>
-            </plugin>
+            </plugin>             
         </plugins>
     </build>
     <reporting>
@@ -136,7 +97,7 @@
             <id>release-profile</id>
             <activation>
                 <property>
-                    <name>performRelease</name>
+                    <name>Release</name>
                 </property>
             </activation>
             <build>
@@ -154,12 +115,12 @@
                                 <configuration>
                                     <artifactSet>
                                         <excludes>
-                                          <!--exclude>classworlds:classworlds</exclude>
+                                          <exclude>classworlds:classworlds</exclude>
                                           <exclude>junit:junit</exclude>
                                           <exclude>jmock:*</exclude>
                                           <exclude>*:xml-apis</exclude>
                                           <exclude>org.apache.maven:lib:tests</exclude>
-                                          <exclude>log4j:log4j:jar:</exclude-->
+                                          <exclude>log4j:log4j:jar:</exclude>
                                         </excludes>
                                       </artifactSet>
                                     <transformers>
@@ -179,7 +140,7 @@
             <id>debug-profile</id>
             <activation>
                 <property>
-                    <name>performDebug</name>
+                    <name>Debug</name>
                 </property>
             </activation>
             <build>
