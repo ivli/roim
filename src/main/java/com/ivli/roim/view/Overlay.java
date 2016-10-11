@@ -161,5 +161,13 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     }
        
     @Override
-    public void OverlayChanged(OverlayChangeEvent anEvt) {}
+    public void OverlayChanged(OverlayChangeEvent anEvt) {
+    
+    
+    }
+    
+    
+    public String toString() {
+        return getClass().getName() + ":" + getName();
+    }
 }

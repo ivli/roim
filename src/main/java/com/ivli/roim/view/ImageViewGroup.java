@@ -20,7 +20,8 @@ package com.ivli.roim.view;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.Uid;
-import com.ivli.roim.events.ROIChangeListener;
+import com.ivli.roim.events.OverlayChangeListener;
+
 import java.util.ArrayList;
 
 /**
@@ -61,11 +62,11 @@ public class ImageViewGroup {
         return ret;
     }   
     
-    public void addROIChangeListener(ROIChangeListener aL) {        
+    public void addROIChangeListener(OverlayChangeListener aL) {        
         iMgr.addROIChangeListener(aL);
     }
     
-    public void removeROIChangeListener(ROIChangeListener aL) {        
+    public void removeROIChangeListener(OverlayChangeListener aL) {        
         iMgr.removeROIChangeListener(aL);
     }
 }

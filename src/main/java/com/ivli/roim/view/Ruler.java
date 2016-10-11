@@ -22,8 +22,8 @@ import org.apache.logging.log4j.Logger;
 public class Ruler extends ScreenObject {
     private double iDistance;
     
-    Ruler(Shape aR) {         
-        super(Uid.getNext(), "RULER",  aR);            
+    Ruler(Shape aR, IImageView aV) {         
+        super(aV, "RULER",  aR);            
     }
           
     @Override

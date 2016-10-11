@@ -35,10 +35,10 @@ public class Profile extends ScreenObject {
     private int iFrameNumber;
     
     
-    public Profile(Rectangle2D aS, IImageView aF) {
-        super(Uid.getNext(), "PROFILE", (Shape)aS); //NOI18N 
-        iFrameNumber = aF.getFrameNumber();
-        iFrame = aF.getFrame();        
+    public Profile(Rectangle2D aS, IImageView aV) {
+        super(aV, "PROFILE", (Shape)aS); //NOI18N 
+        iFrameNumber = aV.getFrameNumber();
+        iFrame = aV.getFrame();        
         iHist = iFrame.processor().histogram(iShape.getBounds()); 
     }
     

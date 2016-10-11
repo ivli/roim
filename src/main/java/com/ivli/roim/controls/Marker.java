@@ -28,8 +28,8 @@ import java.io.IOException;
  */
 class Marker {           
     protected boolean iVert;
-    protected int     iPos; 
-    protected Image   iImage;
+    protected int iPos; 
+    protected Image iImage;
     protected int iSize;
     protected static final int DEFAULT_MARKER_SIZE = 4;
     

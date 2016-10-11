@@ -17,12 +17,7 @@
  */
 package com.ivli.roim.view;
 
-import com.ivli.roim.core.Uid;
-import com.ivli.roim.events.ROIChangeEvent;
 import java.awt.Rectangle;
-
-
-
 /**
  *
  * @author likhachev
@@ -32,9 +27,8 @@ public class OverlayPicture extends ScreenObject {
     java.awt.Image iPicture;
     //Point iOrigin=new Point(0,0);
     
-    OverlayPicture(java.awt.Image aP, String aN) { 
-        super(Uid.getNext(), aN, new Rectangle(aP.getWidth(null), aP.getHeight(null)));
-       
+    OverlayPicture(IImageView aV, java.awt.Image aP, String aN) { 
+        super(aV, aN, new Rectangle(aP.getWidth(null), aP.getHeight(null)));       
         iPicture = aP;
     }
     

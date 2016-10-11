@@ -32,8 +32,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.view.ROI;
-import com.ivli.roim.events.ROIChangeEvent;
-import com.ivli.roim.events.ROIChangeListener;
+import com.ivli.roim.events.OverlayChangeEvent;
+import com.ivli.roim.events.OverlayChangeListener;
 import com.ivli.roim.view.OverlayManager;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ISeries;
@@ -41,7 +41,7 @@ import com.ivli.roim.core.ISeries;
 /*
   * @author likhachev
   */
-public class ChartView extends JPanel implements ROIChangeListener {                   
+public class ChartView extends JPanel implements OverlayChangeListener {                   
     private XYPlot     iPlot;
     private JFreeChart iJfc;    
     private ChartControl iChart;  
@@ -79,17 +79,19 @@ public class ChartView extends JPanel implements ROIChangeListener {
     }
     
     @Override
-    public void ROIChanged (ROIChangeEvent aE) {        
-        if (aE.getObject() instanceof ROI) {
+    public void OverlayChanged (OverlayChangeEvent anEvt) {     
+        LOG.debug(anEvt);
+        
+        if (anEvt.getObject() instanceof ROI) {
             XYSeriesCollection col = ((XYSeriesCollection)iPlot.getDataset());  
-            final OverlayManager mgr = (OverlayManager)aE.getSource();
+            final OverlayManager mgr = (OverlayManager)anEvt.getSource();
             
-            switch (aE.getCode()) {
+            switch (anEvt.getCode()) {
                 case CREATED: {                                     
-                    assert (0 > col.indexOf(aE.getObject().getName()));
+                    assert (0 > col.indexOf(anEvt.getObject().getName()));
                     
-                    final XYSeries s = new XYSeries(aE.getObject().getName(), true, false);
-                    final ISeries c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
+                    final XYSeries s = new XYSeries(anEvt.getObject().getName(), true, false);
+                    final ISeries c = ((ROI)anEvt.getObject()).getSeries(Measurement.DENSITY);
 
                     IMultiframeImage img = mgr.getImage();
                     
@@ -99,17 +101,17 @@ public class ChartView extends JPanel implements ROIChangeListener {
                         s.add(img.getTimeSliceVector().getSlices().get(n) / 1000., c.get(n));
                   
                     ((XYSeriesCollection)iPlot.getDataset()).addSeries(s); 
-                    iPlot.getRenderer().setSeriesPaint(col.indexOf(aE.getObject().getName()), ((ROI)aE.getObject()).getColor());                     
+                    iPlot.getRenderer().setSeriesPaint(col.indexOf(anEvt.getObject().getName()), ((ROI)anEvt.getObject()).getColor());                     
                 } break;
                 
                 case DELETED: {                
-                    final int ndx = col.indexOf(aE.getObject().getName());
+                    final int ndx = col.indexOf(anEvt.getObject().getName());
                     col.removeSeries(ndx);                
                 } break;    
                 
                 case MOVED: {//fall-through                                                                      
-                    final int ndx = col.indexOf(aE.getObject().getName());    
-                    ISeries c = ((ROI)aE.getObject()).getSeries(Measurement.DENSITY);
+                    final int ndx = col.indexOf(anEvt.getObject().getName());    
+                    ISeries c = ((ROI)anEvt.getObject()).getSeries(Measurement.DENSITY);
                     XYSeries s = col.getSeries(ndx); 
                     s.setNotify(false);
                     s.clear();              
@@ -122,30 +124,27 @@ public class ChartView extends JPanel implements ROIChangeListener {
                     //s.fireSeriesChanged();
                     
                 } break;
-                case CHANGED: //TODO: fall through
-                case CHANGEDCOLOR: {
-                    assert (aE.getExtra() instanceof java.awt.Color);
-                    final int ndx = col.indexOf(aE.getObject().getName());
-                    iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)aE.getObject()).getColor());                                 
+                
+                case COLOR: {
+                    assert (anEvt.getExtra() instanceof java.awt.Color);
+                    final int ndx = col.indexOf(anEvt.getObject().getName());
+                    iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)anEvt.getObject()).getColor());                                 
                 } break;
 
-                case CHANGEDNAME: {
-                    assert (aE.getExtra() instanceof String);
-                    LOG.debug("ROI" + (String)aE.getExtra() + "name changed to " + aE.getObject().getName());
+                case NAME: {
+                    assert (anEvt.getExtra() instanceof String);
+                    LOG.debug("ROI" + (String)anEvt.getExtra() + "name changed to " + anEvt.getObject().getName());
                     
-                    final int ndx = col.indexOf(((String)aE.getExtra())); 
+                    final int ndx = col.indexOf(((String)anEvt.getExtra())); 
                     
-                    col.getSeries(ndx).setKey(aE.getObject().getName());
+                    col.getSeries(ndx).setKey(anEvt.getObject().getName());
                     /* this is a work-around the case when two or more ROI have the same names (user mistakenly renamed) 
                      * when this mistake is corrected it might happen the colors of curves does not match colors of corresponding ROI 
                      */                     
-                    iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)aE.getObject()).getColor());
+                    iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)anEvt.getObject()).getColor());
                     
                 } break;    
 
-                case ALLDELETED: {
-                    ((XYSeriesCollection)iPlot.getDataset()).removeAllSeries(); 
-                } break;     
                 default: 
                     ///throw new java.lang.IllegalArgumentException();    
                     break;

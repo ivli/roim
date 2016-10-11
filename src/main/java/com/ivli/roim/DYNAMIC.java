@@ -49,7 +49,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ROIChangeListener, ProgressListener {     
+public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ProgressListener {     
    
     private ChartView  iChart; 
     private ImageViewGroup iGroup;
@@ -433,7 +433,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         image.addWindowChangeListener(this);
         image.addZoomChangeListener(this);
         
-        iGroup.addROIChangeListener(this);       
+//        iGroup.addROIChangeListener(this);       
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -593,9 +593,9 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         
     }
   
-    public void ROIChanged(ROIChangeEvent anEvt) {
+    //public void OverlayChanged(OverlayChangeEvent anEvt) {
     
-    }
+    //}
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

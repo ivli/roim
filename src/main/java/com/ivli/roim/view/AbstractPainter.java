@@ -27,8 +27,7 @@ import java.awt.geom.AffineTransform;
 public abstract class AbstractPainter {    
     ImageView        iView;
     Graphics2D         iGC;
-    AffineTransform iTrans;
-    
+    AffineTransform iTrans;    
     
     public AbstractPainter(Graphics2D aGC, AffineTransform aT, ImageView aV) {
         iView = aV;

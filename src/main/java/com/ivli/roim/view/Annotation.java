@@ -22,30 +22,33 @@ import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
 import java.awt.Color;
 import java.util.ArrayList;
-import com.ivli.roim.events.ROIChangeEvent;
+
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.core.Filter;
-import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
-import com.ivli.roim.events.ROIChangeListener;
+import com.ivli.roim.events.OverlayChangeListener;
 
 /**
  *
  * @author likhachev
  */
-public abstract class Annotation extends ScreenObject implements ROIChangeListener {              
+public abstract class Annotation extends ScreenObject implements OverlayChangeListener {              
     protected boolean iMultiline = true; 
     protected final ArrayList<String> iAnnotation;    
-    Overlay iRoi;
-    
-    Annotation(Uid aUid, String aName, Shape aShape) {
-        super(aUid, aName, aShape);   
+    protected Overlay iRoi;
+     
+    Annotation(IImageView aView, String aName, Shape aShape) {
+        super(aView, aName, aShape);   
         iAnnotation = new ArrayList<>();
     }
     
     @Override
     int getCaps(){return HASMENU|MOVEABLE|SELECTABLE|PINNABLE|HASCUSTOMMENU;}    
-   
+    
+    public Overlay getRoi() {
+        return iRoi;
+    }
+    
     public void setMultiline(boolean aM) {
         iMultiline = aM;
         notify(OverlayChangeEvent.CODE.PRESENTATION, null);
@@ -111,20 +114,22 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
      * 
      */
     public static class Static extends Annotation {              
-        //protected final ROI iRoi;              
+               
                 
         protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
         
-        public Static(ROI aRoi) {
-            super(Uid.getNext(), 
+        public Static(ROI aRoi, IImageView aV) {
+            super(aV, 
                   "ANNOTATION::STATIC", //NOI18N
-                  aRoi.getShape() );  
+                  aRoi.getShape());  
             iRoi = aRoi;     
             aRoi.addChangeListener(this);
         }
   
         @Override
-        public Color getColor() {return ((ROI)iRoi).getColor();}
+        public Color getColor() {
+            return ((ROI)iRoi).getColor();
+        }
         
         public void setFilters(Filter[] aF) {
             iFilters = aF;
@@ -142,20 +147,9 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
                 iAnnotation.add(f.getMeasurement().format(f.filter().eval((ROI)iRoi).get(aP.getView().getFrameNumber())));     
             }
         }
-        
-        //@Override
-       
+                         
         @Override
-        public void OverlayChanged(OverlayChangeEvent anEvt) {
-            switch (anEvt.getCode()) {                
-                case MOVED: {//if not pinned move the same dX and dY                    
-                                   
-                } break;                 
-            }
-        }
-         
-        @Override
-        public void ROIChanged(ROIChangeEvent anEvt) {   
+        public void OverlayChanged(OverlayChangeEvent anEvt) {   
             if (!anEvt.getObject().equals(iRoi))
                 return; //not interested in 
             switch (anEvt.getCode()) {
@@ -168,7 +162,8 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
                     OverlayManager mgr = (OverlayManager)anEvt.getSource();
                     mgr.moveObject(this, deltas[0], deltas[1]);                                  
                 } ///fall through break;
-                case CHANGED:                      
+                case COLOR:
+                case NAME:                      
                 default: //fall-through
                     //update(); break;
             }        
@@ -189,10 +184,10 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
      */
     public static class Active extends Annotation {        
         private final IOperation iOp;
-        //private final Overlay iR;
-        
-        Active(IOperation anOp, Overlay aR) {
-            super(Uid.getNext(), "ANNOTATION.ACTIVE", null);                    
+       
+            
+        Active(IOperation anOp, Overlay aR, IImageView aV) {
+            super(aV, "ANNOTATION.ACTIVE", null);                    
             iOp = anOp;       
             iRoi = aR;
         }   
@@ -232,7 +227,7 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
         */
         
         @Override
-        public void ROIChanged(ROIChangeEvent anEvt) {              
+        public void OverlayChanged(OverlayChangeEvent anEvt) {              
             switch (anEvt.getCode()) {
                 case DELETED: 
                     break;
@@ -241,7 +236,8 @@ public abstract class Annotation extends ScreenObject implements ROIChangeListen
                     ((OverlayManager)anEvt.getSource()).moveObject(this, deltas[0], deltas[1]);
                     //update();
                 } break;            
-                case CHANGED:   
+                case NAME:
+                case COLOR:
                 default: //fall-through
                     update((OverlayManager)anEvt.getSource());                                
                     break;

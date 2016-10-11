@@ -54,5 +54,10 @@ public class OverlayChangeEvent extends java.util.EventObject {
     
     public Object getExtra() {
         return iExtra;
-    }    
+    }   
+    
+    @Override
+    public String toString() {
+        return this.source.getClass().getName() + ":" + iObj.toString() + "," + iCode.toString() + ((null != iExtra) ? ", " + iExtra.getClass().getName() : "");
+    } 
 }

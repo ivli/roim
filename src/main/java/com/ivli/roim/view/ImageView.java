@@ -90,7 +90,7 @@ public class ImageView extends JComponent implements IImageView {
         ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         ret.setFit(ImageView.ZoomFit.VISIBLE);
         ret.setController(new Controller(ret));
-        ret.iMgr = new ROIManager(aM);
+        ret.iMgr = aM;
         
         ret.setImage(aI);
         ret.setViewMode(aMode);         
