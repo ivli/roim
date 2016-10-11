@@ -26,7 +26,7 @@ import java.awt.Shape;
  */
 public abstract class ScreenObject extends Overlay {   
     protected IImageView iView;
-    protected ScreenObject(IImageView aView, String aName, Shape aShape) {
+    protected ScreenObject(String aName, Shape aShape, IImageView aView) {
        super(Uid.getNext(), aName, aShape);
        iView = aView;
     }

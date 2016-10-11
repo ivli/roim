@@ -27,8 +27,8 @@ public class OverlayPicture extends ScreenObject {
     java.awt.Image iPicture;
     //Point iOrigin=new Point(0,0);
     
-    OverlayPicture(IImageView aV, java.awt.Image aP, String aN) { 
-        super(aV, aN, new Rectangle(aP.getWidth(null), aP.getHeight(null)));       
+    OverlayPicture(String aN, java.awt.Image aP, IImageView aV) { 
+        super(aN, new Rectangle(aP.getWidth(null), aP.getHeight(null)), aV);       
         iPicture = aP;
     }
     

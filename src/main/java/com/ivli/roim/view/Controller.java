@@ -96,7 +96,7 @@ class Controller implements IController {
         }
 
         public boolean DoRelease(int aX, int aY) {
-            iControlled.getROIMgr().createRoi(iShape, iControlled);
+            iControlled.getROIMgr().createROI(iShape, iControlled);
             iControlled.repaint();
             return false;
         }
@@ -352,7 +352,7 @@ class Controller implements IController {
                             return true;
                         else {
                             iPath.closePath();
-                            iControlled.getROIMgr().createRoi(iPath, iControlled);
+                            iControlled.getROIMgr().createROI(iPath, iControlled);
                             iControlled.repaint();
                         }
                         return false;
@@ -416,7 +416,7 @@ class Controller implements IController {
                 };
                 } break;
             case KCommandRoiClone:   
-                Overlay c = iControlled.getROIMgr().cloneObject(iSelected);
+                Overlay c = iControlled.getROIMgr().cloneObject(iSelected, iControlled);
                 iControlled.repaint();                
                 releaseSelection(null);     
                 addSelection(c);

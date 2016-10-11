@@ -37,8 +37,8 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     protected final ArrayList<String> iAnnotation;    
     protected Overlay iRoi;
      
-    Annotation(IImageView aView, String aName, Shape aShape) {
-        super(aView, aName, aShape);   
+    Annotation(String aName, Shape aShape, IImageView aView) {
+        super(aName, aShape, aView);   
         iAnnotation = new ArrayList<>();
     }
     
@@ -119,11 +119,10 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
         
         public Static(ROI aRoi, IImageView aV) {
-            super(aV, 
-                  "ANNOTATION::STATIC", //NOI18N
-                  aRoi.getShape());  
+            super("ANNOTATION::STATIC", aRoi.getShape(), aV); //NOI18N                  
+                    
             iRoi = aRoi;     
-            aRoi.addChangeListener(this);
+            //aRoi.addChangeListener(this);
         }
   
         @Override
@@ -184,10 +183,9 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
      */
     public static class Active extends Annotation {        
         private final IOperation iOp;
-       
-            
+                   
         Active(IOperation anOp, Overlay aR, IImageView aV) {
-            super(aV, "ANNOTATION.ACTIVE", null);                    
+            super("ANNOTATION.ACTIVE", null, aV);                    
             iOp = anOp;       
             iRoi = aR;
         }   

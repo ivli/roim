@@ -60,9 +60,9 @@ public class ROIListPanel extends JPanel {
                 
                 final boolean b = bi > 0;
                                     
-                jButtonDelete.setEnabled(b);
-                //jButton6.setEnabled(b);
-                jButtonShowHideCurve.setEnabled(b);                  
+                jButtonDelete.setEnabled(b);               
+                jButtonShowHideCurve.setEnabled(b);   
+                jButtonSelectAll.setEnabled(b);
             }        
         });    
     } 
@@ -115,7 +115,7 @@ public class ROIListPanel extends JPanel {
             }
         });
 
-        jButtonSaveLoad.setText(bundle.getString("ROI_DLG.SAVE_LOADLOAD")); // NOI18N
+        jButtonSaveLoad.setText(bundle.getString("ROI_DLG.SAVE_LOAD")); // NOI18N
         jButtonSaveLoad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSaveLoadActionPerformed(evt);
@@ -132,13 +132,13 @@ public class ROIListPanel extends JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonSaveLoad)
-                        .addGap(49, 49, 49)
+                        .addGap(48, 48, 48)
                         .addComponent(jButtonDelete)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonShowHideCurve)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(15, 15, 15))
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonSelectAll)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
@@ -148,9 +148,9 @@ public class ROIListPanel extends JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
-                .addComponent(jButtonSelectAll)
                 .addGap(18, 18, 18)
+                .addComponent(jButtonSelectAll)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButtonSaveLoad)
@@ -185,7 +185,7 @@ public class ROIListPanel extends JPanel {
             if((boolean)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_CHECK))                 
                 sel.add((Overlay)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_OBJECT));
                
-        FileDialog fd = new FileDialog((JDialog)null, "Choose", sel.isEmpty()? FileDialog.LOAD:FileDialog.SAVE);     
+        FileDialog fd = new FileDialog((JDialog)null, "Choose", sel.isEmpty()? FileDialog.LOAD : FileDialog.SAVE);     
        
         fd.setVisible(true);
 
@@ -202,8 +202,9 @@ public class ROIListPanel extends JPanel {
             try(FileInputStream fis = new FileInputStream(fd.getFile())){
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 sel = (ArrayList<Overlay>)ois.readObject();
+                
                 for (Overlay o:sel) 
-                    iMgr.cloneObject(o);                
+                    iMgr.cloneObject(o, null);                
                 iModel.rebuild(iMgr, -1);
                 
             } catch (java.io.IOException|ClassNotFoundException ex) {

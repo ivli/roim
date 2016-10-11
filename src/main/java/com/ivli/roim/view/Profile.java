@@ -36,7 +36,7 @@ public class Profile extends ScreenObject {
     
     
     public Profile(Rectangle2D aS, IImageView aV) {
-        super(aV, "PROFILE", (Shape)aS); //NOI18N 
+        super("PROFILE", (Shape)aS, aV); //NOI18N 
         iFrameNumber = aV.getFrameNumber();
         iFrame = aV.getFrame();        
         iHist = iFrame.processor().histogram(iShape.getBounds()); 
@@ -49,6 +49,7 @@ public class Profile extends ScreenObject {
         
     @Override
     public void paint(AbstractPainter aP) {
+        if (aP.getView() == getView())
         aP.paint(this);
     } 
  

@@ -32,7 +32,6 @@ import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,57 +46,53 @@ public class ROIManager extends OverlayManager {
     public ROIManager(IMultiframeImage anImage, Uid aUid, boolean aAnnotationsAutoCreate) {
         super (anImage);
         iUid = aUid;
-        iAnnotationsAutoCreate = false;//aAnnotationsAutoCreate;        
+        iAnnotationsAutoCreate = true;//aAnnotationsAutoCreate;        
     }
-    
-    /* 
-    public ROIManager(ROIManager aParent) {
-        super (aParent.getImage(), aParent);
-        iUid = aParent.iUid.getNext();
-        iAnnotationsAutoCreate = false;        
-    }
-    */
-    
+          
     /*
      * creates profile curve for whole width of the image
      * aS - shape <b><i> in screen coordinates </i></b>  
     */
-    public void createProfile(Shape aS, IImageView aV) {               
+    public Overlay createProfile(Shape aS, IImageView aV) {               
         Rectangle r = aV.screenToVirtual().createTransformedShape(aS).getBounds();        
         r.x = 0;
         r.width = getImage().getWidth();
         
-        Profile newRoi = new Profile(r, aV);     
-        addObject(newRoi);   
-        newRoi.addChangeListener(this);
+        Profile ret = new Profile(r, aV);     
+        addObject(ret);   
+        ret.addChangeListener(this);
+        return ret; 
     }
             
-    public void createRuler(Point aFrom, Point aTo, IImageView aV) {                
+    public Overlay createRuler(Point aFrom, Point aTo, IImageView aV) {                
         Path2D.Double r = new Path2D.Double();         
         r.moveTo(aFrom.x, aFrom.y);
         r.lineTo(aTo.x, aTo.y);                                
         Shape s = aV.screenToVirtual().createTransformedShape(r);     
         
-        Ruler ruler = new Ruler(s, aV);     
+        Ruler ret = new Ruler(s, aV);     
                 
-        addObject(ruler);   
+        addObject(ret);   
         //ruler.update(this);
-        ruler.addChangeListener(this);
+        ret.addChangeListener(this);
         
-        addObject(new Annotation.Active(ruler.getOperation(), ruler, aV));        
+        addObject(new Annotation.Active(ret.getOperation(), ret, aV));  
+        return ret;
     }
     
-    public void createAnnotation(ROI aROI, IImageView aV) {    
+    public Overlay createAnnotation(ROI aROI, IImageView aV) {    
         Annotation.Static ret = new Annotation.Static(aROI, aV);
         addObject(ret);        
-        addROIChangeListener(ret);   //TODO:?????????     
+        addROIChangeListener(ret);   //TODO:?????????   
+        return ret;
     }    
         
-    public void createAnnotation(BinaryOp anOp, IImageView aV) {    
+    public Overlay createAnnotation(BinaryOp anOp, IImageView aV) {    
         Annotation ret = new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI(), aV);
         addObject(ret);  
         createSurrogateROI(anOp);
         ret.update(this);
+        return ret;
     }
     
     void createSurrogateROI(BinaryOp anOp) {               
@@ -152,9 +147,19 @@ public class ROIManager extends OverlayManager {
         surrogate.addChangeListener(this);
     }
     
-    public Overlay cloneObject(Overlay aR) {             
+    public Overlay cloneObject(Overlay aR, IImageView aV) {             
         Overlay ret = null;
         
+        if (aR instanceof ROI) {
+            ret = new ROI(Uid.getNext(), null !=aV ? null : aR.getName(), aR.getShape(), null != aV ? null : ((ROI) aR).getColor());         
+            addObject(ret);
+
+            if (iAnnotationsAutoCreate)    
+                createAnnotation((ROI)ret, aV); 
+        }
+        
+        return ret;
+        /*
         try {
             ret = aR.getClass().getConstructor(Uid.class).newInstance(iUid.getNext());             
             ret.iShape = aR.getShape();            
@@ -162,21 +167,23 @@ public class ROIManager extends OverlayManager {
             LOG.catching(ex); //NOI18N            
         }
         
-        
         addObject(ret);
         
         if (ret instanceof ROI){
-            iOverlays.stream()
+            java.util.List <Overlay> l = iOverlays.stream()
                      .filter((o) -> o instanceof Annotation.Static)
                      .filter((o) -> ((Annotation.Static)(o)).getRoi() == aR)
-                     .collect(Collectors.toList())
-                     .forEach((o) -> cloneObject(o));
+                     .collect(Collectors.toList());
+                     //.forEach((o) -> cloneObject(o));
             
-            
+            for (Overlay o:l) {
+                
+            }
+        
             ///internalAddRoi((ROI)ret, aR);            
         }
-        
-        return ret;        
+        */
+         
     }
      
     /*
@@ -190,13 +197,15 @@ public class ROIManager extends OverlayManager {
     }
     */
     
-    public void createRoi(Shape aS, IImageView aV) {                 
+    public Overlay createROI(Shape aS, IImageView aV) {                 
         final Shape shape = aV.screenToVirtual().createTransformedShape(aS);        
         ROI ret = new ROI(iUid.getNext(), null, shape, null);         
         addObject(ret);
         
         if (iAnnotationsAutoCreate)    
             createAnnotation(ret, aV); 
+        
+        return ret;
     }
     
     private final static Logger LOG = LogManager.getLogger();  

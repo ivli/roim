@@ -80,10 +80,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
         notifyROIChanged(aO, OverlayChangeEvent.CODE.CREATED, this);  
     }
     
-    public void moveObject(Overlay aO, double adX, double adY) {   
-        //if (null != iParent && iParent.iOverlays.contains(aO)) {
-        //    iParent.moveObject(aO, adX, adY);
-        //} else 
+    public void moveObject(Overlay aO, double adX, double adY) {          
         if (!aO.isPinned()) {                  
             Shape temp = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(aO.getShape());        
             Rectangle2D.Double bounds = new Rectangle2D.Double(.0, .0, iImage.getWidth(), iImage.getHeight());

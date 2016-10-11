@@ -23,12 +23,13 @@ public class Ruler extends ScreenObject {
     private double iDistance;
     
     Ruler(Shape aR, IImageView aV) {         
-        super(aV, "RULER",  aR);            
+        super("RULER",  aR, aV);            
     }
           
     @Override
     void paint(AbstractPainter aP) {   
-        aP.paint(this);    
+        if (aP.getView() == getView())
+            aP.paint(this);    
     } 
      
     @Override
