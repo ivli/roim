@@ -55,7 +55,7 @@ Roim is a class library designed to help implementing software for processing nu
 This development was inspired by <a href="https://imagej.nih.gov/ij/">ImageJ</a> image viewer and written in Java.
 The library is designed to be vendor neutral and shall support most of modalities. However, for the time being it is tested only with NM/DR/DXR/CT/PET/MR files. 
 It implements a set of controls, screen primitives (Overlays) and algorithms to extract, process and display biomedical information embodied in study files. 
-<br>These include: 
+<br>Namely: 
 <ul style="list-style-type:disc">
 <li>regions of interest (hereinafter <b>ROI</b>) of rectangular, elliptic and free form shape - once ROI is created it can be moved, reshaped, deleted, pinned, etc 
 and a set of characteristics can be measured. Among them area (in pixels and cm), integral density (i.e. arithmetic sum of pixel values), min/max/avg pixel. 
@@ -63,7 +63,8 @@ In the case of multiframe image - often seen in NM - this information will be ex
 <li>Ruler - it is meant for extracting geometrical information of the images;
 <li>Profile - a tool to display density profile over a rectangular area of an image;
 </ul>
-Beyond aforementioned tools there is a number of instruments to adjust visualization parameters W/L (Window Width and Level) and apply presentation LUT (a dozen of most popular ones is built into and there exists a possibility to load LUT from files in NIH format). 
+Beyond aforementioned tools there is a number of instruments to adjust visualization parameters W/L (Window Width and Level) and apply presentation LUT 
+(a dozen most popular ones is built into and there exists a possibility to load LUT from files in NIH format). 
 Frame selection bar provides a mechanism of navigating through multiframe/multi-phase images in either terms of frames or time (milliseconds).   
 <ul style="list-style-type:disc">
 <li>Using ROI calculator it is possible to apply basic maths to measurements. For instance: one of often necessary operation is subtraction of background counts of counts measured from a ROI. 
@@ -73,7 +74,7 @@ Then, the resulting series can be send to a chart control.
 It is not seldom acquisition ends earlier than a particular event takes place, for instance a half excretion time in the case of renal obstruction. 
 Using this tool it becomes possible to extrapolate experimental data in many cases achieving acceptable approximation of missing parameter.
 </ul>
-Visualization provides different rendering methods namely nearest neighbourhood, bilinear and bicubic it is especially important since NM images usually have quite low resolution. 
+Visualization provides different rendering methods namely nearest neighbourhood, bilinear and bicubic it is especially important since NM images usually have quite low resolution, thus, zooming them in would look quite unpleasant on the screen. 
 Reconstructed SPECT (3D) studies can be displayed either as a stack of slices (usually transaxial) or using <b>MIP</b> method.
   
 The library employs <a href=http://www.dcm4che.org/>DCM4CHE</a> library to handle DICOM data and <a href=https://aparapi.github.io/>aparapi</a> to engage GPU into data processing. 
@@ -85,18 +86,19 @@ Finally the library includes several applications for the sake of illustration o
 The picture below shows LUT control in the action with open menu. A number of options are available to made reading as much comfortable as possible.
 Beyond selection of LUT it is possible to use logarithmic function to translate image pixels to screen luminosity (actually sigmoid is used), inverted scales 
 and yet there is a form displaying image's histogram accompanied with live W/L translation curve. Window width and level can be adjusted using control using knobs on the bar control, 
-displayed values are either in arbitrary units or percent.              
+displayed values are either in arbitrary units or percents.              
 <img src="images/LUTControl.png" alt="LUT control - main screen" style="width:640px;height:448px;">
 
 <h3>3. Frame Selector</h3>
-
+The Frame selector is meant for navigating through time scale. It can measure frames or milliseconds from either beginning of the whole study or a particular phase (for multiphase studies only).
+  
 
 <h3>4. Application</h3>
 <img src="images/DYNAMIC.png" alt="Dynamic app - main screen" style="width:640px;height:338px;">
 This application is meant for dealing with data of dynamic acquisitions such as renal clearance or gastric emptying studies. 
 The screen is split into two parts left one is tab control displaying image as a stack of frames (shown), <i>composite image</i> and grid of frames in subsequent tabs.
 Right part is occupied the chart control displaying activity curves of two ROIs and extrapolation of one of them.        
-<br> <b><i>SIC</b>: application requires Java <b> <u>8 </u></b> to run 
+<br> <b><i>SIC</b>: application requires JDK <b><u>8 </u></b> to run <br> 
 <h3>5. Images</h3>
 Despite plenty DICOM files can get easily obtained by means of googling or yandexing whatever is preferred few images are available here.
 <ul>
