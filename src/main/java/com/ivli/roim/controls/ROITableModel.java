@@ -112,8 +112,7 @@ public class ROITableModel extends DefaultTableModel {
         });
     }
     
-    void rebuild(ROIManager aMgr, int aActiveFrame) {
-    
+    void rebuild(ROIManager aMgr, int aActiveFrame) {    
         Iterator<Overlay> aList = aMgr.getObjects();
         
         while (aList.hasNext()) {

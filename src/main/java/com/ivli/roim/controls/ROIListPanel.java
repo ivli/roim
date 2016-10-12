@@ -20,51 +20,34 @@ import java.util.ArrayList;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 /**
  *
  * @author likhachev
  */
-public class ROIListPanel extends JPanel {                           
-    private final ROITableModel iModel;    
-    private int bi = 0;
-
+public class ROIListPanel extends JPanel implements TableModelListener {                           
+    private final ROITableModel iModel;        
     private final ROIManager iMgr;
     
     public ROIListPanel(ImageViewGroup aV) {
-        iModel = new ROITableModel(aV.getROIMgr(), -1, true);      
+        iModel = new ROITableModel(aV.getROIMgr(), -1, true);             
         iMgr = aV.getROIMgr();
-        construct();     
+        construct();            
     }
     
     public ROIListPanel(IImageView aV) {               
         iModel = new ROITableModel(aV.getROIMgr(), aV.getFrameNumber(), true); 
         iMgr = aV.getROIMgr();
-        construct();       
+        construct();               
     }
     
     private void construct() {    
         initComponents();
      
-        iModel.attach(jTable1);   
-        iModel.addTableModelListener((TableModelEvent e) -> {        
-            final int row = e.getFirstRow();
-            final int col = e.getColumn();
-         
-            if (col == ROITableModel.TABLE_COLUMN_CHECK) {                
-                if ((Boolean)iModel.getValueAt(row, col)) {
-                    ++bi;
-                } else {
-                    --bi;
-                }
-                
-                final boolean b = bi > 0;
-                                    
-                jButtonDelete.setEnabled(b);               
-                jButtonShowHideCurve.setEnabled(b);   
-                jButtonSelectAll.setEnabled(b);
-            }        
-        });    
+        iModel.attach(jTable1);  
+        jButtonSelectAll.setEnabled(iModel.getRowCount() > 0);
+        iModel.addTableModelListener(this);       
     } 
 
     /**
@@ -105,7 +88,7 @@ public class ROIListPanel extends JPanel {
             }
         });
 
-        jButtonShowHideCurve.setText("Show curve");
+        jButtonShowHideCurve.setText(bundle.getString("ROILIST.SHOW_CURVE")); // NOI18N
         jButtonShowHideCurve.setEnabled(false);
 
         jButtonSelectAll.setText(bundle.getString("SELECT_ALL")); // NOI18N
@@ -185,13 +168,12 @@ public class ROIListPanel extends JPanel {
             if((boolean)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_CHECK))                 
                 sel.add((Overlay)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_OBJECT));
                
-        FileDialog fd = new FileDialog((JDialog)null, "Choose", sel.isEmpty()? FileDialog.LOAD : FileDialog.SAVE);     
+        FileDialog fd = new FileDialog((JDialog)null, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CHOICE_FILE_TO_OPEN"), 
+                                       sel.isEmpty()? FileDialog.LOAD : FileDialog.SAVE);     
        
         fd.setVisible(true);
-
-        if (null == fd.getFile()) return;
         
-        if (!sel.isEmpty()) {                             
+        if (null != fd.getFile() && !sel.isEmpty()) {                             
             try(FileOutputStream fos = new FileOutputStream(fd.getFile())){
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(sel);            
@@ -204,7 +186,8 @@ public class ROIListPanel extends JPanel {
                 sel = (ArrayList<Overlay>)ois.readObject();
                 
                 for (Overlay o:sel) 
-                    iMgr.cloneObject(o, null);                
+                    iMgr.cloneObject(o, null); 
+                
                 iModel.rebuild(iMgr, -1);
                 
             } catch (java.io.IOException|ClassNotFoundException ex) {
@@ -214,7 +197,34 @@ public class ROIListPanel extends JPanel {
         }
     }//GEN-LAST:event_jButtonSaveLoadActionPerformed
     
-    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        switch (e.getType()) {
+            case TableModelEvent.INSERT: 
+                jButtonSelectAll.setEnabled(iModel.getRowCount() > 0); 
+                break;
+            case TableModelEvent.DELETE: { 
+                final boolean ena = iModel.getRowCount() > 0;
+                jButtonSelectAll.setEnabled(ena); 
+                jButtonDelete.setEnabled(jButtonDelete.isEnabled() && ena);               
+                jButtonShowHideCurve.setEnabled(jButtonShowHideCurve.isEnabled() && ena);
+            } break;
+            case TableModelEvent.UPDATE: { 
+                
+                if (ROITableModel.TABLE_COLUMN_CHECK == e.getColumn()) {                
+                    boolean ena = false;
+
+                    for (int r = 0; r < iModel.getRowCount(); ++r )               
+                        ena |= (Boolean)iModel.getValueAt(r, ROITableModel.TABLE_COLUMN_CHECK);
+
+                    jButtonDelete.setEnabled(ena);               
+                    jButtonShowHideCurve.setEnabled(ena);   
+                }  
+            } 
+            default: break;
+        }
+    }
+   
             
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -226,6 +236,8 @@ public class ROIListPanel extends JPanel {
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 
+  
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }
 
 
