@@ -91,14 +91,14 @@ public class ROIListPanel extends JPanel implements TableModelListener {
         jButtonShowHideCurve.setText(bundle.getString("ROILIST.SHOW_CURVE")); // NOI18N
         jButtonShowHideCurve.setEnabled(false);
 
-        jButtonSelectAll.setText(bundle.getString("SELECT_ALL")); // NOI18N
+        jButtonSelectAll.setText(bundle.getString("ROILIST.SELECT_ALL")); // NOI18N
         jButtonSelectAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSelectAllActionPerformed(evt);
             }
         });
 
-        jButtonSaveLoad.setText(bundle.getString("ROI_DLG.SAVE_LOAD")); // NOI18N
+        jButtonSaveLoad.setText(bundle.getString("ROILIST.SAVE_LOAD")); // NOI18N
         jButtonSaveLoad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSaveLoadActionPerformed(evt);
