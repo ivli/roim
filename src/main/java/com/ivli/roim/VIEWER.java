@@ -126,19 +126,11 @@ public class VIEWER extends javax.swing.JFrame {
             jPanel1.removeAll();
             
             IMultiframeImage dcm = ImageFactory.create(fd.getDirectory() + fd.getFile());                                 
-            ImageView image = ImageView.create(dcm, ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
+            ImageView image = ImageView.create(dcm, ImageView.DEFAULT_VOLUME_IMAGE_MODE); //ImageView.create(mi, root);                       
             jPanel1.setLayout(new BorderLayout());
             jPanel1.add(image, BorderLayout.CENTER);
-            jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
-            switch (dcm.getImageType()){
-                case DYNAMIC:
-                case GATED:
-                    jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);
-                    break;
-                default:
-                    break;
-            }
-                       
+            jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);           
+            jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);                
             jPanel1.validate();
             jPanel1.repaint();
         }

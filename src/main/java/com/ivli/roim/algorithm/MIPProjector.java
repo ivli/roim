@@ -21,6 +21,9 @@ import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.events.ProgressNotifier;
 
+import com.amd.aparapi.Kernel;
+import com.amd.aparapi.Range;
+
 /**
  *
  * @author likhachev
@@ -36,9 +39,9 @@ public class MIPProjector extends ProgressNotifier{
         iImage = aSrc; 
         if (-1 == aProjections)
             aProjections = aSrc.getNumFrames();
+        
         iProjections = aProjections;
-        iMIP = iImage.createCompatibleImage(aProjections); 
-        ///iMIP.iImageType = ImageType 
+        iMIP = iImage.createCompatibleImage(aProjections);        
     }
      
     public MIPProjector(IMultiframeImage aSrc, IMultiframeImage aDst) {
@@ -59,6 +62,10 @@ public class MIPProjector extends ProgressNotifier{
     }
                
     public void project() {
+        projectS();
+    }
+    
+    private void projectS() {
         final int nSlices = iImage.getNumFrames();		                
         final int width   = iImage.getWidth();
         final int height  = iImage.getHeight();        
@@ -96,8 +103,8 @@ public class MIPProjector extends ProgressNotifier{
         notifyProgressChanged(100);
     }
  
-    public ImageFrame get(int currProj) {    
-        final ImageFrame frm = iMIP.get(currProj);
+    public ImageFrame projectOne(int currProj, ImageFrame aF) {    
+        final ImageFrame frm = aF;//iMIP.get(currProj);
         final int nSlices = iImage.getNumFrames();
         final int width = iImage.getWidth();
         final int height = iImage.getHeight();
@@ -126,5 +133,20 @@ public class MIPProjector extends ProgressNotifier{
             }
         }
         return frm;
-    }      
+    } 
+        
+    private void projectA() {
+    
+        Kernel kernel = new Kernel() {
+            @Override
+            public void run() {
+                int gid = getGlobalId();
+                projectOne(gid, iMIP.get(gid));
+            }
+        
+        };
+    
+        kernel.execute(Range.create(iProjections));    
+    }
+    
 }

@@ -75,13 +75,12 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
       
     private static final boolean DRAW_FRAME_MINIATURES = true;
        
-    private boolean iAnnotateMarker = true; 
-   
+    private boolean iAnnotateMarker = true;    
     private boolean iDisplayImageUnits = false;
     private boolean iTimeSincePhase = false;
     private boolean iDrawPhases = true;
         
-    private double conversion = 1.; // holds a value used to conversion pixels to time or pixels to frame number and vice versa
+    private double iConv = 1.; // holds a value used to convert pixels to image units (time or space) or frame number and vice versa
     
     boolean iImageUnitsTime = true;
     
@@ -107,10 +106,10 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         iDisplayImageUnits = aTimeWise;
                 
         if (!iDisplayImageUnits)
-            conversion = (double)iView.getImage().getNumFrames() / (double)getActiveBarWidth();  
+            iConv = (double)iView.getImage().getNumFrames() / (double)getActiveBarWidth();  
         else if(iImageUnitsTime) {                   
                 TimeSliceVector tsv = iView.getImage().getTimeSliceVector(); 
-                conversion = (double)tsv.duration() / (double)getActiveBarWidth();
+                iConv = (double)tsv.duration() / (double)getActiveBarWidth();
         } else {
         
         } 
@@ -168,18 +167,18 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
         if (iDisplayImageUnits) {
             if (iImageUnitsTime) {
                 long moment = iView.getImage().getTimeSliceVector().frameStarts(aFrameNumber);
-                iMarker.setPosition((int)(moment / conversion));
+                iMarker.setPosition((int)(moment / iConv));
                 if (iAnnotateMarker) {
                    Instant t =  new Instant(!iTimeSincePhase ? moment: iView.getImage().getTimeSliceVector().sincePhase(moment)); 
                    iTip.setTipText(t.format());
                 }
             } else { //TODO: recalculate in  
-                iMarker.setPosition((int)(aFrameNumber / conversion));
+                iMarker.setPosition((int)(aFrameNumber / iConv));
                 if (iAnnotateMarker)
                    iTip.setTipText(String.format("%d", aFrameNumber)); //NOI18N
             }            
         } else {
-                iMarker.setPosition((int)(aFrameNumber / conversion));
+                iMarker.setPosition((int)(aFrameNumber / iConv));
                 if (iAnnotateMarker)
                    iTip.setTipText(String.format("%d", aFrameNumber)); //NOI18N
         }
@@ -246,12 +245,12 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
             iMarker.setPosition(aPos);
         else {
             if (!iDisplayImageUnits)
-                 iView.setFrameNumber((int)(conversion*(double)aPos)); 
+                 iView.setFrameNumber((int)(iConv*(double)aPos)); 
             else {
                 if (iImageUnitsTime) 
-                    iView.setFrameNumber(iView.getImage().getTimeSliceVector().frameNumber((long)(conversion*(double)aPos)));                    
+                    iView.setFrameNumber(iView.getImage().getTimeSliceVector().frameNumber((long)(iConv*(double)aPos)));                    
                 else
-                   iView.setFrameNumber((int)(conversion*(double)aPos)); //TODO: 
+                   iView.setFrameNumber((int)(iConv*(double)aPos)); //TODO: 
             }
         }
     }
@@ -331,8 +330,8 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
             int xstart = 0;
             int width = 0;
             for(int i = 0; i < tsv.getNumPhases(); ++i) {
-                width = iDisplayImageUnits ? (int) ((double)tsv.getPhaseDuration(i) / conversion) - 1 :
-                                         (int) ((double)tsv.getPhaseFrames(i) / conversion) - 1;
+                width = iDisplayImageUnits ? (int) ((double)tsv.getPhaseDuration(i) / iConv) - 1 :
+                                         (int) ((double)tsv.getPhaseFrames(i) / iConv) - 1;
                 g.setColor(Colorer.getColor(i));
                 g.drawRect(xstart, 0, width, getHeight() - iTopGap);
                 xstart += width + 1;
