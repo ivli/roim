@@ -173,10 +173,13 @@ public class ROIListPanel extends JPanel implements TableModelListener {
        
         fd.setVisible(true);
         
-        if (null != fd.getFile() && !sel.isEmpty()) {                             
+        if (null == fd.getFile())
+            return;
+        
+        if (!sel.isEmpty()) {                             
             try(FileOutputStream fos = new FileOutputStream(fd.getFile())){
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(sel);            
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(sel);            
             } catch (java.io.IOException ex) {
                 LOG.catching(ex);
             }   
@@ -193,7 +196,6 @@ public class ROIListPanel extends JPanel implements TableModelListener {
             } catch (java.io.IOException|ClassNotFoundException ex) {
                 LOG.catching(ex);
             }   
-
         }
     }//GEN-LAST:event_jButtonSaveLoadActionPerformed
     

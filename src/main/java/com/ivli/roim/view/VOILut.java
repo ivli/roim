@@ -129,12 +129,12 @@ public class VOILut {
             }   
         }
     }       
-   
+    
     public Curve getCurve() {        
         Curve ret = new Curve();        
          
         for (int i=0; i<iBuffer.length; ++i)
-            ret.put(i, (iBuffer[i] & 0xFF));
+            ret.add(i, (iBuffer[i] & 0xFF));
                 
         return ret;
     }      

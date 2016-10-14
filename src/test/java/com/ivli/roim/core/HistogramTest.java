@@ -17,8 +17,6 @@
  */
 package com.ivli.roim.core;
 
-import java.awt.Point;
-import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -31,8 +29,9 @@ import static org.junit.Assert.*;
  * @author likhachev
  */
 public class HistogramTest {    
-    Histogram h1;
-    int v = 0;
+    Histogram histogram = new Histogram(TestImage32x32.SUM_ROWS);
+    
+    
     public HistogramTest() {
     }
     
@@ -46,10 +45,7 @@ public class HistogramTest {
     
     @Before
     public void setUp() {
-        v = 0;
-        h1 = new Histogram();
-        for (int i=0; i < TestImage32x32.SUM_ROWS.length; ++i)
-            h1.put(i, TestImage32x32.SUM_ROWS[i]);     
+       
     }
     
     @After
@@ -64,13 +60,9 @@ public class HistogramTest {
     public void testGet() {
         System.out.println("get");
         
-        Histogram instance = h1;
+        Histogram instance = histogram;
         
-        Set<Integer> keys = instance.keySet();
-        
-        assertEquals(TestImage32x32.SUM_ROWS.length, keys.size());
-                        
-        for (int key:keys) {            
+        for (int key = 0; key < TestImage32x32.SUM_ROWS.length; ++key ) {            
             assertEquals((int)TestImage32x32.SUM_ROWS[key], (int)instance.get(key));
         }       
     }
@@ -82,14 +74,15 @@ public class HistogramTest {
     public void testPut() {
         System.out.println("put");
        
-        Histogram instance = new Histogram();
+        Histogram instance = new Histogram(TestImage32x32.SUM_ROWS.length);
         
         for (int i = 0; i < TestImage32x32.SUM_ROWS.length; ++i)
             instance.put(i, TestImage32x32.SUM_ROWS[i]);
         
-        assertEquals(0, instance.iMin); 
-        assertEquals(TestImage32x32.SUM_ROWS.length-1, instance.iMax);
-               
+        
+        for (int i = 0; i < TestImage32x32.SUM_ROWS.length; ++i)
+            assertEquals((int)instance.get(i), TestImage32x32.SUM_ROWS[i]);
+   
     }
 
     /**
@@ -99,12 +92,84 @@ public class HistogramTest {
     @Test
     public void testRebin() {
         System.out.println("rebin");
+        /*
         int aNoOfBins = 16;
         Histogram instance = h1;       
         Histogram result = instance.rebin(16);
         v = 0;
         instance.keySet().forEach((k)->{v += instance.get(k);});
         
-        assertEquals(TestImage32x32.TOTAL, v);        
+        assertEquals(TestImage32x32.TOTAL, v); 
+        */
     }  
+
+    /**
+     * Test of getNoOfBins method, of class Histogram.
+     */
+    @Test
+    public void testGetNoOfBins() {
+        System.out.println("getNoOfBins");
+        Histogram instance = new Histogram(TestImage32x32.SUM_ROWS);
+        int expResult = TestImage32x32.SUM_ROWS.length;
+        int result = instance.getNoOfBins();
+        assertEquals(expResult, result);
+      
+    }
+
+    /**
+     * Test of getBinSize method, of class Histogram.
+     */
+    @Test
+    public void testGetBinSize() {
+        System.out.println("getBinSize");
+        Histogram instance = histogram;
+        double expResult = 1.;
+        double result = instance.getBinSize();
+        assertEquals(expResult, result, 0.0);        
+    }
+
+    /**
+     * Test of inc method, of class Histogram.
+     */
+    @Test
+    public void testInc() {
+        System.out.println("inc");
+        
+        final int bin = 10;
+        final int iterations = 11;
+        
+        Histogram instance = new Histogram(TestImage32x32.SUM_ROWS);
+        Integer expResult = TestImage32x32.SUM_ROWS[bin] + iterations;
+        
+        for (int i = 0; i < iterations; ++i)            
+            instance.inc(bin);
+        
+        assertEquals(expResult, instance.get(bin));
+        
+    }
+
+    /**
+     * Test of min method, of class Histogram.
+     */
+    @Test
+    public void testMin() {
+        System.out.println("min");
+        Histogram instance = new Histogram(TestImage32x32.SUM_ROWS);
+        double expResult = TestImage32x32.SUM_ROWS_MIN;
+        double result = instance.min();
+        assertEquals(expResult, result, 0.0);
+        
+    }
+
+    /**
+     * Test of max method, of class Histogram.
+     */
+    @Test
+    public void testMax() {
+        System.out.println("max");
+        Histogram instance = new Histogram(TestImage32x32.SUM_ROWS);
+        double expResult = TestImage32x32.SUM_ROWS_MAX;
+        double result = instance.max();
+        assertEquals(expResult, result, 0.0);       
+    }
 }

@@ -53,39 +53,58 @@ import javax.swing.SwingUtilities;
  * @author likhachev
  */
 public class FrameControl extends JComponent implements FrameChangeListener, ActionListener, 
-                                                          MouseMotionListener, MouseListener, MouseWheelListener {
+                                                        MouseMotionListener, MouseListener, MouseWheelListener {
     
     private static final int MARKER_CURSOR = Cursor.HAND_CURSOR;    
-    private static final int WINDOW_CURSOR = Cursor.N_RESIZE_CURSOR;                           
+    private static final int WINDOW_CURSOR = Cursor.N_RESIZE_CURSOR;                              
+    private static final int DEFAULT_HORIZONTAL_GAP = 2;  
+    private static final int DEFAULT_VERTICAL_GAP = 16;
+
     
-    private final int LEFT_GAP;  //reserve border at left & right
-    private final int RIGHT_GAP; 
-    private final int TOP_GAP  = 2;  //reserve a half of marker height at window's top & bottom 
-    private final int BOTTOM_GAP  = 2;
+    private final int iLeftGap;// = DEFAULT_VERTICAL_GAP;  //reserve border at left & right
+    private final int iRightGap;// = DEFAULT_VERTICAL_GAP; 
+    private final int iTopGap = DEFAULT_HORIZONTAL_GAP;  //reserve a half of marker height at window's top & bottom 
+    private final int iBottomGap = DEFAULT_HORIZONTAL_GAP;
     
-    private final Marker iMarker;    
-    private ActionItem   iAction;
+    private final Marker  iMarker;    
+    private ActionItem    iAction;
     private BufferedImage iBuf;
           
-    private ImageView  iView;       
-    JToolTip iTip;
-    
-     //TODO: rewrite to be configured at instantiation
-    
-   
+    private ImageView iView;       
+    private JToolTip iTip;
+      
     private static final boolean DRAW_FRAME_MINIATURES = true;
        
-    private boolean iDrawPhases = true;
-    private boolean iTimeWiseScale = false; 
     private boolean iAnnotateMarker = true; 
+   
+    private boolean iTimeWiseScale = false;
     private boolean iTimeSincePhase = false;
-    
+    private boolean iDrawPhases = true;
+        
     private double conversion = 1.; // holds a value used to conversion pixels to time or pixels to frame number and vice versa
-     
+    
+    
+    abstract class Model {
+        
+        protected double iConv = 1.0;
+        
+        double getConversion() {
+            return iConv;
+        }
+        
+        abstract void setUnits();
+        
+        void setFrames() {
+            iConv = 1.0;
+        }
+    }
+    
+    Model iModel;
+    
     FrameControl() {
         iMarker = new Marker("images/knob_cone_vert.png", false);    //NOI18N    
-        LEFT_GAP  = iMarker.getMarkerSize()/2;
-        RIGHT_GAP = iMarker.getMarkerSize()/2; //to the case images of different height are used 
+        iLeftGap  = iMarker.getMarkerSize()/2;
+        iRightGap = iMarker.getMarkerSize()/2; //to the case images of different height are used 
         
         if(iAnnotateMarker) {
             iTip = new JToolTip();
@@ -103,8 +122,8 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     private void setTimeWise(boolean aTimeWise) {
         iTimeWiseScale = aTimeWise;
         TimeSliceVector tsv = iView.getImage().getTimeSliceVector();                
-                conversion = iTimeWiseScale ? (double)tsv.duration() / (double)getActiveBarWidth() :
-                                              (double)tsv.getNumFrames() / (double)getActiveBarWidth();
+        conversion = iTimeWiseScale ? (double)tsv.duration() / (double)getActiveBarWidth() :
+                                      (double)tsv.getNumFrames() / (double)getActiveBarWidth();
         
         ///iMarker.setPosition(iView.);
         updateMarker(iView.getFrameNumber());
@@ -243,8 +262,8 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
 
                 iAction = new ActionItem(e.getX(), e.getY()) {
                     protected void DoAction(int aX, int aY) { 
-                        if (aX >= LEFT_GAP && aX < getActiveBarWidth() + RIGHT_GAP) {
-                            setFrameByPosition(aX - LEFT_GAP);
+                        if (aX >= iLeftGap && aX < getActiveBarWidth() + iRightGap) {
+                            setFrameByPosition(aX - iLeftGap);
                             //repaint();
                         }
                     }   
@@ -255,8 +274,8 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
                     }
                 };    
             //don't hit but still within active rectangle - just move marker            
-            } else if (xpos >= LEFT_GAP && xpos < getActiveBarWidth() + RIGHT_GAP) {
-                setFrameByPosition(xpos - LEFT_GAP);
+            } else if (xpos >= iLeftGap && xpos < getActiveBarWidth() + iRightGap) {
+                setFrameByPosition(xpos - iLeftGap);
                 //repaint();
             }              
         }
@@ -273,7 +292,6 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     public void mouseReleased(MouseEvent e) {                    
         iAction = null;          
     }
-
     
     @Override
     public void mouseEntered(MouseEvent e) {                       
@@ -313,14 +331,14 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
                 width = iTimeWiseScale ? (int) ((double)tsv.getPhaseDuration(i) / conversion) - 1 :
                                          (int) ((double)tsv.getPhaseFrames(i) / conversion) - 1;
                 g.setColor(Colorer.getColor(i));
-                g.drawRect(xstart, 0, width, getHeight() - TOP_GAP);
+                g.drawRect(xstart, 0, width, getHeight() - iTopGap);
                 xstart += width + 1;
             }           
         } 
     }
     
     int getActiveBarWidth() {
-        return getWidth() - (iReserveSpaceRight ? 2*(RIGHT_GAP + LEFT_GAP) : (RIGHT_GAP + LEFT_GAP));
+        return getWidth() - (iReserveSpaceRight ? 2*(iRightGap + iLeftGap) : (iRightGap + iLeftGap));
     }
     
     private final boolean iReserveSpaceRight = true; 
@@ -329,14 +347,13 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     public void paintComponent(Graphics g) {                          
         final Color old = g.getColor();
                
-        g.setColor(Color.LIGHT_GRAY);  
-                  
+        g.setColor(Color.LIGHT_GRAY);                   
         
         if (iReserveSpaceRight)
             g.draw3DRect(getWidth() - 32, 0, getWidth(), getHeight(), true);       
         
         //g.fillRect(0, 0, getActiveBarWidth(), getHeight());
-        g.drawImage(iBuf, LEFT_GAP, TOP_GAP, getActiveBarWidth(), getHeight() - (TOP_GAP + BOTTOM_GAP), null);    
+        g.drawImage(iBuf, iLeftGap, iTopGap, getActiveBarWidth(), getHeight() - (iTopGap + iBottomGap), null);    
         g.draw3DRect(0, 0, getWidth(), getHeight(), true);    
         
         if (null != iMarker) 

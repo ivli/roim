@@ -37,12 +37,40 @@ public enum ImageType {
     LOCALIZER("LOCALIZER"),
     UNKNOWN("UNKNOWN");
     
-    public final String iName;
-    private final boolean iDerived;
+    protected final String iName;
+    protected boolean iDerived;
     
     private ImageType(String aN) {               
         iName = aN;
         iDerived = false;
+    }    
+ 
+    public String getName() {
+        return iName;
     }
     
+    public void setDerived(boolean aD) {
+        iDerived = aD;
+    } 
+    
+    public boolean isDerived() {
+        return iDerived;
+    }
+        
+    static public ImageType create(String aDicomString) {        
+        if (null != aDicomString) {                        
+            ImageType ret; 
+            
+            for(ImageType t : ImageType.values())
+                if (aDicomString.contains(t.getName())) {
+                    ret = t;
+                    if (aDicomString.contains("DERIVED"))
+                        ret.setDerived(true);
+                    
+                    return ret;
+                }            
+        }
+       
+        return ImageType.UNKNOWN;   
+    }
 }

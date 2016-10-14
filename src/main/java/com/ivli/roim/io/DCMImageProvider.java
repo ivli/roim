@@ -93,7 +93,7 @@ class DCMImageProvider implements IImageProvider {
         sb.append("\nTIMESLICE VECTOR:");
         sb.append(getTimeSliceVector());
         sb.append("\nP-VALUE TRANSFORM:");
-        sb.append(getTransform());                
+        sb.append(getRescaleTransform());                
         sb.append("\n-----------------------------------\n");
         LOG.info(sb);
     }
@@ -133,6 +133,8 @@ class DCMImageProvider implements IImageProvider {
     public int getNumFrames() {     
         if (getModality() == Modality.CR)
             return 1;
+        else if (getModality() == Modality.CT && getImageType() == ImageType.AXIAL)
+            return 1;
         return iDataSet.getInt(Tag.NumberOfFrames, 0);      
     }
      
@@ -140,12 +142,16 @@ class DCMImageProvider implements IImageProvider {
         return ImageDataType.GRAYS32;
     }
     
-     public PValueTransform getTransform() { 
+    //TODO: dcm4chee applies this transform to image data before ??? 
+    public PValueTransform getRescaleTransform() { 
+        /*
         double  s = iDataSet.getDouble(Tag.RescaleSlope, 1.);   
         double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);                    
         return new PValueTransform(s, i);           
+        */
+        return PValueTransform.DEFAULT_TRANSFORM;
     }
-       
+     
     public int[] readFrame(int anIndex, int[] aBuffer) throws IndexOutOfBoundsException, IOException {        
         final int w = getWidth();
         final int h = getHeight();  
@@ -191,46 +197,35 @@ class DCMImageProvider implements IImageProvider {
         }
     }
 
+     @Override
     public double getMin() {
         double ret = iDataSet.getInt(Tag.SmallestImagePixelValue, 0);
         //double ret2 = iDataSet.getInt(Tag.SmallestPixelValueInSeries, 0);
         return ret;
     }
 
+     @Override
     public double getMax() {
         double ret = iDataSet.getInt(Tag.LargestImagePixelValue, Integer.MAX_VALUE);
         //double ret2 = iDataSet.getInt(Tag.LargestPixelValueInSeries, Integer.MAX_VALUE);
         return ret;
     }
 
-    public PValueTransform getRescaleTransform() { 
-        double  s = iDataSet.getDouble(Tag.RescaleSlope, 1.);   
-        double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);            
-        LOG.info ("Slope={}; Intercept={}", s, i);
-        return new PValueTransform(s, i);           
-    }
-               
-    public ImageType getImageType() {//throws IOException {       
+     @Override
+    public ImageType getImageType() {
         Object o = iDataSet.getValue(Tag.ImageType);        
-        
-        if (null != o) {            
-            final String s = new String((byte[])o);
-            for(ImageType t : ImageType.values())
-                if (s.contains(t.iName))
-                    return t;
-        }
-       
-        return ImageType.UNKNOWN;
+        return ImageType.create((null != o) ? new String((byte[])o) : "");
     }
 
+     @Override
     public SliceSpacing getSliceSpacing() {
         return SliceSpacing.UNITY_SLICE_SPACING;
     }
     
     private ImageReadParam readParam() {
-        DicomImageReadParam param = (DicomImageReadParam) iReader.getDefaultReadParam();   
-                     
-        param.setAutoWindowing(false);        
+        DicomImageReadParam param = (DicomImageReadParam) iReader.getDefaultReadParam();                        
+        param.setAutoWindowing(false);     
+       
         return param;
     }
     

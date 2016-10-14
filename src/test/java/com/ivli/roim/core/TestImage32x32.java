@@ -69,7 +69,12 @@ public class TestImage32x32 {
     public final static long TOTAL = 31744;        
     public final static int [] SUM_ROWS = {496,528,560,592,624,656,688,720,752,784,816,848,880,912,944,976,1008,1040,1072,1104,1136,1168,1200,1232,1264,1296,1328,1360,1392,1424,1456,1488};
     public final static int [] SUM_COLS = {496,528,560,592,624,656,688,720,752,784,816,848,880,912,944,976,1008,1040,1072,1104,1136,1168,1200,1232,1264,1296,1328,1360,1392,1424,1456,1488};    
-        
+
+    public final static int SUM_ROWS_MIN = 496;   
+    public final static int SUM_COLS_MIN = 496;
+    public final static int SUM_ROWS_MAX = 1488;   
+    public final static int SUM_COLS_MAX = 1488;
+             
     public final static Rectangle NORD_HALF = new Rectangle(0,0,32,16);
     public final static int       NORD_HALF_TOTAL  = 11776; //total 512
     

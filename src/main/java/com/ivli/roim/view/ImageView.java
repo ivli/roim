@@ -17,8 +17,6 @@
  */
 package com.ivli.roim.view;
 
-
-
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -225,7 +223,7 @@ public class ImageView extends JComponent implements IImageView {
     public static final ViewMode DEFAULT_IMAGE_MODE = ViewMode.frame(0);
     public static final ViewMode DEFAULT_STATIC_IMAGE_MODE = ViewMode.frame(0);
     public static final ViewMode DEFAULT_DYNAMIC_IMAGE_MODE = ViewMode.cine();
-    public static final ViewMode DEFAULT_TOMO_IMAGE_MODE = ViewMode.volume(0, -1);
+    public static final ViewMode DEFAULT_TOMO_IMAGE_MODE = ViewMode.cine();
     public static final ViewMode DEFAULT_VOLUME_IMAGE_MODE = ViewMode.volume(0, -1);
     public static final ViewMode DEFAULT_COMPOSITE_IMAGE_MODE = ViewMode.composite(IFrameProvider.FIRST, IFrameProvider.LAST);
     
@@ -287,7 +285,7 @@ public class ImageView extends JComponent implements IImageView {
     @Override
     public void setImage(IMultiframeImage anImage) {                
         iModel = anImage;             
-        iVLUT.setTransform(iModel.getTransform());  
+        iVLUT.setTransform(iModel.getRescaleTransform());  
         //iMode = 
         setFrameNumber(iCurrent);
     }
@@ -301,6 +299,7 @@ public class ImageView extends JComponent implements IImageView {
         return iModel;
     }
     
+    @Override
     public ImageFrame getFrame() {
         return iModel.get(getFrameNumber());
     }

@@ -5,27 +5,18 @@
  */
 package com.ivli.roim.controls;
 
-
-
 import javax.swing.JPanel;
-
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.plot.CombinedDomainXYPlot;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
-
 import com.ivli.roim.core.*;
 import com.ivli.roim.view.ImageView;
 import com.ivli.roim.events.WindowChangeEvent;
@@ -41,32 +32,28 @@ import org.apache.logging.log4j.Logger;
 public class VOILUTPanel extends JPanel implements WindowChangeListener {    
     
     private static final int NO_OF_BINS = 256;
-    private final LUTControl iLUT;
-    
-    private boolean iShowHistogram;            
+    private final LUTControl iLUT;             
     private final ChartPanel iPanel;
     private final String iCurveName;
     private Histogram iHist;
     private final ImageView iView;
     
-    private XYSeriesCollection makeLUTCurve(int aWidth) {                    
+    private XYSeriesCollection makeLUTCurve() {                    
         return new XYSeriesCollection(XYSeriesUtilities.getSeriesRebinned(iLUT.getCurve(), iCurveName, NO_OF_BINS, iView.getRange()));
     }
     
-    private XYSeries makeHistogram(int aWidth) {  
-        if (null == iHist) {
-            ///HistogramExtractor iHEx = new HistogramExtractor(null);
-            iHist = iView.getFrame().processor().histogram(null);//.extract(iHEx);
-            ///iHist = iHEx.iHist;
+    private XYSeries makeHistogram() {  
+        if (null == iHist) {            
+            iHist = iView.getFrame().processor().histogram(null, 256);//.extract(iHEx);           
         }
         
         final String name = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM");
-        return XYSeriesUtilities.convert(name, iHist.rebin(NO_OF_BINS));
+        return XYSeriesUtilities.convert(name, iHist);//.rebin(NO_OF_BINS));
     }
     
     @Override
     public void windowChanged(WindowChangeEvent anEvt) {            
-        iPanel.getChart().getXYPlot().setDataset(0, makeLUTCurve(jPanel1.getWidth()));
+        iPanel.getChart().getXYPlot().setDataset(0, makeLUTCurve());
         iLUT.windowChanged(anEvt);
     }   
     
@@ -81,14 +68,14 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
                
         XYPlot plot = new XYPlot();
    
-        plot.setDataset(0, makeLUTCurve(jPanel1.getPreferredSize().width));
+        plot.setDataset(0, makeLUTCurve());
         plot.setRenderer(0, new XYSplineRenderer());  
         
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
         plot.setRangeAxis(0, new NumberAxis(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.AXIS_LABEL_VOI_CURVE")));                
                  
         XYSeriesCollection col2 = new XYSeriesCollection();
-        col2.addSeries(makeHistogram(jPanel1.getPreferredSize().width));
+        col2.addSeries(makeHistogram());
 
         plot.setDataset(1, col2);
         plot.setRenderer(1, new XYBarRenderer());
@@ -179,9 +166,9 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

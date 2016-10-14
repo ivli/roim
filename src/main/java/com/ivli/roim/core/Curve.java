@@ -27,7 +27,8 @@ public class Curve extends java.util.ArrayList<Integer> {
     private int iMinY = Integer.MAX_VALUE;
     private int iMaxY = Integer.MIN_VALUE;
            
-    public void put(final Integer aNdx, final Integer aVal) {
+    @Override
+    public void add(int aNdx, Integer aVal) {
         if (aNdx < iMinX)
             iMinX = aNdx;
         if (aNdx > iMaxX)

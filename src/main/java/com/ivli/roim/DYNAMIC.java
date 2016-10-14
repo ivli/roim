@@ -400,25 +400,31 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
         jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);
         jPanel1.validate(); 
-                
-        ImageView sumView = iGroup.createView(ImageView.DEFAULT_COMPOSITE_IMAGE_MODE); //ImageView.create(sum, root);
-        jPanel3.add(sumView, BorderLayout.CENTER);
-        jPanel3.add(LUTControl.create(sumView), BorderLayout.LINE_END);
-        jPanel3.validate(); 
-       /*
-        ImageView gridView = iGroup.createGridView();//ImageView.create(sum, root);
-        jPanel4.add(gridView, BorderLayout.CENTER);
-        jPanel4.add(LUTControl.create(gridView), BorderLayout.LINE_END);
-        jPanel4.validate(); 
-        */
+        
+        if (anImage.getNumFrames() > 1) {
+            ImageView sumView = iGroup.createView(ImageView.DEFAULT_COMPOSITE_IMAGE_MODE); //ImageView.create(sum, root);
+            jPanel3.add(sumView, BorderLayout.CENTER);
+            jPanel3.add(LUTControl.create(sumView), BorderLayout.LINE_END);
+            jPanel3.validate(); 
+            jPanel3.setVisible(true);
+            jTabbedPane1.setEnabledAt(1, true);            
+        } else {
+            jPanel3.setVisible(false);           
+            jTabbedPane1.setEnabledAt(1, false);
+        }
         //CHART        
         if (anImage.getImageType() == ImageType.DYNAMIC) {
             iChart = ChartView.create();                    
             iChart.setPreferredSize(jPanel5.getPreferredSize());
             jPanel5.add(iChart);      
-            iGroup.addROIChangeListener(iChart);                            
+            iGroup.addROIChangeListener(iChart);          
+            jPanel5.setVisible(true);
+            jPanel5.setSize(jPanel5.getPreferredSize());
+            jSplitPane1.setDividerLocation(400);
         } 
-        
+        else 
+            jPanel5.setVisible(false);
+        validate();
         /*        
         if (mi.getImageType() != ImageType.STATIC) {     
             iGrid = GridImageView.create(mi, 4, 4, null) ;          
@@ -451,7 +457,8 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         ROIListPanel panel = new ROIListPanel(iGroup);
-        JDialog dialog = new JDialog(this, "ROI manager", Dialog.ModalityType.APPLICATION_MODAL);
+        JDialog dialog = new JDialog(this, "ROI manager", 
+                                     Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setContentPane(panel);
         dialog.validate();
         dialog.pack();

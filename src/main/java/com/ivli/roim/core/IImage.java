@@ -75,6 +75,9 @@ public interface IImage {
      * @return maximal pixel value  
      */
     double getMax();
-    
-    PValueTransform getTransform();             
+    /**
+     *
+     * @return rescale or PV-transform   
+     */
+    PValueTransform getRescaleTransform();             
 }

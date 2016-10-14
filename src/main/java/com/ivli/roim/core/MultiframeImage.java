@@ -88,7 +88,7 @@ public class MultiframeImage extends IMultiframeImage   {
         iImageType = aP.getImageType();
         iPixelSpacing = aP.getPixelSpacing();
         iTimeSliceVector = aP.getTimeSliceVector(); 
-        iPVT = aP.getTransform();
+        iPVT = aP.getRescaleTransform();
         iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames);
     }
    
@@ -113,7 +113,7 @@ public class MultiframeImage extends IMultiframeImage   {
         iPixelSpacing = aM.getPixelSpacing();
         iSliceSpacing = aM.getSliceSpacing();
         iTimeSliceVector = aM.getTimeSliceVector();
-        iPVT = aM.getTransform();
+        iPVT = aM.getRescaleTransform();
         iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames); 
         iFrames.present(); //have no provider - must not call it
     }
@@ -166,7 +166,7 @@ public class MultiframeImage extends IMultiframeImage   {
     }
     
     @Override
-    public PValueTransform getTransform() {
+    public PValueTransform getRescaleTransform() {
         return iPVT;
     }
     

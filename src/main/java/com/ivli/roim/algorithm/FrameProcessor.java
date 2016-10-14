@@ -54,7 +54,7 @@ public class FrameProcessor {
        
     public void add(ImageFrame aF) throws IllegalArgumentException {
         if (iFrame.getWidth() != aF.getWidth() && iFrame.getHeight() != aF.getHeight())
-            throw new IllegalArgumentException("Frames must be of identical size");
+            throw new IllegalArgumentException("Frames must be of identical size"); //NOI18N
         
         for (int i = 0; i < iFrame.getWidth(); ++i)
             for (int j = 0; j < iFrame.getHeight(); ++j) 
@@ -159,25 +159,68 @@ public class FrameProcessor {
         return lowerAverage + yFraction * (upperAverage - lowerAverage);
     }
 
-    public Histogram histogram(Shape aR) {             
+    public Histogram histogram(Shape aR, Integer aNoOfBins) {             
         final Rectangle r;       
+        
         if (null != aR)
             r = aR.getBounds(); 
         else 
             r = new Rectangle(0, 0, iFrame.getWidth(), iFrame.getHeight());          
         
-        Histogram ret = new Histogram();
-        
-        for (int i = r.x; i < r.x + r.width; ++i) {
-            int v = 0;
+        int min = Integer.MAX_VALUE; 
+        int max = Integer.MIN_VALUE;
+                
+        for (int i = r.x; i < r.x + r.width; ++i) {           
             for (int j = r.y; j < r.y + r.height; ++j) 
-                if (null == aR || aR.contains(i,j))
-                    v += iFrame.get(i, j);
-         
-            ret.put(i, v);
+                if (null == aR || aR.contains(i,j)) {
+                    final int v = iFrame.get(i, j);                      
+                    if (v > max) max = v;
+                    if (v < min) min = v;
+                }
+        }                
+        
+        final int range = max - min + 1;
+        final int noOfBins = null != aNoOfBins ? aNoOfBins : range;
+        final double step = (double)range / (double)noOfBins;
+                
+        int bins[] = new int[noOfBins];
+        
+        for (int i=0; i < bins.length; ++i)
+            bins[i] = 0;
+        
+        for (int i = r.x; i < r.x + r.width; ++i) {                        
+            for (int j = r.y; j < r.y + r.height; ++j) 
+                if (null == aR || aR.contains(i, j)) {
+                    final int bin = (int)Math.floor((double)iFrame.get(i, j) / step);                                      
+                    bins[bin] = bins[bin] + 1;                           
+                }
+        }  
+        return new Histogram(bins, step);
+    }
+    
+    public Histogram profile(Shape aR) {
+        final Rectangle r;       
+        
+        if (null != aR)
+            r = aR.getBounds(); 
+        else 
+            r = new Rectangle(0, 0, iFrame.getWidth(), iFrame.getHeight());          
+        
+        int bins[] = new int[r.width];
+        
+        for (int i=0; i < bins.length; ++i)
+            bins[i] = 0;
+        
+        for (int i = r.x; i < r.x + r.width; ++i) {    
+            int val = 0;
+            for (int j = r.y; j < r.y + r.height; ++j) 
+                if (null == aR || aR.contains(i, j)) {
+                    val += (int)(iFrame.get(i, j));                                              
+                }
+            bins[i - r.x] = val; 
         }
         
-        return ret;
+        return new Histogram(bins);    
     }
         
     public long density(Shape aR) {        
@@ -243,4 +286,5 @@ public class FrameProcessor {
         }
     }
     
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();        
 }

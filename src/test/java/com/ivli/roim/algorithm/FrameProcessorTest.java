@@ -35,13 +35,13 @@ import static org.junit.Assert.*;
  */
 public class FrameProcessorTest {
     static final ImageFrame fc = new ImageFrame(TestImage32x32.ROWS, TestImage32x32.COLS, TestImage32x32.BUFFER);
-    static final Histogram  h1 = new Histogram();
+    static final Histogram  profile = new Histogram(TestImage32x32.SUM_ROWS);
     
     ImageFrame f1;
         
     public FrameProcessorTest() {         
-        for (int i=0; i < TestImage32x32.SUM_ROWS.length; ++i)
-            h1.put(i, TestImage32x32.SUM_ROWS[i]);        
+       // for (int i=0; i < TestImage32x32.SUM_ROWS.length; ++i)
+       //     profile.put(i, TestImage32x32.SUM_ROWS[i]);        
     }
     
     @BeforeClass
@@ -138,12 +138,17 @@ public class FrameProcessorTest {
     @Test
     public void testHistogram() {
         System.out.println("histogram");
-        Rectangle aR = null;
-        FrameProcessor instance = f1.processor();
-        Histogram expResult = h1;
-        Histogram result = instance.histogram(aR);
         
-        assertEquals(expResult, result);       
+        Rectangle aR = null;
+       
+        Histogram expResult = profile;
+        Histogram result = f1.processor().profile(aR);
+        
+        assertEquals(expResult.getNoOfBins(), result.getNoOfBins());
+        assertEquals(expResult.getBinSize(), result.getBinSize(), 1.);
+        
+        for (int i = 0; i < result.getNoOfBins(); ++i)
+            assertEquals(expResult.get(i), result.get(i));       
     }
 
     /**

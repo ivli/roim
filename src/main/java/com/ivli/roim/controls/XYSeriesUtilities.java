@@ -19,6 +19,7 @@ package com.ivli.roim.controls;
 
 import com.ivli.roim.algorithm.Algorithm;
 import com.ivli.roim.core.Curve;
+import com.ivli.roim.core.Histogram;
 import com.ivli.roim.core.Range;
 import java.util.function.Function;
 import org.jfree.data.xy.XYSeries;
@@ -186,7 +187,6 @@ class XYSeriesUtilities {
         return Double.NaN;
     }
     
-  
     /*
      * fits given series aS on the interval [aFrom, aTo)   
      * uses least squares to find intercept and slope
@@ -194,13 +194,13 @@ class XYSeriesUtilities {
      */        
     public static XYSeries fit(XYSeries aS, double aFrom, double aTo, boolean aExp, XYSeries aRet) {            
         if (null == aS || aS.isEmpty())
-            throw new IllegalArgumentException("XYSeries cannot be null");
+            throw new IllegalArgumentException("XYSeries cannot be null"); //NOI18N
         
         if (aFrom == aTo)
-            throw new IllegalArgumentException("aFrom cannot be equal to aTo");
+            throw new IllegalArgumentException("aFrom cannot be equal to aTo"); //NOI18N
         
         if (null == aRet)
-            aRet = new XYSeries("INTERPOLATION" + aS.getKey().toString());
+            aRet = new XYSeries("INTERPOLATION" + aS.getKey().toString()); //NOI18N
 
         final double [][] v = aS.toArray();
                 
@@ -213,7 +213,7 @@ class XYSeriesUtilities {
         final int n2 = Algorithm.getNearestIndex(v[0], availTo);
         
         if (n1 < 0 || n2 < 0 || n2 <= n1)
-            throw new IllegalArgumentException(String.format("n1 = %d, n2 = %d", n1, n2));
+            throw new IllegalArgumentException(String.format("n1 = %d, n2 = %d", n1, n2));//NOI18N
              
         final Function<Double, Double> f = Algorithm.leastsquares(v[0], v[1], n1, n2, aExp ? Algorithm.TYPE.EXPONENTIAL : Algorithm.TYPE.LINEAR);
         
@@ -251,7 +251,26 @@ class XYSeriesUtilities {
                         
         return ret;
     }
- 
+     
+    public static XYSeries convert(final String aName, java.util.ArrayList<Integer> aList){            
+        XYSeries ret = new XYSeries(aName, true, false);
+        
+        for (int i = 0; i < aList.size(); ++i) { 
+            ret.add((double)i, (double)aList.get(i));
+        }                        
+        return ret;
+    }
+    
+    public static XYSeries convert(final String aName, Histogram aHist){            
+        XYSeries ret = new XYSeries(aName, true, false);
+        
+        for (int i = 0; i < aHist.size(); ++i) { 
+            ret.add((double)i * aHist.getBinSize(), (double)aHist.get(i));
+        }                        
+        return ret;
+    }
+    
+    
     public static XYSeries getSeriesRebinned(Curve aC, final String aName, int aNoOfBins, Range aR) {     
         Range r = null != aR ? aR: aC.getRangeX();                
         final int binSize = Math.max(1, (int)r.range() / aNoOfBins);

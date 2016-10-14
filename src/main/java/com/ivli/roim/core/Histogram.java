@@ -17,62 +17,94 @@
  */
 package com.ivli.roim.core;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  *
  * @author likhachev
  */
-public class Histogram extends HashMap<Integer, Integer> {    
-    public int iMin = Integer.MAX_VALUE;
-    public int iMax = Integer.MIN_VALUE;    
+public class Histogram extends ArrayList<Integer> {    
+    private int iMin = Integer.MAX_VALUE;
+    private int iMax = Integer.MIN_VALUE;    
     
+    private double iBinSize = 1.0;
+    private int iNoOfBins = 0;
+    
+    public Histogram(int[] aV, double aS) {
         
-    public Histogram(int[] aV, int aV0, int aS) {
+        iBinSize = aS;
+               
         for (int i = 0; i < aV.length; ++i)
-            this.put(aV0+i*aS, aV[i]);    
+            put(i, aV[i]);    
     }
     
     public Histogram(int[] aV) {
-        this(aV, 0, 1);  
+        this(aV, 1.);  
+    }
+       
+    public Histogram(int aNoOfBins) {     
+        iNoOfBins = aNoOfBins;
+        ensureCapacity(iNoOfBins);
+        
+        for(int i = 0; i < size(); ++i)
+            add(i, 0);
     }
     
-    public Histogram() 
-    {}
-    /**
-     *
-     * @param aKey
-     * @param aVal
-     */
-    public Integer put(final Integer aKey, final Integer aVal) {
-        if (aKey > iMax)
-            iMax = aKey;
-        if (aKey < iMin)
-            iMin = aKey;
-        
-        return super.put(aKey, aVal);
+    public int getNoOfBins() {
+        return this.size();
     }
- 
+    
+    public double getBinSize() {
+        return iBinSize;
+    }
+    
+    /**
+     * assigns values to a given bin
+     * @param aBin bin index to assign
+     * @param aVal value to assign to a bin
+     * @return assigned value
+     */
+    public Integer put(final Integer aBin, final Integer aVal) {
+        if (aVal > iMax)
+            iMax = aVal;
+        if (aVal < iMin)
+            iMin = aVal;
+       
+        super.add(aBin, aVal);
+        return  aVal;
+    }
+    
+    public Integer inc(final Integer aBin) {
+        Integer val = super.get(aBin) + 1;
+        
+        return put(aBin, val);
+    }
   
     /**
      *
-     * @param aNoOfBins
+     * @param rebin
      * @return
      */
-    public Histogram rebin(int aNoOfBins) {              
-        final int binSize = Math.max(1, (iMax-0) / aNoOfBins);
-     
+    /**/
+    public Histogram rebin(int aNoOfBins) throws IllegalArgumentException {                
+        if (aNoOfBins > size())
+            throw new IllegalArgumentException("number of bins must be less");
         
-        Histogram ret = new Histogram();
-             
-        for (int i=0; i < aNoOfBins; ++i) {
-            final Integer key = i * binSize; 
-            Integer val = get(key);
-            ret.put(key, null != val ? val:0);           
+        Histogram ret = new Histogram(aNoOfBins);
+                
+        int step = size() / aNoOfBins;
+        
+        for (int i = 0; i < aNoOfBins; ++i) {
+            int val = 0;
+            for (int j = 0; j<step; ++j) 
+                val += get(i+j); 
+            
+            ret.put(i, val); 
         }
         
         return ret;        
     }
+    
     
     public double min() {return iMin;}
     public double max() {return iMax;}

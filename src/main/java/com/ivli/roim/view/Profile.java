@@ -39,7 +39,7 @@ public class Profile extends ScreenObject {
         super("PROFILE", (Shape)aS, aV); //NOI18N 
         iFrameNumber = aV.getFrameNumber();
         iFrame = aV.getFrame();        
-        iHist = iFrame.processor().histogram(iShape.getBounds()); 
+        iHist = iFrame.processor().profile(iShape.getBounds()); 
     }
     
     @Override
@@ -55,7 +55,7 @@ public class Profile extends ScreenObject {
  
     @Override
     public void update(OverlayManager aM) {        
-        iHist = iFrame.processor().histogram(iShape.getBounds());      
+        iHist = iFrame.processor().profile(iShape.getBounds());      
     }            
     
     public int getFrameNumber() {
