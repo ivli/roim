@@ -23,6 +23,7 @@ import com.ivli.roim.events.ProgressNotifier;
 
 import com.amd.aparapi.Kernel;
 import com.amd.aparapi.Range;
+import java.util.concurrent.RecursiveAction;
 
 /**
  *
@@ -62,7 +63,7 @@ public class MIPProjector extends ProgressNotifier{
     }
                
     public void project() {
-        projectS();
+        projectS2();
     }
     
     private void projectS() {
@@ -103,6 +104,30 @@ public class MIPProjector extends ProgressNotifier{
         notifyProgressChanged(100);
     }
  
+    private void projectS2() {
+        
+        class PrjA extends RecursiveAction {
+            ImageFrame iOut;
+            int iPrj;
+        
+            PrjA(ImageFrame aOut, int aPrj){
+                iOut = aOut;
+                iPrj = aPrj;
+            }
+
+            protected void compute() {
+                projectOne(iPrj, iMIP.get(iPrj));
+            }
+        }
+        
+        
+        //for (int currProj = 0; currProj < iProjections; ++currProj)
+        //    projectOne(currProj, iMIP.get(currProj));
+        
+        
+        
+    }
+    
     public ImageFrame projectOne(int currProj, ImageFrame aF) {    
         final ImageFrame frm = aF;//iMIP.get(currProj);
         final int nSlices = iImage.getNumFrames();
