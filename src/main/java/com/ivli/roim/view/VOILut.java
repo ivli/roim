@@ -130,10 +130,10 @@ public class VOILut {
         }
     }       
     
-    public Curve getCurve() {        
+    public Curve getLUTCurve() {        
         Curve ret = new Curve();        
          
-        for (int i=0; i<iBuffer.length; ++i)
+        for (int i = 0; i < iBuffer.length; ++i)
             ret.add(i, (iBuffer[i] & 0xFF));
                 
         return ret;

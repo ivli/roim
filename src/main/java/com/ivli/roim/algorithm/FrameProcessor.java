@@ -23,6 +23,7 @@ import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.Measure;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.util.Arrays;
 /**
  *
  * @author likhachev
@@ -207,9 +208,8 @@ public class FrameProcessor {
             r = new Rectangle(0, 0, iFrame.getWidth(), iFrame.getHeight());          
         
         int bins[] = new int[r.width];
-        
-        for (int i=0; i < bins.length; ++i)
-            bins[i] = 0;
+              
+        Arrays.fill(bins, 0);
         
         for (int i = r.x; i < r.x + r.width; ++i) {    
             int val = 0;

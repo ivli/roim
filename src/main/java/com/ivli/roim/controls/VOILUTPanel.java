@@ -39,7 +39,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private final ImageView iView;
     
     private XYSeriesCollection makeLUTCurve() {                    
-        return new XYSeriesCollection(XYSeriesUtilities.getSeriesRebinned(iLUT.getCurve(), iCurveName, NO_OF_BINS, iView.getRange()));
+        return new XYSeriesCollection(XYSeriesUtilities.getSeriesRebinned(iCurveName, iLUT.getLUTCurve(), NO_OF_BINS, iView.getFrame().getMin(), iView.getFrame().getMax()));
     }
     
     private XYSeries makeHistogram() {  
@@ -63,7 +63,10 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         
         iLUT = new LUTControl();
         iLUT.attach(aP);
-
+        
+        iView.addWindowChangeListener(this);
+        iView.addWindowChangeListener(iLUT);
+        
         initComponents();
                
         XYPlot plot = new XYPlot();
@@ -90,10 +93,12 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
         
         JFreeChart jfc = new JFreeChart(plot); 
-                
+        
+        jfc.setBorderVisible(true);
+        jfc.removeLegend();
         iPanel = new ChartPanel(jfc);
         //iChart.setMouseWheelEnabled(true);
-                
+        //iPanel.s        
         iPanel.setSize(jPanel1.getPreferredSize());
         jPanel1.add(iPanel);//, java.awt.BorderLayout.CENTER);
               
@@ -101,19 +106,25 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         jPanel2.add(iLUT);
                 
         //aP.addWindowChangeListener(iLUT);
-        iLUT.addWindowChangeListener(this);
+        //iLUT.addWindowChangeListener(this);
         
         super.addAncestorListener(new AncestorListener() {
             public void ancestorAdded(AncestorEvent event) {}
 
             public void ancestorRemoved(AncestorEvent event){        
-                iLUT.removeWindowChangeListener(VOILUTPanel.this);            
+               // iLUT.removeWindowChangeListener(VOILUTPanel.this);    
+              //  iLUT.removeWindowChangeListener(VOILUTPanel.this);    
+                iView.removeWindowChangeListener(VOILUTPanel.this);
+                iView.removeWindowChangeListener(iLUT);
             }
 
             public void ancestorMoved(AncestorEvent event){}         
             });                
-              
-        validate();             
+          
+        iLabelMin.setText(String.format("%.0f", iView.getFrame().getMin()));
+        iLabelMax.setText(String.format("%.0f", iView.getFrame().getMax()));
+               
+        validate();  
     }
    
           
@@ -129,6 +140,10 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        iLabelMin = new javax.swing.JLabel();
+        iLabelMax = new javax.swing.JLabel();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setVerifyInputWhenFocusTarget(false);
@@ -141,7 +156,7 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 274, Short.MAX_VALUE)
+            .addGap(0, 278, Short.MAX_VALUE)
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(240, 240, 240)));
@@ -156,37 +171,66 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 253, Short.MAX_VALUE)
+            .addGap(0, 254, Short.MAX_VALUE)
         );
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
+        jLabel1.setText(bundle.getString("VOILUTPANEL.LABEL_MIN")); // NOI18N
+
+        jLabel2.setText(bundle.getString("VOILUTPANEL.LABEL_MAX")); // NOI18N
+
+        iLabelMin.setText("jLabel3");
+
+        iLabelMax.setText("jLabel4");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(iLabelMin)
+                            .addComponent(iLabelMax))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(iLabelMin))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(iLabelMax))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel iLabelMax;
+    private javax.swing.JLabel iLabelMin;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables

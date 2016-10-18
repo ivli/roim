@@ -596,7 +596,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         }
         
         jLabel2.setText(label2text);                                                                 
-        jLabel3.setText(String.format("%3.0f/%3.0f", iw.getRange().getMin(), iw.getRange().getMax())); // NOI18N
+        jLabel3.setText(String.format("%3.0f/%3.0f", iw.getFrame().getMin(), iw.getFrame().getMax())); // NOI18N
         
     }
   

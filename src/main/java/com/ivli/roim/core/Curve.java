@@ -42,6 +42,6 @@ public class Curve extends java.util.ArrayList<Integer> {
         super.add(aNdx, aVal);
     }
     
-    public Range getRangeX() {return new Range(iMinX, iMaxX);}
-    public Range getRangeY() {return new Range(iMinY, iMaxY);} 
+//    public Range getRangeX() {return new Range(iMinX, iMaxX);}
+//    public Range getRangeY() {return new Range(iMinY, iMaxY);} 
 }

@@ -41,7 +41,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.core.IMultiframeImage;
-import com.ivli.roim.core.Range;
+
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PresentationLUT;
@@ -425,7 +425,7 @@ public class ImageView extends JComponent implements IImageView {
             return false;
         } else {             
             iCurrent = aN;   
-            iVLUT.setWindow(new Window(iModel.get(iCurrent).getRange()));
+            iVLUT.setWindow(Window.fromRange(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));
             //iMgr.update();               
                    
             invalidateBuffer();
@@ -509,22 +509,25 @@ public class ImageView extends JComponent implements IImageView {
         iController.paint((Graphics2D)g); // must be the last in the paint chain   
     }
 
+    @Override
     public void setWindow(Window aW) {    
-        if (getFrame().getRange().contains(aW)) {
+        if (getFrame().getMin() <= aW.getBottom() && getFrame().getMax() >= aW.getTop()) {
             iVLUT.setWindow(aW);               
             invalidateBuffer();
-            notifyWindowChanged();       
+            notifyWindowChanged();   
+            repaint();
         }
     }
     
+    @Override
     public Window getWindow() {
         return iVLUT.getWindow();
     }
-
+/*
     public Range getRange() {
         return iModel.get(iCurrent).getRange();
     }
-
+*/
     public void setInverted(boolean aI) {          
         iVLUT.setInverted(aI);
         invalidateBuffer();

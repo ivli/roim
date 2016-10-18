@@ -23,15 +23,17 @@ import com.ivli.roim.algorithm.FrameProcessor;
  * 
  * @author likhachev
  */
-public class ImageFrame implements java.io.Serializable, Cloneable {
+public class ImageFrame implements java.io.Serializable, IImage, Cloneable {
     private static final long serialVersionUID = 042L;
    
+    private int iMin;
+    private int iMax;    
+    private double iIden;// = Double.NaN;
+    
+    private boolean iStatisticsIsValid = false;
+    
     private int iWidth;
     private int iHeight;
-    
-    private Range iRange = new Range(Double.NaN, Double.NaN);
-    private double iIden = Double.NaN;
-    
     private final int []iPixels;        
         
     public ImageFrame(int aWidth, int aHeight, int[] aPixels) {       
@@ -50,8 +52,10 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         ImageFrame ret = new ImageFrame(iWidth, iHeight); 
         System.arraycopy(getPixelData(), 0, ret.iPixels, 0, iWidth*iHeight);
        
-        ret.iRange = new Range(iRange);
         ret.iIden = iIden;
+        ret.iMin = iMin;
+        ret.iMax = iMax;
+        
         return ret;
     }
     
@@ -63,14 +67,20 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         return iHeight;
     }
        
-    public Range getRange() {
-        if (null == iRange || Double.isNaN(iIden))
+    public double getMin() {
+        if (!iStatisticsIsValid)
             computeStatistics();
-        return iRange;
+        return iMin;
+    }
+    
+    public double getMax() {
+        if (!iStatisticsIsValid)
+            computeStatistics();
+        return iMax;
     }
     
     public double getIden() {
-        if (Double.isNaN(iIden))
+       if (!iStatisticsIsValid)
             computeStatistics();
         return iIden;
     }
@@ -81,6 +91,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
 
     public final void set(int aX, int aY, int aV) {
         iPixels[aY*iWidth+aX] = aV;
+        iStatisticsIsValid = false;        
     }
     
     public final boolean isValidIndex(int aX, int aY) {
@@ -98,6 +109,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         if (!isValidIndex(aX, aY))
             throw new IndexOutOfBoundsException(String.format("bad index x=%d (%d), y=%d (%d)", aX, iWidth, aY, iHeight));  
         set(aX, aY, aV);
+        iStatisticsIsValid = false;
     }
     
     public ImageDataType getImageDataType() {
@@ -111,21 +123,20 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         return ImageDataType.GRAYS32;
     }
    
-    private void computeStatistics() throws IndexOutOfBoundsException { 
-        double Min = Double.MAX_VALUE; 
-        double Max = Double.MIN_VALUE; 
+    private void computeStatistics() {        
+        iMin = Integer.MAX_VALUE;
+        iMax = Integer.MIN_VALUE;
         iIden = .0;
         
         for (int i = 0; i < iPixels.length; ++i) {       
             final int temp = iPixels[i];
-            if (temp > Max) 
-                Max = temp;
-            if (temp < Min) 
-                Min = temp;
+            if (temp > iMax) 
+                iMax = temp;
+            if (temp < iMin) 
+                iMin = temp;
             iIden += temp;        
-        }
-        
-        iRange = new Range(Min, Max);
+        }  
+        iStatisticsIsValid = true;
     }
          
     public int[] getPixelData() {
@@ -137,11 +148,40 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         iHeight = aHeight;
         
         System.arraycopy(aPixels, 0, iPixels, 0, aWidth * aHeight);  
-        
-        iIden = Double.NaN;
+        iStatisticsIsValid = false;
     }
       
     public FrameProcessor processor(){
         return new FrameProcessor(this);
+    }
+
+    @Override
+    public int getNumFrames() {
+        return 1;
+    }
+
+    @Override
+    public ImageType getImageType() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public PixelSpacing getPixelSpacing() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public SliceSpacing getSliceSpacing() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public TimeSliceVector getTimeSliceVector() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public PValueTransform getRescaleTransform() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

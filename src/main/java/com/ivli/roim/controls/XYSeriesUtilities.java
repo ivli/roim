@@ -20,7 +20,6 @@ package com.ivli.roim.controls;
 import com.ivli.roim.algorithm.Algorithm;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.Histogram;
-import com.ivli.roim.core.Range;
 import java.util.function.Function;
 import org.jfree.data.xy.XYSeries;
 
@@ -271,14 +270,15 @@ class XYSeriesUtilities {
     }
     
     
-    public static XYSeries getSeriesRebinned(Curve aC, final String aName, int aNoOfBins, Range aR) {     
-        Range r = null != aR ? aR: aC.getRangeX();                
-        final int binSize = Math.max(1, (int)r.range() / aNoOfBins);
+    public static XYSeries getSeriesRebinned(final String aName, Curve aC, int aNoOfBins, double aMin, double aMax) {     
+        //Range r = null != aR ? aR: aC.getRangeX();
+        
+        final int binSize = Math.max(1, (int)(aMax-aMin) / aNoOfBins);
      
         XYSeries ret = new XYSeries(aName, true, false);
-        for (int i = (int)r.getMin(); i < r.getMax(); i += binSize) {    
-            Integer val = aC.get(i);
-            ret.add(i, val);           
+        
+        for (int i = (int)aMin; i < aMax; i += binSize) {                
+            ret.add(i, aC.get(i));           
         }
         
         return ret; 

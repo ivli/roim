@@ -115,44 +115,7 @@ public class ImageFrameTest {
         int result = instance.getHeight();
         assertEquals(expResult, result);      
     }
-
-    
-    /**
-     * Test of getIden method, of class ImageFrame.
-     */
-    @Test
-    public void testMinMaxGetIden() {
-        System.out.println("testGetMinMaxIden");
-        for (int k = 0; k < SIZES_X.length; ++k) {
-            System.out.printf("X=%d, Y=%d\n", SIZES_X[k], SIZES_Y[k]);
-            int size_x = SIZES_X[k];
-            int size_y = SIZES_Y[k];
-        
-            int []test = new int[size_x*size_y];
-
-            double min = Double.MAX_VALUE;
-            double max = Double.MIN_VALUE;
-            double sum = .0;
-
-            for (int i=0; i<test.length; ++i) {           
-                final int val = (int)(Math.random()*100);
-                test[i] = val;
-                
-                sum += val;
-                if (val < min)
-                    min = val;
-                if (val > max)
-                    max = val;
-            }
-
-            ImageFrame instance = new ImageFrame(size_x, size_y, test);
-            
-            assertEquals(min, instance.getRange().getMin(),  THETA);
-            assertEquals(max, instance.getRange().getMax(),  THETA);
-            assertEquals(sum, instance.getIden(), THETA);
-      }
-    }
-
+   
     /**
      * Test of get method, of class ImageFrame.
      */
@@ -372,10 +335,10 @@ public class ImageFrameTest {
     @Test
     public void testGetRange() {
         System.out.println("getRange");
-        ImageFrame instance = f1;
-        Range expResult = new Range(TestImage32x32.MIN, TestImage32x32.MAX);
-        Range result = instance.getRange();
-        assert(expResult.equals(result));        
+        ImageFrame instance = new ImageFrame(TestImage32x32.ROWS, TestImage32x32.COLS, TestImage32x32.BUFFER);
+        
+        assertEquals(TestImage32x32.MIN, instance.getMin(), .0);  
+        assertEquals(TestImage32x32.MAX, instance.getMax(), .0); 
     }
 
     /**

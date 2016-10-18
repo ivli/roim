@@ -23,7 +23,6 @@ import java.awt.RenderingHints;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import com.ivli.roim.core.IMultiframeImage;
-import com.ivli.roim.core.Range;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.core.Window;
 
@@ -91,14 +90,14 @@ public class GridImageView extends ImageView {
             Double min = Double.MAX_VALUE;
             Double max = Double.MIN_VALUE;
             
-            /* */
+            /* 
             for (int n = 0; n < iModel.getNumFrames(); ++n) {     
-                Range r = iModel.get(n).getRange();
+                Range r = iModel.get(n).getMax() - iModel.get(n).getMin();
                 min = Math.min(min, r.getMin()); 
                 max = Math.max(max, r.getMax());
             } 
-            
-            iVLUT.setWindow(new Window(new Range(min, max))); // frameChanged();
+            */
+            iVLUT.setWindow(Window.fromRange(min, max)); // frameChanged();
 
             iMgr.update();   
 

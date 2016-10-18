@@ -25,7 +25,7 @@ import com.ivli.roim.algorithm.ImageProcessor;
  * 
  * 
  */
-public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFrameProvider, Cloneable {          
+public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFrameProvider, IImage, Cloneable {          
     
     /**
      *    

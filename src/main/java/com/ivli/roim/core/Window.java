@@ -40,11 +40,18 @@ public class Window implements java.io.Serializable {
         iWidth = Math.max(MINIMAL_WINDOW_WIDTH, aW);   
     }
        
-    public Window(Range aR) {    
-        iWidth = aR.range() ;
-        iLevel = aR.getMin() + iWidth / 2.0;                
+    public void set(double aMin, double aMax) {    
+        iWidth = aMax - aMin ;
+        iLevel = (aMin + (aMax - aMin)) / 2.;                
     }
     
+    public static Window fromRange(double aMin, double aMax) {    
+        return new Window(aMin +(aMax - aMin)/2, aMax - aMin);                        
+    }
+    
+    public boolean within(double aMin, double aMax) {    
+        return  getTop() < aMax && getBottom() > aMin;                        
+    }
     /**
      *
      * @return
