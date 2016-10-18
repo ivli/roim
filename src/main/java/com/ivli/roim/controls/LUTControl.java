@@ -42,6 +42,7 @@ import com.ivli.roim.events.FrameChangeListener;
 import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
+//import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import javax.swing.ImageIcon;
@@ -161,18 +162,14 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     public void removeWindowChangeListener(WindowChangeListener aL) {
         iList.remove(WindowChangeListener.class, aL);       
     }
-    */
+    
     
     private void directChangeWindow(Window aW) {           
-       // iTop.setPosition((int) imageToScreen(aW.getTop()));
-       // iBottom.setPosition((int) imageToScreen(aW.getBottom()));              
-       // invalidateBuffer();
-              
         iView.setWindow(aW);        
-        //notifyWindowChange();
-        //iView.repaint();
+   
     }
-            
+    */
+    
     protected void notifyWindowChange() {
         WindowChangeEvent evt = new WindowChangeEvent(this, iView.getWindow());
         for (WindowChangeListener l : iList.getListeners(WindowChangeListener.class))            
@@ -209,7 +206,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
                //nw.scale(nr / or);                
             } 
             
-            directChangeWindow(nw);
+            iView.setWindow(nw);
             makeBuffer();     
         }         
     }   
@@ -228,7 +225,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         else {
             final Window win = new Window(iView.getWindow());                     
             win.setLevel(win.getLevel() - e.getWheelRotation());                 
-            directChangeWindow(win);
+            iView.setWindow(win);
         }            
     } 
     
@@ -271,21 +268,16 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
                         win.setBottom(win.getBottom() - delta);
                         updateMarkerAnnotation(new Point(aX, aY), win.getBottom());
                     }
-
-                    //if (win.within(iView.getFrame().getMin(), iView.getFrame().getMax())) 
-                        directChangeWindow(win); 
-
+                    
+                    iView.setWindow(win); 
                 }   
 
                 protected boolean DoWheel(int aX) {
                     final Window win = new Window(iView.getWindow());                     
 
                     win.setLevel(win.getLevel() - aX);                 
-
-                   // if (win.within(iView.getFrame().getMin(), iView.getFrame().getMax())) {
-                        if (null != iView) 
-                            directChangeWindow(win);
-                   // }
+                   
+                    iView.setWindow(win);                  
 
                     return false;
                 }
@@ -355,7 +347,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         if (SwingUtilities.isRightMouseButton(e)) 
             showPopupMenu(e.getX(), e.getY());
         else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)                                            
-            directChangeWindow(Window.fromRange(iView.getFrame().getMin(), iView.getFrame().getMax()));         
+            iView.setWindow(Window.fromRange(iView.getFrame().getMin(), iView.getFrame().getMax()));         
     }
 
     private ImageFrame iBackFrame;
@@ -511,17 +503,14 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         }
         
         JMenu m1 = new JMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.OPEN_BUILTIN_LUT"));
-        
-        
-       
-        for (String s : LutReader.getInstalledLUT()) {
-            
+ 
+        for (String s : LutReader.getInstalledLUT()) {            
             IndexColorModel icm = LutReader.open(s);
             BufferedImage buf = new BufferedImage(256, 16, TYPE_INT_RGB);
             WritableRaster r = buf.getRaster();
             
             for (int i = 0; i < 255; ++i) {
-                int[] components={0,0,0};
+                int[] components = {0, 0, 0};
                 for(int j = 0; j < 15; ++j)
                     r.setPixel(i, j, icm.getComponents(i, components, 0));
             }

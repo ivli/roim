@@ -29,19 +29,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Kernel;
 import java.awt.image.Raster;
 import java.awt.RenderingHints;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.JComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.ivli.roim.core.IMultiframeImage;
-
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PresentationLUT;
@@ -54,13 +47,14 @@ import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.IFrameProvider;
+import com.ivli.roim.core.IMultiframeImage;
 
 public class ImageView extends JComponent implements IImageView {
     private static final double DEFAULT_SCALE_X = 1.0;
     private static final double DEFAULT_SCALE_Y = 1.0;    
     private static final double MIN_SCALE = .01;
        
-    protected ZoomFit iFit;      //a method of initial fitting into the window       
+    protected ZoomFit iFit; //a method of initial fitting into the window       
     protected Object iInterpolation; //interpolation method   
     
     protected Point iOrigin; //image point [0,0] on the window implements panoramic transform 
@@ -79,6 +73,8 @@ public class ImageView extends JComponent implements IImageView {
         
     private final EventListenerList iListeners; //
 
+   
+    
     public static ImageView create(IMultiframeImage aI, ViewMode aMode) {        
         return create(aI, aMode, new ROIManager(aI, Uid.getNext(), false));    
     }
@@ -405,7 +401,8 @@ public class ImageView extends JComponent implements IImageView {
     public int getFrameNumber() {
         return iCurrent;
     }  
-           
+    
+    /*       
     protected BufferedImage createBufferedImage(ImageFrame aF) {               
         WritableRaster wr = Raster.createBandedRaster(DataBuffer.TYPE_INT, aF.getWidth(), aF.getHeight(), 1, new Point());        
         wr.setDataElements(0, 0, aF.getWidth(), aF.getHeight(), aF.getPixelData());
@@ -418,6 +415,7 @@ public class ImageView extends JComponent implements IImageView {
                                                          wr.getDataBuffer().getDataType()),                                                                                                                                                                                         
                                  wr, true, null);        
     }   
+    */
     
     @Override
     public boolean setFrameNumber(int aN) {                                
@@ -425,9 +423,7 @@ public class ImageView extends JComponent implements IImageView {
             return false;
         } else {             
             iCurrent = aN;   
-            iVLUT.setWindow(Window.fromRange(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));
-            //iMgr.update();               
-                   
+            iVLUT.setWindow(Window.fromRange(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));           
             invalidateBuffer();
             notifyFrameChanged();     
         }
@@ -435,7 +431,7 @@ public class ImageView extends JComponent implements IImageView {
         return true;
     }
     
-    double iZoomStep;
+    private double iZoomStep;
     
     public void zoom(double aFactor) {
         iFit = ZoomFit.NONE;        
@@ -445,30 +441,19 @@ public class ImageView extends JComponent implements IImageView {
      
     public void pan(int adX, int adY) {
         iOrigin.x += adX;
-        iOrigin.y += adY;
-       // repaint();
+        iOrigin.y += adY;       
     }
              
     public void reset() {
         iMgr.clear();
         iOrigin.x = iOrigin.y = 0;
         iZoom.setToScale(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);  
-        iFit = ZoomFit.PIXELS;//Settings.get(Settings.KEY_DEFAULT_IMAGE_SCALE, ZoomFit.PIXELS);
+        iFit = ZoomFit.PIXELS;
         invalidateBuffer();
     }    
-    
-    public static WritableRaster filter(Raster aR) {
-        final float[] emboss = new float[] { -2,0,0,   0,1,0,   0,0,2 };
-        final float[] blurring = new float[] { 1f/9f,1f/9f,1f/9f, 1f/9f,1f/9f,1f/9f, 1f/9f,1f/9f,1f/9f };
-        final float[] sharpening = new float[] { -1,-1,-1,   -1,9,-1,   -1,-1,-1 };
-        
-        Kernel kernel = new Kernel(3, 3, sharpening);
-        ConvolveOp op = new ConvolveOp(kernel);
-        return op.filter(aR, null);
-    }
-      
+             
     protected void invalidateBuffer() {
-        iBuf = null;
+        iBuf = null;       
     }
     
     protected void updateScale() {
@@ -489,32 +474,36 @@ public class ImageView extends JComponent implements IImageView {
                   
         iZoom.setToScale(scale, scale);  
     }                         
- 
-    protected void updateBufferedImage() {                  
+         
+    protected void updateBufferedImage() {
         updateScale();               
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);        
+        
+        
         iBuf2 = iVLUT.transform(iModel.get(iCurrent), iBuf2);
-        iBuf = z.filter(iBuf2, iBuf); 
+        
+        iBuf = z.filter(iBuf2, iBuf);         
     }
     
     @Override
-    public void paintComponent(Graphics g) {                   
+    public void paintComponent(Graphics g) {                           
         if (null == iBuf) 
             updateBufferedImage();
-              
+            
         g.drawImage(iBuf, iOrigin.x, iOrigin.y, iBuf.getWidth(), iBuf.getHeight(), null);       
-        ROIPainter p = new ROIPainter((Graphics2D)g, virtualToScreen(), this);
-        iMgr.paint(p);                        
+       
+        iMgr.paint(new ROIPainter((Graphics2D)g, virtualToScreen(), this));                        
         iController.paint((Graphics2D)g); // must be the last in the paint chain   
     }
 
     @Override
     public void setWindow(Window aW) {    
-        if (getFrame().getMin() <= aW.getBottom() && getFrame().getMax() >= aW.getTop()) {
-            iVLUT.setWindow(aW);               
-            invalidateBuffer();
-            notifyWindowChanged();   
+        if (aW.getBottom() >= getFrame().getMin() && aW.getTop() <= getFrame().getMax()) {
+            LOG.debug("set window" + aW.toString());
+            iVLUT.setWindow(aW); 
+            notifyWindowChanged(); 
+            invalidateBuffer();             
             repaint();
         }
     }
@@ -523,11 +512,7 @@ public class ImageView extends JComponent implements IImageView {
     public Window getWindow() {
         return iVLUT.getWindow();
     }
-/*
-    public Range getRange() {
-        return iModel.get(iCurrent).getRange();
-    }
-*/
+
     public void setInverted(boolean aI) {          
         iVLUT.setInverted(aI);
         invalidateBuffer();

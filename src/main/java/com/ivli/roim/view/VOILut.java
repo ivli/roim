@@ -1,6 +1,6 @@
 package com.ivli.roim.view;
 
-import com.ivli.roim.algorithm.Algorithm;
+import com.amd.aparapi.Kernel;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
@@ -8,7 +8,10 @@ import com.ivli.roim.core.PresentationLUT;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.util.function.Function;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class VOILut {        
     private static final double LUT_MIN   = .0;
@@ -82,23 +85,81 @@ public class VOILut {
     public boolean isLinear() {
         return iLinear;
     }
+        
     
-    //TODO: rewrite to work with ImageFrame instead of BufferedImage
+    class Transformer extends RecursiveAction {        
+        private static final int iThreshold = 512;
+       
+        ImageFrame iSrc;
+        WritableRaster iDst;
+        int iStart;
+        int iLength;       
+        
+        Transformer (ImageFrame aSrc, WritableRaster aDst, int aStart, int aLength) {
+            iSrc = aSrc;
+            iDst = aDst;
+            iStart = aStart;
+            iLength = aLength;
+        }
+                
+        protected void computeDirectly() {
+            final int width = iDst.getWidth();
+            for (int y = iStart; y < iStart + iLength; ++y) 
+                for (int x = 0; x < width; ++x)                          
+                   iDst.setPixel(x, y, iPlut.translate(iBuffer[iSrc.get(x, y)]));                       
+        }
+        
+        @Override
+        public void compute() {
+            if (iLength < iThreshold) {
+                computeDirectly();
+                return;
+            }
+
+            int split = iLength / 2;
+
+            invokeAll(new Transformer(iSrc, iDst, iStart, split),
+                      new Transformer(iSrc, iDst,  iStart + split, iLength - split 
+                      ));        
+        }
+    }
+   
+         
     public BufferedImage transform(ImageFrame aSrc, BufferedImage aDst) {        
         final int width = aSrc.getWidth();
         final int height = aSrc.getHeight();   
         
         if (aDst != null && (aDst.getWidth() != width || aDst.getHeight() != height || aDst.getType() != BufferedImage.TYPE_INT_RGB))
-            throw new IllegalArgumentException("Destination image must either be of the same dimentions or null");
+            throw new IllegalArgumentException("Destination image must either be an image of the same dimentions or null");
              
         BufferedImage ret = null != aDst ? aDst : new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         
         final WritableRaster dst = ret.getRaster();        
-                      
-        for (int y=0; y < height; ++y) 
-            for (int x=0; x < width; ++x)                          
-               dst.setPixel(x, y, iPlut.translate(iBuffer[aSrc.get(x, y)]));               
+       
+        long startTime, endTime;
+        
+        /**        
+        startTime = System.currentTimeMillis();
+       
+        for (int y = 0; y < height; ++y) 
+            for (int x = 0; x < width; ++x)                          
+               dst.setPixel(x, y, iPlut.translate(iBuffer[aSrc.get(x, y)]));                   
+        
+        endTime = System.currentTimeMillis();
+        
+        LOG.debug("working time sequential = " + (endTime - startTime));
+        
                 
+        **/
+               
+        startTime = System.currentTimeMillis();
+        
+        ForkJoinPool fp = new ForkJoinPool();
+        fp.invoke(new Transformer(aSrc, dst, 0, aSrc.getHeight()));        
+
+        endTime = System.currentTimeMillis();
+        LOG.debug("working time parallel = " + (endTime - startTime));
+       
         return ret;
     }
       
@@ -116,7 +177,7 @@ public class VOILut {
     }
  
     private void makeLUT() {             
-        for (int i=0; i<iBuffer.length; ++i) {          
+        for (int i = 0; i < iBuffer.length; ++i) {          
             final double PV = iPVt.transform(i);
             
             if (!isLinear()){    
@@ -137,5 +198,7 @@ public class VOILut {
             ret.add(i, (iBuffer[i] & 0xFF));
                 
         return ret;
-    }      
+    }
+    
+    private static final Logger LOG = LogManager.getLogger();
 } 
