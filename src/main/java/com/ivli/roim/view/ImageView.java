@@ -48,6 +48,11 @@ import com.ivli.roim.events.ZoomChangeListener;
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.IFrameProvider;
 import com.ivli.roim.core.IMultiframeImage;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+
 
 public class ImageView extends JComponent implements IImageView {
     private static final double DEFAULT_SCALE_X = 1.0;
@@ -284,6 +289,7 @@ public class ImageView extends JComponent implements IImageView {
         iVLUT.setTransform(iModel.getRescaleTransform());  
         //iMode = 
         setFrameNumber(iCurrent);
+        
     }
                  
     @Override
@@ -425,7 +431,8 @@ public class ImageView extends JComponent implements IImageView {
             iCurrent = aN;   
             iVLUT.setWindow(Window.fromRange(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));           
             invalidateBuffer();
-            notifyFrameChanged();     
+            notifyFrameChanged(); 
+            repaint();
         }
         
         return true;
@@ -474,23 +481,50 @@ public class ImageView extends JComponent implements IImageView {
                   
         iZoom.setToScale(scale, scale);  
     }                         
-         
+             
+    protected static BufferedImage createBufferedImage(ImageFrame aF) {               
+        WritableRaster wr = Raster.createBandedRaster(DataBuffer.TYPE_USHORT, aF.getWidth(), aF.getHeight(), 1, new Point());        
+        
+        short[] tmp = new short[aF.getWidth()*aF.getHeight()];
+        
+        for (int i=0; i < tmp.length; ++i)
+            tmp[i] = (short)(0xFFFF & aF.getPixelData()[i]);
+                
+        wr.setDataElements(0, 0, aF.getWidth(), aF.getHeight(), tmp);
+        
+        
+        
+        
+        ComponentColorModel ccm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),                                                               
+                                                         new int[] {16},
+                                                         false,		// has alpha
+                                                         false,		// alpha premultipled
+                                                         Transparency.OPAQUE,
+                                                         wr.getDataBuffer().getDataType());
+        
+       
+        return new BufferedImage(ccm, wr, true, null);        
+    }   
+    
     protected void updateBufferedImage() {
         updateScale();               
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);        
         
-        
-        iBuf2 = iVLUT.transform(iModel.get(iCurrent), iBuf2);
-        
+        BufferedImage b = createBufferedImage(iModel.get(iCurrent));
+        iBuf2 = iVLUT.transform(b, iBuf2);        
         iBuf = z.filter(iBuf2, iBuf);         
     }
     
     @Override
     public void paintComponent(Graphics g) {                           
-        if (null == iBuf) 
+        if (null == iBuf) {
+            long endTime, startTime = System.currentTimeMillis(); 
             updateBufferedImage();
-            
+            endTime = System.currentTimeMillis();
+            LOG.debug("buffer update took " + (endTime - startTime) + "millis");
+        }
+        
         g.drawImage(iBuf, iOrigin.x, iOrigin.y, iBuf.getWidth(), iBuf.getHeight(), null);       
        
         iMgr.paint(new ROIPainter((Graphics2D)g, virtualToScreen(), this));                        
@@ -499,10 +533,10 @@ public class ImageView extends JComponent implements IImageView {
 
     @Override
     public void setWindow(Window aW) {    
-        if (aW.getBottom() >= getFrame().getMin() && aW.getTop() <= getFrame().getMax()) {
-            LOG.debug("set window" + aW.toString());
+        if (aW.getBottom() >= getFrame().getMin() && aW.getTop() <= getFrame().getMax()) {            
+            notifyWindowChanged();
             iVLUT.setWindow(aW); 
-            notifyWindowChanged(); 
+             
             invalidateBuffer();             
             repaint();
         }
@@ -534,7 +568,7 @@ public class ImageView extends JComponent implements IImageView {
     }
        
     public BufferedImage transform (ImageFrame aSrc) {
-        return iVLUT.transform(aSrc, null);
+        return iVLUT.transform(createBufferedImage(aSrc), null);
     }
               
     private static final Logger LOG = LogManager.getLogger();

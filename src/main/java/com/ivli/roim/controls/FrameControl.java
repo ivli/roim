@@ -241,16 +241,17 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     
     final void setFrameByPosition(int aPos) {
         LOG.debug("set frame position = " + aPos );
+        boolean repaint = false;
         if (null == iView)
             iMarker.setPosition(aPos);
         else {
             if (!iDisplayImageUnits)
-                 iView.setFrameNumber((int)(iConv*(double)aPos)); 
+                iView.setFrameNumber((int)(iConv*(double)aPos)); 
             else {
                 if (iImageUnitsTime) 
                     iView.setFrameNumber(iView.getImage().getTimeSliceVector().frameNumber((long)(iConv*(double)aPos)));                    
                 else
-                   iView.setFrameNumber((int)(iConv*(double)aPos)); //TODO: 
+                    iView.setFrameNumber((int)(iConv*(double)aPos)); //TODO: 
             }
         }
     }

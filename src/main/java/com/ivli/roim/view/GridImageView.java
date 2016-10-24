@@ -126,7 +126,7 @@ public class GridImageView extends ImageView {
     @Override
     protected void updateBufferedImage() {                  
         updateScale();
-        
+        /*
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, getInterpolationMethod());
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);
                 
@@ -180,5 +180,6 @@ public class GridImageView extends ImageView {
                            
         iBuf = z.filter(tmp, null);      
         gc.dispose();
+*/
     }    
 }

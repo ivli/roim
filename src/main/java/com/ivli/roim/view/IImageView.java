@@ -51,12 +51,7 @@ public interface IImageView {
         HEIGHT,  //height      
         PIXELS;  //fit to display image pixel to pixel no matter how big it is
     }
-    
-    interface bufferMaker {
-        int getVisualWidth();
-        int getVisualHeight();    
-    }
-                
+   
     public void setFit(ZoomFit aW);
     
     public void pan(int aX, int aY);

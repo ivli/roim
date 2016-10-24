@@ -1,12 +1,11 @@
 package com.ivli.roim.view;
 
-import com.amd.aparapi.Kernel;
 import com.ivli.roim.core.Curve;
-import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
 import com.ivli.roim.core.PresentationLUT;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
@@ -29,7 +28,8 @@ public class VOILut {
     private boolean iLinear; 
     
     private final int []iBuffer;   
-       
+    static ForkJoinPool fp = new ForkJoinPool();
+    
     public VOILut(PValueTransform aPVT, Window aWin, PresentationLUT aLUT) {
         iInverted = false;
         iLinear = true;
@@ -55,7 +55,7 @@ public class VOILut {
     }
     
     public final void setLUT(PresentationLUT aLUT) { 
-        iPlut = (null !=aLUT) ? aLUT : PresentationLUT.create(null);;
+        iPlut = (null != aLUT) ? aLUT : PresentationLUT.create(null);
         makeLUT();
     }
         
@@ -85,17 +85,16 @@ public class VOILut {
     public boolean isLinear() {
         return iLinear;
     }
-        
-    
+            
     class Transformer extends RecursiveAction {        
-        private static final int iThreshold = 512;
+        private static final int iThreshold = 1024;
        
-        ImageFrame iSrc;
+        BufferedImage iSrc;
         WritableRaster iDst;
         int iStart;
         int iLength;       
         
-        Transformer (ImageFrame aSrc, WritableRaster aDst, int aStart, int aLength) {
+        Transformer (BufferedImage aSrc, WritableRaster aDst, int aStart, int aLength) {
             iSrc = aSrc;
             iDst = aDst;
             iStart = aStart;
@@ -104,9 +103,11 @@ public class VOILut {
                 
         protected void computeDirectly() {
             final int width = iDst.getWidth();
+            DataBuffer src = iSrc.getRaster().getDataBuffer();
+            
             for (int y = iStart; y < iStart + iLength; ++y) 
                 for (int x = 0; x < width; ++x)                          
-                   iDst.setPixel(x, y, iPlut.translate(iBuffer[iSrc.get(x, y)]));                       
+                   iDst.setPixel(x, y, iPlut.translate(iBuffer[src.getElem(0, x + width*y)]));                       
         }
         
         @Override
@@ -125,7 +126,7 @@ public class VOILut {
     }
    
          
-    public BufferedImage transform(ImageFrame aSrc, BufferedImage aDst) {        
+    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {        
         final int width = aSrc.getWidth();
         final int height = aSrc.getHeight();   
         
@@ -135,31 +136,22 @@ public class VOILut {
         BufferedImage ret = null != aDst ? aDst : new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         
         final WritableRaster dst = ret.getRaster();        
-       
-        long startTime, endTime;
-        
-        /**        
-        startTime = System.currentTimeMillis();
-       
-        for (int y = 0; y < height; ++y) 
-            for (int x = 0; x < width; ++x)                          
-               dst.setPixel(x, y, iPlut.translate(iBuffer[aSrc.get(x, y)]));                   
-        
-        endTime = System.currentTimeMillis();
-        
-        LOG.debug("working time sequential = " + (endTime - startTime));
-        
-                
+       /**
+        DataBuffer src = aSrc.getRaster().getDataBuffer(); 
+        for (int y = 0; y < height; ++y) {
+            final int n1 = width * y;
+            for (int x = 0; x < width; ++x) {
+               final int ndx = x + n1; 
+               final int []rgb = iPlut.translate(iBuffer[src.getElem(0, ndx)]);
+               dst.setPixel(x, y, rgb);
+            }
+        }
+      
         **/
-               
-        startTime = System.currentTimeMillis();
-        
-        ForkJoinPool fp = new ForkJoinPool();
+       
         fp.invoke(new Transformer(aSrc, dst, 0, aSrc.getHeight()));        
 
-        endTime = System.currentTimeMillis();
-        LOG.debug("working time parallel = " + (endTime - startTime));
-       
+        
         return ret;
     }
       
