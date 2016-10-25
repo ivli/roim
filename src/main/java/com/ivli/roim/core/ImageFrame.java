@@ -59,20 +59,24 @@ public class ImageFrame implements java.io.Serializable, IImage, Cloneable {
         return ret;
     }
     
+    @Override
     public int getWidth() {
         return iWidth;
     }
     
+    @Override
     public int getHeight() {
         return iHeight;
     }
        
+    @Override
     public double getMin() {
         if (!iStatisticsIsValid)
             computeStatistics();
         return iMin;
     }
     
+    @Override
     public double getMax() {
         if (!iStatisticsIsValid)
             computeStatistics();

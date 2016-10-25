@@ -68,8 +68,7 @@ class Controller implements IController {
         }
        
         protected boolean DoWheel(int aX) {
-            iControlled.zoom(-aX);
-            //iControlled.repaint();
+            iControlled.zoom(-aX);            
             return true;
         }
     }
@@ -87,8 +86,7 @@ class Controller implements IController {
             if (!first) {
                 final double x = iShape.getX();
                 final double y = iShape.getY();
-                iShape.setFrame(x, y, aX - x, aY - y);                             
-                iControlled.repaint();
+                iShape.setFrame(x, y, aX - x, aY - y);                                             
             } else {
                 iShape.setFrame(aX, aY, 0,0); 
                 first = false;
@@ -96,8 +94,7 @@ class Controller implements IController {
         }
 
         public boolean DoRelease(int aX, int aY) {
-            iControlled.getROIMgr().createROI(iShape, iControlled);
-            iControlled.repaint();
+            iControlled.getROIMgr().createROI(iShape, iControlled);            
             return false;
         }
         
@@ -111,32 +108,28 @@ class Controller implements IController {
         switch (aType){   
             case MOUSE_ACTION_WINDOW: 
                 return new BaseActionItem(aX, aY) {
-                    public void DoAction(int aX, int aY) {                        
-                       iControlled.setWindow(new Window(iControlled.getWindow().getLevel() + iY - aY, iControlled.getWindow().getWidth() + aX - iX));
-                       iControlled.repaint();
+                    public void DoAction(int aX, int aY) {   
+                       final double mx = (iControlled.getFrame().getMax() - iControlled.getFrame().getMin()) / 256.;
+                       Window w = new Window(iControlled.getWindow().getLevel() + (iY - aY) * mx, 
+                                             iControlled.getWindow().getWidth() + (aX - iX) * mx); 
+                       LOG.debug("request to change window to: " + w);
+                       iControlled.setWindow(w);                        
                 }}; 
             case MOUSE_ACTION_ZOOM: 
                 return new BaseActionItem(aX, aY) {
                     public void DoAction(int aX, int aY) {
-                        iControlled.zoom((aX-iX));
-                        iControlled.repaint();
+                        iControlled.zoom((aX - iX));
+                        
                 }};  
             case MOUSE_ACTION_PAN: 
                 return new BaseActionItem(aX, aY) {
                     public void DoAction(int aX, int aY) {
                         iControlled.pan(aX-iX, aY-iY);
-                        iControlled.repaint();
+                        //iControlled.repaint();
                 }};                 
             case MOUSE_ACTION_LIST: return new BaseActionItem(aX, aY) {
-                public void DoAction(int aX, int aY) {
-                    //try {                            
-                        iControlled.setFrameNumber(iControlled.getFrameNumber() + 1 * (int)Math.signum(aX));
-                            //iX += aX; 
-                            //iControlled.repaint();
-                        
-                    //} catch (IndexOutOfBoundsException ex) {
-                    //    LOG.info(ex);
-                    //}
+                public void DoAction(int aX, int aY) {                                          
+                        iControlled.setFrameNumber(iControlled.getFrameNumber() + 1 * (int)Math.signum(aX));                        
                 }}; 
             case MOUSE_ACTION_WHEEL: 
             case MOUSE_ACTION_ROI: 

@@ -125,6 +125,7 @@ public class MultiframeImage extends IMultiframeImage   {
     protected void computeStatistics() {                        
         iMin = iProvider.getMin();
         iMax = iProvider.getMax();
+    //TODO: handle the situation min/max not present in DICOM - what to do? calculate through entire seri?        
     }
    
     public ImageDataType getImageDataType() {

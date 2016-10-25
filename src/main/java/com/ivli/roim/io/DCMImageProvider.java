@@ -199,14 +199,14 @@ class DCMImageProvider implements IImageProvider {
 
      @Override
     public double getMin() {
-        double ret = iDataSet.getInt(Tag.SmallestImagePixelValue, 0);
+        double ret = iDataSet.getDouble(Tag.SmallestImagePixelValue, Double.NaN);
         //double ret2 = iDataSet.getInt(Tag.SmallestPixelValueInSeries, 0);
         return ret;
     }
 
      @Override
     public double getMax() {
-        double ret = iDataSet.getInt(Tag.LargestImagePixelValue, Integer.MAX_VALUE);
+        double ret = iDataSet.getDouble(Tag.LargestImagePixelValue, Double.NaN);
         //double ret2 = iDataSet.getInt(Tag.LargestPixelValueInSeries, Integer.MAX_VALUE);
         return ret;
     }

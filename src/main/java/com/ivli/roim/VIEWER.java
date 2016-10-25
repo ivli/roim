@@ -113,6 +113,20 @@ public class VIEWER extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     
+    private void openFile(String aFileName) {
+        jPanel1.removeAll();
+
+        IMultiframeImage dcm = ImageFactory.create(aFileName);                                 
+        ImageView image = ImageView.create(dcm, ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
+        jPanel1.setLayout(new BorderLayout());
+        jPanel1.add(image, BorderLayout.CENTER);
+        LUTControl lc = LUTControl.create(image);
+        lc.enableToolTips(false);
+        jPanel1.add(lc, BorderLayout.LINE_END);           
+        //jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);                
+        jPanel1.validate();
+        jPanel1.repaint();
+    }
     
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         FileDialog fd = new FileDialog(this, "Choose", FileDialog.LOAD);            
@@ -126,11 +140,13 @@ public class VIEWER extends javax.swing.JFrame {
             jPanel1.removeAll();
             
             IMultiframeImage dcm = ImageFactory.create(fd.getDirectory() + fd.getFile());                                 
-            ImageView image = ImageView.create(dcm, ImageView.DEFAULT_VOLUME_IMAGE_MODE); //ImageView.create(mi, root);                       
+            ImageView image = ImageView.create(dcm, ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
             jPanel1.setLayout(new BorderLayout());
             jPanel1.add(image, BorderLayout.CENTER);
-            jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);           
-            jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);                
+            //LUTControl lc = LUTControl.create(image);
+            //lc.enableToolTips(false);
+            //jPanel1.add(lc, BorderLayout.LINE_END);           
+            //jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);                
             jPanel1.validate();
             jPanel1.repaint();
         }
@@ -186,7 +202,10 @@ public class VIEWER extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VIEWER().setVisible(true);
+                VIEWER w = new VIEWER();
+                if (args.length > 0)
+                    w.openFile(args[0]);
+                w.setVisible(true);
             }
         });
     }

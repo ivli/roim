@@ -1,11 +1,11 @@
 package com.ivli.roim.view;
 
 import com.ivli.roim.core.Curve;
+import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
 import com.ivli.roim.core.PresentationLUT;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
@@ -23,29 +23,38 @@ public class VOILut {
     private static final double SIGMOID_SKEW = -8;
     private PValueTransform iPVt;
     private PresentationLUT iPlut;
-    private Window iWin;    
+    private Window  iWin;    
     private boolean iInverted;            
     private boolean iLinear; 
     
-    private final int []iBuffer;   
-    static ForkJoinPool fp = new ForkJoinPool();
+    private final byte []iBuffer; // W/L LUT   
+    
+    private int []iRGBBuffer; // Presentation LUT
+    
+    static ForkJoinPool fjp = new ForkJoinPool();
     
     public VOILut(PValueTransform aPVT, Window aWin, PresentationLUT aLUT) {
         iInverted = false;
         iLinear = true;
         iPVt = aPVT;
-        iBuffer = new int[IMAGESPACE_SIZE];
+               
         iPlut = (null != aLUT) ? aLUT : PresentationLUT.create(null);
-        iWin = aWin;                  
+        iWin = aWin;  
+                 
+        iBuffer = new byte[IMAGESPACE_SIZE];
+        iRGBBuffer = iPlut.asArray(null);
     }  
     
     public VOILut(PresentationLUT aLUT) {
         iInverted = false;
         iLinear = true;
         iPVt = PValueTransform.DEFAULT_TRANSFORM;        
-        iBuffer = new int[IMAGESPACE_SIZE];       
+             
         iPlut = (null !=aLUT) ? aLUT : PresentationLUT.create(null);
-        iWin = new Window(0, IMAGESPACE_SIZE);                        
+        iWin = new Window(0, IMAGESPACE_SIZE);    
+        
+        iBuffer = new byte[IMAGESPACE_SIZE];  
+        iRGBBuffer = iPlut.asArray(null);
     }  
     
     public void setTransform(PValueTransform aT) {
@@ -87,27 +96,23 @@ public class VOILut {
     }
             
     class Transformer extends RecursiveAction {        
-        private static final int iThreshold = 1024;
+        private static final int iThreshold = 4096*1200;
        
-        BufferedImage iSrc;
-        WritableRaster iDst;
+        int[] iSrc;
+        int[] iDst;
         int iStart;
         int iLength;       
         
-        Transformer (BufferedImage aSrc, WritableRaster aDst, int aStart, int aLength) {
+        Transformer (int[] aSrc, int[] aDst, int aStart, int aLength) {
             iSrc = aSrc;
             iDst = aDst;
             iStart = aStart;
             iLength = aLength;
         }
                 
-        protected void computeDirectly() {
-            final int width = iDst.getWidth();
-            DataBuffer src = iSrc.getRaster().getDataBuffer();
-            
-            for (int y = iStart; y < iStart + iLength; ++y) 
-                for (int x = 0; x < width; ++x)                          
-                   iDst.setPixel(x, y, iPlut.translate(iBuffer[src.getElem(0, x + width*y)]));                       
+        protected void computeDirectly() {          
+            for (int i = iStart; i < iStart + iLength; ++i)                         
+                iDst[i] = iRGBBuffer[0xff & (int)iBuffer[iSrc[i]]];            
         }
         
         @Override
@@ -123,38 +128,54 @@ public class VOILut {
                       new Transformer(iSrc, iDst,  iStart + split, iLength - split 
                       ));        
         }
-    }
-   
+    }   
          
-    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {        
+    private BufferedImage transform(ImageFrame aSrc, BufferedImage aDst) {        
         final int width = aSrc.getWidth();
         final int height = aSrc.getHeight();   
         
         if (aDst != null && (aDst.getWidth() != width || aDst.getHeight() != height || aDst.getType() != BufferedImage.TYPE_INT_RGB))
             throw new IllegalArgumentException("Destination image must either be an image of the same dimentions or null");
              
-        BufferedImage ret = null != aDst ? aDst : new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        
-        final WritableRaster dst = ret.getRaster();        
-       /**
-        DataBuffer src = aSrc.getRaster().getDataBuffer(); 
-        for (int y = 0; y < height; ++y) {
-            final int n1 = width * y;
-            for (int x = 0; x < width; ++x) {
-               final int ndx = x + n1; 
-               final int []rgb = iPlut.translate(iBuffer[src.getElem(0, ndx)]);
-               dst.setPixel(x, y, rgb);
-            }
-        }
-      
-        **/
+        BufferedImage ret = null != aDst ? aDst : new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);                  
        
-        fp.invoke(new Transformer(aSrc, dst, 0, aSrc.getHeight()));        
-
+        int[] dst = new int[aSrc.getPixelData().length];
+        
+        fjp.invoke(new Transformer(aSrc.getPixelData(), dst, 0, dst.length));   
+        
+        
+        ret.getRaster().setDataElements(0, 0, width, height, dst);
         
         return ret;
     }
       
+    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {        
+        final int width = aSrc.getWidth();
+        final int height = aSrc.getHeight();   
+        
+        BufferedImage ret = aDst;
+        
+        if (aDst == null) {
+            ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB); 
+        } else {
+            if(aDst.getWidth() != width || aDst.getHeight() != height)
+                throw new IllegalArgumentException("Destination image must either be an image of the same dimentions or null");
+            if (aDst.getType() != BufferedImage.TYPE_INT_RGB)
+               throw new IllegalArgumentException("Destination image must be of TYPE_INT_RGB"); 
+        } 
+        
+        final int[] src = (int[])aSrc.getData().getDataElements(0, 0, width, height, null);           
+        
+        final int[] dst = new int[src.length];        
+        
+        for (int i = 0; i < src.length; ++i)                         
+            dst[i] = iRGBBuffer[0x0ff & (int)iBuffer[src[i]]];   
+        
+        ret.getRaster().setDataElements(0, 0, width, height, dst);
+        
+        return ret;
+    }
+    
     private int linVal(double PV) {  
         if (PV <= iWin.getBottom()) 
             return GREYSCALES_MIN;
@@ -173,14 +194,15 @@ public class VOILut {
             final double PV = iPVt.transform(i);
             
             if (!isLinear()){    
-                iBuffer[i] = logVal(PV);
+                iBuffer[i] = (byte)logVal(PV);
             } else {                              
                 if (!isInverted())                
-                    iBuffer[i] = linVal(PV);  
+                    iBuffer[i] = (byte)linVal(PV);  
                 else
-                    iBuffer[i] = (GREYSCALES_MAX - linVal(PV));                                                                                                   
+                    iBuffer[i] = (byte)(GREYSCALES_MAX - linVal(PV));                                                                                                   
             }   
         }
+        iRGBBuffer = iPlut.asArray(iRGBBuffer);
     }       
     
     public Curve getLUTCurve() {        

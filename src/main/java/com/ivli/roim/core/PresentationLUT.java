@@ -23,7 +23,7 @@ import com.ivli.roim.io.LutReader;
  */
 public class PresentationLUT {
     
-    private final int [][] iRGBBuffer;
+    final int [][] iRGBBuffer;
     
     PresentationLUT(){
         iRGBBuffer = new int[LutReader.TABLE_SIZE][3];
@@ -59,5 +59,18 @@ public class PresentationLUT {
     public int[] translate(int aNdx) {
         return iRGBBuffer[aNdx];
     }
-    
+     
+    public int[] asArray(int [] anArray) {     
+        int []ret;
+        
+        if (null == anArray)
+            ret = new int [LutReader.TABLE_SIZE];
+        else
+            ret = anArray;
+        
+        for (int i=0; i < iRGBBuffer.length; ++i)             
+            ret[i] = (0xff & (int)iRGBBuffer[i][0]) << 16 | (0xff & (int)iRGBBuffer[i][1]) << 8 | 0xff & (int)iRGBBuffer[i][2];
+       
+        return ret;
+    }
 }

@@ -68,8 +68,8 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
    
     protected final EventListenerList iList;
     
-    private boolean iAnnotateMarker = true;
-    private boolean iAnnotationShowPercents = true;
+    private boolean iShowToolTips = true;
+    private boolean iToolTipsInPercents = true;
     
     //private Range iRange;    
     private final Marker iTop;
@@ -312,8 +312,8 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
             popup = null;
         }
         
-        if (iAnnotateMarker && iActive && null != aPosition) {
-            String text = !iAnnotationShowPercents ? String.format("%.0f", aVal): //NOI18N
+        if (iShowToolTips && iActive && null != aPosition) {
+            String text = !iToolTipsInPercents ? String.format("%.0f", aVal): //NOI18N
                 String.format("%.0f%%", aVal / (iView.getFrame().getMax() - iView.getFrame().getMin()) * 100.); //NOI18N
             //LOG.debug("value = " + aVal + ", width = " + iView.getRange(). getRange().getWidth());
             iTip.setTipText(text);
@@ -350,19 +350,19 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
             iView.setWindow(Window.fromRange(iView.getFrame().getMin(), iView.getFrame().getMax()));         
     }
 
-    private ImageFrame iBackFrame;
+    private BufferedImage iBackFrame;
     
     private void makeBuffer() {
-        final int width  = getWidth()  - (LEFT_GAP + RIGHT_GAP);
+        final int width  = getWidth() - (LEFT_GAP + RIGHT_GAP);
         final int height = getHeight() - (TOP_GAP + BOTTOM_GAP);               
         
-        iBackFrame = new ImageFrame(width, height);
+        iBackFrame = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         
         final double ratio = (iView.getFrame().getMax() - iView.getFrame().getMin()) / height;
         
         for (int i = 0; i < width; ++i) {                  
             for (int j = 0; j < height; ++j) {                                     
-                iBackFrame.setPixel(i, j, (int)((height - j) * ratio));
+                iBackFrame.setRGB(i, j, (int)((height - j) * ratio));
             }                      
         }
     }
@@ -429,10 +429,10 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {    
             case KCOMMAND_ANNOTATE_MARKER: 
-                iAnnotateMarker = !iAnnotateMarker;
+                iShowToolTips = !iShowToolTips;
                 break;
             case KCOMMAND_ANNOTATE_PERCENTS: 
-                iAnnotationShowPercents = !iAnnotationShowPercents;
+                toolTipsInPercents(!iToolTipsInPercents);
                 break;
             case KCOMMAND_TRIGGER_LINEAR: 
                 iView.setLinear(!iView.isLinear());
@@ -531,18 +531,32 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         JCheckBoxMenuItem mi15 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.KCOMMAND_ANNOTATE_MARKER"));
         mi15.addActionListener(this);
         mi15.setActionCommand(KCOMMAND_ANNOTATE_MARKER); 
-        mi15.setState(iAnnotateMarker);
+        mi15.setState(iShowToolTips);
         mnu.add(mi15);
         
         JCheckBoxMenuItem mi16 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.KCOMMAND_ANNOTATE_PERCENTS"));
         mi16.addActionListener(this);
         mi16.setActionCommand(KCOMMAND_ANNOTATE_PERCENTS); 
-        mi16.setState(iAnnotationShowPercents);
+        mi16.setState(iToolTipsInPercents);
         mnu.add(mi16);
         
         mnu.show(this, aX, aY);
     }   
 
     private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
+
+    /**
+     * @param iShowToolTips the iShowToolTips to set
+     */
+    public void enableToolTips(boolean iShowToolTips) {
+        this.iShowToolTips = iShowToolTips;
+    }
+
+    /**
+     * @param iTooleTipsInPercents the iTooleTipsInPercents to set
+     */
+    public void toolTipsInPercents(boolean iToolTipsInPercents) {
+        this.iToolTipsInPercents = iToolTipsInPercents;
+    }
 }
 
