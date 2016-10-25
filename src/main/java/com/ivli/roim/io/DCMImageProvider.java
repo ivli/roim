@@ -135,6 +135,8 @@ class DCMImageProvider implements IImageProvider {
             return 1;
         else if (getModality() == Modality.CT && getImageType() == ImageType.AXIAL)
             return 1;
+        else if (getModality() == Modality.UNKNOWN)
+            return 1;
         return iDataSet.getInt(Tag.NumberOfFrames, 0);      
     }
      
@@ -199,21 +201,17 @@ class DCMImageProvider implements IImageProvider {
 
      @Override
     public double getMin() {
-        double ret = iDataSet.getDouble(Tag.SmallestImagePixelValue, Double.NaN);
-        //double ret2 = iDataSet.getInt(Tag.SmallestPixelValueInSeries, 0);
-        return ret;
+        return iDataSet.getDouble(Tag.SmallestImagePixelValue, Double.NaN);       
     }
 
      @Override
     public double getMax() {
-        double ret = iDataSet.getDouble(Tag.LargestImagePixelValue, Double.NaN);
-        //double ret2 = iDataSet.getInt(Tag.LargestPixelValueInSeries, Integer.MAX_VALUE);
-        return ret;
+        return iDataSet.getDouble(Tag.LargestImagePixelValue, Double.NaN);       
     }
 
      @Override
     public ImageType getImageType() {
-        Object o = iDataSet.getValue(Tag.ImageType);        
+        Object o = iDataSet.getValue(Tag.ImageType);    //TODO: use getString    
         return ImageType.create((null != o) ? new String((byte[])o) : "");
     }
 

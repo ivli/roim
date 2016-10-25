@@ -12,7 +12,6 @@ import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.controls.ROIListPanel;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
-import com.ivli.roim.core.ImageType;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FileDialog;
@@ -117,9 +116,9 @@ public class VIEWER extends javax.swing.JFrame {
         jPanel1.removeAll();
 
         IMultiframeImage dcm = ImageFactory.create(aFileName);                                 
-        ImageView image = ImageView.create(dcm, ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
+        ImageView image = ImageView.create(dcm, ImageView.DEFAULT_IMAGE_MODE);                    
         jPanel1.setLayout(new BorderLayout());
-        jPanel1.add(image, BorderLayout.CENTER);
+        jPanel1.add(image, BorderLayout.CENTER);  
         LUTControl lc = LUTControl.create(image);
         lc.enableToolTips(false);
         jPanel1.add(lc, BorderLayout.LINE_END);           
@@ -136,19 +135,9 @@ public class VIEWER extends javax.swing.JFrame {
 
         fd.setVisible(true);
 
-        if (null != fd.getFile()) {         
-            jPanel1.removeAll();
+        if (null != fd.getFile()) {                     
+            openFile(fd.getDirectory() + fd.getFile());                                 
             
-            IMultiframeImage dcm = ImageFactory.create(fd.getDirectory() + fd.getFile());                                 
-            ImageView image = ImageView.create(dcm, ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
-            jPanel1.setLayout(new BorderLayout());
-            jPanel1.add(image, BorderLayout.CENTER);
-            //LUTControl lc = LUTControl.create(image);
-            //lc.enableToolTips(false);
-            //jPanel1.add(lc, BorderLayout.LINE_END);           
-            //jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);                
-            jPanel1.validate();
-            jPanel1.repaint();
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 

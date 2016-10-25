@@ -68,7 +68,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
    
     protected final EventListenerList iList;
     
-    private boolean iShowToolTips = true;
+    private boolean iShowToolTips = false;
     private boolean iToolTipsInPercents = true;
     
     //private Range iRange;    
@@ -89,12 +89,11 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     }
     
     protected LUTControl() { 
-        iTop    = new Marker("images/knob_horz.png", true);  //NOI18N
+        iTop = new Marker("images/knob_horz.png", true);  //NOI18N
         iBottom = new Marker("images/knob_horz.png", true);  //NOI18N
         iList = new EventListenerList();
         TOP_GAP= iTop.getMarkerSize()/2;
-        BOTTOM_GAP = iBottom.getMarkerSize()/2; //to the case images of different height are used 
-        //iRange  = null;        
+        BOTTOM_GAP = iBottom.getMarkerSize()/2; //to the case images of different height are used                
         iCanShowDialog = true;        
     }
           
@@ -102,9 +101,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         construct(aParent.iView);
         
         iCanShowDialog = false;
-        
-        //aParent.addWindowChangeListener(this);
-        
+      
         super.addAncestorListener(new AncestorListener() {
             public void ancestorAdded(AncestorEvent event) {}
 

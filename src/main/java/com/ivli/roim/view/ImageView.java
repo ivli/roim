@@ -490,6 +490,7 @@ public class ImageView extends JComponent implements IImageView {
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);        
        
+       
         ImageFrame frm = iModel.get(iCurrent);
         
         BufferedImage bi = new BufferedImage(frm.getWidth(), frm.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -500,7 +501,7 @@ public class ImageView extends JComponent implements IImageView {
         /* /* 
         iBuf2 = iVLUT.transform(iModel.get(iCurrent), iBuf2);        
         iBuf = z.filter(iBuf2, iBuf);         
-       */
+        */ 
     }
     
     @Override

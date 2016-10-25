@@ -152,8 +152,8 @@ public class VOILut {
     public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {        
         final int width = aSrc.getWidth();
         final int height = aSrc.getHeight();   
-        
-        BufferedImage ret = aDst;
+        LOG.debug("transform: w =" + width + ", h=" + height);
+        BufferedImage ret;
         
         if (aDst == null) {
             ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB); 
@@ -162,10 +162,10 @@ public class VOILut {
                 throw new IllegalArgumentException("Destination image must either be an image of the same dimentions or null");
             if (aDst.getType() != BufferedImage.TYPE_INT_RGB)
                throw new IllegalArgumentException("Destination image must be of TYPE_INT_RGB"); 
+             ret = aDst;
         } 
         
-        final int[] src = (int[])aSrc.getData().getDataElements(0, 0, width, height, null);           
-        
+        final int[] src = (int[])aSrc.getData().getDataElements(0, 0, width, height, null);                   
         final int[] dst = new int[src.length];        
         
         for (int i = 0; i < src.length; ++i)                         
