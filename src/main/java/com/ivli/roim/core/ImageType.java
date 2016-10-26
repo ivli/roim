@@ -21,6 +21,15 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
+
+///see C.7.6.1.1.2 Image Type
+/// a. Pixel Attributes
+/// ORIGINAL|DERIVED
+/// b. Patient examination
+/// PRIMARY|SECONDARY
+/// c. Modality Specific Characteristics
+/// for NM 
+/// d. Implementation specific identifiers
 public enum ImageType {   
     IMAGE("IMAGE"),
     //NM
@@ -37,36 +46,60 @@ public enum ImageType {
     LOCALIZER("LOCALIZER"),
     UNKNOWN("UNKNOWN");
     
+    static final String ORIGINAL = "ORIGINAL";
+    static final String DERIVED = "DERIVED";
+    static final String PRIMARY = "PRIMARY";
+    static final String SECONDARY = "SECONDARY";
+    
     protected final String iName;
-    protected boolean iDerived;
+    
+    protected boolean iOriginal = true;
+    protected boolean iPrimary = true; 
     
     private ImageType(String aN) {               
         iName = aN;
-        iDerived = false;
     }    
  
     public String getName() {
         return iName;
     }
     
-    public void setDerived(boolean aD) {
-        iDerived = aD;
+    private void setDerived() {
+        iOriginal = false;
     } 
     
-    public boolean isDerived() {
-        return iDerived;
+    private void setSecondary() {
+        iPrimary = false;
+    } 
+    
+    private boolean isPrimary() {
+        return iPrimary;
+    } 
+    
+    public boolean isOriginal() {
+        return iOriginal;
     }
-        
-    static public ImageType create(String aDicomString) {        
+      
+    static public ImageType create(String[] aDicomString) {        
         if (null != aDicomString) {                        
             ImageType ret; 
             
+            boolean original = false;
+            boolean primary = false;
+            
+            if (aDicomString[0].equalsIgnoreCase("ORIGINAL"))
+                original = true;
+            
+            if (aDicomString[1].equalsIgnoreCase("PRIMARY"))
+                primary = true;
+            
             for(ImageType t : ImageType.values())
-                if (aDicomString.contains(t.getName())) {
+                if (aDicomString[2].contains(t.getName())) {
                     ret = t;
-                    if (aDicomString.contains("DERIVED"))
-                        ret.setDerived(true);
-                    
+                    if (!original)
+                        t.setDerived();
+                    if(!primary)
+                        t.setSecondary();
                     return ret;
                 }            
         }

@@ -70,15 +70,14 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     
     private boolean iShowToolTips = false;
     private boolean iToolTipsInPercents = true;
-    
-    //private Range iRange;    
+            
     private final Marker iTop;
     private final Marker iBottom;
     private ActionItem iAction;
     private BufferedImage iBuf;
       
     private boolean iCanShowDialog;
-    private ImageView  iView;                 
+    private ImageView iView;                 
         
     public static LUTControl create(ImageView aV) {
         LUTControl ret = new LUTControl();

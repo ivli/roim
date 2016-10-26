@@ -211,8 +211,9 @@ class DCMImageProvider implements IImageProvider {
 
      @Override
     public ImageType getImageType() {
-        Object o = iDataSet.getValue(Tag.ImageType);    //TODO: use getString    
-        return ImageType.create((null != o) ? new String((byte[])o) : "");
+        Object o = iDataSet.getValue(Tag.ImageType);    //TODO: use getString  
+        String[] s = iDataSet.getStrings(Tag.ImageType);
+        return ImageType.create(s);
     }
 
      @Override
