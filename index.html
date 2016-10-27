@@ -77,10 +77,8 @@ Using this tool it becomes possible to extrapolate experimental data in many cas
 Visualization provides different rendering methods namely nearest neighbourhood, bilinear and bicubic it is especially important since NM images usually have quite low resolution, thus, zooming them in would look quite unpleasant on the screen. 
 Reconstructed SPECT (3D) studies can be displayed either as a stack of slices (usually transaxial) or using <b>MIP</b> method.
   
-The library employs <a href=http://www.dcm4che.org/>DCM4CHE</a> library to handle DICOM data and <a href=https://aparapi.github.io/>aparapi</a> to engage GPU into data processing. 
-Finally the library includes several applications for the sake of illustration of the basic concepts and principles behind the design.  
-
-
+The library relies on <a href=http://www.dcm4che.org/>DCM4CHE</a> to handle DICOM data and <a href=https://aparapi.github.io/>aparapi</a> to employ GPU based data processing. 
+Finally the library includes several applications to illustrate basic concepts and principles behind the design.  
 
 <h3>2. LUT Control</h3>
 The picture below shows LUT control in the action with open menu. A number of options are available to made reading as much comfortable as possible.
@@ -90,7 +88,9 @@ displayed values are either in arbitrary units or percents.
 <img src="images/LUTControl.png" alt="LUT control - main screen" style="width:640px;height:448px;">
 
 <h3>3. Frame Selector</h3>
-The Frame selector is meant for navigating through time scale. It can measure frames or milliseconds from either beginning of the whole study or a particular phase (for multiphase studies only).
+The Frame selector is meant for navigating through the image. Depending on image type it measures either time or space.     
+Time scale can show milliseconds from either beginning of the whole study or a particular phase (for multiphase studies only).
+Of course, there is a mode in which it operates purely with frames.
   
 
 <h3>4. Application</h3>
@@ -98,7 +98,9 @@ The Frame selector is meant for navigating through time scale. It can measure fr
 This application is meant for dealing with data of dynamic acquisitions such as renal clearance or gastric emptying studies. 
 The screen is split into two parts left one is tab control displaying image as a stack of frames (shown), <i>composite image</i> and grid of frames in subsequent tabs.
 Right part is occupied the chart control displaying activity curves of two ROIs and extrapolation of one of them.        
+
 <br> <b><i>SIC</b>: application requires JDK <b><u>8 </u></b> to run <br> 
+
 <h3>5. Images</h3>
 There are some DICOM files available: 
 <ul>
