@@ -43,6 +43,7 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
 import com.ivli.roim.events.*;
 import com.ivli.roim.view.ImageViewGroup;
+import com.ivli.roim.view.ViewMode;
 import javax.swing.JPanel;
 
 import org.apache.logging.log4j.LogManager;
@@ -394,7 +395,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
        
         iGroup = ImageViewGroup.create(anImage);
        
-        ImageView image = iGroup.createView(ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
+        ImageView image = iGroup.createView(ViewMode.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(image, BorderLayout.CENTER);
         jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
@@ -402,7 +403,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jPanel1.validate(); 
         
         if (anImage.getNumFrames() > 1) {
-            ImageView sumView = iGroup.createView(ImageView.DEFAULT_COMPOSITE_IMAGE_MODE); //ImageView.create(sum, root);
+            ImageView sumView = iGroup.createView(ViewMode.DEFAULT_COMPOSITE_IMAGE_MODE); //ImageView.create(sum, root);
             jPanel3.add(sumView, BorderLayout.CENTER);
             jPanel3.add(LUTControl.create(sumView), BorderLayout.LINE_END);
             jPanel3.validate(); 
@@ -413,7 +414,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
             jTabbedPane1.setEnabledAt(1, false);
         }
         //CHART        
-        if (anImage.getImageType() == ImageType.DYNAMIC) {
+        if (anImage.getImageType().getTypeName().equals(ImageType.NM_DYNAMIC)) {
             iChart = ChartView.create();                    
             iChart.setPreferredSize(jPanel5.getPreferredSize());
             jPanel5.add(iChart);      
@@ -577,20 +578,20 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         
         String label2text;
         
-        switch (iw.getImage().getImageType()) {
-            case DYNAMIC: {
+        switch (iw.getImage().getImageType().getTypeName()) {
+            case ImageType.NM_DYNAMIC: {
                 TimeSlice ts = iw.getImage().getTimeSliceVector().getSlice(aE.getFrame());
                 label2text = String.format("%s - %s", ts.getFrom().format(), ts.getTo().format());
             } break;
-            case WHOLEBODY: {
+            case ImageType.NM_WHOLEBODY: {
                 label2text = aE.getFrame() == 0 ? "ANT" : "POST";
             } break;
-            case TOMO: //fall-through
-            case VOLUME:{
+            case ImageType.NM_TOMO: //fall-through
+            case ImageType.NM_VOLUME:{
                 label2text = String.format("%d", aE.getFrame());
             } break;
                 
-            case STATIC: //fall-through
+            case ImageType.NM_STATIC: //fall-through
             default: label2text = "---"; break;
 
         }

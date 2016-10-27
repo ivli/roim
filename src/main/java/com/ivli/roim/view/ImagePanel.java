@@ -15,26 +15,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.core;
+package com.ivli.roim.view;
+
+import com.ivli.roim.controls.FrameControl;
+import com.ivli.roim.controls.LUTControl;
+import com.ivli.roim.core.IMultiframeImage;
+import javax.swing.JPanel;
 
 /**
  *
  * @author likhachev
  */
-public enum Modality {
-    NM("NM"),
-    CR("CR"),
-    CT("CT"),
-    MR("MR"),
-    UNKNOWN("UNKNOWN");
+public class ImagePanel extends JPanel{    
+    ImageView iView;
+    LUTControl iLut;
+    FrameControl iFrame;
     
-    private Modality(final String aName) {
-        iName = aName;
+    ImagePanel(IMultiframeImage anImage) {
+    
     }
-    
-    public String getName() {
-        return iName;
-    }
-    
-    private final String iName;
 }

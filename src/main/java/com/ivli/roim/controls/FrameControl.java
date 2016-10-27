@@ -120,13 +120,17 @@ public class FrameControl extends JComponent implements FrameChangeListener, Act
     private void construct(ImageView aW) {    
         iView = aW;    
         
+        /*
         switch(aW.getImage().getImageType()) {
             case DYNAMIC: //TODO: check logic about gated and the rest of image types
                 iImageUnitsTime = true; break;
             default:
                 iImageUnitsTime = false;
         }
-            
+        */
+        
+        //aW.getImage().getTimeSliceVector()
+        
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {   
                 iBuf = null; 

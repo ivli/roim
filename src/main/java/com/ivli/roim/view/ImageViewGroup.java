@@ -38,7 +38,7 @@ public class ImageViewGroup {
         iImage = anImage;
         iViews = new ArrayList<>();
         iUid = Uid.getNext();
-        iMgr = new ROIManager(iImage, iUid, iImage.getImageType() == ImageType.STATIC);        
+        iMgr = new ROIManager(iImage, iUid, false);        
     }
     
     public ROIManager getROIMgr() {
@@ -50,7 +50,7 @@ public class ImageViewGroup {
         return ret;
     }
     
-    public ImageView createView(ImageView.ViewMode aMode) {
+    public ImageView createView(ViewMode aMode) {
         ImageView ret = ImageView.create(iImage, aMode, iMgr);
         iViews.add(ret);
         return ret;

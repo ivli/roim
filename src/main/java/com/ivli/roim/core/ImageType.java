@@ -21,89 +21,90 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
+public class ImageType {          
+    public static final ImageType UNKNOWN = new ImageType(new String[]{}) {@Override public String toString() {return _UNKNOWN;}};
+    // see C.7.6.1.1.2 Image Type
+    // a. Pixel Data Characteristics
+    private static final String ORIGINAL = "ORIGINAL";
+    private static final String DERIVED = "DERIVED";
+    // CT and MR C.8.16.1.1
+    private static final String MIXED = "MIXED"; 
+    
+    // b. Patient Examination Characteristics
+    private static final String PRIMARY = "PRIMARY";    
+    private static final String SECONDARY = "SECONDARY";
+    
 
-///see C.7.6.1.1.2 Image Type
-/// a. Pixel Attributes
-/// ORIGINAL|DERIVED
-/// b. Patient examination
-/// PRIMARY|SECONDARY
-/// c. Modality Specific Characteristics
-/// for NM 
-/// d. Implementation specific identifiers
-public enum ImageType {   
-    IMAGE("IMAGE"),
-    //NM
-    STATIC("STATIC"),        
-    DYNAMIC("DYNAMIC"), 
-    GATED("DYNAMIC/GATED"), 
-    WHOLEBODY("WHOLE BODY"),
-    TOMO("TOMO"),
-    TOMO_G("TOMO/GATED"),
-    VOLUME("RECON TOMO"),
-    VOLUME_G("RECON TOMO/GATED"),
-    //CR/CT
-    AXIAL("AXIAL"),
-    LOCALIZER("LOCALIZER"),
-    UNKNOWN("UNKNOWN");
+    // c. Modality Specific Characteristics
+    public final static String _UNKNOWN = "UNKNOWN";
+    public final static String _IMAGE = "IMAGE";      
+    //NM C.8.4.9.1.1
+    public final static String NM_STATIC = "STATIC";        
+    public final static String NM_DYNAMIC = "DYNAMIC"; 
+    public final static String NM_GATED = "GATED"; 
+    public final static String NM_WHOLEBODY = "WHOLE BODY";
+    public final static String NM_TOMO = "TOMO";
+    public final static String NM_TOMO_G = "GATED TOMO";
+    public final static String NM_VOLUME = "RECON TOMO";
+    public final static String NM_VOLUME_G = "RECON GATED TOMO";
+    //CR/MR C.8.16.1.3 
+    public final static String CT_AXIAL = "AXIAL";
+    public final static String CT_LOCALIZER = "LOCALIZER";
+    ///TBC...
     
-    static final String ORIGINAL = "ORIGINAL";
-    static final String DERIVED = "DERIVED";
-    static final String PRIMARY = "PRIMARY";
-    static final String SECONDARY = "SECONDARY";
+    // d. Implementation specific identifiers
+    // NM 
+    public final static String EMISSION  = "EMISSION";
+    public final static String TRANSMISSION = "TRANSMISSION";
     
-    protected final String iName;
+    private static final String SEPARATOR = "\\";
     
-    protected boolean iOriginal = true;
-    protected boolean iPrimary = true; 
-    
-    private ImageType(String aN) {               
-        iName = aN;
+    // a. Pixel Data Characteristics    
+    protected String iPixels;     
+    // b. Patient Examination Characteristics
+    protected String iPatient;     
+    // c. Modality Specific Characteristics    
+    protected String iName;        
+    // d. Implementation specific identifiers    
+    protected String iSpecifics;
+
+    private ImageType(String[] aN) {            
+        switch(aN.length) {  
+            case 4:        
+                iSpecifics = aN[3];                
+            case 3: 
+                iName = aN[2];          
+            case 2:
+                iPatient = aN[1];
+                iPixels = aN[0];                
+            case 1:
+            default: break;
+        }       
     }    
- 
-    public String getName() {
+           
+    public String getTypeName() {
         return iName;
     }
-    
-    private void setDerived() {
-        iOriginal = false;
-    } 
-    
-    private void setSecondary() {
-        iPrimary = false;
-    } 
-    
-    private boolean isPrimary() {
-        return iPrimary;
+          
+    public boolean isPrimary() {
+        return iPixels.equalsIgnoreCase(PRIMARY);
     } 
     
     public boolean isOriginal() {
-        return iOriginal;
+        return iPatient.equalsIgnoreCase(ORIGINAL);
     }
       
     static public ImageType create(String[] aDicomString) {        
-        if (null != aDicomString) {                        
-            ImageType ret; 
-            
-            boolean original = false;
-            boolean primary = false;
-            
-            if (aDicomString[0].equalsIgnoreCase("ORIGINAL"))
-                original = true;
-            
-            if (aDicomString[1].equalsIgnoreCase("PRIMARY"))
-                primary = true;
-            
-            for(ImageType t : ImageType.values())
-                if (aDicomString[2].contains(t.getName())) {
-                    ret = t;
-                    if (!original)
-                        t.setDerived();
-                    if(!primary)
-                        t.setSecondary();
-                    return ret;
-                }            
-        }
-       
-        return ImageType.UNKNOWN;   
+        if (null != aDicomString)                        
+            return new ImageType(aDicomString);
+ 
+        return UNKNOWN;   
+    }
+    
+    @Override
+    public String toString() {   
+        return iPixels + SEPARATOR + iPatient
+             + (null != iName ? SEPARATOR + iName 
+              + (null != iSpecifics ? SEPARATOR + iSpecifics : "") : "");                            
     }
 }

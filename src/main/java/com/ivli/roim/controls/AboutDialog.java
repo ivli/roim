@@ -22,7 +22,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import static com.ivli.roim.core.ImageType.DYNAMIC;
+
 /**
  *
  * @author likhachev

@@ -116,7 +116,7 @@ public class VIEWER extends javax.swing.JFrame {
         jPanel1.removeAll();
 
         IMultiframeImage dcm = ImageFactory.create(aFileName);                                 
-        ImageView image = ImageView.create(dcm, ImageView.DEFAULT_IMAGE_MODE);                    
+        ImageView image = ImageView.create(dcm, ViewMode.DEFAULT_IMAGE_MODE);                    
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(image, BorderLayout.CENTER);  
         LUTControl lc = LUTControl.create(image);

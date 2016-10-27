@@ -99,14 +99,12 @@ class DCMImageProvider implements IImageProvider {
     }
     
     public Modality getModality() {
-        Object o = iDataSet.getValue(Tag.Modality);        
+        String s = iDataSet.getString(Tag.Modality);        
+
+        for(Modality t : Modality.values())
+            if (s.contains(t.getName()))
+                return t;
         
-        if (null != o) {            
-            final String s = new String((byte[])o);
-            for(Modality t : Modality.values())
-                if (s.contains(t.iName))
-                    return t;
-        }
         return Modality.UNKNOWN;
     }
     
@@ -131,13 +129,15 @@ class DCMImageProvider implements IImageProvider {
     }
    
     public int getNumFrames() {     
-        if (getModality() == Modality.CR)
-            return 1;
-        else if (getModality() == Modality.CT && getImageType() == ImageType.AXIAL)
-            return 1;
-        else if (getModality() == Modality.UNKNOWN)
-            return 1;
-        return iDataSet.getInt(Tag.NumberOfFrames, 0);      
+        switch (getModality()) {
+            case NM:        
+                return iDataSet.getInt(Tag.NumberOfFrames, 0);  
+            case CT:
+            case MR:
+            default:    
+            ///if (getImageType() == ImageType.AXIAL)
+                return 1;    
+        }
     }
      
     public ImageDataType getImageDataType() {
@@ -210,10 +210,8 @@ class DCMImageProvider implements IImageProvider {
     }
 
      @Override
-    public ImageType getImageType() {
-        Object o = iDataSet.getValue(Tag.ImageType);    //TODO: use getString  
-        String[] s = iDataSet.getStrings(Tag.ImageType);
-        return ImageType.create(s);
+    public ImageType getImageType() {                
+        return ImageType.create(iDataSet.getStrings(Tag.ImageType));
     }
 
      @Override

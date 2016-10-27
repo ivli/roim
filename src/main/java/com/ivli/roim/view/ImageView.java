@@ -48,6 +48,7 @@ import com.ivli.roim.events.ZoomChangeListener;
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.IFrameProvider;
 import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.ImageType;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.ComponentColorModel;
@@ -135,107 +136,16 @@ public class ImageView extends JComponent implements IImageView {
         addKeyListener(iController);
     }
     
-    enum VIEWMODETYPE {
-        DEFAULT, //
-        FRAME, // display single frame of a number 
-        CINE,  // display single frame, can move from first to last
-        RANGE, // display single frame, can move within the range
-        COMPOSITE, // composite frame (a summ of frames within the range)
-        SLICE, // single slice at a number
-        VOLUME // MIP volume
-    }
-
-    public static class ViewMode {
-        public static final ViewMode DEFAULT = new ViewMode(VIEWMODETYPE.DEFAULT, IFrameProvider.FIRST, IFrameProvider.LAST);
-                
-        public static ViewMode frame(int aFrameNumber) {
-            return new ViewMode(VIEWMODETYPE.FRAME, aFrameNumber, IFrameProvider.LAST);
-        }
-        
-        public static ViewMode cine() {
-            return new ViewMode(VIEWMODETYPE.CINE, IFrameProvider.FIRST, IFrameProvider.LAST);
-        }
-        
-        public static ViewMode range(int aFrom, int aTo) {
-            return new ViewMode(VIEWMODETYPE.RANGE, aFrom, aTo);
-        }
-        
-        public static ViewMode composite(int aSummFrom, int aSummTo) {
-            return new ViewMode(VIEWMODETYPE.COMPOSITE, aSummFrom, aSummTo);
-        }
-        
-        public static ViewMode slice(int aSliceNumber) {
-            return new ViewMode(VIEWMODETYPE.FRAME, aSliceNumber, IFrameProvider.LAST);
-        }
-        
-        public static ViewMode volume(int aSliceFrom, int aSliceTo) {
-            return new ViewMode(VIEWMODETYPE.VOLUME, aSliceFrom, aSliceTo);
-        }
-        
-        public boolean isCompatible(IMultiframeImage aI) {           
-            switch (iType) {            
-                case FRAME: 
-                    switch (aI.getImageType()) {
-                        case IMAGE:
-                        case STATIC:
-                        case DYNAMIC:
-                        case GATED:
-                        case WHOLEBODY:
-                            if (aI.hasAt(iFrameFrom))
-                                return true;                   
-                    }                
-                case CINE:  
-                case RANGE:
-                case COMPOSITE:
-                    switch (aI.getImageType()) {                        
-                        case DYNAMIC:
-                        case GATED:     
-                            if (aI.hasAt(iFrameFrom) && aI.hasAt(iFrameTo))
-                                return true;                   
-                    }                
-                
-                case SLICE:  ///break;  
-                case VOLUME:  
-                    switch (aI.getImageType()) {                        
-                        case VOLUME:
-                        case VOLUME_G:                       
-                            return true;                   
-                    }  
-                case DEFAULT:
-                    return true;
-            }
-            
-            return false;
-        }
-        
-        private ViewMode(VIEWMODETYPE aType, int aF, int aT) {
-            iType = aType;
-            iFrameFrom = aF;
-            iFrameTo = aT;
-        }
-        
-        VIEWMODETYPE iType;
-        int iFrameFrom;
-        int iFrameTo;
-    }
+    
     
     protected ViewMode iMode = ViewMode.DEFAULT;
     
-    public static final ViewMode DEFAULT_IMAGE_MODE = ViewMode.frame(0);
-    public static final ViewMode DEFAULT_STATIC_IMAGE_MODE = ViewMode.frame(0);
-    public static final ViewMode DEFAULT_DYNAMIC_IMAGE_MODE = ViewMode.cine();
-    public static final ViewMode DEFAULT_TOMO_IMAGE_MODE = ViewMode.cine();
-    public static final ViewMode DEFAULT_VOLUME_IMAGE_MODE = ViewMode.volume(0, -1);
-    public static final ViewMode DEFAULT_COMPOSITE_IMAGE_MODE = ViewMode.composite(IFrameProvider.FIRST, IFrameProvider.LAST);
-    
-    public static final ViewMode DEFAULT_DUNAMIC_SECOND_IMAGE_MODE = DEFAULT_COMPOSITE_IMAGE_MODE;    
-    public static final ViewMode DEFAULT_TOMO_SECOND_IMAGE_MODE = DEFAULT_VOLUME_IMAGE_MODE;
-        
     
     public void setViewMode(ViewMode aM) {
-        if (null != aM && aM.isCompatible(iModel) && aM != DEFAULT_IMAGE_MODE) {
+        if (null != aM && aM.isCompatible(iModel) && aM != ViewMode.DEFAULT_IMAGE_MODE) {
             iMode = aM;
         } else {
+            /*
             switch (iModel.getImageType()) {
                 case IMAGE:            
                 case STATIC:    
@@ -253,7 +163,7 @@ public class ImageView extends JComponent implements IImageView {
                 case AXIAL:
                 case LOCALIZER:
                 case UNKNOWN:  
-            }
+            }*/
         } 
         
         switch (iMode.iType) {        

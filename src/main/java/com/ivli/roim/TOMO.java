@@ -22,9 +22,10 @@ import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.controls.ROIListPanel;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
-import static com.ivli.roim.core.ImageType.GATED;
+import com.ivli.roim.core.ImageType;
 import com.ivli.roim.view.IImageView;
 import com.ivli.roim.view.ImageView;
+import com.ivli.roim.view.ViewMode;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FileDialog;
@@ -127,13 +128,13 @@ public class TOMO extends javax.swing.JFrame {
             jPanel1.removeAll();
 
             IMultiframeImage dcm = ImageFactory.create(fd.getDirectory() + fd.getFile());
-            ImageView image = ImageView.create(dcm, ImageView.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);
+            ImageView image = ImageView.create(dcm, ViewMode.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);
             jPanel1.setLayout(new BorderLayout());
             jPanel1.add(image, BorderLayout.CENTER);
             jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
-            switch (dcm.getImageType()){
-                case DYNAMIC:
-                case GATED:
+            switch (dcm.getImageType().getTypeName()){
+                case ImageType.NM_DYNAMIC:
+                case ImageType.NM_GATED:
                 jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);
                 break;
                 default:

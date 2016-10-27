@@ -11,6 +11,7 @@ import com.ivli.roim.core.Series;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.FrameOffsetVector;
 import com.ivli.roim.core.FrameOffset;
+import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.TimeSliceVector;
 import java.awt.Rectangle;
 /**
@@ -19,14 +20,14 @@ import java.awt.Rectangle;
  */
 public class CurveExtractor {    
     public static SeriesCollection extract(IMultiframeImage anImage, ROI aRoi, FrameOffsetVector anOff) {
-        switch (anImage.getImageType()) {            
-            case TOMO:
-            case TOMO_G:
-            case VOLUME:       
-            case VOLUME_G:    
+        switch (anImage.getImageType().getTypeName()) {            
+            case ImageType.NM_TOMO:
+            case ImageType.NM_TOMO_G:
+            case ImageType.NM_VOLUME:       
+            case ImageType.NM_VOLUME_G:    
                 return extract_tomo(anImage, aRoi, anOff);
-            case STATIC:
-            case DYNAMIC:
+            case ImageType.NM_STATIC:
+            case ImageType.NM_DYNAMIC:
             default: 
                 return extract_dynamic(anImage, aRoi, anOff);    
         }
