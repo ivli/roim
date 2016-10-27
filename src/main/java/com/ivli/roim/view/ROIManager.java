@@ -131,9 +131,8 @@ public class ROIManager extends OverlayManager {
                 if (iLhs.equals(anEvt.getObject()) || iRhs.equals(anEvt.getObject())) {
                     switch (anEvt.getCode()) {
                         case MOVED: //cheat
-                           // update((OverlayManager)anEvt.getExtra());
-                           // notifyROIChanged(ROIChangeEvent.ROIMOVED, anEvt.getExtra()); break;
-                        //TODO;
+                            update(ROIManager.this);
+                            notifyROIChanged(this, OverlayChangeEvent.CODE.MOVED, null); break;                       
                         default: break;
                     }
                 }            

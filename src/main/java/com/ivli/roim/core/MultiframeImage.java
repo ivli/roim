@@ -100,7 +100,7 @@ public class MultiframeImage extends IMultiframeImage   {
         iNumFrames = 1;           
         iPixelSpacing = PixelSpacing.UNITY_PIXEL_SPACING;
         iTimeSliceVector = TimeSliceVector.ONESHOT; 
-        iPVT = PValueTransform.DEFAULT_TRANSFORM;
+        iPVT = PValueTransform.DEFAULT;
         iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames);    
     }
     

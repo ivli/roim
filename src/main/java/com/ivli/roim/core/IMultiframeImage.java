@@ -17,8 +17,6 @@
  */
 package com.ivli.roim.core;
 
-import com.ivli.roim.algorithm.ImageProcessor;
-
 /**
  *
  * @author likhachev
@@ -31,7 +29,7 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFramePr
      *    
      * @return ImageProcessor - providing means of image manipulations
      */
-    public abstract ImageProcessor processor();
+    public abstract com.ivli.roim.algorithm.ImageProcessor processor();
     
     /**
      *    

@@ -22,7 +22,7 @@ package com.ivli.roim.core;
  * @author likhachev
  */
 public interface IImage {
-   /**
+    /**
      *
      * @return image width in pixels
      */
@@ -57,12 +57,12 @@ public interface IImage {
     PixelSpacing getPixelSpacing();  
     /**
      *
-     * @return for TOMO RECON images - physical slice thickness 
+     * @return  physical slice thickness 
      */
     SliceSpacing getSliceSpacing();    
     /**
      *
-     * @return for DYNAMIC images - temporal characteristics of multiframe image 
+     * @return  an instance of TimeSliceVector class carrying all temporal characteristics of the image 
      */
     TimeSliceVector getTimeSliceVector();            
     /**

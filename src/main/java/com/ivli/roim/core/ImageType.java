@@ -34,7 +34,6 @@ public class ImageType {
     private static final String PRIMARY = "PRIMARY";    
     private static final String SECONDARY = "SECONDARY";
     
-
     // c. Modality Specific Characteristics
     public final static String _UNKNOWN = "UNKNOWN";
     public final static String _IMAGE = "IMAGE";      
@@ -64,16 +63,16 @@ public class ImageType {
     // b. Patient Examination Characteristics
     protected String iPatient;     
     // c. Modality Specific Characteristics    
-    protected String iName;        
+    protected String iTypeName;        
     // d. Implementation specific identifiers    
-    protected String iSpecifics;
+    protected String iImplementationSpecific;
 
     private ImageType(String[] aN) {            
         switch(aN.length) {  
             case 4:        
-                iSpecifics = aN[3];                
+                iImplementationSpecific = aN[3];                
             case 3: 
-                iName = aN[2];          
+                iTypeName = aN[2];          
             case 2:
                 iPatient = aN[1];
                 iPixels = aN[0];                
@@ -83,7 +82,7 @@ public class ImageType {
     }    
            
     public String getTypeName() {
-        return iName;
+        return iTypeName;
     }
           
     public boolean isPrimary() {
@@ -94,6 +93,24 @@ public class ImageType {
         return iPatient.equalsIgnoreCase(ORIGINAL);
     }
       
+    public int getDimensions() {
+        switch (iTypeName) {
+            case NM_STATIC: return 2;
+            case NM_WHOLEBODY: return 2;
+            
+            case NM_DYNAMIC: return 3;
+            case NM_GATED: return 3;            
+            
+            case NM_TOMO: return 3;
+            case NM_VOLUME: return 3;                        
+            
+            case NM_TOMO_G: return 4;            
+            case NM_VOLUME_G: return 4;
+            default:
+                return 2;
+        } 
+    }
+    
     static public ImageType create(String[] aDicomString) {        
         if (null != aDicomString)                        
             return new ImageType(aDicomString);
@@ -104,7 +121,7 @@ public class ImageType {
     @Override
     public String toString() {   
         return iPixels + SEPARATOR + iPatient
-             + (null != iName ? SEPARATOR + iName 
-              + (null != iSpecifics ? SEPARATOR + iSpecifics : "") : "");                            
+             + (null != iTypeName ? SEPARATOR + iTypeName 
+              + (null != iImplementationSpecific ? SEPARATOR + iImplementationSpecific : "") : "");                            
     }
 }

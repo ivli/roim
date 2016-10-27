@@ -23,7 +23,7 @@ import com.ivli.roim.algorithm.FrameProcessor;
  * 
  * @author likhachev
  */
-public class ImageFrame implements java.io.Serializable, IImage, Cloneable {
+public class ImageFrame implements java.io.Serializable, Cloneable {
     private static final long serialVersionUID = 042L;
    
     private int iMin;
@@ -59,24 +59,20 @@ public class ImageFrame implements java.io.Serializable, IImage, Cloneable {
         return ret;
     }
     
-    @Override
     public int getWidth() {
         return iWidth;
     }
     
-    @Override
     public int getHeight() {
         return iHeight;
     }
        
-    @Override
     public double getMin() {
         if (!iStatisticsIsValid)
             computeStatistics();
         return iMin;
     }
     
-    @Override
     public double getMax() {
         if (!iStatisticsIsValid)
             computeStatistics();
@@ -158,34 +154,5 @@ public class ImageFrame implements java.io.Serializable, IImage, Cloneable {
     public FrameProcessor processor(){
         return new FrameProcessor(this);
     }
-
-    @Override
-    public int getNumFrames() {
-        return 1;
-    }
-
-    @Override
-    public ImageType getImageType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public PixelSpacing getPixelSpacing() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public SliceSpacing getSliceSpacing() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public TimeSliceVector getTimeSliceVector() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public PValueTransform getRescaleTransform() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
 }

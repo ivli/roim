@@ -151,7 +151,7 @@ class DCMImageProvider implements IImageProvider {
         double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);                    
         return new PValueTransform(s, i);           
         */
-        return PValueTransform.DEFAULT_TRANSFORM;
+        return PValueTransform.DEFAULT;
     }
      
     public int[] readFrame(int anIndex, int[] aBuffer) throws IndexOutOfBoundsException, IOException {        

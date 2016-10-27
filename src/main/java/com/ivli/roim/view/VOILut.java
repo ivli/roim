@@ -48,7 +48,7 @@ public class VOILut {
     public VOILut(PresentationLUT aLUT) {
         iInverted = false;
         iLinear = true;
-        iPVt = PValueTransform.DEFAULT_TRANSFORM;        
+        iPVt = PValueTransform.DEFAULT;        
              
         iPlut = (null !=aLUT) ? aLUT : PresentationLUT.create(null);
         iWin = new Window(0, IMAGESPACE_SIZE);    
