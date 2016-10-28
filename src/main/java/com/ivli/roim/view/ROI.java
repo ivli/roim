@@ -35,14 +35,12 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
     transient SeriesCollection iSeries;               
     
     @Override
-    int getCaps() {return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU|PINNABLE;}
-    
-    public ROI(Uid anID) {
-        this(anID, null , null, Colorer.getNextColor(ROI.class));                 
+    int getCaps() {
+        return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU|PINNABLE;
     }
-    
-    public ROI(Uid anID, String aName, Shape aS, Color aC) {
-        super(anID, null == aName ? String.format("ROI%d", anID.getLong()):aName, aS);         
+          
+    public ROI(Uid anID, Shape aS, String aName,  Color aC) {
+        super(anID, aS, null == aName ? String.format("ROI%d", anID.getLong()):aName);         
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);          
         iAreaInPixels = -1;
         iSeries = null;

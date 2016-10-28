@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.core.Filter;
+import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 import com.ivli.roim.events.OverlayChangeListener;
 
@@ -37,8 +38,8 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     protected final ArrayList<String> iAnnotation;    
     protected Overlay iRoi;
      
-    Annotation(String aName, Shape aShape, IImageView aView) {
-        super(aName, aShape, aView);   
+    Annotation(Uid anUid, Shape aShape, String aName, IImageView aView) {
+        super(anUid, aShape, aName, aView);   
         iAnnotation = new ArrayList<>();
     }
     
@@ -118,8 +119,8 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
                 
         protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
         
-        public Static(ROI aRoi, IImageView aV) {
-            super("ANNOTATION::STATIC", aRoi.getShape(), aV); //NOI18N                  
+        public Static(Uid anUid, ROI aRoi, IImageView aV) {
+            super(anUid, aRoi.getShape(), "ANNOTATION::STATIC",  aV); //NOI18N                  
                     
             iRoi = aRoi;     
             //aRoi.addChangeListener(this);
@@ -184,8 +185,8 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     public static class Active extends Annotation {        
         private final IOperation iOp;
                    
-        Active(IOperation anOp, Overlay aR, IImageView aV) {
-            super("ANNOTATION.ACTIVE", null, aV);                    
+        Active(Uid anUid, IOperation anOp, Overlay aR, IImageView aV) {
+            super(anUid, null, "ANNOTATION.ACTIVE", aV);                    
             iOp = anOp;       
             iRoi = aR;
         }   

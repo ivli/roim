@@ -81,6 +81,7 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="com/ivli/roim/Bundle.properties" key="DYNAMIC.jMenu3.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="jMenuItem10">
@@ -120,6 +121,7 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="com/ivli/roim/Bundle.properties" key="DYNAMIC.jMenu5.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="jMenuItem13">
@@ -169,6 +171,7 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="com/ivli/roim/Bundle.properties" key="DYNAMIC.jMenuItem4.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem4ActionPerformed"/>

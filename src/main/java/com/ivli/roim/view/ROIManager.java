@@ -70,42 +70,34 @@ public class ROIManager extends OverlayManager {
         r.lineTo(aTo.x, aTo.y);                                
         Shape s = aV.screenToVirtual().createTransformedShape(r);     
         
-        Ruler ret = new Ruler(s, aV);     
+        Ruler ret = new Ruler(Uid.getNext(), s, aV);     
                 
         addObject(ret);   
         //ruler.update(this);
         ret.addChangeListener(this);
         
-        addObject(new Annotation.Active(ret.getOperation(), ret, aV));  
+        addObject(new Annotation.Active(Uid.getNext(), ret.getOperation(), ret, aV));  
         return ret;
     }
     
     public Overlay createAnnotation(ROI aROI, IImageView aV) {    
-        Annotation.Static ret = new Annotation.Static(aROI, aV);
+        Annotation.Static ret = new Annotation.Static(Uid.getNext(), aROI, aV);
         addObject(ret);        
         addROIChangeListener(ret);   //TODO:?????????   
         return ret;
     }    
         
     public Overlay createAnnotation(BinaryOp anOp, IImageView aV) {    
-        Annotation ret = new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI(), aV);
+        Annotation ret = new Annotation.Active(Uid.getNext(), anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI(), aV);
         addObject(ret);  
         createSurrogateROI(anOp);
         ret.update(this);
         return ret;
     }
     
-    void createSurrogateROI(BinaryOp anOp) {               
-        final class SO implements IOperand {
-            ISeries iV; 
-            SO(ISeries aV) {
-                iV = aV;
-            } 
-            public ISeries value() {return iV;}
-            public String getString() {return "";}
-        } 
-        
-        ROI surrogate = new ROI(iUid.getNext(), null, null, Color.YELLOW) {
+    void createSurrogateROI(BinaryOp anOp) { 
+   
+        ROI surrogate = new ROI(Uid.getNext(), null, null, Color.YELLOW) {
             ROI iLhs = ((ConcreteOperand)anOp.getLhs()).getROI();
             ROI iRhs = ((ConcreteOperand)anOp.getRhs()).getROI();            
             {              
@@ -114,7 +106,16 @@ public class ROIManager extends OverlayManager {
             }
             
             @Override
-            public void update(OverlayManager aMgr) {               
+            public void update(OverlayManager aMgr) {       
+                 final class SO implements IOperand {
+                    ISeries iV; 
+                    SO(ISeries aV) {
+                        iV = aV;
+                    } 
+                    public ISeries value() {return iV;}
+                    public String getString() {return "";}
+                } 
+                 
                 final Measurement f1 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();                
                 final Measurement f2 = ((ConcreteOperand)anOp.getLhs()).getFilter().getMeasurement();
                 
@@ -149,56 +150,21 @@ public class ROIManager extends OverlayManager {
     public Overlay cloneObject(Overlay aR, IImageView aV) {             
         Overlay ret = null;
         
-        if (aR instanceof ROI) {
-            ret = new ROI(Uid.getNext(), null !=aV ? null : aR.getName(), aR.getShape(), null != aV ? null : ((ROI) aR).getColor());         
+        if (aR instanceof ROI) {           
+            ret = new ROI(Uid.getNext(), aR.getShape(), null != aV ? null : aR.getName(),  null != aV ? null : ((ROI) aR).getColor());         
+            
             addObject(ret);
 
             if (iAnnotationsAutoCreate)    
                 createAnnotation((ROI)ret, aV); 
         }
         
-        return ret;
-        /*
-        try {
-            ret = aR.getClass().getConstructor(Uid.class).newInstance(iUid.getNext());             
-            ret.iShape = aR.getShape();            
-        } catch (InstantiationException|IllegalAccessException|NoSuchMethodException|InvocationTargetException ex) {
-            LOG.catching(ex); //NOI18N            
-        }
-        
-        addObject(ret);
-        
-        if (ret instanceof ROI){
-            java.util.List <Overlay> l = iOverlays.stream()
-                     .filter((o) -> o instanceof Annotation.Static)
-                     .filter((o) -> ((Annotation.Static)(o)).getRoi() == aR)
-                     .collect(Collectors.toList());
-                     //.forEach((o) -> cloneObject(o));
-            
-            for (Overlay o:l) {
-                
-            }
-        
-            ///internalAddRoi((ROI)ret, aR);            
-        }
-        */
-         
+        return ret;      
     }
      
-    /*
-    private void internalAddRoi(ROI aR, IImageView aV) {    
-            addObject(aR);
-        
-        if (iAnnotationsAutoCreate)    
-            createAnnotation(aR, aV);            
-                      
-        aR.addChangeListener(this);                   
-    }
-    */
-    
     public Overlay createROI(Shape aS, IImageView aV) {                 
         final Shape shape = aV.screenToVirtual().createTransformedShape(aS);        
-        ROI ret = new ROI(iUid.getNext(), null, shape, null);         
+        ROI ret = new ROI(iUid.getNext(), shape, null, null);         
         addObject(ret);
         
         if (iAnnotationsAutoCreate)    

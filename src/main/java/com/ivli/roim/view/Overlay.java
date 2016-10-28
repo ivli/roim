@@ -46,20 +46,20 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     public static final int HASCUSTOMMENU = HASMENU << 0x1;  
     public static final int FRAMESCOPE = HASCUSTOMMENU << 0x1;
            
-    protected final Uid iUid;
+    protected final transient Uid iUid;
     protected Shape   iShape;
     protected String  iName;
     protected boolean iEmphasized = false;
     protected boolean iPinned = false;
     protected boolean iVisible = true;
     
-    private transient final EventListenerList iListeners;        
+    private final transient EventListenerList iListeners;        
             
     protected Overlay(Uid anID) {
         this(anID, null, null);
     }
     
-    protected Overlay(Uid anID, String aName, Shape aShape) {
+    protected Overlay(Uid anID, Shape aShape, String aName) {
         iUid   = anID;
         iShape = aShape;         
         iName  = (null != aName)? aName : String.format("OVERLAY%d", anID); //NOI18N                  

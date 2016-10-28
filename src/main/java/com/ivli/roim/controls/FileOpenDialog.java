@@ -19,10 +19,10 @@ package com.ivli.roim.controls;
 
 import com.ivli.roim.view.Settings;
 import java.awt.FileDialog;
+import java.awt.Frame;
 import java.io.File;
 import java.util.Locale;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
@@ -68,76 +68,120 @@ public class FileOpenDialog {
         }
     }
     
-    { //ensure localisation 
+    static { //ensure localisation 
         adjustLAF();
     }
     
+    private final Frame  iFrame;
     private final String iTitle;
-    private final String iFileExtension; 
-    private final String iFileDescription;
+    private String iFileExtension; 
+    private String iFileDescription;    
+    private final boolean iOpen;
+    private String iFilePath;
     private String iFileName;
     
-    public FileOpenDialog(String aTitle, String aFileExtension, String aFileDescription) {
+    public FileOpenDialog(Frame aF, String aTitle, String aFileExtension, String aFileDescription, String aPath, boolean aOpen) {
+        iFrame = aF;
         iTitle = aTitle;
         iFileExtension = aFileExtension;
         iFileDescription = aFileDescription;
-        iFileName = null;
+        iFilePath = null != aPath ? aPath : System.getProperty("user.home");//Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, );
+        iOpen = aOpen;
+        iFileName = null;        
+    }
+    
+    public FileOpenDialog(String aTitle, String aFileExtension, String aFileDescription, String aPath, boolean aOpen) {
+        this(null, aTitle, aFileExtension, aFileDescription, aPath, aOpen);       
+    }
+    
+    public FileOpenDialog(String aTitle, String aFileExtension, String aFileDescription, String aPath) {
+        this(null, aTitle, aFileExtension, aFileDescription, aPath, true);       
+    }
+    
+    public FileOpenDialog(String aTitle, String aFileExtension, String aFileDescription, boolean aOpen) {
+        this(null, aTitle, aFileExtension, aFileDescription, null, aOpen);       
+    }
+       
+    public FileOpenDialog(String aTitle, String aFileExtension, String aFileDescription) {    
+        this (null, aTitle, aFileExtension, aFileDescription, null, true);
+    }
+    
+    public FileOpenDialog(String aTitle, boolean aOpen) {    
+        this (null, aTitle, null, null, null, aOpen);
+    }
+    
+    public void setFileExtension(String aFileExtension, String aFileDescription) {
+        iFileExtension = aFileExtension;
+        iFileDescription = aFileDescription;
+    }
+    
+    public void setPath(String aPath) {
+        iFilePath = aPath;
     }
     
     public String getFileName() {
         return iFileName;
     }
     
-    public boolean DoModal(JFrame aF, boolean aOpen) {
-        
+    public File getFile() {
+        return new File(iFileName);
+    }
+    
+    public boolean DoModal() {        
         if (USE_SYSTEM_FILE_DIALOG) {
-            FileDialog fd = new FileDialog(aF, iTitle, aOpen ? FileDialog.LOAD : FileDialog.SAVE);
+            FileDialog fd = new FileDialog(iFrame, iTitle, iOpen ? FileDialog.LOAD : FileDialog.SAVE);
             
-            fd.setFile(iFileExtension);//Settings.get(Settings.DEFAULT_FILE_SUFFIX_DICOM, "*.dcm")); // NOI18N
+            fd.setFile(iFileExtension);
             
             // following doesn't work on windows see JDK-4031440 f**k 
             fd.setFilenameFilter((File dir, String name) -> name.endsWith(iFileExtension) );
                 
-            fd.setDirectory(Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home"))); // NOI18N
+            fd.setDirectory(iFilePath); // NOI18N
             fd.setVisible(true);
 
             if (null != fd.getFile()) {
                 iFileName = fd.getDirectory() + fd.getFile(); 
                 Settings.set(Settings.KEY_DEFAULT_FOLDER_DICOM, fd.getDirectory());
-            }
+            }            
             return null != iFileName;       
         } else {    
             JFileChooser jfc = new JFileChooser();   
-            jfc.setCurrentDirectory(new File(Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")))); // NOI18N
+            
+            jfc.setCurrentDirectory(new File(iFilePath)); 
+            
             jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            jfc.setFileFilter(new FileFilter(){ 
-                public  boolean accept(File f) {                                 
-                    if (f.isDirectory()) 
-                        return true;
-                    else {
-                        String ext = "";
-                        String s = f.getName();
-                        int i = s.lastIndexOf('.');
-
-                        if (i > 0 &&  i < s.length() - 1) {
-                            ext = s.substring(i+1).toLowerCase();
-                        }    
-
-                        if (ext.equalsIgnoreCase(Settings.DEFAULT_FILE_SUFFIX_DICOM))
+            
+            if (null != iFileExtension && null != iFileDescription) {
+                jfc.setFileFilter(new FileFilter(){ 
+                    @Override
+                    public  boolean accept(File f) {                                 
+                        if (f.isDirectory()) 
                             return true;
+                        else {
+                            String ext = "";
+                            String s = f.getName();
+                            int i = s.lastIndexOf('.');
+
+                            if (i > 0 &&  i < s.length() - 1) {
+                                ext = s.substring(i+1).toLowerCase();
+                            }    
+
+                            if (ext.equalsIgnoreCase(iFileExtension))
+                                return true;
+                        }
+
+                        return false;
                     }
 
-                    return false;
-                }
+                    @Override
+                    public String getDescription() {
+                        return iFileDescription;
+                    }                           
+                });        
+            }
             
-                public String getDescription() {
-                    return iFileDescription;
-                }                           
-            });        
-           
-            if (JFileChooser.APPROVE_OPTION == (aOpen ? jfc.showOpenDialog(aF) : jfc.showSaveDialog(aF))) {
-                iFileName = jfc.getSelectedFile().getAbsolutePath();  
-                Settings.set(Settings.KEY_DEFAULT_FOLDER_DICOM, jfc.getSelectedFile().getParent());
+            if (JFileChooser.APPROVE_OPTION == (iOpen ? jfc.showOpenDialog(iFrame) : jfc.showSaveDialog(iFrame))) {
+                iFileName = jfc.getSelectedFile().getAbsolutePath();                  
             } else {
                 return false;
             }

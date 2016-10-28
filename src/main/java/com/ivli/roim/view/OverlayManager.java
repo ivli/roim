@@ -43,12 +43,9 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     protected final IMultiframeImage  iImage;
     protected final HashSet<Overlay>  iOverlays;        
     protected final EventListenerList iList;
-        
-    //protected final OverlayManager iParent;
-            
-    public OverlayManager(IMultiframeImage anImage){//, OverlayManager aP) {
-        iImage = anImage;
-    //    iParent = aP;        
+  
+    public OverlayManager(IMultiframeImage anImage) {
+        iImage = anImage;   
         iOverlays = new HashSet();        
         iList = new EventListenerList();
     }
@@ -101,14 +98,11 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
                 return o;                                   
         }
         
-       // if (null != iParent)
-       //     return iParent.findObject(aP, aV);
-        
         return null;
     }
                
     public boolean deleteObject(Overlay aO) {
-        if (iOverlays.remove(aO)){// || null != iParent && iParent.deleteObject(aO)) {
+        if (iOverlays.remove(aO)) {
             notifyROIChanged(aO, OverlayChangeEvent.CODE.DELETED, this);        
             return true;
         }
@@ -120,14 +114,10 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     }     
                
     public void addROIChangeListener(OverlayChangeListener aL) {    
-       // if (null != iParent)
-       //     iParent.addROIChangeListener(aL);
         iList.add(OverlayChangeListener.class, aL);
     }
     
-    public void removeROIChangeListener(OverlayChangeListener aL) {   
-        //if (null != iParent)
-        //    iParent.removeROIChangeListener(aL);
+    public void removeROIChangeListener(OverlayChangeListener aL) {          
         iList.remove(OverlayChangeListener.class, aL);
     }
     

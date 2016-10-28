@@ -168,12 +168,11 @@ public class ROIListPanel extends JPanel implements TableModelListener {
             if((boolean)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_CHECK))                 
                 sel.add((Overlay)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_OBJECT));
                
-        FileDialog fd = new FileDialog((JDialog)null, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CHOICE_FILE_TO_OPEN"), 
-                                       sel.isEmpty()? FileDialog.LOAD : FileDialog.SAVE);     
+        FileOpenDialog fd = new FileOpenDialog(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CHOICE_FILE_TO_OPEN"), 
+                                              !sel.isEmpty());     
        
-        fd.setVisible(true);
         
-        if (null == fd.getFile())
+        if (!fd.DoModal())
             return;
         
         if (!sel.isEmpty()) {                             
@@ -188,7 +187,7 @@ public class ROIListPanel extends JPanel implements TableModelListener {
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 sel = (ArrayList<Overlay>)ois.readObject();
                 
-                for (Overlay o:sel) 
+                for (Overlay o:sel)  
                     iMgr.cloneObject(o, null); 
                 
                 iModel.rebuild(iMgr, -1);

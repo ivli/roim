@@ -11,14 +11,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
@@ -150,12 +147,8 @@ public class ChartControl extends ChartPanel {
         
         if (null == mark || mark.isEmpty())
             return null;
-  
-        Point2D p = translateScreenToJava2D(e.getPoint());
-        Rectangle2D plotArea = getScreenDataArea();
-        
-        final double domainX = plot.getDomainAxis().java2DToValue(e.getX(), getScreenDataArea(), plot.getDomainAxisEdge());                     
-        //double domainY = plot.getRangeAxis().java2DToValue(p.getY(), plotArea, plot.getRangeAxisEdge());
+          
+        final double domainX = plot.getDomainAxis().java2DToValue(e.getX(), getScreenDataArea(), plot.getDomainAxisEdge());                            
        
         final double Epsilon = plot.getDataRange(plot.getDomainAxis()).getLength() * .01d;
         
@@ -186,19 +179,23 @@ public class ChartControl extends ChartPanel {
                 } break;
             case EXPORT_CSV:               
                 if (null != iSeries && iSeries instanceof XYSeries) { 
-                    FileOpenDialog dlg = new FileOpenDialog("Select file", "*.csv", "");
-                    if (!dlg.DoModal(null, false))
-                        return;
-                    try (Writer pwr = new PrintWriter(dlg.getFileName())) { //NOI18N                              
-                        for (int i = 0; i < iSeries.getItemCount(); ++i) {
-                            XYDataItem xy = iSeries.getDataItem(i);
-                            pwr.append(String.format("%f\t%f\n", xy.getXValue(), xy.getYValue())); //NOI18N                        
-                        }
-                        pwr.flush(); 
-                        pwr.close();
-                    } catch (IOException ex) {
-                        LOG.throwing(ex);
-                    } 
+                    FileOpenDialog dlg = new FileOpenDialog(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CHOICE_FILE_TO_OPEN"), 
+                            "csv", //NOI18N 
+                            "CSV file", //NOI18N 
+                            false);
+                    
+                    if (dlg.DoModal()) {                        
+                        try (Writer pwr = new PrintWriter(dlg.getFileName())) { //NOI18N                              
+                            for (int i = 0; i < iSeries.getItemCount(); ++i) {
+                                XYDataItem xy = iSeries.getDataItem(i);
+                                pwr.append(String.format("%f\t%f\n", xy.getXValue(), xy.getYValue())); //NOI18N                        
+                            }
+                            pwr.flush(); 
+                            pwr.close();
+                        } catch (IOException ex) {
+                            LOG.throwing(ex);
+                        } 
+                    }
                 } break;
             case MOVE_TO_MAX:                                              
                 iMarker.setValue(XYSeriesUtilities.getDomainValueOfMaximum(((DomainMarker)iMarker).getXYSeries())); break;//((DomainMarker)iMarker).moveToMaximum(DomainMarker.MOVETO.GLOBAL)); break;                           
@@ -264,13 +261,12 @@ public class ChartControl extends ChartPanel {
     final class Interpolation implements MarkerChangeListener, SeriesChangeListener, AutoCloseable {
         DomainMarker iLhs; 
         DomainMarker iRhs;
-        XYSeries     iSeries;                
+        XYSeries iSeries;                
            
         boolean iExp = true;
         FITDIR iFitDir = FITDIR.FIT_RANGE; 
                         
-        Interpolation(DomainMarker aLhs, FITDIR aDir) {
-            ///this(aLhs, new DomainMarker(aLhs.getXYSeries().getDataItem(aGoWest ? 0 : aLhs.getXYSeries().getItemCount() - 1).getXValue(), aLhs.getXYSeries()));
+        Interpolation(DomainMarker aLhs, FITDIR aDir) {           
             iLhs = aLhs; 
             iRhs = null;
             iFitDir = aDir;
@@ -286,8 +282,7 @@ public class ChartControl extends ChartPanel {
             ds.addSeries(iSeries);
             getChart().getXYPlot().setDataset(1, ds);
             
-            aLhs.addChangeListener(this);
-            ///aRhs.addChangeListener(this);   
+            aLhs.addChangeListener(this);              
         }
                 
         Interpolation(DomainMarker aLhs, DomainMarker aRhs) {

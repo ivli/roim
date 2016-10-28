@@ -43,7 +43,9 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
 import com.ivli.roim.events.*;
 import com.ivli.roim.view.ImageViewGroup;
+import com.ivli.roim.view.Settings;
 import com.ivli.roim.view.ViewMode;
+import java.awt.Frame;
 import javax.swing.JPanel;
 
 import org.apache.logging.log4j.LogManager;
@@ -73,7 +75,10 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         LOG.info("-->Entering application"); // NOI18N       
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("images/khibiny.png")).getImage());
       
-        initComponents();    
+        initComponents(); 
+        
+        jMenuItem7.setEnabled(false);
+        jMenuItem8.setEnabled(false);
     }
     	
     /**
@@ -241,6 +246,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jMenu4.setText(bundle.getString("DYNAMIC.jMenu4.text")); // NOI18N
 
         jMenu3.setText(bundle.getString("DYNAMIC.jMenu3.text")); // NOI18N
+        jMenu3.setEnabled(false);
 
         jMenuItem10.setText(bundle.getString("DYNAMIC.jMenuItem10.text")); // NOI18N
         jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
@@ -269,6 +275,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jMenu4.add(jMenu3);
 
         jMenu5.setText(bundle.getString("DYNAMIC.jMenu5.text")); // NOI18N
+        jMenu5.setEnabled(false);
 
         jMenuItem13.setText(bundle.getString("DYNAMIC.jMenuItem13.text")); // NOI18N
         jMenuItem13.addActionListener(new java.awt.event.ActionListener() {
@@ -305,6 +312,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jMenu4.add(jMenu5);
 
         jMenuItem4.setText(bundle.getString("DYNAMIC.jMenuItem4.text")); // NOI18N
+        jMenuItem4.setEnabled(false);
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem4ActionPerformed(evt);
@@ -364,11 +372,14 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         String fn;
         
         if (null == (fn = aF)) {        
-            FileOpenDialog dlg = new FileOpenDialog(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CHOICE_FILE_TO_OPEN"), 
-                                                    "*.dcm", //NOI18N 
-                                                    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("DICOM_FILE_TITLE")
+            FileOpenDialog dlg = new FileOpenDialog(this, 
+                                                    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CHOICE_FILE_TO_OPEN"), 
+                                                    "dcm", //NOI18N 
+                                                    java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("DICOM_FILE_TITLE"),
+                                                    Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")),
+                                                    true
                                                     );
-            if(!dlg.DoModal(this, true))
+            if(!dlg.DoModal())
                 return;
             else
                 fn = dlg.getFileName();
@@ -439,8 +450,11 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         image.addFrameChangeListener(this);        
         image.addWindowChangeListener(this);
         image.addZoomChangeListener(this);
-        
-//        iGroup.addROIChangeListener(this);       
+        jMenuItem7.setEnabled(true);
+        jMenuItem8.setEnabled(true);       
+        jMenuItem4.setEnabled(true);
+        jMenu3.setEnabled(true);
+        jMenu5.setEnabled(true);
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -452,8 +466,10 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     }//GEN-LAST:event_jMenu2ComponentShown
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        if(null != jTabbedPane1.getSelectedComponent()) 
-            ((IImageView)jTabbedPane1.getSelectedComponent()).reset();                
+        if(null != jTabbedPane1.getSelectedComponent()) {
+         ///   ((IImageView)jTabbedPane1.getSelectedComponent()).reset();                
+         ////TODO:
+        }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
