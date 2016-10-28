@@ -228,17 +228,21 @@ public class FrameProcessor {
     } 
     
     public Measure measure(Shape aR) {        
-        final Rectangle r;        
+        final Rectangle bounds;        
+        
         int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
         long den = 0L;
         
-        if (null != aR)
-            r = aR.getBounds(); 
-        else 
-            r = new Rectangle(0, 0, iFrame.getWidth(), iFrame.getHeight());      
+        if (null == aR) {
+            bounds = new Rectangle(0, 0, iFrame.getWidth(), iFrame.getHeight());
+        } else {
+            bounds = aR.getBounds(); 
+            if (!new Rectangle(0, 0, iFrame.getWidth(), iFrame.getHeight()).contains(bounds))
+                throw new IllegalArgumentException("ROI out of bounds");
+        }            
               
-        for (int i = r.x; i < r.x + r.width; ++i) {           
-            for (int j = r.y; j < r.y + r.height; ++j) 
+        for (int i = bounds.x; i < bounds.x + bounds.width; ++i) {           
+            for (int j = bounds.y; j < bounds.y + bounds.height; ++j) 
                 if (null == aR || aR.contains(i,j)) {
                     final int v = iFrame.get(i, j);  
                     den += v;  

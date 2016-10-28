@@ -31,7 +31,14 @@ import com.ivli.roim.core.ISeries;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -171,6 +178,24 @@ public class ROIManager extends OverlayManager {
             createAnnotation(ret, aV); 
         
         return ret;
+    }
+    
+    public void externalize(ObjectOutputStream ois) {
+    
+    }
+    
+    public void internalize(ObjectInputStream ois) 
+            throws IOException, ClassNotFoundException {
+        
+        Collection<Overlay> sel = (Collection<Overlay>)ois.readObject();
+
+        for (Overlay o:sel) { 
+            if( new Rectangle(getImage().getWidth(), getImage().getHeight()).contains(o.getShape().getBounds()))
+                cloneObject(o, null); 
+            else 
+                throw new IOException("File has wrong data");
+        }
+    
     }
     
     private final static Logger LOG = LogManager.getLogger();  

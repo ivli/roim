@@ -46,6 +46,8 @@ public class ChartView extends JPanel implements OverlayChangeListener {
     private JFreeChart iJfc;    
     private ChartControl iChart;  
       
+    private final static int DEFAULT_DATASET = 1;
+    
     public static ChartView create() {
         ChartView ret = new ChartView();
         ret.initChart();        
@@ -63,7 +65,8 @@ public class ChartView extends JPanel implements OverlayChangeListener {
             iPlot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
             iPlot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
 
-            iJfc   = new JFreeChart("TITLE", iPlot); 
+            iJfc   = new JFreeChart(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("ROI_CHART.CHART_TITLE"), iPlot); 
+                      
             iChart = new ChartControl(iJfc);           
            
             iPlot.setDataset(new XYSeriesCollection());

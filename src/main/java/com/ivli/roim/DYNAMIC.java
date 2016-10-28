@@ -46,6 +46,9 @@ import com.ivli.roim.view.ImageViewGroup;
 import com.ivli.roim.view.Settings;
 import com.ivli.roim.view.ViewMode;
 import java.awt.Frame;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import javax.swing.JPanel;
 
 import org.apache.logging.log4j.LogManager;
@@ -77,8 +80,8 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
       
         initComponents(); 
         
-        jMenuItem7.setEnabled(false);
-        jMenuItem8.setEnabled(false);
+        //jMenuItem7.setEnabled(false);
+        //jMenuItem8.setEnabled(false);
     }
     	
     /**
@@ -226,6 +229,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         });
 
         jMenuItem7.setText(bundle.getString("DYNAMIC.jMenuItem7.text")); // NOI18N
+        jMenuItem7.setEnabled(false);
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
@@ -234,6 +238,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jMenu2.add(jMenuItem7);
 
         jMenuItem8.setText(bundle.getString("DYNAMIC.jMenuItem8.text")); // NOI18N
+        jMenuItem8.setEnabled(false);
         jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem8ActionPerformed(evt);
@@ -368,10 +373,11 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         dispose();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
      
-    private void openImage(String aF) {   
-        String fn;
+    private void openImage(String[] aF) {   
+        String dicom = null;
+        String roif = null;
         
-        if (null == (fn = aF)) {        
+        if (null == aF || aF.length == 0) {        
             FileOpenDialog dlg = new FileOpenDialog(this, 
                                                     java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CHOICE_FILE_TO_OPEN"), 
                                                     "dcm", //NOI18N 
@@ -382,23 +388,20 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
             if(!dlg.DoModal())
                 return;
             else
-                fn = dlg.getFileName();
-        }
-        
-        File f = new File(fn);                 
-        if (f.exists() && !f.isDirectory()) {             
-            initPanels(ImageFactory.create(fn));
-            setTitle(fn);
+                dicom = dlg.getFileName();
         } else {
-            JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + fn);                   
-        }                     
-       // } catch (NullPointerException ex) {            
-       //     LOG.error(ex);           
-       //     JOptionPane.showMessageDialog(this, java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MSG_UNABLETOOPENFILE") + fn);                   
-       // }         
+            File f = new File(aF[0]);        
+            if (f.exists() && !f.isDirectory())
+                dicom = aF[0];
+            if (aF.length > 1 && new File(aF[1]).exists()) 
+                roif = aF[1];
+        }
+
+        initPanels(ImageFactory.create(dicom), roif);
+        setTitle(dicom);             
     }
         
-    private void initPanels(IMultiframeImage anImage){//final String aFileName) {         
+    private void initPanels(IMultiframeImage anImage, String aROILIST) {       
         jPanel1.removeAll();
         jPanel3.removeAll();
       //  jPanel4.removeAll();
@@ -406,6 +409,8 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
        
         iGroup = ImageViewGroup.create(anImage);
        
+        
+        
         ImageView image = iGroup.createView(ViewMode.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(image, BorderLayout.CENTER);
@@ -447,6 +452,15 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         }        
         */
         
+        if (aROILIST != null) {
+            try {
+                iGroup.getROIMgr().internalize(new ObjectInputStream(new FileInputStream(aROILIST)));
+            } catch (IOException | ClassNotFoundException ex) {
+                LOG.throwing(ex);
+                JOptionPane.showMessageDialog(this, "ERROR", "Unable to open file", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
         image.addFrameChangeListener(this);        
         image.addWindowChangeListener(this);
         image.addZoomChangeListener(this);
@@ -474,8 +488,9 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         ROIListPanel panel = new ROIListPanel(iGroup);
-        JDialog dialog = new JDialog(this, "ROI manager", 
-                                     Dialog.ModalityType.APPLICATION_MODAL);
+        JDialog dialog = new JDialog(this, 
+                                    "ROI manager", 
+                                    Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setContentPane(panel);
         dialog.validate();
         dialog.pack();
@@ -567,7 +582,8 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
             public void run() {
                 DYNAMIC nmc = new DYNAMIC();
                 if (args.length > 0)
-                    nmc.openImage(args[0]);
+                    nmc.openImage(args);
+                
                 nmc.setVisible(true);
             }
         });

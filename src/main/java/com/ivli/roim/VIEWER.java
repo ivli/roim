@@ -5,6 +5,7 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.controls.FileOpenDialog;
 import com.ivli.roim.controls.FrameControl;
 import com.ivli.roim.view.*;
 
@@ -128,17 +129,11 @@ public class VIEWER extends javax.swing.JFrame {
     }
     
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        FileDialog fd = new FileDialog(this, "Choose", FileDialog.LOAD);            
-        fd.setFile("*.dcm"); // NOI18N
-        // following doesn't work on windows see JDK-4031440 f**k 
-        fd.setFilenameFilter((File dir, String name) -> name.endsWith(".dcm") || name.endsWith(".dicom"));
-
-        fd.setVisible(true);
-
-        if (null != fd.getFile()) {                     
-            openFile(fd.getDirectory() + fd.getFile());                                 
-            
-        }
+        FileOpenDialog fd = new FileOpenDialog("Choose", "dcm", "");            
+       
+        if (fd.DoModal())                    
+            openFile(fd.getFileName());                                 
+       
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed

@@ -45,7 +45,7 @@ class DomainMarker extends ValueMarker implements SeriesChangeListener {
         setOutlineStroke(new BasicStroke(.0f));           
     }
    
-    public XYSeries getXYSeries() {
+    public XYSeries getSeries() {
         return iSeries;
     }
     
@@ -60,6 +60,7 @@ class DomainMarker extends ValueMarker implements SeriesChangeListener {
         return iLink;
     }
         
+    @Override
     public void seriesChanged(SeriesChangeEvent sce) {        
         setValue(getValue());
     }   
@@ -75,9 +76,8 @@ class DomainMarker extends ValueMarker implements SeriesChangeListener {
                 iLink.setLabel(String.format(LABEL_FORMAT, newY));
             }
             setLabel(String.format(LABEL_FORMAT, aVal));    
-        } else {
-           //super.setValue(aVal);
-           setLabel(String.format("%f", aVal)); //NOI18N
+        } else {          
+           setLabel(String.format(LABEL_FORMAT, aVal)); //NOI18N
         }        
     }  
     

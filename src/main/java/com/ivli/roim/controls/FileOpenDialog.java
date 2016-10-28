@@ -23,6 +23,7 @@ import java.awt.Frame;
 import java.io.File;
 import java.util.Locale;
 import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
@@ -179,7 +180,7 @@ public class FileOpenDialog {
                     }                           
                 });        
             }
-            
+                                   
             if (JFileChooser.APPROVE_OPTION == (iOpen ? jfc.showOpenDialog(iFrame) : jfc.showSaveDialog(iFrame))) {
                 iFileName = jfc.getSelectedFile().getAbsolutePath();                  
             } else {

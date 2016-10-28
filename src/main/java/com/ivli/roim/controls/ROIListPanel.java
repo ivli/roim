@@ -9,7 +9,6 @@ import com.ivli.roim.view.IImageView;
 import com.ivli.roim.view.ImageViewGroup;
 import com.ivli.roim.view.Overlay;
 import com.ivli.roim.view.ROIManager;
-import java.awt.FileDialog;
 import javax.swing.SwingUtilities;
 import java.awt.Window;
 import java.io.FileInputStream;
@@ -17,7 +16,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -168,8 +167,9 @@ public class ROIListPanel extends JPanel implements TableModelListener {
             if((boolean)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_CHECK))                 
                 sel.add((Overlay)iModel.getValueAt(i, ROITableModel.TABLE_COLUMN_OBJECT));
                
-        FileOpenDialog fd = new FileOpenDialog(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CHOICE_FILE_TO_OPEN"), 
-                                              !sel.isEmpty());     
+        FileOpenDialog fd = new FileOpenDialog(
+                                               java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CHOICE_FILE_TO_OPEN"), 
+                                               !sel.isEmpty());     
        
         
         if (!fd.DoModal())
@@ -184,16 +184,14 @@ public class ROIListPanel extends JPanel implements TableModelListener {
             }   
         } else {        
             try(FileInputStream fis = new FileInputStream(fd.getFile())){
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                sel = (ArrayList<Overlay>)ois.readObject();
-                
-                for (Overlay o:sel)  
-                    iMgr.cloneObject(o, null); 
-                
-                iModel.rebuild(iMgr, -1);
-                
+                iMgr.internalize(new ObjectInputStream(fis));                
+                iModel.rebuild(iMgr, -1);                
             } catch (java.io.IOException|ClassNotFoundException ex) {
                 LOG.catching(ex);
+                JOptionPane.showMessageDialog(this, 
+                                              "Unable to open file", 
+                                              "ERROR", 
+                                              JOptionPane.ERROR_MESSAGE);
             }   
         }
     }//GEN-LAST:event_jButtonSaveLoadActionPerformed
