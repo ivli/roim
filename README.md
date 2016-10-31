@@ -1,13 +1,13 @@
-Roim is a class library designed to help implementing software for processing nuclear medicine (hereinafter <b>NM</b>) data. 
-
+Roim is a class library for processing biomedical imaging data. 
 It is designed to be vendor neutral and support most of modalities. 
-However, for the time being it is tested only with NM/DR/DXR/CT/PET/MR files. 
-It implements a set of controls, screen primitives (Overlays) and algorithms to extract, 
-process and display biomedical information off study files in DICOM format. 
-  
-The library relies on few external libraries namely DCM4CHE to handle DICOM data, aparapi for GPU operations and charting is based on JFreeChart. 
+However, for the time being it is tested only with NM/DR/DXR/CT/PET/MR files.
+ 
+It implements a set of algorithms, screen primitives and forms to simplify processes of extraction, 
+processing and display information extracted off study files. 
+The library relies on few external libraries namely DCM4CHE to handle DICOM data, 
+aparapi for GPU operations and charts is based on JFreeChart. 
 
-Finally the library includes an application to illustrate basic concepts and principles behind the design.  
+The library includes an application to illustrate basic concepts and principles behind it.  
 This application is meant for processing dynamic studies such as renal clearance, hida or gastric emptying. 
 The screen is split into two parts left one displays image either in list mode or as a composite image (a sum of all frames)
 Here one can work with ROIs - set, delete, move. 
