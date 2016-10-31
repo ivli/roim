@@ -46,7 +46,7 @@ public class ChartView extends JPanel implements OverlayChangeListener {
     private JFreeChart iJfc;    
     private ChartControl iChart;  
       
-    private final static int DEFAULT_DATASET = 1;
+   // private final static int DEFAULT_DATASET = 1;
     
     public static ChartView create() {
         ChartView ret = new ChartView();

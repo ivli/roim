@@ -89,13 +89,11 @@ public class ChartControl extends ChartPanel {
         }
     }
     
-    private XYSeriesCollection iInterSet = new XYSeriesCollection(); 
+    //private XYSeriesCollection iInterSet = new XYSeriesCollection(); 
     ///////////////////////////////////////  
     ChartControl(JFreeChart aChart) {
-        super(aChart);
-        
-        aChart.getXYPlot().setDataset(INTERPOLATION_DATASET, iInterSet);
-        
+        super(aChart);        
+        //aChart.getXYPlot().setDataset(INTERPOLATION_DATASET, iInterSet);        
     }
     
     void addMarker(DomainMarker aM) {
@@ -173,9 +171,7 @@ public class ChartControl extends ChartPanel {
     public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         final XYPlot plot = getChart().getXYPlot();
-        
-        FITDIR fitDir = FITDIR.FIT_EAST;
-         
+       
         switch (MENUS.translate(e.getActionCommand())) {
             case ADD:               
                 if (null != iSeries && iSeries instanceof XYSeries) {                    
@@ -221,18 +217,16 @@ public class ChartControl extends ChartPanel {
                 iInterpolations.stream().forEach((i) -> {i.close();});           
                 iInterpolations.clear();
                 break;                
-            case FIT_LEFT:   
-                fitDir = FITDIR.FIT_WEST;
-            case FIT_RIGHT: {   
-                fitDir = FITDIR.FIT_EAST;
-                
-                Collection mrak = plot.getDomainMarkers(Layer.FOREGROUND);
+            case FIT_LEFT:                   
+            case FIT_RIGHT: {                   
+                final Collection mrak = plot.getDomainMarkers(Layer.FOREGROUND);
+                final FITDIR dir = MENUS.FIT_LEFT == MENUS.translate(e.getActionCommand())? FITDIR.FIT_WEST:FITDIR.FIT_EAST;
                 
                 if (mrak.isEmpty()) {                  
                     return;                    
-                } else if (mrak.size() == 1) { // Fine, got just one Marker interpolate till the last/first point                                                        
-                    iInterpolations.add(new Interpolation((DomainMarker)mrak.iterator().next(), fitDir));                              
-                } else {// got plenty ( more than 1 :-) Markers thus range them and find east/west adjacent one to interpolate inbetween    
+                } else if (mrak.size() == 1) { // Fine, got just one Marker interpolate till the last/first point                     
+                    iInterpolations.add(new Interpolation((DomainMarker)mrak.iterator().next(), dir));                              
+                } else {// got more than 1 markers thus range them and find east/west adjacent one to interpolate inbetween    
                     List<DomainMarker> list = 
                         (new ArrayList<DomainMarker>(mrak)).stream()
                                 .sorted((DomainMarker aLhs, DomainMarker aRhs) -> {                                                
@@ -241,15 +235,16 @@ public class ChartControl extends ChartPanel {
                     
                     int ndx = list.indexOf(iMarker);  
                     
-                    if (ndx == 0 && fitDir == FITDIR.FIT_WEST || ndx == list.size() - 1 && fitDir == FITDIR.FIT_EAST)
-                        iInterpolations.add(new Interpolation((DomainMarker)iMarker, fitDir));
+                    if (ndx == 0 && dir == FITDIR.FIT_WEST || ndx == list.size() - 1 && dir == FITDIR.FIT_EAST)
+                        iInterpolations.add(new Interpolation((DomainMarker)iMarker, dir));
                         
-                    DomainMarker mark2 = list.get(fitDir == FITDIR.FIT_WEST ? --ndx : ++ndx);                        
+                    
+                    DomainMarker mark2 = list.get(dir == FITDIR.FIT_WEST ? --ndx : ++ndx);                        
                     
                     if (null != mark2)                                                      
                         iInterpolations.add(new Interpolation((DomainMarker)iMarker, mark2));    
                     else                                                             
-                        iInterpolations.add(new Interpolation((DomainMarker)iMarker, fitDir));
+                        iInterpolations.add(new Interpolation((DomainMarker)iMarker, dir));
                 }
             } break;                                
             default:
@@ -268,18 +263,21 @@ public class ChartControl extends ChartPanel {
             FIT_RANGE
     }
     
-    private final static int INTERPOLATION_DATASET = 2;
-    
-   
+    //private final static int INTERPOLATION_DATASET = 2;   
+    final static BasicStroke iInterpolationStroke = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
     
     final class Interpolation implements MarkerChangeListener, SeriesChangeListener, AutoCloseable {
         DomainMarker iLhs; 
         DomainMarker iRhs;
+        
         XYSeries iSeries;                
            
         boolean iExp = true;
         FITDIR iFitDir = FITDIR.FIT_RANGE;
-                                        
+              
+        
+        
+        
         Interpolation(DomainMarker aLhs, FITDIR aDir) {           
             iLhs = aLhs; 
             iRhs = null;
@@ -291,19 +289,19 @@ public class ChartControl extends ChartPanel {
             iLhs.getSeries().addChangeListener(this);
                     
             XYSeriesUtilities.fit(iLhs.getSeries(), iLhs.getValue(), finval, iExp, iSeries);
+                        
+            //iInterSet.addSeries(iSeries);
             
-            
-            iInterSet.addSeries(iSeries);
-            
-            //getChart().getXYPlot().setDataset(INTERPOLATION_DATASET, ds);
+            ((XYSeriesCollection)getChart().getXYPlot().getDataset()).addSeries(iSeries);
               
-            Paint p = getChart().getXYPlot().getRenderer().getSeriesPaint(getChart().getXYPlot().getDataset(INTERPOLATION_DATASET).indexOf(iLhs.getSeries().getKey()));
+            int ndx = getChart().getXYPlot().getDataset().indexOf(iLhs.getSeries().getKey());
+            Paint p = getChart().getXYPlot().getRenderer().getSeriesPaint(ndx);
             
-            getChart().getXYPlot().getRenderer().setSeriesPaint(getChart().getXYPlot().getDataset(INTERPOLATION_DATASET).indexOf(iSeries.getKey()), 
-                    p);
+            getChart().getXYPlot().getRenderer().setSeriesPaint(getChart().getXYPlot().getDataset().indexOf(iSeries.getKey()), 
+                    getChart().getXYPlot().getRenderer().getSeriesPaint(getChart().getXYPlot().getDataset().indexOf(iLhs.getSeries().getKey())));
           
-            getChart().getXYPlot().getRenderer().setSeriesStroke(getChart().getXYPlot().getDataset(INTERPOLATION_DATASET).indexOf(iSeries.getKey()),
-                    new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0));
+            getChart().getXYPlot().getRenderer().setSeriesStroke(getChart().getXYPlot().getDataset().indexOf(iSeries.getKey()),
+                    iInterpolationStroke);
            
             aLhs.addChangeListener(this);              
         }
@@ -315,21 +313,18 @@ public class ChartControl extends ChartPanel {
             iLhs.getSeries().addChangeListener(this);
                     
             XYSeriesUtilities.fit(iLhs.getSeries(), iLhs.getValue(), iRhs.getValue(), iExp, iSeries);
-            
-            //XYSeriesCollection ds = new XYSeriesCollection();
-            iInterSet.addSeries(iSeries);
-            
-            //getChart().getXYPlot().setDataset(INTERPOLATION_DATASET, ds);
-            
+           
+            ((XYSeriesCollection)getChart().getXYPlot().getDataset()).addSeries(iSeries);
+                      
             aLhs.addChangeListener(this);
             aRhs.addChangeListener(this);  
             /**/
-            getChart().getXYPlot().getRenderer().setSeriesPaint(getChart().getXYPlot().getDataset(INTERPOLATION_DATASET).indexOf(iSeries.getKey()), 
-                getChart().getXYPlot().getRenderer().getSeriesPaint(getChart().getXYPlot().getDataset(INTERPOLATION_DATASET).indexOf(iLhs.getSeries().getKey())));
+            getChart().getXYPlot().getRenderer().setSeriesPaint(getChart().getXYPlot().getDataset().indexOf(iSeries.getKey()), 
+                getChart().getXYPlot().getRenderer().getSeriesPaint(getChart().getXYPlot().getDataset().indexOf(iLhs.getSeries().getKey())));
             
             
-            getChart().getXYPlot().getRenderer().setSeriesStroke(getChart().getXYPlot().getDataset(INTERPOLATION_DATASET).indexOf(iSeries.getKey()),
-                new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0));            
+            getChart().getXYPlot().getRenderer().setSeriesStroke(getChart().getXYPlot().getDataset().indexOf(iSeries.getKey()),iInterpolationStroke);
+                                                                        
 
         }             
         

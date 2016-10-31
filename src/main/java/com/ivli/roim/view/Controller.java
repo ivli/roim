@@ -90,11 +90,13 @@ class Controller implements IController {
             } else {
                 iShape.setFrame(aX, aY, 0,0); 
                 first = false;
-            }                        
+            }    
+            iControlled.repaint();
         }
 
         public boolean DoRelease(int aX, int aY) {
-            iControlled.getROIMgr().createROI(iShape, iControlled);            
+            iControlled.getROIMgr().createROI(iShape, iControlled);   
+            iControlled.repaint();
             return false;
         }
         
@@ -230,11 +232,9 @@ class Controller implements IController {
                 protected void DoAction(int aX, int aY) {
                     //iControlled.getROIMgr().moveObject(iSelected, aX-iX, aY-iY);
                     iControlled.getROIMgr().moveObject(iSelected, (aX-iX)/iControlled.getZoom().getScaleX(), (aY-iY)/iControlled.getZoom().getScaleY());
-                    iControlled.repaint();//old.createIntersection(iSelected.iShape.getBounds2D())); 
+                    iControlled.repaint(); 
                 }    
-                protected boolean DoRelease(int aX, int aY) {    
-                    //iSelected.select(false);
-                    //iSelected = null;
+                protected boolean DoRelease(int aX, int aY) {                     
                     releaseSelection(null);
                     iControlled.repaint();
                     return false;
@@ -337,7 +337,7 @@ class Controller implements IController {
                         else
                             iPath.lineTo(aX, aY);
                         ++first; 
-                        iControlled.repaint();//iPath.getBounds()); 
+                        iControlled.repaint(); 
                     }
 
                     public boolean DoRelease(int aX, int aY) {
