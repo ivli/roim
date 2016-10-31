@@ -15,8 +15,9 @@ Right part is a cartesian chart showing activity curves over the ROIs.
 Also, using markers it is possible to fit acquired data with exponential curve using least squares method. 
 And export data into a CSV file for processing in an external application.          
 
-SIC: library heavily uses features of JDK8 so it is necessary to build and run.
+SIC: library heavily uses features introduced in JDK8 thus it is necessary to build and run.
 
 With best regards,
 I. 
+
 
