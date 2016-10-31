@@ -242,9 +242,9 @@ public class ChartControl extends ChartPanel {
                     DomainMarker mark2 = list.get(dir == FITDIR.FIT_WEST ? --ndx : ++ndx);                        
                     
                     if (null != mark2)                                                      
-                        iInterpolations.add(new Interpolation((DomainMarker)iMarker, mark2));    
+                        iInterpolations.add(createInterpolation((DomainMarker)iMarker, mark2));    
                     else                                                             
-                        iInterpolations.add(new Interpolation((DomainMarker)iMarker, dir));
+                        iInterpolations.add(createInterpolation((DomainMarker)iMarker, null));
                 }
             } break;                                
             default:
@@ -262,36 +262,60 @@ public class ChartControl extends ChartPanel {
             FIT_EAST,            
             FIT_RANGE
     }
+        
+    Interpolation createInterpolation(DomainMarker aLhs, DomainMarker aRhs) {
+            Interpolation ret = new Interpolation(aLhs, aRhs);
+            ret.iLhs = aLhs;
+            ret.iRhs = aRhs;
+         
+            final double finval = aLhs.getSeries().getDataItem(aLhs.getSeries().getItemCount() - 1).getXValue();
+                        
+            ret.iSeries = new XYSeries(String.format(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INTERPOLATION%D"), iInterpolationID++));
+            
+            aLhs.getSeries().addChangeListener(ret);
+                    
+            XYSeriesUtilities.fit(aLhs.getSeries(), aLhs.getValue(), finval, true, ret.iSeries);
+            
+            
+             getChart().getXYPlot().getRenderer().setSeriesPaint(getChart().getXYPlot().getDataset().indexOf(ret.iSeries.getKey()), 
+                getChart().getXYPlot().getRenderer().getSeriesPaint(getChart().getXYPlot().getDataset().indexOf(aLhs.getSeries().getKey())));
+                        
+            getChart().getXYPlot().getRenderer().setSeriesStroke(getChart().getXYPlot().getDataset().indexOf(ret.iSeries.getKey()), INTERPOLATION_STROKE);
+            
+            ret.iLhs.addChangeListener(ret); 
+            ret.iLhs.getSeries().addChangeListener(ret);
+            
+            if (null != aRhs) 
+                ret.iRhs.addChangeListener(ret);
+            
+            return ret;
+        }
     
-    //private final static int INTERPOLATION_DATASET = 2;   
-    final static BasicStroke iInterpolationStroke = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
+    private final static BasicStroke INTERPOLATION_STROKE = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
     
     final class Interpolation implements MarkerChangeListener, SeriesChangeListener, AutoCloseable {
         DomainMarker iLhs; 
-        DomainMarker iRhs;
-        
+        DomainMarker iRhs;        
         XYSeries iSeries;                
            
-        boolean iExp = true;
-        FITDIR iFitDir = FITDIR.FIT_RANGE;
-              
-        
-        
+        Interpolation(DomainMarker aLhs, DomainMarker aRhs, XYSeries aSeries) {
+            iLhs = aLhs;
+            iRhs = aRhs;
+            iSeries = aSeries;
+        }
         
         Interpolation(DomainMarker aLhs, FITDIR aDir) {           
             iLhs = aLhs; 
             iRhs = null;
-            iFitDir = aDir;
-            
-            final double finval = iLhs.getSeries().getDataItem(iFitDir == FITDIR.FIT_WEST ? 0 : iLhs.getSeries().getItemCount() - 1).getXValue();
+                        
+            final double finval = iLhs.getSeries().getDataItem(iLhs.getSeries().getItemCount() - 1).getXValue();
                         
             iSeries = new XYSeries(String.format(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INTERPOLATION%D"), iInterpolationID++));
+            
             iLhs.getSeries().addChangeListener(this);
                     
-            XYSeriesUtilities.fit(iLhs.getSeries(), iLhs.getValue(), finval, iExp, iSeries);
-                        
-            //iInterSet.addSeries(iSeries);
-            
+            XYSeriesUtilities.fit(iLhs.getSeries(), iLhs.getValue(), finval, true, iSeries);
+                                   
             ((XYSeriesCollection)getChart().getXYPlot().getDataset()).addSeries(iSeries);
               
             int ndx = getChart().getXYPlot().getDataset().indexOf(iLhs.getSeries().getKey());
@@ -301,7 +325,7 @@ public class ChartControl extends ChartPanel {
                     getChart().getXYPlot().getRenderer().getSeriesPaint(getChart().getXYPlot().getDataset().indexOf(iLhs.getSeries().getKey())));
           
             getChart().getXYPlot().getRenderer().setSeriesStroke(getChart().getXYPlot().getDataset().indexOf(iSeries.getKey()),
-                    iInterpolationStroke);
+                    INTERPOLATION_STROKE);
            
             aLhs.addChangeListener(this);              
         }
@@ -309,33 +333,23 @@ public class ChartControl extends ChartPanel {
         Interpolation(DomainMarker aLhs, DomainMarker aRhs) {
             iLhs = aLhs; 
             iRhs = aRhs;
-            iSeries = new XYSeries(String.format(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INTERPOLATION%D"), iInterpolationID++));
-            iLhs.getSeries().addChangeListener(this);
+            
+            iSeries = new XYSeries(String.format(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INTERPOLATION%D"), iInterpolationID++));            
                     
-            XYSeriesUtilities.fit(iLhs.getSeries(), iLhs.getValue(), iRhs.getValue(), iExp, iSeries);
+            XYSeriesUtilities.fit(iLhs.getSeries(), iLhs.getValue(), iRhs.getValue(), true, iSeries);
            
             ((XYSeriesCollection)getChart().getXYPlot().getDataset()).addSeries(iSeries);
-                      
-            aLhs.addChangeListener(this);
-            aRhs.addChangeListener(this);  
-            /**/
+           
             getChart().getXYPlot().getRenderer().setSeriesPaint(getChart().getXYPlot().getDataset().indexOf(iSeries.getKey()), 
                 getChart().getXYPlot().getRenderer().getSeriesPaint(getChart().getXYPlot().getDataset().indexOf(iLhs.getSeries().getKey())));
+                        
+            getChart().getXYPlot().getRenderer().setSeriesStroke(getChart().getXYPlot().getDataset().indexOf(iSeries.getKey()), INTERPOLATION_STROKE);
             
-            
-            getChart().getXYPlot().getRenderer().setSeriesStroke(getChart().getXYPlot().getDataset().indexOf(iSeries.getKey()),iInterpolationStroke);
-                                                                        
-
+            iLhs.getSeries().addChangeListener(this);
+            aLhs.addChangeListener(this);
+            aRhs.addChangeListener(this);             
         }             
-        
-        public void setExp(boolean aExp) {
-            iExp = aExp;
-        }
-        
-        public boolean isExp() {
-            return iExp;
-        }
-        
+                        
         public void close() {
             iLhs.removeChangeListener(this);
             if (iRhs != null)
@@ -350,14 +364,14 @@ public class ChartControl extends ChartPanel {
             
             if (mce.getMarker() == iLhs){
                 left = ((DomainMarker)mce.getMarker()).getValue();
-                right = (null != iRhs) ? iRhs.getValue() : iLhs.getSeries().getDataItem(iFitDir == FITDIR.FIT_WEST ? 0 : iLhs.getSeries().getItemCount() - 1).getXValue();;
+                right = (null != iRhs) ? iRhs.getValue() : iLhs.getSeries().getDataItem(iLhs.getSeries().getItemCount() - 1).getXValue();
             } else if (mce.getMarker() == iRhs) {
                 left = iLhs.getValue();
                 right = ((DomainMarker)mce.getMarker()).getValue();
             } else 
                 throw new IllegalArgumentException();
             
-            iSeries = XYSeriesUtilities.fit(iLhs.getSeries(), left, right, iExp, iSeries);              
+            iSeries = XYSeriesUtilities.fit(iLhs.getSeries(), left, right, true, iSeries);              
         }
         
         public void seriesChanged(SeriesChangeEvent sce) {           
