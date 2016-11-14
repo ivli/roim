@@ -217,29 +217,48 @@ public class ChartControl extends ChartPanel {
                 iInterpolations.clear();
                 break;                
             case FIT_LEFT:                   
-            case FIT_RIGHT: {                   
-                final Collection mrak = plot.getDomainMarkers(Layer.FOREGROUND);
-                final FITDIR dir = MENUS.FIT_LEFT == MENUS.translate(e.getActionCommand())? FITDIR.FIT_WEST:FITDIR.FIT_EAST;
+            case FIT_RIGHT: {                                  
+                final FITDIR dir = (MENUS.FIT_LEFT == MENUS.translate(e.getActionCommand()) ? FITDIR.FIT_LEFT : FITDIR.FIT_RIGHT);
+    
+                List<DomainMarker> list = 
+                    (new ArrayList<DomainMarker>(plot.getDomainMarkers(Layer.FOREGROUND))).stream()
+                            .filter((DomainMarker m) -> {                                                
+                                return ((DomainMarker)iMarker).getSeries() == m.getSeries();}) 
+                            .sorted((DomainMarker aLhs, DomainMarker aRhs) -> {                                                
+                                return (int)(aLhs.getValue() - aRhs.getValue());})                                                                                            
+                            .collect(Collectors.toList());                
+
+                LOG.debug("-->Found " + list.size() + " markers");
+                                  
                 
-                if (mrak.isEmpty()) {                  
-                    return;                    
-                } else if (mrak.size() == 1) { // Fine, got just one Marker interpolate till the last/first point                     
-                    iInterpolations.add(new Interpolation((DomainMarker)mrak.iterator().next(), dir));                              
-                } else {// got more than 1 markers thus range them and find east/west adjacent one to interpolate inbetween    
-                    List<DomainMarker> list = 
-                        (new ArrayList<DomainMarker>(mrak)).stream()
-                                .sorted((DomainMarker aLhs, DomainMarker aRhs) -> {                                                
-                                    return (int)(aLhs.getValue() - aRhs.getValue());})                                                                                            
-                                .collect(Collectors.toList());                
-                    
-                    int ndx = list.indexOf(iMarker);  
-                    
-                    if (ndx == 0 && dir == FITDIR.FIT_WEST || ndx == list.size() - 1 && dir == FITDIR.FIT_EAST)
+                switch (list.size()) {
+                    case 0: break;
+                    case 1: 
                         iInterpolations.add(new Interpolation((DomainMarker)iMarker, dir));
-                                            
-                    DomainMarker mark2 = list.get(dir == FITDIR.FIT_WEST ? --ndx : ++ndx);                        
-                                                                                    
-                    iInterpolations.add(new Interpolation((DomainMarker)iMarker, mark2));                        
+                        break;
+                    case 2: //fallthrough as default
+                    default: {
+                        DomainMarker left = null, right = null;
+                        int ndx = list.indexOf(iMarker);
+                        if (dir == FITDIR.FIT_LEFT) {
+                            if(ndx >=1) {
+                                right = (DomainMarker)iMarker;
+                                left = list.get(--ndx);
+                                iInterpolations.add(new Interpolation(left, right));
+                            } else {
+                                iInterpolations.add(new Interpolation((DomainMarker)iMarker, dir));
+                            }
+     
+                        } else if(dir == FITDIR.FIT_RIGHT) {
+                            if(ndx < list.size()-1) {
+                                right = list.get(++ndx);
+                                left = (DomainMarker)iMarker;
+                                iInterpolations.add(new Interpolation(left, right));
+                            } else {
+                                iInterpolations.add(new Interpolation((DomainMarker)iMarker, dir));
+                            }                            
+                        }                        
+                    }break;
                 }
             } break;                                
             default:
@@ -253,9 +272,8 @@ public class ChartControl extends ChartPanel {
     static int iInterpolationID = 0;
     
     static enum FITDIR {
-            FIT_WEST,
-            FIT_EAST,            
-            FIT_RANGE
+        FIT_LEFT,
+        FIT_RIGHT,                  
     }
                
     private final static BasicStroke INTERPOLATION_STROKE = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
@@ -274,12 +292,18 @@ public class ChartControl extends ChartPanel {
         Interpolation(DomainMarker aLhs, FITDIR aDir) {           
             iLhs = aLhs; 
             iRhs = null;
-                        
-            final double finval = iLhs.getSeries().getDataItem(iLhs.getSeries().getItemCount() - 1).getXValue();
-                        
+           
+            double start  = iLhs.getSeries().getDataItem(0).getXValue(); 
+            double finish = iLhs.getSeries().getDataItem(iLhs.getSeries().getItemCount() - 1).getXValue();
+            
+            if (aDir == FITDIR.FIT_LEFT)
+                finish = aLhs.getValue();
+            else
+                start = aLhs.getValue(); 
+            
             iSeries = new XYSeries(String.format(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INTERPOLATION%D"), iInterpolationID++));
               
-            XYSeriesUtilities.fit(iLhs.getSeries(), iLhs.getValue(), finval, true, iSeries);
+            XYSeriesUtilities.fit(iLhs.getSeries(), start, finish, true, iSeries);
                                    
             ((XYSeriesCollection)getChart().getXYPlot().getDataset()).addSeries(iSeries);
               
