@@ -26,7 +26,7 @@ import java.awt.image.BufferedImage;
 public class LUTTransform implements Transformation {    
     final int [][] iRGBBuffer;
     
-    LUTTransform(){
+    public LUTTransform(){
         iRGBBuffer = new int[LutReader.TABLE_SIZE][3];
     }
     

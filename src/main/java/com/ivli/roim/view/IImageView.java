@@ -28,22 +28,15 @@ import java.awt.geom.AffineTransform;
  *
  * @author likhachev
  */
-public interface IImageView {    
+public interface IImageView extends WindowTarget {    
     public void setImage(IMultiframeImage anImage);
-    public IMultiframeImage getImage();
-    
-    public ImageFrame getFrame();
-    
-    public int getFrameNumber();
-    
-    public boolean setFrameNumber(int aN);
-    
-    public void setROIMgr(ROIManager aR);
+    public IMultiframeImage getImage();    
+    public ImageFrame getFrame();    
+    public int getFrameNumber();    
+    public boolean setFrameNumber(int aN);    
+    public void    setROIMgr(ROIManager aR);
     public ROIManager getROIMgr();
-    
-    public void setWindow(Window aW);
-    public Window getWindow();
-    
+       
     public enum ZoomFit {       
         NONE,    //no fit        
         VISIBLE, //fit entire image into view      
@@ -52,19 +45,14 @@ public interface IImageView {
         PIXELS;  //fit to display image pixel to pixel no matter how big it is
     }
    
-    public void setFit(ZoomFit aW);
-    
+    public void setFit(ZoomFit aW);    
     public void pan(int aX, int aY);
-    public void zoom(double aStep);
-    
+    public void zoom(double aStep);    
     public AffineTransform getZoom();
-    public void setInterpolationMethod(Object aM);
-    
+    public void setInterpolationMethod(Object aM);    
     public void reset();
-
     public AffineTransform virtualToScreen();
-    public AffineTransform screenToVirtual();
-    
+    public AffineTransform screenToVirtual();    
     public void repaint();
 }
 

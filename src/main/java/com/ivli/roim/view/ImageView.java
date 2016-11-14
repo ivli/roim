@@ -22,12 +22,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
-import java.awt.image.ConvolveOp;
 import java.awt.image.AffineTransformOp;
-import java.awt.image.WritableRaster;
 import java.awt.image.BufferedImage;
-import java.awt.image.Kernel;
-import java.awt.image.Raster;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -45,13 +41,7 @@ import com.ivli.roim.events.WindowChangeListener;
 import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
 import com.ivli.roim.algorithm.MIPProjector;
-import com.ivli.roim.core.IFrameProvider;
 import com.ivli.roim.core.IMultiframeImage;
-import com.ivli.roim.core.ImageType;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
 
 
 public class ImageView extends JComponent implements IImageView {
@@ -77,9 +67,7 @@ public class ImageView extends JComponent implements IImageView {
     protected BufferedImage iBuf;  //offscreen buffer made of a iBuf2 after zoom and pan   
         
     private final EventListenerList iListeners; //
-
    
-    
     public static ImageView create(IMultiframeImage aI, ViewMode aMode) {        
         return create(aI, aMode, new ROIManager(aI, Uid.getNext(), false));    
     }
@@ -116,7 +104,7 @@ public class ImageView extends JComponent implements IImageView {
         iCurrent = 0; 
         iOrigin = new Point(0, 0);              
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);          
-        iVLUT = new VOITransform(null);                             
+        iVLUT = new VOITransform();                             
         iListeners = new EventListenerList();        
     }
       
@@ -218,10 +206,12 @@ public class ImageView extends JComponent implements IImageView {
     public ROIManager getROIMgr() {
         return iMgr;
     } 
-        
+    
+    /*    
     public VOITransform getLUTMgr() {
         return iVLUT;
     }
+    */
     
     public void setFit(ZoomFit aFit) {               
         iFit = aFit;         
@@ -399,18 +389,17 @@ public class ImageView extends JComponent implements IImageView {
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);        
        
-       
+        
         ImageFrame frm = iModel.get(iCurrent);
         
         BufferedImage bi = new BufferedImage(frm.getWidth(), frm.getHeight(), BufferedImage.TYPE_INT_RGB);
         bi.getRaster().setDataElements(0, 0, frm.getWidth(), frm.getHeight(), iModel.get(iCurrent).getPixelData());
-                
+       /*         
         iBuf = iVLUT.transform(z.filter(bi, null), null); 
         
-        /* /* 
-        iBuf2 = iVLUT.transform(iModel.get(iCurrent), iBuf2);        
-        iBuf = z.filter(iBuf2, iBuf);         
-        */ 
+        /* */ 
+        iBuf2 = iVLUT.transform(bi, iBuf2);        
+        iBuf = z.filter(iBuf2, iBuf);                 
     }
     
     @Override
@@ -465,10 +454,12 @@ public class ImageView extends JComponent implements IImageView {
         repaint();
     }
 
+    @Override
     public boolean isInverted() {
         return iVLUT.isInverted();
     }
 
+    @Override
     public void setLinear(boolean aI) {      
         iVLUT.setLinear(aI);
         invalidateBuffer();
@@ -476,12 +467,22 @@ public class ImageView extends JComponent implements IImageView {
         repaint();
     }
 
+    @Override
     public boolean isLinear() {
         return iVLUT.isLinear();
     }
        
-    public BufferedImage transform (BufferedImage aSrc) {
-        return iVLUT.transform(aSrc, null);
+    public double getMin() {
+        return getFrame().getMin();
+    }
+    
+    public double getMax() {
+        return getFrame().getMax();
+    }           
+    
+    @Override
+    public BufferedImage transform (BufferedImage aSrc, BufferedImage aDst) {
+        return iVLUT.transform(aSrc, aDst);
     }
               
     private static final Logger LOG = LogManager.getLogger();

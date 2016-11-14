@@ -29,22 +29,22 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class VOILUTPanel extends JPanel implements WindowChangeListener {    
-    
+public class VOILUTPanel extends JPanel implements WindowChangeListener {        
     private static final int NO_OF_BINS = 256;
     private final LUTControl iLUT;             
     private final ChartPanel iPanel;
     private final String iCurveName;
     private Histogram iHist;
-    private final ImageView iView;
-    
+   // private final ImageView iView;
+    /*
     private XYSeriesCollection makeLUTCurve() {                    
         return new XYSeriesCollection(XYSeriesUtilities.getSeriesRebinned(iCurveName, iLUT.getLUTCurve(), NO_OF_BINS, iView.getFrame().getMin(), iView.getFrame().getMax()));
     }
+    */
     
     private XYSeries makeHistogram() {  
         if (null == iHist) {            
-            iHist = iView.getFrame().processor().histogram(null, 256);//.extract(iHEx);           
+//            iHist = iView.getFrame().processor().histogram(null, 256);//.extract(iHEx);           
         }
         
         final String name = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM");
@@ -53,25 +53,24 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     
     @Override
     public void windowChanged(WindowChangeEvent anEvt) {            
-        iPanel.getChart().getXYPlot().setDataset(0, makeLUTCurve());
+//        iPanel.getChart().getXYPlot().setDataset(0, makeLUTCurve());
         iLUT.windowChanged(anEvt);
     }   
     
-    public VOILUTPanel(LUTControl aP, ImageView aView) {        
-        iView = aView;
+    public VOILUTPanel(LUTControl aP) {        
+        
         iCurveName = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.VOI_LUT");        
         
-        iLUT = new LUTControl();
-        iLUT.attach(aP);
+        iLUT = LUTControl.create(aP);        
         
-        iView.addWindowChangeListener(this);
-        iView.addWindowChangeListener(iLUT);
+     //   iView.addWindowChangeListener(this);
+        
         
         initComponents();
                
         XYPlot plot = new XYPlot();
    
-        plot.setDataset(0, makeLUTCurve());
+      //  plot.setDataset(0, makeLUTCurve());
         plot.setRenderer(0, new XYSplineRenderer());  
         
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);
@@ -96,33 +95,13 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         
         jfc.setBorderVisible(true);
         jfc.removeLegend();
-        iPanel = new ChartPanel(jfc);
-        //iChart.setMouseWheelEnabled(true);
-        //iPanel.s        
+        iPanel = new ChartPanel(jfc);            
         iPanel.setSize(jPanel1.getPreferredSize());
-        jPanel1.add(iPanel);//, java.awt.BorderLayout.CENTER);
-              
+        jPanel1.add(iPanel);//, java.awt.BorderLayout.CENTER);              
         iLUT.setSize(jPanel2.getPreferredSize());
-        jPanel2.add(iLUT);
-                
-        //aP.addWindowChangeListener(iLUT);
-        //iLUT.addWindowChangeListener(this);
-        
-        super.addAncestorListener(new AncestorListener() {
-            public void ancestorAdded(AncestorEvent event) {}
-
-            public void ancestorRemoved(AncestorEvent event){        
-               // iLUT.removeWindowChangeListener(VOILUTPanel.this);    
-              //  iLUT.removeWindowChangeListener(VOILUTPanel.this);    
-                iView.removeWindowChangeListener(VOILUTPanel.this);
-                iView.removeWindowChangeListener(iLUT);
-            }
-
-            public void ancestorMoved(AncestorEvent event){}         
-            });                
-          
-        iLabelMin.setText(String.format("%.0f", iView.getFrame().getMin()));
-        iLabelMax.setText(String.format("%.0f", iView.getFrame().getMax()));
+        jPanel2.add(iLUT);       
+        iLabelMin.setText(String.format("%.0f", iLUT.getView().getMin()));
+        iLabelMax.setText(String.format("%.0f", iLUT.getView().getMax()));
                
         validate();  
     }

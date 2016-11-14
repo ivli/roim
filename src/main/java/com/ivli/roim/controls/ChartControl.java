@@ -7,7 +7,6 @@ package com.ivli.roim.controls;
 
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.Paint;
@@ -237,14 +236,10 @@ public class ChartControl extends ChartPanel {
                     
                     if (ndx == 0 && dir == FITDIR.FIT_WEST || ndx == list.size() - 1 && dir == FITDIR.FIT_EAST)
                         iInterpolations.add(new Interpolation((DomainMarker)iMarker, dir));
-                        
-                    
+                                            
                     DomainMarker mark2 = list.get(dir == FITDIR.FIT_WEST ? --ndx : ++ndx);                        
-                    
-                    if (null != mark2)                                                      
-                        iInterpolations.add(createInterpolation((DomainMarker)iMarker, mark2));    
-                    else                                                             
-                        iInterpolations.add(createInterpolation((DomainMarker)iMarker, null));
+                                                                                    
+                    iInterpolations.add(new Interpolation((DomainMarker)iMarker, mark2));                        
                 }
             } break;                                
             default:
@@ -262,35 +257,7 @@ public class ChartControl extends ChartPanel {
             FIT_EAST,            
             FIT_RANGE
     }
-        
-    Interpolation createInterpolation(DomainMarker aLhs, DomainMarker aRhs) {
-            Interpolation ret = new Interpolation(aLhs, aRhs);
-            ret.iLhs = aLhs;
-            ret.iRhs = aRhs;
-         
-            final double finval = aLhs.getSeries().getDataItem(aLhs.getSeries().getItemCount() - 1).getXValue();
-                        
-            ret.iSeries = new XYSeries(String.format(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INTERPOLATION%D"), iInterpolationID++));
-            
-            aLhs.getSeries().addChangeListener(ret);
-                    
-            XYSeriesUtilities.fit(aLhs.getSeries(), aLhs.getValue(), finval, true, ret.iSeries);
-            
-            
-             getChart().getXYPlot().getRenderer().setSeriesPaint(getChart().getXYPlot().getDataset().indexOf(ret.iSeries.getKey()), 
-                getChart().getXYPlot().getRenderer().getSeriesPaint(getChart().getXYPlot().getDataset().indexOf(aLhs.getSeries().getKey())));
-                        
-            getChart().getXYPlot().getRenderer().setSeriesStroke(getChart().getXYPlot().getDataset().indexOf(ret.iSeries.getKey()), INTERPOLATION_STROKE);
-            
-            ret.iLhs.addChangeListener(ret); 
-            ret.iLhs.getSeries().addChangeListener(ret);
-            
-            if (null != aRhs) 
-                ret.iRhs.addChangeListener(ret);
-            
-            return ret;
-        }
-    
+               
     private final static BasicStroke INTERPOLATION_STROKE = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
     
     final class Interpolation implements MarkerChangeListener, SeriesChangeListener, AutoCloseable {
@@ -311,9 +278,7 @@ public class ChartControl extends ChartPanel {
             final double finval = iLhs.getSeries().getDataItem(iLhs.getSeries().getItemCount() - 1).getXValue();
                         
             iSeries = new XYSeries(String.format(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("INTERPOLATION%D"), iInterpolationID++));
-            
-            iLhs.getSeries().addChangeListener(this);
-                    
+              
             XYSeriesUtilities.fit(iLhs.getSeries(), iLhs.getValue(), finval, true, iSeries);
                                    
             ((XYSeriesCollection)getChart().getXYPlot().getDataset()).addSeries(iSeries);
@@ -324,9 +289,9 @@ public class ChartControl extends ChartPanel {
             getChart().getXYPlot().getRenderer().setSeriesPaint(getChart().getXYPlot().getDataset().indexOf(iSeries.getKey()), 
                     getChart().getXYPlot().getRenderer().getSeriesPaint(getChart().getXYPlot().getDataset().indexOf(iLhs.getSeries().getKey())));
           
-            getChart().getXYPlot().getRenderer().setSeriesStroke(getChart().getXYPlot().getDataset().indexOf(iSeries.getKey()),
-                    INTERPOLATION_STROKE);
-           
+            getChart().getXYPlot().getRenderer().setSeriesStroke(getChart().getXYPlot().getDataset().indexOf(iSeries.getKey()), INTERPOLATION_STROKE);
+                    
+            iLhs.getSeries().addChangeListener(this);
             aLhs.addChangeListener(this);              
         }
                 
@@ -350,6 +315,7 @@ public class ChartControl extends ChartPanel {
             aRhs.addChangeListener(this);             
         }             
                         
+        @Override
         public void close() {
             iLhs.removeChangeListener(this);
             if (iRhs != null)
@@ -357,6 +323,7 @@ public class ChartControl extends ChartPanel {
             iSeries.clear();
         }
                 
+        @Override
         public void markerChanged(MarkerChangeEvent mce) {
             iSeries.clear();        
             double left;
@@ -374,11 +341,13 @@ public class ChartControl extends ChartPanel {
             iSeries = XYSeriesUtilities.fit(iLhs.getSeries(), left, right, true, iSeries);              
         }
         
+        @Override
         public void seriesChanged(SeriesChangeEvent sce) {           
             // it seems there's nothing to get done since marker change would fire an update of interpolation 
         }
     }
             
+    @Override
     public void mouseMoved(MouseEvent e) {
         super.mouseMoved(e);
 

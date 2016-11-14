@@ -1,7 +1,6 @@
 package com.ivli.roim.view;
 
 import com.ivli.roim.core.Curve;
-import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
@@ -19,6 +18,7 @@ public class VOITransform implements Transformation {
     private static final int IMAGESPACE_SIZE = 65536;
     private static final int LUT_SIZE = 256;        
     private static final double SIGMOID_SKEW = -8;
+    
     private PValueTransform iPVt;
     private LUTTransform iPlut;
     private Window  iWin;    
@@ -31,6 +31,17 @@ public class VOITransform implements Transformation {
     
     static ForkJoinPool fjp = new ForkJoinPool();
     
+    
+    public VOITransform() {
+        iInverted = false;
+        iLinear = true;
+        iPVt = PValueTransform.DEFAULT;                     
+        iPlut = LUTTransform.create(null);
+        iWin = new Window(0, IMAGESPACE_SIZE);           
+        iBuffer = new byte[IMAGESPACE_SIZE];  
+        iRGBBuffer = iPlut.asArray(null);
+    }  
+     
     public VOITransform(PValueTransform aPVT, Window aWin, LUTTransform aLUT) {
         iInverted = false;
         iLinear = true;
@@ -42,19 +53,7 @@ public class VOITransform implements Transformation {
         iBuffer = new byte[IMAGESPACE_SIZE];
         iRGBBuffer = iPlut.asArray(null);
     }  
-    
-    public VOITransform(LUTTransform aLUT) {
-        iInverted = false;
-        iLinear = true;
-        iPVt = PValueTransform.DEFAULT;        
-             
-        iPlut = (null !=aLUT) ? aLUT : LUTTransform.create(null);
-        iWin = new Window(0, IMAGESPACE_SIZE);    
-        
-        iBuffer = new byte[IMAGESPACE_SIZE];  
-        iRGBBuffer = iPlut.asArray(null);
-    }  
-    
+   
     public void setTransform(PValueTransform aT) {
         if (null != aT)
             iPVt = aT;

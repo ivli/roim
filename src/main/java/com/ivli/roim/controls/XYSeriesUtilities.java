@@ -262,10 +262,10 @@ class XYSeriesUtilities {
     
     public static XYSeries convert(final String aName, Histogram aHist){            
         XYSeries ret = new XYSeries(aName, true, false);
-        
-        for (int i = 0; i < aHist.size(); ++i) { 
-            ret.add((double)i * aHist.getBinSize(), (double)aHist.get(i));
-        }                        
+        if (null != aHist)
+            for (int i = 0; i < aHist.size(); ++i) 
+                ret.add((double)i * aHist.getBinSize(), (double)aHist.get(i));
+                                 
         return ret;
     }
     
