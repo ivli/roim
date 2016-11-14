@@ -229,8 +229,7 @@ public class ChartControl extends ChartPanel {
                             .collect(Collectors.toList());                
 
                 LOG.debug("-->Found " + list.size() + " markers");
-                                  
-                
+                                                  
                 switch (list.size()) {
                     case 0: break;
                     case 1: 
