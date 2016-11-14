@@ -37,7 +37,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.PresentationLUT;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
@@ -66,7 +65,7 @@ public class ImageView extends JComponent implements IImageView {
     protected Point iOrigin; //image point [0,0] on the window implements panoramic transform 
     protected AffineTransform iZoom; //zoom factor relating to original image size
                
-    protected VOILut iVLUT; //VOI LUT combines W/L and Presentation LUT 
+    protected VOITransform iVLUT; //VOI LUT combines W/L and Presentation LUT 
    
     protected int iCurrent; //frame that is currently shown
     protected IMultiframeImage iModel; //the image   
@@ -117,7 +116,7 @@ public class ImageView extends JComponent implements IImageView {
         iCurrent = 0; 
         iOrigin = new Point(0, 0);              
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);          
-        iVLUT = new VOILut(null);                             
+        iVLUT = new VOITransform(null);                             
         iListeners = new EventListenerList();        
     }
       
@@ -184,7 +183,7 @@ public class ImageView extends JComponent implements IImageView {
     }
     
     public void setLUT(String aLUT) {          
-        iVLUT.setLUT(PresentationLUT.create(aLUT));
+        iVLUT.setLUT(LUTTransform.create(aLUT));
         invalidateBuffer();
     }    
     
@@ -220,7 +219,7 @@ public class ImageView extends JComponent implements IImageView {
         return iMgr;
     } 
         
-    public VOILut getLUTMgr() {
+    public VOITransform getLUTMgr() {
         return iVLUT;
     }
     

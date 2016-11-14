@@ -15,22 +15,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.ivli.roim.core;
+package com.ivli.roim.view;
 import com.ivli.roim.io.LutReader;
+import java.awt.image.BufferedImage;
+
 /**
  *
  * @author likhachev
  */
-public class PresentationLUT {
-    
+public class LUTTransform implements Transformation {    
     final int [][] iRGBBuffer;
     
-    PresentationLUT(){
+    LUTTransform(){
         iRGBBuffer = new int[LutReader.TABLE_SIZE][3];
     }
     
-    static public PresentationLUT create(String aName) {
-        PresentationLUT self = new PresentationLUT();
+    static public LUTTransform create(String aName) {
+        LUTTransform self = new LUTTransform();
         self.open(aName);
         return self;
     }
@@ -73,4 +74,9 @@ public class PresentationLUT {
        
         return ret;
     }
+
+    @Override
+    public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    } 
 }

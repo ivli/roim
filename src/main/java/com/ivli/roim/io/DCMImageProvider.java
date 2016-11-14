@@ -48,7 +48,7 @@ import org.dcm4che3.io.DicomInputStream;
  */
 class DCMImageProvider implements IImageProvider {    
     
-     static {
+    static {
         ImageIO.scanForPlugins();
     }
 

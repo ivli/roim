@@ -3,16 +3,14 @@ package com.ivli.roim.view;
 import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.PValueTransform;
-import com.ivli.roim.core.PresentationLUT;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class VOILut {        
+public class VOITransform implements Transformation {        
     private static final double LUT_MIN   = .0;
     private static final double LUT_MAX   = 255.;
     private static final double LUT_RANGE = LUT_MAX - LUT_MIN;    
@@ -22,7 +20,7 @@ public class VOILut {
     private static final int LUT_SIZE = 256;        
     private static final double SIGMOID_SKEW = -8;
     private PValueTransform iPVt;
-    private PresentationLUT iPlut;
+    private LUTTransform iPlut;
     private Window  iWin;    
     private boolean iInverted;            
     private boolean iLinear; 
@@ -33,24 +31,24 @@ public class VOILut {
     
     static ForkJoinPool fjp = new ForkJoinPool();
     
-    public VOILut(PValueTransform aPVT, Window aWin, PresentationLUT aLUT) {
+    public VOITransform(PValueTransform aPVT, Window aWin, LUTTransform aLUT) {
         iInverted = false;
         iLinear = true;
         iPVt = aPVT;
                
-        iPlut = (null != aLUT) ? aLUT : PresentationLUT.create(null);
+        iPlut = (null != aLUT) ? aLUT : LUTTransform.create(null);
         iWin = aWin;  
                  
         iBuffer = new byte[IMAGESPACE_SIZE];
         iRGBBuffer = iPlut.asArray(null);
     }  
     
-    public VOILut(PresentationLUT aLUT) {
+    public VOITransform(LUTTransform aLUT) {
         iInverted = false;
         iLinear = true;
         iPVt = PValueTransform.DEFAULT;        
              
-        iPlut = (null !=aLUT) ? aLUT : PresentationLUT.create(null);
+        iPlut = (null !=aLUT) ? aLUT : LUTTransform.create(null);
         iWin = new Window(0, IMAGESPACE_SIZE);    
         
         iBuffer = new byte[IMAGESPACE_SIZE];  
@@ -63,8 +61,8 @@ public class VOILut {
         makeLUT();
     }
     
-    public final void setLUT(PresentationLUT aLUT) { 
-        iPlut = (null != aLUT) ? aLUT : PresentationLUT.create(null);
+    public final void setLUT(LUTTransform aLUT) { 
+        iPlut = (null != aLUT) ? aLUT : LUTTransform.create(null);
         makeLUT();
     }
         
@@ -129,30 +127,11 @@ public class VOILut {
                       ));        
         }
     }   
-         
-    private BufferedImage transform(ImageFrame aSrc, BufferedImage aDst) {        
-        final int width = aSrc.getWidth();
-        final int height = aSrc.getHeight();   
-        
-        if (aDst != null && (aDst.getWidth() != width || aDst.getHeight() != height || aDst.getType() != BufferedImage.TYPE_INT_RGB))
-            throw new IllegalArgumentException("Destination image must either be an image of the same dimentions or null");
-             
-        BufferedImage ret = null != aDst ? aDst : new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);                  
-       
-        int[] dst = new int[aSrc.getPixelData().length];
-        
-        fjp.invoke(new Transformer(aSrc.getPixelData(), dst, 0, dst.length));   
-        
-        
-        ret.getRaster().setDataElements(0, 0, width, height, dst);
-        
-        return ret;
-    }
-      
+                  
     public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {        
         final int width = aSrc.getWidth();
         final int height = aSrc.getHeight();   
-        LOG.debug("transform: w =" + width + ", h=" + height);
+        
         BufferedImage ret;
         
         if (aDst == null) {
