@@ -1,9 +1,8 @@
 *Так же доступен: [in English](README.md), [по Русски](README.ru_ru.md)*
 
-Roim is a class library for processing biomedical imaging data. 
-It is designed to be vendor neutral and support most of modalities. 
-However, for the time being it is tested only with NM/DR/DXR/CT/PET/MR files.
- 
+Roim - библиотека классов предназначенная быть каркасом для создания приложений по обработке данных медицинских исследований, преимущественно в области ядерной медицины. Библиотека целиком написанна на Java и спроектирована так, что бы быть максимально независимой от модальностей и оборудования, с помощью которого данные изображения получены. В настоящее время помимо собственно ядерной медицины (ЯМ) реализована ограниченная поддержка NM/DR/DXR/CT/PET/MR.
+
+
 It implements a set of algorithms, screen primitives and forms to simplify processes of extraction, 
 processing and display information extracted off study files. 
 The library relies on few external libraries namely DCM4CHE to handle DICOM data, 
