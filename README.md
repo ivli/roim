@@ -19,7 +19,7 @@ And export data into a CSV file for processing in an external application.
 
 SIC: library heavily uses features introduced in JDK8 thus it is necessary to build and run.
 
-With best regards,
+With best regards,    
 I.
 
 
