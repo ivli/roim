@@ -6,8 +6,8 @@ However, for the time being it is tested only with ***NM/DR/DXR/CT/PET/MR*** fil
  
 It implements a set of algorithms, screen primitives and forms to simplify processes of extraction, 
 processing and display information extracted off study files. 
-The library relies on few external libraries namely [DICOM](<https://ru.wikipedia.org/wiki/DICOM>) to handle DICOM data, 
-[Aparapi](<https://aparapi.github.io/>) for GPU operations and charts is based on [JFreeChart](<http://www.jfree.org/jfreechart/>). 
+The library relies on few external libraries namely [DICOM](https://ru.wikipedia.org/wiki/DICOM) to handle DICOM data, 
+[Aparapi](https://aparapi.github.io/) for GPU operations and charts is based on [JFreeChart](http://www.jfree.org/jfreechart/). 
 
 The library includes an application to illustrate basic concepts and principles behind it.  
 This application is meant for processing dynamic studies such as renal clearance, hida or gastric emptying. 
@@ -19,7 +19,7 @@ And export data into a CSV file for processing in an external application.
 
 ***SIC***: library heavily uses features available since ***JDK8*** thus it is necessary to build and run.
 
-Please visit Roim [project](<http://ivli.github.io/roim/>) or [WiKi] (<https://github.com/ivli/roim/wiki/ROIM>) page to get more details on design, uses and how it can help in creating your applications.
+Please visit Roim ['project'](http://ivli.github.io/roim/) or ['WiKi'] (https://github.com/ivli/roim/wiki/ROIM/) page to get more details on design, uses and how it can help in creating your applications.
 
 With best regards,    
 I.
