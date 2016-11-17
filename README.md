@@ -19,6 +19,8 @@ And export data into a CSV file for processing in an external application.
 
 ***SIC***: library heavily uses features introduced in JDK8 thus it is necessary to build and run.
 
+Please wisit [WiKi page] (<https://github.com/ivli/roim/wiki/ROIM>) to get more details on Roim's design and usage.
+
 With best regards,    
 I.
 
