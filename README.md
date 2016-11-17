@@ -2,7 +2,7 @@
 
 ***Roim*** is a class library for processing biomedical imaging data. 
 It is designed to be vendor neutral and support most of modalities. 
-However, for the time being it is tested only with ***NM/DR/DXR/CT/PET/MR files.
+However, for the time being it is tested only with ***NM/DR/DXR/CT/PET/MR*** files.
  
 It implements a set of algorithms, screen primitives and forms to simplify processes of extraction, 
 processing and display information extracted off study files. 
