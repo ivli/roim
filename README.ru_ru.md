@@ -1,4 +1,4 @@
-*Also available in: [in English](./README.md) [по Русски](./README.ru_ru.md)*
+*РўР°Рє Р¶Рµ РґРѕСЃС‚СѓРїРµРЅ: [in English](README.md), [РїРѕ Р СѓСЃСЃРєРё](README.ru_ru.md)*
 
 Roim is a class library for processing biomedical imaging data. 
 It is designed to be vendor neutral and support most of modalities. 
@@ -19,7 +19,7 @@ And export data into a CSV file for processing in an external application.
 
 SIC: library heavily uses features introduced in JDK8 thus it is necessary to build and run.
 ---
-*С пожеланиями всего самого лучшего,
-И.* 
+*РЎ РїРѕР¶РµР»Р°РЅРёСЏРјРё РІСЃРµРіРѕ СЃР°РјРѕРіРѕ Р»СѓС‡С€РµРіРѕ,
+Р.* 
 
 
