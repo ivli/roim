@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.io;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -27,8 +28,14 @@ public class ImageProviderFactory {
     
     //TODO: implement here a logic of finding a provider according to image file type (file extension???) 
     public static IImageProvider create(final String aFullPath) throws IOException {
+        IImageProvider ret; 
+        if (new File(aFullPath).isDirectory())
+            ret = DirectoryBuilder.build(aFullPath, null);
+        else 
+            ret = new DCMImageProvider(aFullPath);
         
-        return new DCMImageProvider(aFullPath);
+        ret.dumpFileInformation();
         
+        return ret;
     }
 }

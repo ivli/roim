@@ -65,24 +65,33 @@ class DCMImageProvider implements IImageProvider {
         return ir;
     }
 
-    private final ImageReader iReader;
+    private ImageReader iReader = null;
     private final Attributes iDataSet;               
+    private final String iFileName;
     
     protected DCMImageProvider(final String aFile) throws IOException {
-        File f = new File(aFile);
+        File f = new File(iFileName = aFile);
         DicomInputStream dis = new DicomInputStream(f);
         iDataSet = dis.readDataset(-1, -1);   
         iReader = installImageReader();
         iReader.setInput(ImageIO.createImageInputStream(f));  
-        
-        dumpFileInmormation(aFile);   
+       
     }
     
-    private void dumpFileInmormation(String aN) {        
+    protected DCMImageProvider(final File aFile) throws IOException {  
+        iFileName = aFile.getAbsolutePath();
+        iDataSet = new DicomInputStream(aFile).readDataset(-1, -1);                  
+    }
+    
+    public String getFileName() {
+        return iFileName;
+    }
+    
+    public String dumpFileInformation() {        
         StringBuilder sb = new StringBuilder();
         sb.append("\n-----------------------------------");
         sb.append("\nFILE: ");
-        sb.append(aN);       
+        sb.append(getFileName());       
         sb.append("\nMODALITY: ");
         sb.append(getModality());
         sb.append("\nTYPE: ");
@@ -94,8 +103,11 @@ class DCMImageProvider implements IImageProvider {
         sb.append(getTimeSliceVector());
         sb.append("\nP-VALUE TRANSFORM:");
         sb.append(getRescaleTransform());                
+        sb.append("\nmin/max:");
+        sb.append(getMin());
+        sb.append(getMax());
         sb.append("\n-----------------------------------\n");
-        LOG.info(sb);
+        return sb.substring(0);
     }
     
     public Modality getModality() {

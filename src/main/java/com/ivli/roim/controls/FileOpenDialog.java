@@ -23,7 +23,6 @@ import java.awt.Frame;
 import java.io.File;
 import java.util.Locale;
 import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
@@ -150,7 +149,7 @@ public class FileOpenDialog {
             
             jfc.setCurrentDirectory(new File(iFilePath)); 
             
-            jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);//.FILES_ONLY);
             
             if (null != iFileExtension && null != iFileDescription) {
                 jfc.setFileFilter(new FileFilter(){ 

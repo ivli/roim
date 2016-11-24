@@ -127,7 +127,15 @@ public class MultiframeImage extends IMultiframeImage   {
         iMax = iProvider.getMax();
     //TODO: handle the situation min/max not present in DICOM - what to do? calculate through entire seri?        
     }
-   
+    
+    public Modality getModality() {
+        return iProvider.getModality();
+    }
+    
+    public Photometric getPhotometric() {
+        return iProvider.getPhotometric();
+    }
+    
     public ImageDataType getImageDataType() {
         return ImageDataType.GRAYS32;
     }

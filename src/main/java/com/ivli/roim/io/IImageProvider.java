@@ -37,4 +37,7 @@ public interface IImageProvider extends com.ivli.roim.core.IImage {
      * @throws IOException 
      */
     public int[] readFrame(int anIndex, int [] aBuffer) throws IndexOutOfBoundsException, java.io.IOException;
+   
+    public String dumpFileInformation();
+    public String getFileName();
 }

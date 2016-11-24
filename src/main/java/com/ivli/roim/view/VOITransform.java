@@ -147,7 +147,7 @@ public class VOITransform implements Transformation {
         final int[] dst = new int[src.length];        
         
         for (int i = 0; i < src.length; ++i)                         
-            dst[i] = iRGBBuffer[0x0ff & (int)iBuffer[src[i]]];   
+            dst[i] = iRGBBuffer[0x0ff & (int)iBuffer[0x0ffff & src[i]]];   
         
         ret.getRaster().setDataElements(0, 0, width, height, dst);
         

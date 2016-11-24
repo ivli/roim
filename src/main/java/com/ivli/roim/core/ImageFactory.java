@@ -31,6 +31,7 @@ public class ImageFactory {
             IImageProvider provider = ImageProviderFactory.create(aFullPath);        
             return MultiframeImage.create(provider);
         } catch (IOException ex) {
+            LOG.debug(ex);
             return null;
         }
     }
