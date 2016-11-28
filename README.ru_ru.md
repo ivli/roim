@@ -1,26 +1,25 @@
-*Так же доступен: [in English](README.md), [по Русски](README.ru_ru.md)*
+*Так же доступно: [in English](README.md), [по Русски](README.ru_ru.md)*
 
-Roim is a class library for processing biomedical imaging data. 
-It is designed to be vendor neutral and support most of modalities. 
-However, for the time being it is tested only with NM/DR/DXR/CT/PET/MR files.
- 
-It implements a set of algorithms, screen primitives and forms to simplify processes of extraction, 
-processing and display information extracted off study files. 
-The library relies on few external libraries namely DCM4CHE to handle DICOM data, 
-aparapi for GPU operations and charts is based on JFreeChart. 
+***Roim*** - библиотека классов предназначенная быть каркасом для создания приложений по обработке данных медицинских исследований, преимущественно в области ядерной медицины. Библиотека целиком написанна на Java и спроектирована так, что бы быть максимально независимой от модальностей и оборудования, с помощью которого данные изображения получены. В настоящее время помимо собственно ядерной медицины (ЯМ) реализована ограниченная поддержка ***NM/DR/DXR/CT/PET/MR***.
 
-The library includes an application to illustrate basic concepts and principles behind it.  
-This application is meant for processing dynamic studies such as renal clearance, hida or gastric emptying. 
-The screen is split into two parts left one displays image either in list mode or as a composite image (a sum of all frames)
-Here one can work with ROIs - set, delete, move. 
-Right part is a cartesian chart showing activity curves over the ROIs. 
-Also, using markers it is possible to fit acquired data with exponential curve using least squares method. 
-And export data into a CSV file for processing in an external application.          
+Имеется реализация экранных примитивов таких как области интереса (ОИ), профили, аннотации и т.д. которые могут быть использованы для извлечения данных и построения графиков зависимостей, например накопления от времени имп./сек. (т.к. в случае исследования ЯМ интенсивность пиксела напрямую зависит от накопления активности в данной области).     
+Библиотека поддерживает данные в формате [DICOM](<https://ru.wikipedia.org/wiki/DICOM>) для доступа к котрорым используется [DCM4CHE](<http://www.dcm4che.org>).  
+[Aparapi](<https://aparapi.github.io/>) задействуется для обработки данных с использованием GPU а отрисовка графиков основывается на [JFreeChart](<http://www.jfree.org/jfreechart/>). 
 
-SIC: library heavily uses features introduced in JDK8 thus it is necessary to build and run.
+Для демонстрации возможностей библиотека включает приложение, использующее большую часть заложенной функциональности. Приложение может быть использовано для просмотра и обработки динамических исследований таках как, например: рено- ангио- сцинтиграфия или холесцинтиграфия.
+Имеется возможность установки ОИ как по отдельным кадрам так и с использованием суммарного снимка. Визуализации графиков зависимостей, полученных с данных ОИ, применения к ним базовых арифметических опрераций: сложения, вычитания и т.д. а так же аппроксимация  экспоненциальными кривыми по методу наименьших квадратов с возможностью экстраполяции в случае недостатка экспериментальных данных. 
+Результаты могут быть сохранены как в виде изображения (jpeg) так и в файле CSV для дальнейшей обработки во внешней программе например Excel.          
 
 
-С пожеланиями всего самого лучшего,   
+***SIC:*** для работы необхдимо наличие JDK8.
+
+Программа была оттестирована на Windows и Linux (Ubuntu) так же в наличии почти 100% локализация для English и Russian.
+
+[Страничка проекта](<http://ivli.github.io/roim/>) и [WiKi] (<https://github.com/ivli/roim/wiki/ROIM>) содержат более детальное описание внутреннего устройства и вариантов использования Roim *(увы пока только по Английски :-).*  
+
+
+
+*С пожеланиями всего самого лучшего,*   
 И.  
 
 
