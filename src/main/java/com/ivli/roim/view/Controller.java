@@ -111,7 +111,7 @@ class Controller implements IController {
             case MOUSE_ACTION_WINDOW: 
                 return new BaseActionItem(aX, aY) {
                     public void DoAction(int aX, int aY) {   
-                       final double mx = (iControlled.getFrame().getMax() - iControlled.getFrame().getMin()) / 256.;
+                       final double mx = (iControlled.getMax() - iControlled.getMin()) / 256.;
                        Window w = new Window(iControlled.getWindow().getLevel() + (iY - aY) * mx, 
                                              iControlled.getWindow().getWidth() + (aX - iX) * mx); 
                        LOG.debug("request to change window to: " + w);

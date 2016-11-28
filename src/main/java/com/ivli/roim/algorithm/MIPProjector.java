@@ -25,6 +25,7 @@ import com.amd.aparapi.Kernel;
 import com.amd.aparapi.Range;
 import com.ivli.roim.core.MultiframeImage;
 import com.ivli.roim.events.ProgressListener;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -43,8 +44,34 @@ public class MIPProjector extends ProgressNotifier {
         if (null != aPL)
             addProgressListener(aPL);
     }
-      
+    
+    private static boolean PROJECTOR_USE_PARALLEL = true;
+    static int progress = 0;
+    
+    protected void notifyProgressChanged(int aProgress) {
+        
+        if (!PROJECTOR_USE_PARALLEL)
+            super.notifyProgressChanged(aProgress);
+        else {
+           super.notifyProgressChanged(Math.min(100, progress++)); 
+        }        
+    }
+    
     public IMultiframeImage project(Integer aProjections) {
+        
+        
+        if (PROJECTOR_USE_PARALLEL) {
+            ParallelProjector p = new ParallelProjector(aProjections);
+            progress = 0;
+            p.exec();
+            return p.mip;    
+        } else {
+            return projectSequential(aProjections);
+        }
+        
+    }
+    
+    private IMultiframeImage projectSequential(Integer aProjections) {
         if (null == aProjections)
             aProjections = iImage.getNumFrames();
         if (aProjections <= 0)
@@ -73,12 +100,14 @@ public class MIPProjector extends ProgressNotifier {
                     
             for (int z = 0; z < nSlices; ++z) {
                 final ImageFrame cur = temp.get(z);
-
+                
+                final int d[] = cur.getPixelData();
+                
                 for (int x = 0; x < width; ++x) {                               
                     double pixMax = .0;		
                     
                     for (int y = 0; y < height; ++y)                        				                         				                    
-                        pixMax = Math.max(pixMax, (cur.get(x, y) / weights[y]));							                                
+                        pixMax = Math.max(pixMax, (d[y*width + x] / weights[y]));							                                
 
                     frm.set(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
                 }
@@ -90,37 +119,57 @@ public class MIPProjector extends ProgressNotifier {
         return mip;
     }
  
-    /* 
-    public ImageFrame projectOne(int currProj, ImageFrame aF) {    
-        final ImageFrame frm = aF;//iMIP.get(currProj);
-        final int nSlices = iImage.getNumFrames();
-        final int width = iImage.getWidth();
-        final int height = iImage.getHeight();
-        final double maxVol = iImage.getMax();
-        
-        final double angStep = 360./iMIP.getNumFrames();
-        
-        final double weights[] = new double[height]; 
-        
-        for (int i=0; i < weights.length; ++i)
-            weights[i] = (i + 1) * DEPTH_FACTOR;
-        
-        IMultiframeImage temp = iImage.duplicate();
-        temp.processor().rotate(angStep*currProj);
-
-        for (int z = 0; z < nSlices; ++z) {
-            final ImageFrame cur = temp.get(z);
-
-            for (int x = 0; x < width; ++x) {                               
-                double pixMax = .0;		
-
-                for (int y = 0; y < height; ++y)                        				                         				                    
-                    pixMax = Math.max(pixMax, (cur.get(x, y) / weights[y]));							                                
-
-                frm.set(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
-            }
+    class ParallelProjector {          
+        final int iProjections;
+        final double maxVol;      	
+        final double angStep ;
+        final double weights[];
+        final IMultiframeImage mip;
+   
+        ParallelProjector(int aProjections) {            
+            iProjections = aProjections;
+            maxVol  = iImage.processor().measure(null).getMax();       	
+            angStep = 360.0 / aProjections;	
+            weights = new double[iImage.getHeight()];
+            
+            for (int i=0; i < weights.length; ++i)
+                weights[i] = (i + 1) * DEPTH_FACTOR;
+            
+            mip = iImage.createCompatibleImage(aProjections);
         }
-        return frm;
+        
+        public void exec(){
+            IntStream.range(0, iProjections)
+                     .parallel()
+                     .forEach(i -> projectOne(i)); 
+            mip.processor().flipVert();      
+            notifyProgressChanged(100);
+        }
+        
+        private void projectOne(int currProj) {        
+            final ImageFrame frm = mip.get(currProj);            
+            final IMultiframeImage temp = iImage.duplicate();
+            final int width = iImage.getWidth();
+            final int height = iImage.getHeight();
+            
+            temp.processor().rotate(angStep*currProj);
+            
+            notifyProgressChanged((int)(((angStep*currProj)/360.) * 100.));
+            
+            for (int z = 0; z < iImage.getNumFrames(); ++z) {
+                final ImageFrame cur = temp.get(z);
+
+                for (int x = 0; x < width; ++x) {                               
+                    double pixMax = .0;		
+                    
+                    for (int y = 0; y < height; ++y)                        				                         				                    
+                        pixMax = Math.max(pixMax, (cur.get(x, y) / weights[y]));							                                
+
+                    frm.set(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
+                }
+            }            
+        }   
+        
     }  
-*/
+    private final static org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }

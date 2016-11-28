@@ -42,6 +42,8 @@ import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
 import com.ivli.roim.algorithm.MIPProjector;
 import com.ivli.roim.core.IMultiframeImage;
+import com.ivli.roim.core.Measure;
+import com.ivli.roim.core.Measurement;
 
 
 public class ImageView extends JComponent implements IImageView {
@@ -66,6 +68,9 @@ public class ImageView extends JComponent implements IImageView {
     protected BufferedImage iBuf2; //pre processed image of original size       
     protected BufferedImage iBuf;  //offscreen buffer made of a iBuf2 after zoom and pan   
         
+    protected int iMin;
+    protected int iMax;
+    
     private final EventListenerList iListeners; //
    
     public static ImageView create(IMultiframeImage aI, ViewMode aMode) {        
@@ -327,7 +332,10 @@ public class ImageView extends JComponent implements IImageView {
             return false;
         } else {             
             iCurrent = aN;   
-            iVLUT.setWindow(Window.fromRange(iModel.get(iCurrent).getMin(), iModel.get(iCurrent).getMax()));           
+            Measure m = iModel.get(iCurrent).processor().measure(null);
+            iMin = m.getMin();
+            iMax = m.getMax();
+            iVLUT.setWindow(Window.fromRange(m.getMin(), m.getMax()));           
             invalidateBuffer();
             notifyFrameChanged(); 
             repaint();
@@ -432,7 +440,7 @@ public class ImageView extends JComponent implements IImageView {
 
     @Override
     public void setWindow(Window aW) {    
-        if (aW.getBottom() >= getFrame().getMin() && aW.getTop() <= getFrame().getMax()) {            
+        if (aW.getBottom() >= getMin() && aW.getTop() <= getMax()) {            
             LOG.debug("window changed" + aW);            
             iVLUT.setWindow(aW);              
             notifyWindowChanged();
@@ -472,11 +480,11 @@ public class ImageView extends JComponent implements IImageView {
     }
        
     public double getMin() {
-        return getFrame().getMin();
+        return iMin;
     }
     
     public double getMax() {
-        return getFrame().getMax();
+        return iMax;
     }           
     
     @Override

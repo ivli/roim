@@ -25,6 +25,10 @@ import com.ivli.roim.core.TimeSlice;
 import com.amd.aparapi.Kernel;
 import com.ivli.roim.core.Measure;
 import java.awt.Shape;
+import static java.util.concurrent.ForkJoinTask.invokeAll;
+import java.util.concurrent.RecursiveAction;
+import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -58,11 +62,17 @@ public class ImageProcessor {
         
         testArgs(aFrom, aTo);
                   
-        for (int i = aFrom; i < aTo; ++i) {
-            FrameProcessor fp = new FrameProcessor(iImage.get(i), iInterpol);
-            fp.flipVert();
-        }
+        for (int i = aFrom; i <= aTo; ++i) 
+            new FrameProcessor(iImage.get(i), iInterpol).flipVert();
+         
     }
+    
+    public void flipVert() {   
+        iImage.forEach(f -> f.processor().flipVert());
+        //IntStream.range(0, iImage.getNumFrames())
+        //         .parallel()
+        //         .forEach(i -> iImage.get(i).processor().flipVert());
+    }    
     
     public void flipHorz(int aFrom, int aTo) {    
         if (aTo == IFrameProvider.LAST)
@@ -70,34 +80,29 @@ public class ImageProcessor {
         
         testArgs(aFrom, aTo);
                       
-        for (int i = aFrom; i < aTo; ++i) {
-            FrameProcessor fp = new FrameProcessor(iImage.get(i), iInterpol);
-            fp.flipHorz();
-        }
+        for (int i = aFrom; i <= aTo; ++i) 
+            new FrameProcessor(iImage.get(i), iInterpol).flipHorz();       
     }
-         
+      
+    public void flipHorz() {
+        iImage.forEach((f) -> f.processor().flipHorz());     
+    }
+            
     public void rotate(final double anAngle, int aFrom, int aTo) {   
         if (aTo == IFrameProvider.LAST)
             aTo = iImage.getNumFrames() - 1;
         
         testArgs(aFrom, aTo);
                     
-        for (int i = aFrom; i < aTo; ++i) {
-            FrameProcessor fp = new FrameProcessor(iImage.get(i), iInterpol);
-            fp.rotate(anAngle);
-        }
+        for (int i = aFrom; i <= aTo; ++i)
+           new FrameProcessor(iImage.get(i), iInterpol).rotate(anAngle);        
     }
     
-    public void flipVert() {
-        flipVert(0, IFrameProvider.LAST);
-    }
-    
-    public void flipHorz() {
-        flipHorz(0, IFrameProvider.LAST);
-    }
-            
     public void rotate(final double anAngle) {
-        rotate(anAngle, 0, IFrameProvider.LAST);
+        iImage.forEach((f) -> f.processor().rotate(anAngle));
+        //IntStream.range(0, iImage.getNumFrames())
+        //         .parallel()
+        //         .forEach(i -> iImage.get(i).processor().rotate(anAngle));
     }      
         
     public IMultiframeImage collapse(int aFrom, int aTo) {      
@@ -128,14 +133,29 @@ public class ImageProcessor {
         
     public void map(double aKey) {
         for(ImageFrame f:iImage)
-            f.processor().map(aKey);
-    
+            f.processor().map(aKey);    
     }
     
     public Measure measure(Shape aR){
         Measure ret = new Measure(Integer.MAX_VALUE, Integer.MIN_VALUE, 0L);
-        for (ImageFrame f:iImage) 
-            ret.combine(f.processor().measure(null));                   
+        for (ImageFrame f : iImage) 
+            ret.combine(f.processor().measure(aR));                   
         return ret;    
-    }       
+    }    
+    
+    public Measure measure(Shape aR, int aFrom, int aTo){
+        if (aTo == IFrameProvider.LAST)
+            aTo = iImage.getNumFrames() - 1;
+        
+        testArgs(aFrom, aTo);
+        
+        Measure ret = new Measure(Integer.MAX_VALUE, Integer.MIN_VALUE, 0L);
+        
+        for (int i=0; i <= aTo; ++i) 
+            ret.combine(iImage.get(i).processor().measure(aR));                   
+        
+        return ret;    
+    }   
+    
+    
 }

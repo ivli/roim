@@ -31,7 +31,7 @@ public class MultiframeImage extends IMultiframeImage   {
     protected final int iHeight;
     protected final int iNumFrames;   
     
-    protected ImageType iImageType;
+    protected final ImageType iImageType;
     protected PixelSpacing iPixelSpacing;
     protected SliceSpacing iSliceSpacing;
     protected TimeSliceVector iTimeSliceVector; 
@@ -101,7 +101,8 @@ public class MultiframeImage extends IMultiframeImage   {
         iPixelSpacing = PixelSpacing.UNITY_PIXEL_SPACING;
         iTimeSliceVector = TimeSliceVector.ONESHOT; 
         iPVT = PValueTransform.DEFAULT;
-        iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames);    
+        iImageType = ImageType.UNKNOWN;
+        iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames);         
     }
     
     private MultiframeImage(IMultiframeImage aM, int aFrames) {        
@@ -113,7 +114,8 @@ public class MultiframeImage extends IMultiframeImage   {
         iPixelSpacing = aM.getPixelSpacing();
         iSliceSpacing = aM.getSliceSpacing();
         iTimeSliceVector = aM.getTimeSliceVector();
-        iPVT = aM.getRescaleTransform();
+        iImageType = aM.getImageType();
+        iPVT = aM.getRescaleTransform();        
         iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames); 
         iFrames.present(); //have no provider - must not call it
     }
@@ -223,8 +225,8 @@ public class MultiframeImage extends IMultiframeImage   {
     public IMultiframeImage createCompatibleImage(int aNumberOfFrames) {
         //TODO: change type and ... parent too 
         MultiframeImage ret = new MultiframeImage(this, aNumberOfFrames); 
-        ret.iImageType = iImageType;
-        /*
+        /*ret.iImageType = iImageType;
+        
         ret.iNumFrames = aI;
         ret.iWidth = iWidth;
         ret.iHeight = iHeight;

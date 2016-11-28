@@ -64,12 +64,12 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFramePr
             private int _next = 0;
             @Override
             public boolean hasNext() {    
-                return hasAt(_next + 1);
+                return hasAt(_next);
             }
 
             @Override
             public ImageFrame next() {
-                return get(++_next);
+                return get(_next++);
             }  
         };
     }

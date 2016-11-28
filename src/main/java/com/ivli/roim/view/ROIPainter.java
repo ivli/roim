@@ -72,7 +72,7 @@ public class ROIPainter extends AbstractPainter {
             double min = h.min(); //Double.MAX_VALUE;
             double max = h.max(); //Double.MIN_VALUE;
             
-            final double range = iView.getFrame().getMax() - iView.getFrame().getMin();// maxV - minV; 
+            final double range = iView.getMax() - iView.getMin();// maxV - minV; 
 
             Rectangle bounds = new Rectangle(0, 0, iView.getImage().getWidth(), iView.getImage().getHeight());
 

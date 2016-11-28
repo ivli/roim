@@ -110,14 +110,8 @@ class DCMImageProvider implements IImageProvider {
         return sb.substring(0);
     }
     
-    public Modality getModality() {
-        String s = iDataSet.getString(Tag.Modality);        
-
-        for(Modality t : Modality.values())
-            if (s.contains(t.getName()))
-                return t;
-        
-        return Modality.UNKNOWN;
+    public Modality getModality() {        
+        return Modality.create(iDataSet.getString(Tag.Modality));
     }
     
     public Photometric getPhotometric() {

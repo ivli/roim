@@ -25,6 +25,7 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
+import com.ivli.roim.core.Modality;
 import com.ivli.roim.events.ProgressEvent;
 import com.ivli.roim.events.ProgressListener;
 
@@ -160,12 +161,12 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
             setCursor(null); //turn off the wait cursor
             setProgress(100);
             try {
-                initPanels(get());
+                imageLoaded(get());
             } catch (InterruptedException|ExecutionException ex) {
                 LOG.catching(ex);
             }
             jProgressBar1.setValue(0); 
-            jProgressBar1.setVisible(false); 
+           //jProgressBar1.setVisible(false); 
         }
         
         @Override
@@ -174,13 +175,59 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
         }
     }
     
-    private void initPanels(IMultiframeImage img) {
-        MIPProjector mip = new MIPProjector(img, null);            
-        IMultiframeImage dcm = mip.project(img.getNumFrames());
-        for (ImageFrame f:dcm)
-            LOG.debug(f.processor().measure(null));
+    final boolean MAKE_MIP_PROJECTION = true;
+    
+    private void imageLoaded(IMultiframeImage aImg) {
+        if (MAKE_MIP_PROJECTION && (aImg.getModality().isTomographic() ||  aImg.getImageType().isTomographic())) { 
+            SwingMIPProjector l = new SwingMIPProjector(aImg, aImg.getNumFrames(), true);                 
+            l.addPropertyChangeListener(this);             
+            l.execute();
+        } else {
+            initPanels(aImg);
+        }
+    }
+    
+    class SwingMIPProjector extends SwingWorker<IMultiframeImage, Void> implements ProgressListener {    
+        final IMultiframeImage iSource;
+        final int iNoOfProjections;
+        final boolean iCoarse;
+        
+        SwingMIPProjector(final IMultiframeImage aSource, int aNoOfProjections, boolean aCoarse) {
+            iSource = aSource;
+            iNoOfProjections = aNoOfProjections;
+            iCoarse = aCoarse;
+        }
                 
-                
+        @Override
+        protected IMultiframeImage doInBackground() throws Exception { 
+            final long start = System.currentTimeMillis();
+            IMultiframeImage ret =  new MIPProjector(iSource, this).project(iNoOfProjections);
+            
+            LOG.debug("MIP took" + (System.currentTimeMillis() - start));
+            return ret;
+        }
+
+        @Override
+        public void done() {            
+            setCursor(null); //turn off the wait cursor
+            setProgress(100);
+            try {
+                initPanels(get());
+            } catch (InterruptedException|ExecutionException ex) {
+                LOG.catching(ex);
+            }
+            jProgressBar1.setValue(0); 
+            //jProgressBar1.setVisible(false); 
+        }
+        
+        @Override
+        public void ProgressChanged(ProgressEvent anEvt) {
+            setProgress(anEvt.getProgress());             
+        }
+    }
+        
+    private void initPanels(IMultiframeImage dcm) {
+        
         jPanel1.removeAll();
         ImageView image = ImageView.create(dcm, ViewMode.DEFAULT); 
         jPanel1.setLayout(new BorderLayout());

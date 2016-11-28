@@ -88,7 +88,7 @@ public class ImageFrameTest {
             //assertEquals(instance.getMin(), result.getMin(), THETA);
             //assertEquals(instance.getMax(), result.getMax(), THETA);
            // assertEquals(instance.getRange(), result.getRange(), THETA);
-            assertEquals(instance.getIden(), result.getIden(), THETA);
+           // assertEquals(instance.getIden(), result.getIden(), THETA);
         }
     }
 
@@ -331,14 +331,14 @@ public class ImageFrameTest {
 
     /**
      * Test of getRange method, of class ImageFrame.
-     */
+    */ 
     @Test
     public void testGetRange() {
         System.out.println("getRange");
         ImageFrame instance = new ImageFrame(TestImage32x32.ROWS, TestImage32x32.COLS, TestImage32x32.BUFFER);
-        
-        assertEquals(TestImage32x32.MIN, instance.getMin(), .0);  
-        assertEquals(TestImage32x32.MAX, instance.getMax(), .0); 
+        Measure m = instance.processor().measure(null);
+        assertEquals(TestImage32x32.MIN, m.getMin(), .0);  
+        assertEquals(TestImage32x32.MAX, m.getMax(), .0); 
     }
 
     /**
@@ -349,7 +349,7 @@ public class ImageFrameTest {
         System.out.println("getIden");
         ImageFrame instance = f1;
         double expResult = TestImage32x32.TOTAL;
-        double result = instance.getIden();
+        double result = instance.processor().density(null);
         assertEquals(expResult, result, 0.0);       
     }
 

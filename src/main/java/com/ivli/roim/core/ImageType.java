@@ -25,14 +25,14 @@ public class ImageType {
     public static final ImageType UNKNOWN = new ImageType(new String[]{}) {@Override public String toString() {return _UNKNOWN;}};
     // see C.7.6.1.1.2 Image Type
     // a. Pixel Data Characteristics
-    private static final String ORIGINAL = "ORIGINAL";
-    private static final String DERIVED = "DERIVED";
+    public static final String ORIGINAL = "ORIGINAL";
+    public static final String DERIVED = "DERIVED";
     // CT and MR C.8.16.1.1
-    private static final String MIXED = "MIXED"; 
+    public static final String MIXED = "MIXED"; 
     
     // b. Patient Examination Characteristics
-    private static final String PRIMARY = "PRIMARY";    
-    private static final String SECONDARY = "SECONDARY";
+    public static final String PRIMARY = "PRIMARY";    
+    public static final String SECONDARY = "SECONDARY";
     
     // c. Modality Specific Characteristics
     public final static String _UNKNOWN = "UNKNOWN";
@@ -46,11 +46,16 @@ public class ImageType {
     public final static String NM_TOMO_G = "GATED TOMO";
     public final static String NM_VOLUME = "RECON TOMO";
     public final static String NM_VOLUME_G = "RECON GATED TOMO";
+    
     //CR/MR C.8.16.1.3 
     public final static String CT_AXIAL = "AXIAL";
     public final static String CT_LOCALIZER = "LOCALIZER";
-    ///TBC...
     
+    //TODO: check
+    public final static String PT_TOMO = "PT";
+    public final static String PT_TOMO_RECON = "PT_RECON";
+    
+    ///TBC...
     // d. Implementation specific identifiers
     // NM 
     public final static String EMISSION  = "EMISSION";
@@ -92,7 +97,13 @@ public class ImageType {
     public boolean isOriginal() {
         return iPatient.equalsIgnoreCase(ORIGINAL);
     }
-      
+    
+    public boolean isTomographic() {
+        return iTypeName.contains(NM_TOMO) || iTypeName.contains(NM_TOMO_G) || iTypeName.contains(NM_VOLUME)  || iTypeName.contains(NM_VOLUME_G) 
+               || iTypeName.contains(PT_TOMO) || iTypeName.contains(PT_TOMO_RECON) 
+               || iTypeName.contains(CT_AXIAL)  || iTypeName.contains(CT_LOCALIZER);
+    }
+    
     public int getDimensions() {
         switch (iTypeName) {
             case NM_STATIC: return 2;
