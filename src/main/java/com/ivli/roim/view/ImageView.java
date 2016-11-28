@@ -163,9 +163,9 @@ public class ImageView extends JComponent implements IImageView {
             case SLICE: //TODO:
                 break;
             case VOLUME: {
-                MIPProjector prj = new MIPProjector(getImage(), getImage().getNumFrames());
-                setImage(prj.getDst());
-                prj.project();
+               // MIPProjector prj = new MIPProjector(getImage(), getImage().getNumFrames());
+               // setImage(prj.getDst());
+               // prj.project();
             } break;
         }
     }
@@ -185,8 +185,7 @@ public class ImageView extends JComponent implements IImageView {
         iModel = anImage;             
         iVLUT.setTransform(iModel.getRescaleTransform());  
         //iMode = 
-        setFrameNumber(iCurrent);
-        
+        setFrameNumber(iCurrent);        
     }
                  
     @Override

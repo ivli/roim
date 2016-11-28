@@ -25,27 +25,38 @@ import com.ivli.roim.core.Photometric;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.SliceSpacing;
 import com.ivli.roim.core.TimeSliceVector;
+import com.ivli.roim.events.ProgressEvent;
+import com.ivli.roim.events.ProgressListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 
 /**
  *
  * @author likhachev
  */
-public class DirectoryBuilder {
-    public DirectoryBuilder() {}
+public class DirectoryBuilder  {
+    private ProgressListener iPL;
     
-    public static IImageProvider build(final String aDir, Modality aM) throws IOException {
+    public DirectoryBuilder(ProgressListener aPL) {
+        iPL = aPL;
+    }
+                
+    public IImageProvider build(final String aDir, Modality aM) throws IOException {
+        if (null != iPL)
+            iPL.ProgressChanged(new ProgressEvent(this, 0));
         
         File dir = new File(aDir); 
         
         if (!dir.isDirectory()) {
             throw new UnsupportedOperationException("Not supported yet.");        
         }
-        
+      
         String[] lst = dir.list();
         ArrayList<String> sa = new ArrayList<>();
+        
+        int step = 0;
         
         try {
             for(String s:lst) {                 
@@ -56,7 +67,11 @@ public class DirectoryBuilder {
                     if (null == aM) {
                         aM = dc.getModality();
                     }
-
+                    
+                    if (null != iPL) {
+                        iPL.ProgressChanged(new ProgressEvent(this, (int)((double)step++ * 100./(double)lst.length))); //ugly
+                    }
+                    
                     if (dc.getModality() == aM)
                         sa.add(fi.getAbsolutePath());
                 }
@@ -167,7 +182,8 @@ public class DirectoryBuilder {
             }
 
         };
-
+        if (null != iPL)
+            iPL.ProgressChanged(new ProgressEvent(this, 100));
         return ret;
     }
     

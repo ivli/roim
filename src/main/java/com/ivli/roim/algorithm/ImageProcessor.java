@@ -23,6 +23,8 @@ import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.TimeSlice;
 import com.amd.aparapi.Kernel;
+import com.ivli.roim.core.Measure;
+import java.awt.Shape;
 
 /**
  *
@@ -129,4 +131,11 @@ public class ImageProcessor {
             f.processor().map(aKey);
     
     }
+    
+    public Measure measure(Shape aR){
+        Measure ret = new Measure(Integer.MAX_VALUE, Integer.MIN_VALUE, 0L);
+        for (ImageFrame f:iImage) 
+            ret.combine(f.processor().measure(null));                   
+        return ret;    
+    }       
 }

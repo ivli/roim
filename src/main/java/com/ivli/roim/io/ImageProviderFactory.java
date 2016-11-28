@@ -19,6 +19,7 @@ package com.ivli.roim.io;
 
 import java.io.File;
 import java.io.IOException;
+import com.ivli.roim.events.ProgressListener;
 
 /**
  *
@@ -27,12 +28,13 @@ import java.io.IOException;
 public class ImageProviderFactory {
     
     //TODO: implement here a logic of finding a provider according to image file type (file extension???) 
-    public static IImageProvider create(final String aFullPath) throws IOException {
+    public static IImageProvider create(final String aFullPath, ProgressListener aPL) throws IOException {
         IImageProvider ret; 
-        if (new File(aFullPath).isDirectory())
-            ret = DirectoryBuilder.build(aFullPath, null);
-        else 
-            ret = new DCMImageProvider(aFullPath);
+        if (new File(aFullPath).isDirectory()) {            
+            ret = new DirectoryBuilder(aPL).build(aFullPath, null);
+        } else { 
+            ret = new DCMImageProvider(aFullPath);        
+        }
         
         ret.dumpFileInformation();
         

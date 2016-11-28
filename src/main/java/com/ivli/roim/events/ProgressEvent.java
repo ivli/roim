@@ -32,4 +32,12 @@ public class ProgressEvent extends java.util.EventObject {
     public int getProgress() {
         return iProgress;
     }  
+    
+    public boolean isStarting() {
+        return iProgress == 0;
+    }
+    
+    public boolean isFinished() {
+        return iProgress == 100;
+    }
 }

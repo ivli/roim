@@ -35,7 +35,8 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private final ChartPanel iPanel;
     private final String iCurveName;
     private Histogram iHist;
-   // private final ImageView iView;
+   
+// private final ImageView iView;
     /*
     private XYSeriesCollection makeLUTCurve() {                    
         return new XYSeriesCollection(XYSeriesUtilities.getSeriesRebinned(iCurveName, iLUT.getLUTCurve(), NO_OF_BINS, iView.getFrame().getMin(), iView.getFrame().getMax()));

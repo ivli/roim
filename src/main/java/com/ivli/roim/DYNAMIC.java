@@ -397,7 +397,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
                 roif = aF[1];
         }
 
-        initPanels(ImageFactory.create(dicom), roif);
+        initPanels(ImageFactory.create(dicom, null), roif);
         setTitle(dicom);             
     }
         
@@ -407,9 +407,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
       //  jPanel4.removeAll();
         jPanel5.removeAll();       
        
-        iGroup = ImageViewGroup.create(anImage);
-       
-        
+        iGroup = ImageViewGroup.create(anImage);       
         
         ImageView image = iGroup.createView(ViewMode.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
         jPanel1.setLayout(new BorderLayout());

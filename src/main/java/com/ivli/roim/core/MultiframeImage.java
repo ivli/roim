@@ -125,7 +125,8 @@ public class MultiframeImage extends IMultiframeImage   {
     protected void computeStatistics() {                        
         iMin = iProvider.getMin();
         iMax = iProvider.getMax();
-    //TODO: handle the situation min/max not present in DICOM - what to do? calculate through entire seri?        
+        //TODO: handle the situation min/max not present in DICOM - what to do? calculate through entire seri?    
+        
     }
     
     public Modality getModality() {
@@ -187,7 +188,7 @@ public class MultiframeImage extends IMultiframeImage   {
     @Override
     public ImageFrame get(int aFrameNumber) throws IndexOutOfBoundsException {                      
         if (!hasAt(aFrameNumber))
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException(String.format("requesting frame = %d, of %d", aFrameNumber, iNumFrames));
 
         final int[] pix = iFrames.get(aFrameNumber);
         

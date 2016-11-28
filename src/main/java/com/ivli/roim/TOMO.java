@@ -17,26 +17,31 @@
  */
 package com.ivli.roim;
 
+import com.ivli.roim.algorithm.MIPProjector;
+import com.ivli.roim.controls.FileOpenDialog;
 import com.ivli.roim.controls.FrameControl;
 import com.ivli.roim.controls.LUTControl;
-import com.ivli.roim.controls.ROIListPanel;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
+import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
-import com.ivli.roim.view.IImageView;
+import com.ivli.roim.events.ProgressEvent;
+import com.ivli.roim.events.ProgressListener;
+
 import com.ivli.roim.view.ImageView;
+import com.ivli.roim.view.Settings;
 import com.ivli.roim.view.ViewMode;
 import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.FileDialog;
-import java.io.File;
-import javax.swing.JDialog;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.concurrent.ExecutionException;
+import javax.swing.SwingWorker;
 
 /**
  *
  * @author likhachev
  */
-public class TOMO extends javax.swing.JFrame {
+public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
 
     /**
      * Creates new form TOMO
@@ -44,6 +49,7 @@ public class TOMO extends javax.swing.JFrame {
     public TOMO() {
         initComponents();
         jMenuItem3.setEnabled(false);
+        ///jProgressBar1.setVisible(false);
     }
 
     /**
@@ -56,6 +62,8 @@ public class TOMO extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jProgressBar1 = new javax.swing.JProgressBar();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -66,6 +74,12 @@ public class TOMO extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setLayout(new java.awt.BorderLayout());
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel2.setMaximumSize(new java.awt.Dimension(2147483647, 32));
+        jPanel2.setMinimumSize(new java.awt.Dimension(32, 32));
+        jPanel2.setLayout(new java.awt.BorderLayout());
+        jPanel2.add(jProgressBar1, java.awt.BorderLayout.CENTER);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
         jMenu1.setText(bundle.getString("DYNAMIC.jMenu1.text")); // NOI18N
@@ -106,44 +120,100 @@ public class TOMO extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        FileDialog fd = new FileDialog(this, "Choose", FileDialog.LOAD);
-        fd.setFile("*.dcm"); //NOI18N
-        // following doesn't work on windows see JDK-4031440 f**k
-        fd.setFilenameFilter((File dir, String name) -> name.endsWith(".dcm") || name.endsWith(".dicom"));
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if ("progress" == evt.getPropertyName()) {                       
+            jProgressBar1.setValue((Integer) evt.getNewValue());             
+        }         
+    }
+    
+    class SwingImageLoader extends SwingWorker<IMultiframeImage, Void> implements ProgressListener {    
+        final String iFileName;
+        
+        SwingImageLoader(final String aFileName) {
+            iFileName = aFileName;
+        }
+        
+        @Override
+        protected IMultiframeImage doInBackground() throws Exception {
+            IMultiframeImage img = ImageFactory.create(iFileName, this);
+            //MIPProjector mip = new MIPProjector(img, this);            
+            return img;//mip.project(img.getNumFrames());
+        }
 
-        fd.setVisible(true);
-
-        if (null != fd.getFile()) {
-            jPanel1.removeAll();
-
-            IMultiframeImage dcm = ImageFactory.create(fd.getDirectory() + fd.getFile());
-            ImageView image = ImageView.create(dcm, ViewMode.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);
-            jPanel1.setLayout(new BorderLayout());
-            jPanel1.add(image, BorderLayout.CENTER);
-            jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
-            switch (dcm.getImageType().getTypeName()){
-                case ImageType.NM_DYNAMIC:
-                case ImageType.NM_GATED:
-                jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);
-                break;
-                default:
-                break;
+        @Override
+        public void done() {            
+            setCursor(null); //turn off the wait cursor
+            setProgress(100);
+            try {
+                initPanels(get());
+            } catch (InterruptedException|ExecutionException ex) {
+                LOG.catching(ex);
             }
+            jProgressBar1.setValue(0); 
+            jProgressBar1.setVisible(false); 
+        }
+        
+        @Override
+        public void ProgressChanged(ProgressEvent anEvt) {
+            setProgress(anEvt.getProgress());             
+        }
+    }
+    
+    private void initPanels(IMultiframeImage img) {
+        MIPProjector mip = new MIPProjector(img, null);            
+        IMultiframeImage dcm = mip.project(img.getNumFrames());
+        for (ImageFrame f:dcm)
+            LOG.debug(f.processor().measure(null));
+                
+                
+        jPanel1.removeAll();
+        ImageView image = ImageView.create(dcm, ViewMode.DEFAULT); 
+        jPanel1.setLayout(new BorderLayout());
+        jPanel1.add(image, BorderLayout.CENTER);
+        jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
+        
+        switch (dcm.getImageType().getTypeName()){
+            case ImageType.NM_DYNAMIC:
+            case ImageType.NM_GATED:
+                jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);
+            break;
+            default:
+            break;
+        }
 
-            jPanel1.validate();
-            jPanel1.repaint();
-            jMenuItem3.setEnabled(true);
+        jPanel1.validate();
+        jPanel1.repaint();
+        jMenuItem3.setEnabled(true);    
+    }
+    
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        FileOpenDialog dlg = new FileOpenDialog(this, 
+                                                java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CHOICE_FILE_TO_OPEN"), 
+                                                "dcm", //NOI18N 
+                                                java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("DICOM_FILE_TITLE"),
+                                                Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")),
+                                                true );                                               
+        if(dlg.DoModal()) {                     
+            SwingImageLoader l = new SwingImageLoader(dlg.getFileName());
+            l.addPropertyChangeListener(this);             
+            l.execute();
+            jProgressBar1.setVisible(true);
+            jProgressBar1.setString("Loading image(s)" + dlg.getFileName());
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -154,7 +224,7 @@ public class TOMO extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        ROIListPanel panel = new ROIListPanel((IImageView)(jPanel1.getComponent(0)));
+/*        ROIListPanel panel = new ROIListPanel((IImageView)(jPanel1.getComponent(0)));
         JDialog dialog = new JDialog(this, "ROI manager", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setContentPane(panel);
         dialog.validate();
@@ -162,6 +232,21 @@ public class TOMO extends javax.swing.JFrame {
         dialog.setResizable(true);
         dialog.setVisible(true);
         repaint();
+        final ProgressListener pl = this;
+        new Thread(
+                new Runnable() {                    
+                    @Override
+                    public void run() {
+                        try {
+                            for (int i = 0; i <= 100; ++i) {
+                                Thread.sleep(100);
+                                pl.ProgressChanged(new ProgressEvent(this, i));
+                            }
+                        } catch (InterruptedException ex) {
+                            
+                        }        
+                     } 
+                }).start();   */ 
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     /**
@@ -209,5 +294,9 @@ public class TOMO extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
+
+   
 }

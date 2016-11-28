@@ -116,7 +116,7 @@ public class VIEWER extends javax.swing.JFrame {
     private void openFile(String aFileName) {
         jPanel1.removeAll();
 
-        IMultiframeImage dcm = ImageFactory.create(aFileName);                                 
+        IMultiframeImage dcm = ImageFactory.create(aFileName, null);                                 
         ImageView image = ImageView.create(dcm, ViewMode.DEFAULT_IMAGE_MODE);                    
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(image, BorderLayout.CENTER);  

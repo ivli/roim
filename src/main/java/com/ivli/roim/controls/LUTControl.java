@@ -77,7 +77,9 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     private boolean iCanHaveChildren;
     private final WindowTarget iView;                 
         
-    public WindowTarget getView(){return iView;}
+    public WindowTarget getView() {
+        return iView;
+    }
     
     public static LUTControl create(WindowTarget aV) {
         LUTControl ret = new LUTControl(aV);

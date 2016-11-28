@@ -23,65 +23,50 @@ import com.ivli.roim.events.ProgressNotifier;
 
 import com.amd.aparapi.Kernel;
 import com.amd.aparapi.Range;
-import java.util.concurrent.RecursiveAction;
+import com.ivli.roim.core.MultiframeImage;
+import com.ivli.roim.events.ProgressListener;
 
 /**
  *
  * @author likhachev
  */
-public class MIPProjector extends ProgressNotifier{
-    private final double DEPTH_FACTOR = .1; //must fit into range [0 - 1]
-   
+public class MIPProjector extends ProgressNotifier {   
+    private final double DEPTH_FACTOR = .1; //real number in range [0 - 1]
+    
     private final IMultiframeImage iImage;
-    private final IMultiframeImage iMIP;
-    private int iProjections;
-                
-    public MIPProjector(IMultiframeImage aSrc, int aProjections) {
-        iImage = aSrc; 
-        if (-1 == aProjections)
-            aProjections = aSrc.getNumFrames();
+            
+    public MIPProjector(IMultiframeImage aSrc, ProgressListener aPL) {
+        if (null == aSrc)
+            throw new IllegalArgumentException("aSrc may not be null");       
+        iImage = aSrc;         
         
-        iProjections = aProjections;
-        iMIP = iImage.createCompatibleImage(aProjections);        
+        if (null != aPL)
+            addProgressListener(aPL);
     }
-     
-    public MIPProjector(IMultiframeImage aSrc, IMultiframeImage aDst) {
-        iImage = aSrc; 
-        iMIP = aDst;         
-    }
-    
-    public IMultiframeImage getSrc() {
-        return iImage;
-    }
-    
-    public IMultiframeImage getDst() {
-        return iMIP;
-    }
-    
-    public int getNumFrames() {
-        return iMIP.getNumFrames();
-    }
-               
-    public void project() {
-        projectS2();
-    }
-    
-    private void projectS() {
+      
+    public IMultiframeImage project(Integer aProjections) {
+        if (null == aProjections)
+            aProjections = iImage.getNumFrames();
+        if (aProjections <= 0)
+            throw new IllegalArgumentException("number of projections must be a natural number");
+        
         final int nSlices = iImage.getNumFrames();		                
         final int width   = iImage.getWidth();
         final int height  = iImage.getHeight();        
-        final double maxVol = iImage.getMax();       	
-        final double angStep = 360.0 / iProjections;			
+        final double maxVol = iImage.processor().measure(null).getMax();       	
+        final double angStep = 360.0 / aProjections;			
         
         final double weights[] = new double[height]; 
         
         for (int i=0; i < weights.length; ++i)
             weights[i] = (i + 1) * DEPTH_FACTOR;
         
-        for (int currProj = 0; currProj < iProjections; ++currProj) {
+        IMultiframeImage mip = iImage.createCompatibleImage(aProjections);
+                
+        for (int currProj = 0; currProj < aProjections; ++currProj) {
             notifyProgressChanged((int)(((angStep*currProj)/360.) * 100.));
             
-            final ImageFrame frm = iMIP.get(currProj);            
+            final ImageFrame frm = mip.get(currProj);            
             IMultiframeImage temp = iImage.duplicate();
 
             temp.processor().rotate(angStep*currProj);
@@ -100,34 +85,12 @@ public class MIPProjector extends ProgressNotifier{
             }            
         }
         
-        iMIP.processor().flipVert();      
+        mip.processor().flipVert();      
         notifyProgressChanged(100);
+        return mip;
     }
  
-    private void projectS2() {
-        
-        class PrjA extends RecursiveAction {
-            ImageFrame iOut;
-            int iPrj;
-        
-            PrjA(ImageFrame aOut, int aPrj){
-                iOut = aOut;
-                iPrj = aPrj;
-            }
-
-            protected void compute() {
-                projectOne(iPrj, iMIP.get(iPrj));
-            }
-        }
-        
-        
-        //for (int currProj = 0; currProj < iProjections; ++currProj)
-        //    projectOne(currProj, iMIP.get(currProj));
-        
-        
-        
-    }
-    
+    /* 
     public ImageFrame projectOne(int currProj, ImageFrame aF) {    
         final ImageFrame frm = aF;//iMIP.get(currProj);
         final int nSlices = iImage.getNumFrames();
@@ -158,20 +121,6 @@ public class MIPProjector extends ProgressNotifier{
             }
         }
         return frm;
-    } 
-        
-    private void projectA() {
-    
-        Kernel kernel = new Kernel() {
-            @Override
-            public void run() {
-                int gid = getGlobalId();
-                projectOne(gid, iMIP.get(gid));
-            }
-        
-        };
-    
-        kernel.execute(Range.create(iProjections));    
-    }
-    
+    }  
+*/
 }

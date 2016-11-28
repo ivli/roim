@@ -45,7 +45,7 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFramePr
     public abstract boolean hasAt(int aFrameNumber);
     
     /**
-     * Creates a multiframe image with physical characteristics of original but Z or time axis whose lenght is set in the first parementer
+     * Creates a multiframe image with physical characteristics of original except Z or time axis whose length is set in the first parameter
      * frames are zeroed out  
      * @param aNoOfFrames - a number of frames
      * @return  a multiframe image of the same physical dimensions   
@@ -64,7 +64,7 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFramePr
             private int _next = 0;
             @Override
             public boolean hasNext() {    
-                return hasAt(_next);
+                return hasAt(_next + 1);
             }
 
             @Override

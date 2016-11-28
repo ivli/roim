@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.core;
 
+import com.ivli.roim.events.ProgressListener;
 import com.ivli.roim.io.IImageProvider;
 import com.ivli.roim.io.ImageProviderFactory;
 import java.io.IOException;
@@ -26,9 +27,9 @@ import java.io.IOException;
  * @author likhachev
  */
 public class ImageFactory { 
-    public static IMultiframeImage create(final String aFullPath) { 
+    public static IMultiframeImage create(final String aFullPath, ProgressListener aPL) { 
         try {
-            IImageProvider provider = ImageProviderFactory.create(aFullPath);        
+            IImageProvider provider = ImageProviderFactory.create(aFullPath, aPL);        
             return MultiframeImage.create(provider);
         } catch (IOException ex) {
             LOG.debug(ex);

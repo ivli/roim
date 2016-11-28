@@ -26,7 +26,6 @@ import javax.swing.event.EventListenerList;
 public class ProgressNotifier {           
     private final EventListenerList iListeners;  
     
-
     protected ProgressNotifier() {
          iListeners = new EventListenerList();   
     }
