@@ -75,10 +75,11 @@ public class MIPProjector extends ProgressNotifier {
             aProjections = iImage.getNumFrames();
         if (aProjections <= 0)
             throw new IllegalArgumentException("number of projections must be a natural number");
+        		                
+        final int width  = iImage.getWidth();
+        final int height = iImage.getHeight();      
+        final int depth  = iImage.getNumFrames();
         
-        final int nSlices = iImage.getNumFrames();		                
-        final int width   = iImage.getWidth();
-        final int height  = iImage.getHeight();        
         final double maxVol = iImage.processor().measure(null).getMax();       	
         final double angStep = 360.0 / aProjections;			
         
@@ -87,7 +88,7 @@ public class MIPProjector extends ProgressNotifier {
         for (int i=0; i < weights.length; ++i)
             weights[i] = (i + 1) * DEPTH_FACTOR;
         
-        IMultiframeImage mip = iImage.createCompatibleImage(iImage.getWidth(), iImage.getNumFrames(), aProjections);
+        IMultiframeImage mip = iImage.createCompatibleImage(width, depth, aProjections);
                 
         for (int cp = 0; cp < aProjections; ++cp) {
             notifyProgressChanged((int)(((angStep*cp)/360.) * 100.));
@@ -97,7 +98,7 @@ public class MIPProjector extends ProgressNotifier {
 
             temp.processor().rotate(angStep*cp);
                     
-            for (int z = 0; z < nSlices; ++z) {
+            for (int z = 0; z < depth; ++z) {
                 final ImageFrame cur = temp.get(z);
                                
                 for (int x = 0; x < width; ++x) {                               
@@ -106,7 +107,7 @@ public class MIPProjector extends ProgressNotifier {
                     for (int y = 0; y < height; ++y)                        				                         				                    
                         pixMax = Math.max(pixMax, (cur.get(x, y) / weights[y]));							                                
 
-                    frm.set(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
+                    frm.setPixel(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
                 }
             }            
         }

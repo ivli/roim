@@ -107,12 +107,12 @@ public class MultiframeImage extends IMultiframeImage   {
     
     private MultiframeImage(IMultiframeImage aM, int aX, int aY, int aFrames) {        
         iProvider = null;
-        iParent = aM;
-        iNumFrames = aFrames;        
+        iParent = aM;               
         iWidth = aX;// aM.getWidth();
         iHeight = aY;//aM.getHeight();        
         iPixelSpacing = aM.getPixelSpacing();
         iSliceSpacing = aM.getSliceSpacing();
+        iNumFrames = aFrames; 
         iTimeSliceVector = aM.getTimeSliceVector();
         iImageType = aM.getImageType();
         iPVT = aM.getRescaleTransform();        
@@ -229,7 +229,7 @@ public class MultiframeImage extends IMultiframeImage   {
     
      @Override
     public IMultiframeImage createCompatibleImage(int aX, int aY, int aZ) {
-        MultiframeImage ret = new MultiframeImage(this, getWidth(), getHeight(), aZ);        
+        MultiframeImage ret = new MultiframeImage(this, aX, aY, aZ);        
         ret.iFrames.present();
         return ret;
     }
@@ -237,21 +237,10 @@ public class MultiframeImage extends IMultiframeImage   {
      @Override
     public IMultiframeImage duplicate() { 
         //TODO: parent???
-        MultiframeImage ret = new MultiframeImage(this.iProvider);
-        
-        /*
-        for(int n = 0; n < getNumFrames(); ++n)
-           ret.iFrames.add(n, get(n).duplicate());
-       
-        int i1 = ret.iFrames.iBuf.length;
-        int i2 = ret.iFrames.iBuf[0].length;
-        for (int i=0; i < ret.iFrames.iBuf.length; ++i)
-            System.arraycopy(iFrames.iBuf[i], 0, ret.iFrames.iBuf[i], 0, ret.iFrames.iBuf[i].length);
-        ret.iFrames.all();
-        */
-        
+        MultiframeImage ret = new MultiframeImage(this.iProvider);              
         for (int i=0; i < getNumFrames(); ++i) {
             ImageFrame f = get(i);
+            
             System.arraycopy(iFrames.iBuf[i], 0, ret.iFrames.iBuf[i], 0, ret.iFrames.iBuf[i].length);            
         }
         
