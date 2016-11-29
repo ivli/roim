@@ -105,12 +105,12 @@ public class MultiframeImage extends IMultiframeImage   {
         iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames);         
     }
     
-    private MultiframeImage(IMultiframeImage aM, int aFrames) {        
+    private MultiframeImage(IMultiframeImage aM, int aX, int aY, int aFrames) {        
         iProvider = null;
         iParent = aM;
         iNumFrames = aFrames;        
-        iWidth = aM.getWidth();
-        iHeight = aM.getHeight();        
+        iWidth = aX;// aM.getWidth();
+        iHeight = aY;//aM.getHeight();        
         iPixelSpacing = aM.getPixelSpacing();
         iSliceSpacing = aM.getSliceSpacing();
         iTimeSliceVector = aM.getTimeSliceVector();
@@ -224,23 +224,13 @@ public class MultiframeImage extends IMultiframeImage   {
      @Override
     public IMultiframeImage createCompatibleImage(int aNumberOfFrames) {
         //TODO: change type and ... parent too 
-        MultiframeImage ret = new MultiframeImage(this, aNumberOfFrames); 
-        /*ret.iImageType = iImageType;
-        
-        ret.iNumFrames = aI;
-        ret.iWidth = iWidth;
-        ret.iHeight = iHeight;
-        ret.iMin = ret.iMax = Double.NaN;
-        ret.iPixelSpacing = iPixelSpacing;
-        ret.iSliceSpacing = iSliceSpacing;
-        ret.iTimeSliceVector = iTimeSliceVector;
-        
-        ret.iFrames = new java.util.ArrayList<>(iNumFrames);
-        for (int n=0; n < iNumFrames; ++n)
-            iFrames.add(n, new ImageFrame(iWidth, iHeight, new int[iWidth*iHeight]));          
-        */        
+        return createCompatibleImage(getWidth(), getHeight(), aNumberOfFrames);             
+    }
+    
+     @Override
+    public IMultiframeImage createCompatibleImage(int aX, int aY, int aZ) {
+        MultiframeImage ret = new MultiframeImage(this, getWidth(), getHeight(), aZ);        
         ret.iFrames.present();
-        
         return ret;
     }
        

@@ -67,8 +67,7 @@ public class MIPProjector extends ProgressNotifier {
             return p.mip;    
         } else {
             return projectSequential(aProjections);
-        }
-        
+        }        
     }
     
     private IMultiframeImage projectSequential(Integer aProjections) {
@@ -88,33 +87,31 @@ public class MIPProjector extends ProgressNotifier {
         for (int i=0; i < weights.length; ++i)
             weights[i] = (i + 1) * DEPTH_FACTOR;
         
-        IMultiframeImage mip = iImage.createCompatibleImage(aProjections);
+        IMultiframeImage mip = iImage.createCompatibleImage(iImage.getWidth(), iImage.getNumFrames(), aProjections);
                 
-        for (int currProj = 0; currProj < aProjections; ++currProj) {
-            notifyProgressChanged((int)(((angStep*currProj)/360.) * 100.));
+        for (int cp = 0; cp < aProjections; ++cp) {
+            notifyProgressChanged((int)(((angStep*cp)/360.) * 100.));
             
-            final ImageFrame frm = mip.get(currProj);            
+            final ImageFrame frm = mip.get(cp);            
             IMultiframeImage temp = iImage.duplicate();
 
-            temp.processor().rotate(angStep*currProj);
+            temp.processor().rotate(angStep*cp);
                     
             for (int z = 0; z < nSlices; ++z) {
                 final ImageFrame cur = temp.get(z);
-                
-                final int d[] = cur.getPixelData();
-                
+                               
                 for (int x = 0; x < width; ++x) {                               
                     double pixMax = .0;		
                     
                     for (int y = 0; y < height; ++y)                        				                         				                    
-                        pixMax = Math.max(pixMax, (d[y*width + x] / weights[y]));							                                
+                        pixMax = Math.max(pixMax, (cur.get(x, y) / weights[y]));							                                
 
                     frm.set(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
                 }
             }            
         }
         
-        mip.processor().flipVert();      
+        //mip.processor().flipVert();      
         notifyProgressChanged(100);
         return mip;
     }
