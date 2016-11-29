@@ -25,37 +25,32 @@ import com.ivli.roim.algorithm.FrameProcessor;
  */
 public class ImageFrame implements java.io.Serializable, Cloneable {
     private static final long serialVersionUID = 042L;
-   /*
-    private int iMin;
-    private int iMax;    
-    private double iIden;// = Double.NaN;
+   
+    private Measure iStats;
     
-    private boolean iStatisticsIsValid = false;
-    */
     private int iWidth;
     private int iHeight;
+    
     private final int []iPixels;        
         
-    public ImageFrame(int aWidth, int aHeight, int[] aPixels) {       
+    public ImageFrame(int aWidth, int aHeight, int[] aPixels) {          
         iWidth  = aWidth;
         iHeight = aHeight;
-        iPixels = aPixels;      
+        iPixels = aPixels;    
+        iStats = null;
     }
     
     public ImageFrame(int aWidth, int aHeight) {       
         iWidth = aWidth;
         iHeight = aHeight;
-        iPixels = new int[aWidth * aHeight];         
+        iPixels = new int[aWidth * aHeight];    
+        iStats = null;
     }
        
     public ImageFrame duplicate() {       
         ImageFrame ret = new ImageFrame(iWidth, iHeight); 
         System.arraycopy(getPixelData(), 0, ret.iPixels, 0, iWidth*iHeight);
-       /*
-        ret.iIden = iIden;
-        ret.iMin = iMin;
-        ret.iMax = iMax;
-        */
+        
         return ret;
     }
     
@@ -66,26 +61,22 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     public int getHeight() {
         return iHeight;
     }
-/*       
-    public double getMin() {
-        return iMin;
+          
+    public Measure getStats() {
+        if (null == iStats)
+            return iStats = processor().measure(null);
+        else
+            return iStats;
     }
-    
-    public double getMax() {     
-        return iMax;
-    }
-    
-    public double getIden() {
-        return iIden;
-    }
-    */
+   
     public final int get(int aX, int aY) {
         return iPixels[aY*iWidth+aX];
     }
 
     public final void set(int aX, int aY, int aV) {
         iPixels[aY*iWidth+aX] = aV;
-             
+        if (null != iStats) 
+            iStats = null;      
     }
     
     public final boolean isValidIndex(int aX, int aY) {
@@ -102,8 +93,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
     public final void setPixel(int aX, int aY, int aV) throws IndexOutOfBoundsException {
         if (!isValidIndex(aX, aY))
             throw new IndexOutOfBoundsException(String.format("bad index x=%d (%d), y=%d (%d)", aX, iWidth, aY, iHeight));  
-        set(aX, aY, aV);
-      
+        set(aX, aY, aV);      
     }
     
     public ImageDataType getImageDataType() {
@@ -111,7 +101,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         return ImageDataType.GRAYS32;
     }
    
-    public int[] getPixelData() {
+    public final int[] getPixelData() {
         return iPixels;
     }
     
@@ -120,7 +110,8 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         iHeight = aHeight;
         
         System.arraycopy(aPixels, 0, iPixels, 0, aWidth * aHeight);  
-        //iStatisticsIsValid = false;
+        if (null != iStats) 
+            iStats = null;  
     }
       
     public FrameProcessor processor(){
