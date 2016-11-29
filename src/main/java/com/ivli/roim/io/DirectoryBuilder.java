@@ -30,6 +30,7 @@ import com.ivli.roim.events.ProgressListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 
 /**
@@ -53,33 +54,44 @@ public class DirectoryBuilder  {
             throw new UnsupportedOperationException("Not supported yet.");        
         }
       
-        String[] lst = dir.list();
+        File[] lst = dir.listFiles();
         ArrayList<String> sa = new ArrayList<>();
         
         int step = 0;
-        
-        try {
-            for(String s:lst) {                 
-                File fi = new File(aDir + "\\" + s);
-                if (fi.isFile()) {
-                    DCMImageProvider dc = new DCMImageProvider(fi);
+       
+        for (File fi:lst) {         
+            try{
+                DCMImageProvider dc = new DCMImageProvider(fi);
 
-                    if (null == aM) {
-                        aM = dc.getModality();
-                    }
-                    
-                    if (null != iPL) {
-                        iPL.ProgressChanged(new ProgressEvent(this, (int)((double)step++ * 100./(double)lst.length))); //ugly
-                    }
-                    
-                    if (dc.getModality() == aM)
-                        sa.add(fi.getAbsolutePath());
-                }
-            }
-        } catch (IOException ex) {
-            LOG.debug(ex);
+                if (null == aM) 
+                    aM = dc.getModality();
+
+                if (null != iPL) 
+                    iPL.ProgressChanged(new ProgressEvent(this, (int)((double)step++ * 100./(double)lst.length))); //ugly but workin'            
+
+                if (dc.getModality() == aM)
+                    sa.add(fi.getAbsolutePath());
+                
+            } catch (IOException ex){
+               
+                if (ex.getMessage().equals("Not a DICOM Stream"))                 
+                    LOG.info("skipping file (not a DICOM): " + fi.getAbsolutePath());
+                 else
+                    LOG.catching(ex);
+            }            
         }
+        /* sort files semantically to avoid following situation          
+         * 1.3.46.670589.28.2.15.4.9169.24064.3.1400.109.1205337200.dcm
+         * 1.3.46.670589.28.2.15.4.9169.24064.3.1400.11.1205337200.dcm         
+         */
+        sa.sort((l, r) -> {if (l.length() != r.length())
+                               return l.length() - r.length();
+                           else
+                               return l.compareToIgnoreCase(r);
+                           });
         
+        LOG.debug("filelist: " + sa.stream().map(e -> e + "\n").collect(Collectors.toList()));
+                
         IImageProvider ret = new IImageProvider() {
             final int iNoOfFrames = sa.size();
             

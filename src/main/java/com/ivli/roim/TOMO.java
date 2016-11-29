@@ -175,11 +175,11 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
         }
     }
     
-    final boolean MAKE_MIP_PROJECTION = false;
+    final boolean MAKE_MIP_PROJECTION = true;
     
     private void imageLoaded(IMultiframeImage aImg) {
         if (MAKE_MIP_PROJECTION && (aImg.getModality().isTomographic() ||  aImg.getImageType().isTomographic())) { 
-            SwingMIPProjector l = new SwingMIPProjector(aImg, aImg.getNumFrames(), true);                 
+            SwingMIPProjector l = new SwingMIPProjector(aImg, Math.min(64, aImg.getNumFrames()), true);                 
             l.addPropertyChangeListener(this);             
             l.execute();
         } else {

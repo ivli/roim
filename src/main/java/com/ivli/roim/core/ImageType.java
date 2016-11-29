@@ -22,7 +22,9 @@ package com.ivli.roim.core;
  * @author likhachev
  */
 public class ImageType {          
-    public static final ImageType UNKNOWN = new ImageType(new String[]{}) {@Override public String toString() {return _UNKNOWN;}};
+    public static final ImageType UNKNOWN = new ImageType() {@Override public String toString() {return _UNKNOWN;}};
+    
+    public static final String NOTSET = "";
     // see C.7.6.1.1.2 Image Type
     // a. Pixel Data Characteristics
     public static final String ORIGINAL = "ORIGINAL";
@@ -64,14 +66,17 @@ public class ImageType {
     private static final String SEPARATOR = "\\";
     
     // a. Pixel Data Characteristics    
-    protected String iPixels;     
+    protected String iPixels = NOTSET;     
     // b. Patient Examination Characteristics
-    protected String iPatient;     
+    protected String iPatient = NOTSET;     
     // c. Modality Specific Characteristics    
-    protected String iTypeName;        
+    protected String iTypeName = NOTSET;        
     // d. Implementation specific identifiers    
-    protected String iImplementationSpecific;
+    protected String iImplementationSpecific = NOTSET;
 
+    private ImageType() {
+    }
+    
     private ImageType(String[] aN) {            
         switch(aN.length) {  
             case 4:        
@@ -80,16 +85,17 @@ public class ImageType {
                 iTypeName = aN[2];          
             case 2:
                 iPatient = aN[1];
-                iPixels = aN[0];                
+                iPixels = aN[0];  break;           
             case 1:
-            default: break;
+            default:
+                throw new IllegalArgumentException("Syspicious DICOM: fields a and b are mandatory");               
         }       
     }    
            
     public String getTypeName() {
         return iTypeName;
     }
-          
+    
     public boolean isPrimary() {
         return iPixels.equalsIgnoreCase(PRIMARY);
     } 

@@ -36,8 +36,9 @@ public class ImageProviderFactory {
             ret = new DCMImageProvider(aFullPath);        
         }
         
-        ret.dumpFileInformation();
+        LOG.info(ret.dumpFileInformation());
         
         return ret;
     }
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }
