@@ -83,68 +83,18 @@ public class FrameProcessor {
         final int height = iFrame.getHeight() ;
         final int [] buf = iFrame.getPixelData();
         
-        for (int i=0; i < height; ++i)
+        for (int i=0; i < height; ++i) {
+            final int i1 = width*i;
+            final int i2 = width*(i+1);
             for(int j=0; j< width/2; ++j) {
-                final int temp = buf[width*i+j];                
-                buf[width*i+j] = buf[width*(i+1) - j-1];
-                buf[width*(i+1) - j -1] = temp;
+                final int temp = buf[i1+j];                
+                buf[i1+j] = buf[i2 - j-1];
+                buf[i2 - j-1] = temp;
             } 
-    }
-            
-    public void rotate(final double anAngle) {                       
-        final int width = iFrame.getWidth();
-        final int height = iFrame.getHeight();
-        
-        final int[] src = iFrame.getPixelData(); //source
-        final int[] dst = new int[src.length];   //destination
-               
-        double centerX = (width-1)/2.0;
-        double centerY = (height-1)/2.0;
-        int xMax = width - 1;
-
-        final double angleRadians = -anAngle/(180.0/Math.PI);
-        final double ca = Math.cos(angleRadians);
-        final double sa = Math.sin(angleRadians);
-        final double tmp1 = centerY*sa-centerX*ca;
-        final double tmp2 = -centerX*sa-centerY*ca;
-        
-        final double dwidth = width, dheight = height;
-        final double xlimit = width-1.0, xlimit2 = width-1.001;
-        final double ylimit = height-1.0, ylimit2 = height-1.001;
-        // zero is 32768 for signed images
-        int background = 0;//cTable!=null && cTable[0]==-32768?32768:0; 
-        double tmp3, tmp4, xs, ys;
-        int ixs, iys;
-       
-        for (int y=0; y<height; ++y) {
-            int index = width*y;
-            tmp3 = tmp1 - y*sa + centerX;
-            tmp4 = tmp2 + y*ca + centerY;
-            for (int x=0; x<=xMax; ++x) {
-                xs = x*ca + tmp3;
-                ys = x*sa + tmp4;
-                if ((xs>=-0.01) && (xs<dwidth) && (ys>=-0.01) && (ys<dheight)) {
-                    if (InterpolationMethod.INTERPOLATION_BILINEAR == iInterpol) {
-                        if (xs<0.0) xs = 0.0;
-                        if (xs>=xlimit) xs = xlimit2;
-                        if (ys<0.0) ys = 0.0;			
-                        if (ys>=ylimit) ys = ylimit2;
-                        dst[index++] = (short)(getInterpolatedPixel(xs, ys, src) + 0.5);
-                    } else {
-                        ixs = (int)(xs+0.5);
-                        iys = (int)(ys+0.5);
-                        if (ixs>=width) ixs = width - 1;
-                        if (iys>=height) iys = height -1;
-                        dst[index++] = src[width*iys+ixs];
-                    }
-                } else
-                    dst[index++] = background;
-            }
         }
-        iFrame.setPixelData(width, height, dst);
     }
-   
-    private double getInterpolatedPixel(final double aX, final double aY, final int[] aPixels) {
+    
+    private double _getInterpolatedPixel(final double aX, final double aY, final int[] aPixels) {
         final int xbase = (int)aX;
         final int ybase = (int)aY;
         final double xFraction = aX - xbase;
@@ -158,7 +108,61 @@ public class FrameProcessor {
         final double lowerAverage = lowerLeft + xFraction * (lowerRight - lowerLeft);
         return lowerAverage + yFraction * (upperAverage - lowerAverage);
     }
-
+    
+    private void _rotate(final int[] src, final int [] dst, final int width, final int height, final double anAngle) {        
+        final double centerX = (width-1)/2.0;
+        final double centerY = (height-1)/2.0;
+       
+        final double angleRadians = -anAngle/(180.0f/Math.PI);
+        final double ca = Math.cos(angleRadians);
+        final double sa = Math.sin(angleRadians);
+        final double tmp1 = centerY*sa-centerX*ca;
+        final double tmp2 = -centerX*sa-centerY*ca;
+        
+        final double dwidth = width, dheight = height;
+        final double xlimit = width-1.0, xlimit2 = width-1.001;
+        final double ylimit = height-1.0, ylimit2 = height-1.001;
+        
+        double tmp3, tmp4, xs, ys;
+        int ixs, iys;
+        final int background = 0;       
+                
+        for (int y=0; y<height; ++y) {
+            int index = width*y;
+            tmp3 = tmp1 - y*sa + centerX;
+            tmp4 = tmp2 + y*ca + centerY;
+            for (int x=0; x<width; ++x) {
+                xs = x*ca + tmp3;
+                ys = x*sa + tmp4;
+                if ((xs>=-0.01) && (xs<dwidth) && (ys>=-0.01) && (ys<dheight)) {
+                    if (InterpolationMethod.INTERPOLATION_BILINEAR == iInterpol) {
+                        if (xs<0.0) xs = 0.0;
+                        if (xs>=xlimit) xs = xlimit2;
+                        if (ys<0.0) ys = 0.0;			
+                        if (ys>=ylimit) ys = ylimit2;
+                        dst[index++] = (int)(_getInterpolatedPixel(xs, ys, src) + 0.5);
+                    } else {
+                        ixs = (int)(xs+0.5);
+                        iys = (int)(ys+0.5);
+                        if (ixs>=width) ixs = width - 1;
+                        if (iys>=height) iys = height -1;
+                        dst[index++] = src[width*iys+ixs];
+                    }
+                } else
+                    dst[index++] = background;
+            }
+        }
+    }
+    
+    public void rotate(final double anAngle) {                       
+        final int width = iFrame.getWidth();
+        final int height = iFrame.getHeight();       
+        final int[] src = iFrame.getPixelData(); //source
+        final int[] dst = new int[src.length];   //destination
+        _rotate(src, dst, width, height, anAngle);
+        iFrame.setPixelData(width, height, dst);
+    }
+  
     public Histogram histogram(Shape aR, Integer aNoOfBins) {             
         final Rectangle r;       
         
@@ -239,10 +243,10 @@ public class FrameProcessor {
             if (!new Rectangle(0, 0, iFrame.getWidth(), iFrame.getHeight()).contains(bounds))
                 throw new IllegalArgumentException("ROI out of bounds");
         }            
-              
+                
         for (int i = bounds.x; i < bounds.x + bounds.width; ++i) {           
             for (int j = bounds.y; j < bounds.y + bounds.height; ++j) 
-                if (null == aR || aR.contains(i,j)) {
+                if (null == aR || aR.contains(i, j)) {
                     final int v = iFrame.get(i, j);  
                     den += v;  
                     if (v > max) max = v;

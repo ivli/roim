@@ -173,5 +173,8 @@
         <connection>scm:git:git@github.com:ivli/roim.git</connection>
         <url>scm:git:git@github.com:ivli/roim.git</url>
         <developerConnection>scm:git:git@github.com:ivli/roim.git</developerConnection>
-    </scm>  
+    </scm>
+    <description>-Xms1G
+-Xmm2G
+-Xss128M</description>
 </project>

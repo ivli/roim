@@ -45,11 +45,10 @@ public class MIPProjector extends ProgressNotifier {
             addProgressListener(aPL);
     }
     
-    private static boolean PROJECTOR_USE_PARALLEL = true;
+    private static boolean PROJECTOR_USE_PARALLEL = false;
     static int progress = 0;
     
-    protected void notifyProgressChanged(int aProgress) {
-        
+    protected void notifyProgressChanged(int aProgress) {        
         if (!PROJECTOR_USE_PARALLEL)
             super.notifyProgressChanged(aProgress);
         else {

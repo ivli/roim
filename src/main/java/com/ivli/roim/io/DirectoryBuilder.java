@@ -89,9 +89,10 @@ public class DirectoryBuilder  {
                            else
                                return l.compareToIgnoreCase(r);
                            });
-        
+        /*
         LOG.debug("filelist: " + sa.stream().map(e -> e + "\n").collect(Collectors.toList()));
-                
+        */
+        
         IImageProvider ret = new IImageProvider() {
             final int iNoOfFrames = sa.size();
             

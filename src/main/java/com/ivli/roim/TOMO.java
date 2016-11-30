@@ -205,7 +205,7 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
             final long start = System.currentTimeMillis();
             IMultiframeImage ret =  new MIPProjector(iSource, this).project(iNoOfProjections);
             
-            LOG.debug("MIP took" + (System.currentTimeMillis() - start));
+            LOG.debug("-->MIP took: " + (System.currentTimeMillis() - start) + " millis.");
             return ret;
         }
 
@@ -215,7 +215,7 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
             setProgress(100);
             try {
                 IMultiframeImage img = get();
-                img.processor().flipVert();
+                //img.processor().flipVert();
                 initPanels(img);
             } catch (InterruptedException|ExecutionException ex) {
                 LOG.catching(ex);
