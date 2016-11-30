@@ -45,7 +45,7 @@ public class MIPProjector extends ProgressNotifier {
             addProgressListener(aPL);
     }
     
-    private static boolean PROJECTOR_USE_PARALLEL = false;
+    private static boolean PROJECTOR_USE_PARALLEL = true;
     static int progress = 0;
     
     protected void notifyProgressChanged(int aProgress) {
@@ -57,14 +57,12 @@ public class MIPProjector extends ProgressNotifier {
         }        
     }
     
-    public IMultiframeImage project(Integer aProjections) {
-        
-        
+    public IMultiframeImage project(Integer aProjections) { 
         if (PROJECTOR_USE_PARALLEL) {
             ParallelProjector p = new ParallelProjector(aProjections);
             progress = 0;
             p.exec();
-            return p.mip;    
+            return iImage.createCompatibleImage(iImage.getWidth(), iImage.getNumFrames(), aProjections, p.mip);    
         } else {
             return projectSequential(aProjections);
         }        
@@ -88,15 +86,15 @@ public class MIPProjector extends ProgressNotifier {
         for (int i=0; i < weights.length; ++i)
             weights[i] = (i + 1) * DEPTH_FACTOR;
         
-        IMultiframeImage mip = iImage.createCompatibleImage(width, depth, aProjections);
-                
+        IMultiframeImage mip = iImage.createCompatibleImage(width, depth, aProjections, null);
+        
+        
         for (int cp = 0; cp < aProjections; ++cp) {
             notifyProgressChanged((int)(((angStep*cp)/360.) * 100.));
             
             final ImageFrame frm = mip.get(cp);            
             IMultiframeImage temp = iImage.duplicate();
-
-            temp.processor().rotate(angStep*cp);
+            temp.processor().rotate(cp*angStep);
                     
             for (int z = 0; z < depth; ++z) {
                 final ImageFrame cur = temp.get(z);
@@ -107,7 +105,7 @@ public class MIPProjector extends ProgressNotifier {
                     for (int y = 0; y < height; ++y)                        				                         				                    
                         pixMax = Math.max(pixMax, (cur.get(x, y) / weights[y]));							                                
 
-                    frm.setPixel(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
+                    frm.set(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
                 }
             }            
         }
@@ -118,14 +116,24 @@ public class MIPProjector extends ProgressNotifier {
     }
  
     class ParallelProjector {          
-        final int iProjections;
+        
         final double maxVol;      	
         final double angStep ;
-        final double weights[];
-        final IMultiframeImage mip;
-   
-        ParallelProjector(int aProjections) {            
-            iProjections = aProjections;
+        final double weights[];        
+        final int width;
+        final int height;
+        final int depth;
+        final int projections;
+        
+        final int src[][];
+        final int mip[][];
+        
+        
+        ParallelProjector(int aProjections) {  
+            width  = iImage.getWidth();
+            height = iImage.getHeight();
+            depth = iImage.getNumFrames();
+            projections = aProjections;
             maxVol  = iImage.processor().measure(null).getMax();       	
             angStep = 360.0 / aProjections;	
             weights = new double[iImage.getHeight()];
@@ -133,28 +141,28 @@ public class MIPProjector extends ProgressNotifier {
             for (int i=0; i < weights.length; ++i)
                 weights[i] = (i + 1) * DEPTH_FACTOR;
             
-            mip = iImage.createCompatibleImage(aProjections);
+            mip = new int[projections][width*depth];
+            src = iImage.getAsArray();
         }
         
         public void exec(){
-            IntStream.range(0, iProjections)
+            IntStream.range(0, projections)
                      .parallel()
                      .forEach(i -> projectOne(i)); 
-            mip.processor().flipVert();      
+            
             notifyProgressChanged(100);
         }
         
-        private void projectOne(int currProj) {        
-            final ImageFrame frm = mip.get(currProj);            
+        private void projectOne(int cp) {                                
+            int frm[] = mip[cp];
+            
             final IMultiframeImage temp = iImage.duplicate();
-            final int width = iImage.getWidth();
-            final int height = iImage.getHeight();
+           
+            temp.processor().rotate(angStep*cp);
             
-            temp.processor().rotate(angStep*currProj);
+            notifyProgressChanged((int)(((angStep*cp)/360.) * 100.));
             
-            notifyProgressChanged((int)(((angStep*currProj)/360.) * 100.));
-            
-            for (int z = 0; z < iImage.getNumFrames(); ++z) {
+            for (int z = 0; z < depth; ++z) {
                 final ImageFrame cur = temp.get(z);
 
                 for (int x = 0; x < width; ++x) {                               
@@ -163,11 +171,12 @@ public class MIPProjector extends ProgressNotifier {
                     for (int y = 0; y < height; ++y)                        				                         				                    
                         pixMax = Math.max(pixMax, (cur.get(x, y) / weights[y]));							                                
 
-                    frm.set(width-x-1, z, (int)((pixMax / maxVol) * 32767.));
+                    frm[(width-x-1) + z*width] = (int)((pixMax / maxVol) * 32767.);
                 }
             }            
         }   
-        
+   
     }  
+    
     private final static org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }

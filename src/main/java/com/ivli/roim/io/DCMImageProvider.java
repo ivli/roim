@@ -164,8 +164,6 @@ class DCMImageProvider implements IImageProvider {
         final int w = getWidth();
         final int h = getHeight();  
         
-        LOG.debug("Loading frame # = {}", anIndex);
-        
         if (null == aBuffer)
             aBuffer = new int[w*h];       
         else if (aBuffer.length != w*h)

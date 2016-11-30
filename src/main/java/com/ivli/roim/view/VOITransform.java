@@ -29,9 +29,8 @@ public class VOITransform implements Transformation {
     
     private int []iRGBBuffer; // Presentation LUT
     
-    static ForkJoinPool fjp = new ForkJoinPool();
-    
-    
+    static ForkJoinPool iPool = new ForkJoinPool();
+        
     public VOITransform() {
         iInverted = false;
         iLinear = true;

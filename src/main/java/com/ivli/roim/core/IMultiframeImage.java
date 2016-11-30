@@ -58,9 +58,15 @@ public abstract class IMultiframeImage implements Iterable<ImageFrame>, IFramePr
      * @param aX - number of rows
      * @param aY - number of columns
      * @param aZ - a number of frames
+     * @param aBuf - image data can be null
      * @return  multiframe image of the same physical dimensions   
      */
-    public abstract IMultiframeImage createCompatibleImage(int aX, int aY, int aZ); 
+    public abstract IMultiframeImage createCompatibleImage(int aX, int aY, int aZ, int[][]aBuf); 
+    
+     /**
+     * @return array of pixels as following [depth][width*height]       
+     */
+    public abstract int[][] getAsArray(); 
     
     /**
      * Returns a deep copy of original image    

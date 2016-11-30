@@ -43,11 +43,26 @@ public class MultiframeImage extends IMultiframeImage   {
     
     private final class PixelBuffer {               
         private final BitSet iMask;       
-        private final int [][] iBuf;
+        private final int [][]iBuf;
         
-        PixelBuffer(int aW, int aH, int aF){
-            iBuf = new int[aF][aW*aH];
+        PixelBuffer(int aW, int aH, int aF, int [][]aBuf){
+            if (null == aBuf)
+                iBuf = new int[aF][aW*aH];
+            else
+                iBuf = aBuf;
+            ///TODO: add size checkings
             iMask = new BitSet(aF);
+        }
+        
+        PixelBuffer(final PixelBuffer aSrc) {
+            iBuf = new int[aSrc.iBuf.length][aSrc.iBuf[0].length];
+            System.arraycopy(aSrc.iBuf, 0, iBuf, 0, aSrc.iBuf.length*aSrc.iBuf[0].length);
+            iMask = new BitSet(aSrc.iMask.size());
+            iMask.or(aSrc.iMask);
+        }
+        
+        int[][] getData() {
+            return iBuf;
         }
         
         boolean isPresent(int aF) {
@@ -64,15 +79,7 @@ public class MultiframeImage extends IMultiframeImage   {
         
         void present() {           
             iMask.set(0, iMask.size(), true);
-        }
- 
-        void copyFrom(int aF, int[] aS) {
-            System.arraycopy(aS, 0, iBuf, aF * iWidth * iHeight, iWidth * iHeight);
-        }
-        
-        void copyTo(int aF, int[] aS) {
-            System.arraycopy(iBuf, aF * iWidth * iHeight, aS, 0, iWidth * iHeight);
-        }
+        } 
     }
             
     private final PixelBuffer iFrames;
@@ -89,34 +96,22 @@ public class MultiframeImage extends IMultiframeImage   {
         iPixelSpacing = aP.getPixelSpacing();
         iTimeSliceVector = aP.getTimeSliceVector(); 
         iPVT = aP.getRescaleTransform();
-        iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames);
-    }
-   
-    private MultiframeImage(ImageFrame aF) {
-        iProvider = null;  
-        iParent = null; //TODO: it looks like strayed image, do i have to set parent for it ????? 
-        iWidth = aF.getWidth();
-        iHeight = aF.getHeight();
-        iNumFrames = 1;           
-        iPixelSpacing = PixelSpacing.UNITY_PIXEL_SPACING;
-        iTimeSliceVector = TimeSliceVector.ONESHOT; 
-        iPVT = PValueTransform.DEFAULT;
-        iImageType = ImageType.UNKNOWN;
-        iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames);         
+        iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames, null);
     }
     
-    private MultiframeImage(IMultiframeImage aM, int aX, int aY, int aFrames) {        
+    private MultiframeImage(IMultiframeImage aM, int aX, int aY, int aZ, int [][]aBuf) {        
         iProvider = null;
         iParent = aM;               
         iWidth = aX;// aM.getWidth();
         iHeight = aY;//aM.getHeight();        
         iPixelSpacing = aM.getPixelSpacing();
         iSliceSpacing = aM.getSliceSpacing();
-        iNumFrames = aFrames; 
+        iNumFrames = aZ; 
         iTimeSliceVector = aM.getTimeSliceVector();
         iImageType = aM.getImageType();
-        iPVT = aM.getRescaleTransform();        
-        iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames); 
+        iPVT = aM.getRescaleTransform();    
+        iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames, aBuf); 
+        
         iFrames.present(); //have no provider - must not call it
     }
     
@@ -214,37 +209,42 @@ public class MultiframeImage extends IMultiframeImage   {
         return iMin;
     }  
     
-     @Override
+    @Override
     public double getMax() { 
         if (Double.isNaN(iMax))
             computeStatistics();
         return iMax;
     }  
         
-     @Override
+    @Override
     public IMultiframeImage createCompatibleImage(int aNumberOfFrames) {
         //TODO: change type and ... parent too 
-        return createCompatibleImage(getWidth(), getHeight(), aNumberOfFrames);             
+        return createCompatibleImage(getWidth(), getHeight(), aNumberOfFrames, null);             
     }
     
-     @Override
-    public IMultiframeImage createCompatibleImage(int aX, int aY, int aZ) {
-        MultiframeImage ret = new MultiframeImage(this, aX, aY, aZ);        
+        @Override   
+    public IMultiframeImage createCompatibleImage(int aX, int aY, int aZ, int[][] aBuf) {
+        MultiframeImage ret = new MultiframeImage(this, aX, aY, aZ, aBuf);        
         ret.iFrames.present();
         return ret;
     }
-       
+    
+    public int[][] getAsArray() {
+        return iFrames.getData();
+    }
+    
      @Override
     public IMultiframeImage duplicate() { 
         //TODO: parent???
         MultiframeImage ret = new MultiframeImage(this.iProvider);              
-        for (int i=0; i < getNumFrames(); ++i) {
-            ImageFrame f = get(i);
-            
+        
+        for (int i = 0; i < getNumFrames(); ++i) {
+            ImageFrame f = get(i);            
             System.arraycopy(iFrames.iBuf[i], 0, ret.iFrames.iBuf[i], 0, ret.iFrames.iBuf[i].length);            
         }
-        
+       
         ret.iFrames.present();
+        
         return ret;
     }
       

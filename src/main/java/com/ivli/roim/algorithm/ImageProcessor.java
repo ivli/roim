@@ -25,6 +25,7 @@ import com.ivli.roim.core.TimeSlice;
 import com.amd.aparapi.Kernel;
 import com.ivli.roim.core.Measure;
 import java.awt.Shape;
+import java.util.concurrent.ForkJoinPool;
 import static java.util.concurrent.ForkJoinTask.invokeAll;
 import java.util.concurrent.RecursiveAction;
 import java.util.function.Consumer;
@@ -37,6 +38,7 @@ import java.util.stream.IntStream;
 public class ImageProcessor {    
     private final IMultiframeImage iImage;
     private int iInterpol;
+    static ForkJoinPool iPool = new ForkJoinPool();
     
     public ImageProcessor(IMultiframeImage anImage) {
         iImage = anImage;
@@ -99,7 +101,42 @@ public class ImageProcessor {
     }
     
     public void rotate(final double anAngle) {
-        iImage.forEach((f) -> f.processor().rotate(anAngle));
+       
+        class Transformer extends RecursiveAction {        
+            private static final int iThreshold = 16;           
+            int iStart;
+            int iLength;
+             
+            Transformer (int aStart, int aLength) {
+               // iSrc = aSrc;               
+                iStart = aStart;
+                iLength = aLength;
+            }
+
+            protected void computeDirectly() {          
+                for (int i = iStart; i < iStart + iLength; ++i)                         
+                    iImage.get(i).processor().rotate(anAngle);            
+            }
+
+            @Override
+            public void compute() {
+                if (iLength < iThreshold) {
+                    computeDirectly();
+                    return;
+                }
+
+                int split = iLength / 2;
+
+                invokeAll(new Transformer(iStart, split),
+                          new Transformer(iStart + split, iLength - split 
+                          ));        
+            }
+        }  
+        
+        //new Transformer(0, iImage.getNumFrames()).compute();
+        iPool.invoke(new Transformer(0, iImage.getNumFrames()));
+        
+        ///iImage.forEach((f) -> f.processor().rotate(anAngle));
         //IntStream.range(0, iImage.getNumFrames())
         //         .parallel()
         //         .forEach(i -> iImage.get(i).processor().rotate(anAngle));
