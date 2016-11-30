@@ -215,13 +215,12 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
             setProgress(100);
             try {
                 IMultiframeImage img = get();
-                img.processor().flipHorz();
-                initPanels(img );
+                img.processor().flipVert();
+                initPanels(img);
             } catch (InterruptedException|ExecutionException ex) {
                 LOG.catching(ex);
             }
-            jProgressBar1.setValue(0); 
-            //jProgressBar1.setVisible(false); 
+            jProgressBar1.setValue(0);            
         }
         
         @Override

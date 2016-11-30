@@ -67,12 +67,15 @@ public class FrameProcessor {
         final int height = iFrame.getHeight() ;
         final int [] buf = iFrame.getPixelData();     
        
-        for (int i=0; i < height/2; ++i)
+        for (int i=0; i < height/2; ++i) {
+            final int i1 = width*i;
+            final int i2 = width*(height-i-1);
             for(int j=0; j< width; ++j) {
-                final int temp = buf[width*i+j];
-                buf[width*i+j] = buf[width*(width-i-1)+j];
-                buf[width*(width-i-1)+j] = temp;                
-            }       
+                final int temp = buf[i1+j];
+                buf[i1+j] = buf[i2+j];
+                buf[i2+j] = temp;                
+            }    
+        }
     }
     
     public void flipHorz() {
@@ -88,20 +91,16 @@ public class FrameProcessor {
             } 
     }
             
-    public void rotate(final double anAngle) {               
-        int roiX = 0;
-        int roiY = 0;
+    public void rotate(final double anAngle) {                       
         final int width = iFrame.getWidth();
         final int height = iFrame.getHeight();
-        final int roiWidth = width;
-        final int roiHeight = height;
         
-        final int[] pixels = iFrame.getPixelData(); //source
-        final int[] pixels2 = getPixelsCopy(); //destination
+        final int[] src = iFrame.getPixelData(); //source
+        final int[] dst = new int[src.length];   //destination
                
-        double centerX = roiX + (roiWidth-1)/2.0;
-        double centerY = roiY + (roiHeight-1)/2.0;
-        int xMax = roiX + roiWidth - 1;
+        double centerX = (width-1)/2.0;
+        double centerY = (height-1)/2.0;
+        int xMax = width - 1;
 
         final double angleRadians = -anAngle/(180.0/Math.PI);
         final double ca = Math.cos(angleRadians);
@@ -117,11 +116,11 @@ public class FrameProcessor {
         double tmp3, tmp4, xs, ys;
         int ixs, iys;
        
-        for (int y=roiY; y<(roiY + roiHeight); ++y) {
-            int index = width*y + roiX;
+        for (int y=0; y<height; ++y) {
+            int index = width*y;
             tmp3 = tmp1 - y*sa + centerX;
             tmp4 = tmp2 + y*ca + centerY;
-            for (int x=roiX; x<=xMax; ++x) {
+            for (int x=0; x<=xMax; ++x) {
                 xs = x*ca + tmp3;
                 ys = x*sa + tmp4;
                 if ((xs>=-0.01) && (xs<dwidth) && (ys>=-0.01) && (ys<dheight)) {
@@ -130,19 +129,19 @@ public class FrameProcessor {
                         if (xs>=xlimit) xs = xlimit2;
                         if (ys<0.0) ys = 0.0;			
                         if (ys>=ylimit) ys = ylimit2;
-                        pixels2[index++] = (short)(getInterpolatedPixel(xs, ys, pixels) + 0.5);
+                        dst[index++] = (short)(getInterpolatedPixel(xs, ys, src) + 0.5);
                     } else {
                         ixs = (int)(xs+0.5);
                         iys = (int)(ys+0.5);
                         if (ixs>=width) ixs = width - 1;
                         if (iys>=height) iys = height -1;
-                        pixels2[index++] = pixels[width*iys+ixs];
+                        dst[index++] = src[width*iys+ixs];
                     }
                 } else
-                    pixels2[index++] = background;
+                    dst[index++] = background;
             }
         }
-        iFrame.setPixelData(width, height, pixels2);
+        iFrame.setPixelData(width, height, dst);
     }
    
     private double getInterpolatedPixel(final double aX, final double aY, final int[] aPixels) {
