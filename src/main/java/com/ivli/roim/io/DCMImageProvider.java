@@ -22,7 +22,7 @@ import java.io.IOException;
 import com.ivli.roim.core.ImageDataType;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.Modality;
-import com.ivli.roim.core.PValueTransform;
+import com.ivli.roim.core.ModalityTransform;
 import com.ivli.roim.core.PhaseInformation;
 import com.ivli.roim.core.Photometric;
 import com.ivli.roim.core.PixelSpacing;
@@ -151,13 +151,13 @@ class DCMImageProvider implements IImageProvider {
     }
     
     //TODO: dcm4chee applies this transform to image data before ??? 
-    public PValueTransform getRescaleTransform() { 
+    public ModalityTransform getRescaleTransform() { 
         /*
         double  s = iDataSet.getDouble(Tag.RescaleSlope, 1.);   
         double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);                    
-        return new PValueTransform(s, i);           
+        return new ModalityTransform(s, i);           
         */
-        return PValueTransform.DEFAULT;
+        return ModalityTransform.DEFAULT;
     }
      
     public int[] readFrame(int anIndex, int[] aBuffer) throws IndexOutOfBoundsException, IOException {        

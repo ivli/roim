@@ -35,7 +35,7 @@ public class MultiframeImage extends IMultiframeImage   {
     protected PixelSpacing iPixelSpacing;
     protected SliceSpacing iSliceSpacing;
     protected TimeSliceVector iTimeSliceVector; 
-    protected PValueTransform iPVT; 
+    protected ModalityTransform iPVT; 
      //computed
     protected Double iMin = Double.NaN;
     protected Double iMax = Double.NaN;
@@ -173,7 +173,7 @@ public class MultiframeImage extends IMultiframeImage   {
     }
     
     @Override
-    public PValueTransform getRescaleTransform() {
+    public ModalityTransform getRescaleTransform() {
         return iPVT;
     }
     

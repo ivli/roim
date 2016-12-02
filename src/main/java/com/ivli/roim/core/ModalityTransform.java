@@ -6,15 +6,15 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public class PValueTransform implements java.io.Serializable {
+public class ModalityTransform implements java.io.Serializable {
     private static final long serialVersionUID = 42L;
 
-    public static final PValueTransform DEFAULT = new  PValueTransform(1.0, .0);
+    public static final ModalityTransform DEFAULT = new  ModalityTransform(1.0, .0);
     
     private final double iSlope;
     private final double iIntercept;
   
-    public PValueTransform(double aS, double aI) {
+    public ModalityTransform(double aS, double aI) {
         iSlope = aS; 
         iIntercept = aI;
     }

@@ -20,7 +20,7 @@ package com.ivli.roim.io;
 import com.ivli.roim.core.ImageDataType;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.Modality;
-import com.ivli.roim.core.PValueTransform;
+import com.ivli.roim.core.ModalityTransform;
 import com.ivli.roim.core.Photometric;
 import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.SliceSpacing;
@@ -190,7 +190,7 @@ public class DirectoryBuilder  {
             }
 
             @Override
-            public PValueTransform getRescaleTransform() {
+            public ModalityTransform getRescaleTransform() {
                 return dc.getRescaleTransform();
             }
 

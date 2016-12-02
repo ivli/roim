@@ -1,7 +1,7 @@
 package com.ivli.roim.view;
 
 import com.ivli.roim.core.Curve;
-import com.ivli.roim.core.PValueTransform;
+import com.ivli.roim.core.ModalityTransform;
 import com.ivli.roim.core.Window;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ForkJoinPool;
@@ -19,7 +19,7 @@ public class VOITransform implements Transformation {
     private static final int LUT_SIZE = 256;        
     private static final double SIGMOID_SKEW = -8;
     
-    private PValueTransform iPVt;
+    private ModalityTransform iPVt;
     private LUTTransform iPlut;
     private Window  iWin;    
     private boolean iInverted;            
@@ -34,14 +34,14 @@ public class VOITransform implements Transformation {
     public VOITransform() {
         iInverted = false;
         iLinear = true;
-        iPVt = PValueTransform.DEFAULT;                     
+        iPVt = ModalityTransform.DEFAULT;                     
         iPlut = LUTTransform.create(null);
         iWin = new Window(0, IMAGESPACE_SIZE);           
         iBuffer = new byte[IMAGESPACE_SIZE];  
         iRGBBuffer = iPlut.asArray(null);
     }  
      
-    public VOITransform(PValueTransform aPVT, Window aWin, LUTTransform aLUT) {
+    public VOITransform(ModalityTransform aPVT, Window aWin, LUTTransform aLUT) {
         iInverted = false;
         iLinear = true;
         iPVt = aPVT;
@@ -53,7 +53,7 @@ public class VOITransform implements Transformation {
         iRGBBuffer = iPlut.asArray(null);
     }  
    
-    public void setTransform(PValueTransform aT) {
+    public void setTransform(ModalityTransform aT) {
         if (null != aT)
             iPVt = aT;
         makeLUT();
