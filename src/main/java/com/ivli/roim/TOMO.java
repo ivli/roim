@@ -15,6 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 package com.ivli.roim;
 
 import com.ivli.roim.algorithm.MIPProjector;
@@ -23,16 +24,14 @@ import com.ivli.roim.controls.FrameControl;
 import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
-import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.ImageType;
-import com.ivli.roim.core.Modality;
 import com.ivli.roim.events.ProgressEvent;
 import com.ivli.roim.events.ProgressListener;
-
 import com.ivli.roim.view.ImageView;
 import com.ivli.roim.view.Settings;
 import com.ivli.roim.view.ViewMode;
 import java.awt.BorderLayout;
+import java.awt.RenderingHints;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.ExecutionException;
@@ -142,10 +141,10 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
         }         
     }
     
-    class SwingImageLoader extends SwingWorker<IMultiframeImage, Void> implements ProgressListener {    
+    class Loader extends SwingWorker<IMultiframeImage, Void> implements ProgressListener {    
         final String iFileName;
         
-        SwingImageLoader(final String aFileName) {
+        Loader(final String aFileName) {
             iFileName = aFileName;
         }
         
@@ -179,22 +178,20 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
     
     private void imageLoaded(IMultiframeImage aImg) {
         if (MAKE_MIP_PROJECTION && (aImg.getModality().isTomographic() ||  aImg.getImageType().isTomographic())) {            
-            SwingMIPProjector l = new SwingMIPProjector(aImg, Math.min(64, aImg.getNumFrames()), true);                 
+            MIPBuilder l = new MIPBuilder(aImg, Math.min(64, aImg.getNumFrames()), true);                 
             l.addPropertyChangeListener(this);             
             l.execute();
-           
-            ///initPanels(new MIPProjector(aImg, null).project(Math.min(64, aImg.getNumFrames())));
         } else {
             initPanels(aImg);
         }
     }
     
-    class SwingMIPProjector extends SwingWorker<IMultiframeImage, Void> implements ProgressListener {    
+    class MIPBuilder extends SwingWorker<IMultiframeImage, Void> implements ProgressListener {    
         final IMultiframeImage iSource;
         final int iNoOfProjections;
         final boolean iCoarse;
         
-        SwingMIPProjector(final IMultiframeImage aSource, int aNoOfProjections, boolean aCoarse) {
+        MIPBuilder(final IMultiframeImage aSource, int aNoOfProjections, boolean aCoarse) {
             iSource = aSource;
             iNoOfProjections = aNoOfProjections;
             iCoarse = aCoarse;
@@ -229,10 +226,10 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
         }
     }
         
-    private void initPanels(IMultiframeImage dcm) {
-        
+    private void initPanels(IMultiframeImage dcm) {        
         jPanel1.removeAll();
         ImageView image = ImageView.create(dcm, ViewMode.DEFAULT); 
+        image.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(image, BorderLayout.CENTER);
         jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
@@ -259,7 +256,7 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
                                                 Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")),
                                                 true );                                               
         if(dlg.DoModal()) {                     
-            SwingImageLoader l = new SwingImageLoader(dlg.getFileName());
+            Loader l = new Loader(dlg.getFileName());
             l.addPropertyChangeListener(this);             
             l.execute();
             jProgressBar1.setVisible(true);

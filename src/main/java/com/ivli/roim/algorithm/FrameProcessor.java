@@ -18,7 +18,6 @@
 package com.ivli.roim.algorithm;
 
 import com.ivli.roim.core.Histogram;
-import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.Measure;
 import java.awt.Rectangle;
@@ -28,14 +27,17 @@ import java.util.Arrays;
  *
  * @author likhachev
  */
-public class FrameProcessor {       
-    private final ImageFrame iFrame;
-       
-    private int iInterpol;// 
+public class FrameProcessor {      
+    public static final int INTERPOLATION_NONE     = 0;
+    public static final int INTERPOLATION_BILINEAR = 1;
+    public static final int INTERPOLATION_BICUBIC  = 2;    
+    
+    private final ImageFrame iFrame;       
+    private int iInterpol; 
         
     public FrameProcessor(ImageFrame aF) {
         iFrame = aF;   
-        iInterpol = InterpolationMethod.INTERPOLATION_NONE;
+        iInterpol = INTERPOLATION_NONE;
     }
     
     public FrameProcessor(ImageFrame aF, int aI) {
@@ -43,8 +45,8 @@ public class FrameProcessor {
         iInterpol = aI;
     }
     
-    public void setInterpolation(boolean aI) {
-        iInterpol = aI ? InterpolationMethod.INTERPOLATION_BILINEAR : InterpolationMethod.INTERPOLATION_NONE;
+    public void setInterpolation(int aI) {
+        iInterpol = aI;
     }
        
     protected int[] getPixelsCopy() {
@@ -135,7 +137,7 @@ public class FrameProcessor {
                 xs = x*ca + tmp3;
                 ys = x*sa + tmp4;
                 if ((xs>=-0.01) && (xs<dwidth) && (ys>=-0.01) && (ys<dheight)) {
-                    if (InterpolationMethod.INTERPOLATION_BILINEAR == iInterpol) {
+                    if (INTERPOLATION_BILINEAR == iInterpol) {
                         if (xs<0.0) xs = 0.0;
                         if (xs>=xlimit) xs = xlimit2;
                         if (ys<0.0) ys = 0.0;			

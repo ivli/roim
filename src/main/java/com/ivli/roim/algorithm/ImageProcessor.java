@@ -18,18 +18,14 @@
 package com.ivli.roim.algorithm;
 
 import com.ivli.roim.core.IFrameProvider;
-import com.ivli.roim.core.InterpolationMethod;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.TimeSlice;
-import com.amd.aparapi.Kernel;
 import com.ivli.roim.core.Measure;
 import java.awt.Shape;
 import java.util.concurrent.ForkJoinPool;
 import static java.util.concurrent.ForkJoinTask.invokeAll;
 import java.util.concurrent.RecursiveAction;
-import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 /**
  *
@@ -42,11 +38,11 @@ public class ImageProcessor {
     
     public ImageProcessor(IMultiframeImage anImage) {
         iImage = anImage;
-        iInterpol = InterpolationMethod.INTERPOLATION_NONE;
+        iInterpol = FrameProcessor.INTERPOLATION_NONE;
     }
     
-    public void setInterpolation(boolean aI) {
-        iInterpol = aI ? InterpolationMethod.INTERPOLATION_BILINEAR : InterpolationMethod.INTERPOLATION_NONE;  
+    public void setInterpolation(int aI) {
+        iInterpol = aI; 
     }
     
     private boolean safeTestArgs(int aFrom, int aTo) {        
@@ -193,6 +189,4 @@ public class ImageProcessor {
         
         return ret;    
     }   
-    
-    
 }
