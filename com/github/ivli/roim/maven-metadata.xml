@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <groupId>com.ivli</groupId>
+  <groupId>com.github.ivli</groupId>
   <artifactId>roim</artifactId>
   <versioning>
     <release>v0.9.6</release>
     <versions>
       <version>v0.9.6</version>
     </versions>
-    <lastUpdated>20161206095215</lastUpdated>
+    <lastUpdated>20161206102320</lastUpdated>
   </versioning>
 </metadata>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.ivli</groupId>
+    <groupId>com.github.ivli</groupId>
     <artifactId>roim</artifactId>
     <version>v0.9.6</version>
     <packaging>jar</packaging>    
@@ -73,7 +73,7 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.8.2</version>  
                 <configuration>
-                        <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
                 </configuration>
             </plugin>  
             <plugin>
@@ -205,6 +205,7 @@
         <url>scm:git:git@github.com:ivli/roim.git</url>
         <developerConnection>scm:git:git@github.com:ivli/roim.git</developerConnection>
     </scm>
+
     <distributionManagement>
         <repository>
             <id>internal.repo</id>
