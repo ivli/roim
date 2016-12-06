@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.ivli</groupId>
+    <groupId>com.github.ivli</groupId>
     <artifactId>roim</artifactId>
     <version>v0.9.6</version>
     <packaging>jar</packaging>    
@@ -9,7 +9,7 @@
     <repository>
       <id>dcm4che.org</id>
       <url>http://www.dcm4che.org/maven2</url>
-     </repository>
+    </repository>
     </repositories>
     <dependencies>          
         <dependency>
@@ -72,6 +72,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.8.2</version>  
+                <configuration>
+                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+                </configuration>
             </plugin>  
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -80,7 +83,30 @@
                 <configuration>     
                     <aggregate>true</aggregate>    
                 </configuration>
-            </plugin>             
+            </plugin>   
+            <plugin>
+            <groupId>com.github.github</groupId>
+            <artifactId>site-maven-plugin</artifactId>
+            <version>0.12</version>
+            <configuration>
+                <message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
+                <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+                <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
+                <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+                <includes><include>**/*</include></includes>
+                <repositoryName>roim</repositoryName>      <!-- github repo name -->
+                <repositoryOwner>ivli</repositoryOwner>    <!-- github username  -->
+            </configuration>
+            <executions>
+              <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
+              <execution>
+                <goals>
+                  <goal>site</goal>
+                </goals>
+                <phase>deploy</phase>
+              </execution>
+            </executions>
+        </plugin>                 
         </plugins>
     </build>
     <reporting>
@@ -90,11 +116,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>1.8</maven.compiler.target>        
+        <!-- github server corresponds to entry in ~/.m2/settings.xml -->
+        <github.global.server>github</github.global.server>
     </properties>    
     <profiles>
+        <!-- RELEASE PROFILE-->
         <profile>
-            <id>release-profile</id>
+            <id>RELEASE</id>
             <activation>
                 <property>
                     <name>Release</name>
@@ -131,13 +160,15 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>      
+                    </plugin>  
+                    
                 </plugins>         
-            </build> 
-        </profile>
-        
+            </build>             
+            
+        </profile> 
+        <!-- DEBUG PROFILE-->
         <profile>
-            <id>debug-profile</id>
+            <id>DEBUG</id>
             <activation>
                 <property>
                     <name>Debug</name>
@@ -166,7 +197,7 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>                
+        </profile> <!-- END OF DEBUG PROFILE-->               
     </profiles>  
     
     <scm>
@@ -174,7 +205,12 @@
         <url>scm:git:git@github.com:ivli/roim.git</url>
         <developerConnection>scm:git:git@github.com:ivli/roim.git</developerConnection>
     </scm>
-    <description>-Xms1G
--Xmm2G
--Xss128M</description>
+
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Temporary Staging Repository</name>
+            <url>file://${project.build.directory}/mvn-repo</url>
+        </repository>
+   </distributionManagement>   
 </project>
