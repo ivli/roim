@@ -196,7 +196,7 @@ public class ChartControl extends ChartPanel {
                             "CSV file", //NOI18N 
                             false);
                     
-                    if (dlg.DoModal()) {                        
+                    if (dlg.doModal()) {                        
                         try (Writer pwr = new PrintWriter(dlg.getFileName())) { //NOI18N                              
                             for (int i = 0; i < iSeries.getItemCount(); ++i) {
                                 XYDataItem xy = iSeries.getDataItem(i);

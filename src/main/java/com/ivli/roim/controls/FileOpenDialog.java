@@ -17,7 +17,6 @@
  */
 package com.ivli.roim.controls;
 
-import com.ivli.roim.view.Settings;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.io.File;
@@ -31,9 +30,15 @@ import javax.swing.filechooser.FileFilter;
  * @author likhachev
  */
 public class FileOpenDialog { 
+    //TODO: following are the subject for configuration so user can choose what dialog is to be used
+    //OS or swing and does it make sense to let open folders
     private final static boolean USE_SYSTEM_FILE_DIALOG = false;
+    private final static boolean OPEN_FOLDERS = true;
     
-    private static final void adjustLAF() {
+    /*
+     * let swing dialog speak a bit Russian
+     */
+    private static void adjustLAF() {
         if (Locale.getDefault().equals(new Locale("ru", "RU"))) { //NOI18N
             /*  add locale to JFileChooser */
             UIManager.put("FileChooser.lookInLabelText", "Папка");
@@ -80,6 +85,15 @@ public class FileOpenDialog {
     private String iFilePath;
     private String iFileName;
     
+    /**
+     * creates an instance of the FileOpenDialog
+     * @param aF  parent frame object 
+     * @param aTitle caption text
+     * @param aFileExtension file extensions to display like "dcm" or "jpg" 
+     * @param aFileDescription file description text 
+     * @param aPath path to start in
+     * @param aOpen the reason: true means open file, false does save  
+     */
     public FileOpenDialog(Frame aF, String aTitle, String aFileExtension, String aFileDescription, String aPath, boolean aOpen) {
         iFrame = aF;
         iTitle = aTitle;
@@ -106,6 +120,11 @@ public class FileOpenDialog {
         this (null, aTitle, aFileExtension, aFileDescription, null, true);
     }
     
+    /**
+     * creates an instance of the FileOpenDialog
+     * @param aTitle caption text
+     * @param aOpen the reason: true means open file, false does save
+     */
     public FileOpenDialog(String aTitle, boolean aOpen) {    
         this (null, aTitle, null, null, null, aOpen);
     }
@@ -127,7 +146,11 @@ public class FileOpenDialog {
         return new File(iFileName);
     }
     
-    public boolean DoModal() {        
+    /**
+     * displays the dialog in application modal mode 
+     * @return true if a file or folder has been selected otherwise false is returned   
+     */
+    public boolean doModal() {        
         if (USE_SYSTEM_FILE_DIALOG) {
             FileDialog fd = new FileDialog(iFrame, iTitle, iOpen ? FileDialog.LOAD : FileDialog.SAVE);
             
@@ -136,20 +159,19 @@ public class FileOpenDialog {
             // following doesn't work on windows see JDK-4031440 f**k 
             fd.setFilenameFilter((File dir, String name) -> name.endsWith(iFileExtension) );
                 
-            fd.setDirectory(iFilePath); // NOI18N
+            fd.setDirectory(iFilePath); 
             fd.setVisible(true);
 
-            if (null != fd.getFile()) {
-                iFileName = fd.getDirectory() + fd.getFile(); 
-                Settings.set(Settings.KEY_DEFAULT_FOLDER_DICOM, fd.getDirectory());
-            }            
+            if (null != fd.getFile())
+                iFileName = fd.getDirectory() + fd.getFile();                 
+                        
             return null != iFileName;       
         } else {    
             JFileChooser jfc = new JFileChooser();   
             
             jfc.setCurrentDirectory(new File(iFilePath)); 
             
-            jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);//.FILES_ONLY);
+            jfc.setFileSelectionMode(OPEN_FOLDERS ? JFileChooser.FILES_AND_DIRECTORIES:JFileChooser.FILES_ONLY);
             
             if (null != iFileExtension && null != iFileDescription) {
                 jfc.setFileFilter(new FileFilter(){ 

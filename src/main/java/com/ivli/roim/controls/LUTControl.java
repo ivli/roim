@@ -443,7 +443,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
                     true
                 );
               
-                if (fd.DoModal()) {
+                if (fd.doModal()) {
                     final String lutFile = fd.getFileName();
                     Settings.set(Settings.KEY_LASTFILE_LUT, lutFile);
                     invalidateBuffer(); 

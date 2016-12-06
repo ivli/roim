@@ -255,7 +255,7 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
                                                 java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("DICOM_FILE_TITLE"),
                                                 Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")),
                                                 true );                                               
-        if(dlg.DoModal()) {                     
+        if(dlg.doModal()) {                     
             Loader l = new Loader(dlg.getFileName());
             l.addPropertyChangeListener(this);             
             l.execute();

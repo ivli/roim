@@ -386,7 +386,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
                                                     Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")),
                                                     true
                                                     );
-            if(!dlg.DoModal())
+            if(!dlg.doModal())
                 return;
             else
                 dicom = dlg.getFileName();

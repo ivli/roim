@@ -185,7 +185,7 @@ public class ROIListPanel extends JPanel implements TableModelListener {
                                                !sel.isEmpty());     
        
         
-        if (!fd.DoModal())
+        if (!fd.doModal())
             return;
         
         if (!sel.isEmpty()) {                             
