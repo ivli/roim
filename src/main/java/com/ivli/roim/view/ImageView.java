@@ -169,6 +169,7 @@ public class ImageView extends JComponent implements IImageView {
         }
     }
     
+    @Override
     public void setLUT(String aLUT) {          
         iVLUT.setLUT(LUTTransform.create(aLUT));
         invalidateBuffer();

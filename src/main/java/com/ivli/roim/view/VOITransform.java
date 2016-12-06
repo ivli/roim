@@ -171,31 +171,29 @@ public class VOITransform implements ImageTransform {
         
         return ret;
     }
-    
-    private int linVal(double PV) {  
-        if (PV <= iWin.getBottom()) 
-            return GREYSCALES_MIN;
-        else if (PV > iWin.getTop()) 
-            return GREYSCALES_MAX;
-        else  
-            return (int)(LUT_RANGE *((PV - iWin.getLevel()) / iWin.getWidth()+ .5) + LUT_MIN);
-    }  
-    
-    private int logVal(double aV) {               
-        return (int)(LUT_RANGE /(1 + Math.exp(SIGMOID_SKEW * (aV - iWin.getLevel()) / (iWin.getWidth()))) + LUT_MIN);
-    }
- 
-    private void makeLUT() {             
+       
+    private void makeLUT() {           
+        final double BOT = iWin.getBottom();
+        final double TOP = iWin.getTop();
+                 
         for (int i = 0; i < iBuffer.length; ++i) {          
             final double PV = iPVt.transform(i);
             
             if (!isLinear()){    
-                iBuffer[i] = (byte)logVal(PV);
-            } else {                              
+                iBuffer[i] = (byte)(int)(LUT_RANGE /(1 + Math.exp(SIGMOID_SKEW * (PV - iWin.getLevel()) / (iWin.getWidth()))) + LUT_MIN);
+            } else {    
+                int V; 
+                if (PV <= BOT) 
+                    V = GREYSCALES_MIN;
+                else if (PV > TOP) 
+                    V = GREYSCALES_MAX;
+                else  
+                    V = (int)(LUT_RANGE *((PV - iWin.getLevel()) / iWin.getWidth() + .5) + LUT_MIN);
+               
                 if (!isInverted())                
-                    iBuffer[i] = (byte)linVal(PV);  
+                    iBuffer[i] = (byte)V;  
                 else
-                    iBuffer[i] = (byte)(GREYSCALES_MAX - linVal(PV));                                                                                                   
+                    iBuffer[i] = (byte)(GREYSCALES_MAX - V);                                                                                                   
             }   
         }
         iRGBBuffer = iPlut.asArray(iRGBBuffer);
