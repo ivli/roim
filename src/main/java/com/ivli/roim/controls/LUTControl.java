@@ -22,9 +22,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Frame;
 import java.awt.Dialog;
-import java.awt.FileDialog;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,8 +39,6 @@ import javax.swing.JMenu;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.JToolTip;
 import javax.swing.Popup;
@@ -120,7 +116,6 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
        
         ///TODO:
         aP.addWindowChangeListener(ret);
-        //addWindowChangeListener(ret);
         
         return ret;
     }

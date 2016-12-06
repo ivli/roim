@@ -17,13 +17,14 @@
  */
 package com.ivli.roim.view;
 
+import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.Window;
 
 /**
  *
  * @author likhachev
  */
-public interface WindowTarget extends Transformation {    
+public interface WindowTarget extends ImageTransform {    
     public double getMin();
     public double getMax();
     
@@ -36,4 +37,5 @@ public interface WindowTarget extends Transformation {
     public boolean isLinear();     
     
     public void setLUT(String aLutName);
+    public Curve getWindowCurve();
 }

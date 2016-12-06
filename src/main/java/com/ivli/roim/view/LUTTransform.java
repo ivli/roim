@@ -23,7 +23,7 @@ import java.awt.image.BufferedImage;
  *
  * @author likhachev
  */
-public class LUTTransform implements Transformation {    
+public class LUTTransform implements ImageTransform {    
     final int [][] iRGBBuffer;
     
     public LUTTransform(){

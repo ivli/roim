@@ -82,7 +82,7 @@ public class ROIPainter extends AbstractPainter {
             //Integer set[]=h.values();
             s.moveTo(0, aO.getShape().getBounds().getY() - h.get(0) * scale);
 
-            for (int n = 1; n < h.size(); ++n) 
+            for (int n = 1; n < h.getNoOfBins(); ++n) 
                 s.lineTo(n, aO.getShape().getBounds().getY() - h.get(n) * scale);
 
             iGC.setXORMode(Color.WHITE);             

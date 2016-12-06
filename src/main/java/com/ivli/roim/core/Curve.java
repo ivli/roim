@@ -21,13 +21,14 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
-public class Curve extends java.util.ArrayList<Integer> {    
+public class Curve  {    
     private int iMinX = Integer.MAX_VALUE;
     private int iMaxX = Integer.MIN_VALUE;
     private int iMinY = Integer.MAX_VALUE;
     private int iMaxY = Integer.MIN_VALUE;
            
-    @Override
+    java.util.ArrayList<Integer> iData = new java.util.ArrayList();
+    
     public void add(int aNdx, Integer aVal) {
         if (aNdx < iMinX)
             iMinX = aNdx;
@@ -39,9 +40,14 @@ public class Curve extends java.util.ArrayList<Integer> {
         if (aVal > iMaxY)
             iMaxY = aVal;
         
-        super.add(aNdx, aVal);
+        iData.add(aNdx, aVal);
     }
     
-//    public Range getRangeX() {return new Range(iMinX, iMaxX);}
-//    public Range getRangeY() {return new Range(iMinY, iMaxY);} 
+    public void add(Integer aVal) {       
+        iData.add(aVal);
+    }
+    
+    public Integer get(int aNdx) {
+        return iData.get(aNdx);
+    }
 }

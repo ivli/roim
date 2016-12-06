@@ -24,6 +24,6 @@ import java.awt.image.BufferedImage;
  * @author likhachev
  */
 @FunctionalInterface
-public interface Transformation {
+public interface ImageTransform {
     public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst); 
 }

@@ -64,9 +64,9 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
           
     public Measure getStats() {
         if (null == iStats)
-            return iStats = processor().measure(null);
-        else
-            return iStats;
+            iStats = processor().measure(null);
+         
+        return iStats;
     }
    
     public final int get(int aX, int aY) {
@@ -75,6 +75,7 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
 
     public final void set(int aX, int aY, int aV) {
         iPixels[aY*iWidth+aX] = aV;
+        
         if (null != iStats) 
             iStats = null;      
     }
@@ -110,12 +111,12 @@ public class ImageFrame implements java.io.Serializable, Cloneable {
         iHeight = aHeight;
         
         System.arraycopy(aPixels, 0, iPixels, 0, aWidth * aHeight);  
+        
         if (null != iStats) 
             iStats = null;  
     }
       
     public FrameProcessor processor(){
         return new FrameProcessor(this);
-    }
-    
+    }    
 }

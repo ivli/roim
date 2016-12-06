@@ -23,12 +23,13 @@ import java.util.ArrayList;
  *
  * @author likhachev
  */
-public class Histogram extends ArrayList<Integer> {    
+public class Histogram {    
     private int iMin = Integer.MAX_VALUE;
     private int iMax = Integer.MIN_VALUE;    
     
     private double iBinSize = 1.0;
     private int iNoOfBins = 0;
+    private ArrayList<Integer> iData = new ArrayList();
     
     public Histogram(int[] aV, double aS) {
         
@@ -44,14 +45,14 @@ public class Histogram extends ArrayList<Integer> {
        
     public Histogram(int aNoOfBins) {     
         iNoOfBins = aNoOfBins;
-        ensureCapacity(iNoOfBins);
+        iData.ensureCapacity(iNoOfBins);
         
-        for(int i = 0; i < size(); ++i)
-            add(i, 0);
+        for(int i = 0; i < iData.size(); ++i)
+            iData.add(i, 0);
     }
     
     public int getNoOfBins() {
-        return this.size();
+        return iData.size();
     }
     
     public double getBinSize() {
@@ -70,13 +71,16 @@ public class Histogram extends ArrayList<Integer> {
         if (aVal < iMin)
             iMin = aVal;
        
-        super.add(aBin, aVal);
+        iData.add(aBin, aVal);
         return  aVal;
     }
     
+    public Integer get(final Integer aBin) {     
+        return iData.get(aBin);    
+    } 
+             
     public Integer inc(final Integer aBin) {
-        Integer val = super.get(aBin) + 1;
-        
+        Integer val = iData.get(aBin) + 1;        
         return put(aBin, val);
     }
   
@@ -87,12 +91,12 @@ public class Histogram extends ArrayList<Integer> {
      */
     /**/
     public Histogram rebin(int aNoOfBins) throws IllegalArgumentException {                
-        if (aNoOfBins > size())
-            throw new IllegalArgumentException("number of bins must be less");
+        if (aNoOfBins > getNoOfBins())
+            throw new IllegalArgumentException("new number of bins must be less than current");
         
         Histogram ret = new Histogram(aNoOfBins);
                 
-        int step = size() / aNoOfBins;
+        int step = getNoOfBins() / aNoOfBins;
         
         for (int i = 0; i < aNoOfBins; ++i) {
             int val = 0;

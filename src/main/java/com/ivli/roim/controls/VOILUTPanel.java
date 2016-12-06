@@ -15,12 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.ivli.roim.controls;
 
+import com.ivli.roim.core.Curve;
 import javax.swing.JPanel;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -30,10 +28,10 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
-import com.ivli.roim.core.*;
-import com.ivli.roim.view.ImageView;
 import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
+import com.ivli.roim.core.Histogram;
+import com.ivli.roim.view.ImageView;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,28 +44,30 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     private static final int NO_OF_BINS = 256;
     private final LUTControl iLUT;             
     private final ChartPanel iPanel;
-    private final String iCurveName;
-    private Histogram iHist;
+    private final String iCurveName;    
    
-// private final ImageView iView;
-    /*
     private XYSeriesCollection makeLUTCurve() {                    
-        return new XYSeriesCollection(XYSeriesUtilities.getSeriesRebinned(iCurveName, iLUT.getLUTCurve(), NO_OF_BINS, iView.getFrame().getMin(), iView.getFrame().getMax()));
+        double min = iLUT.getView().getMin();
+        double max = iLUT.getView().getMax();
+       
+        Curve c = iLUT.getView().getWindowCurve();
+        
+        return new XYSeriesCollection(XYSeriesUtilities.getSeriesRebinned(iCurveName, c, NO_OF_BINS, min, max));
     }
-    */
-    
+        
     private XYSeries makeHistogram() {  
-        if (null == iHist) {            
-//            iHist = iView.getFrame().processor().histogram(null, 256);//.extract(iHEx);           
+        Histogram hist = new Histogram(NO_OF_BINS);
+        if (iLUT.getView() instanceof ImageView) {
+            hist = ((ImageView)iLUT.getView()).getFrame().processor().histogram(null, NO_OF_BINS);
         }
         
         final String name = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM");
-        return XYSeriesUtilities.convert(name, iHist);//.rebin(NO_OF_BINS));
+        return XYSeriesUtilities.convert(name, hist);
     }
     
     @Override
     public void windowChanged(WindowChangeEvent anEvt) {            
-//        iPanel.getChart().getXYPlot().setDataset(0, makeLUTCurve());
+        iPanel.getChart().getXYPlot().setDataset(0, makeLUTCurve());
         iLUT.windowChanged(anEvt);
     }   
     
@@ -77,14 +77,13 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         
         iLUT = LUTControl.create(aP);        
         
-     //   iView.addWindowChangeListener(this);
-        
+        aP.addWindowChangeListener(this);
         
         initComponents();
                
         XYPlot plot = new XYPlot();
    
-      //  plot.setDataset(0, makeLUTCurve());
+        plot.setDataset(0, makeLUTCurve());
         plot.setRenderer(0, new XYSplineRenderer());  
         
         ((XYSplineRenderer)plot.getRenderer()).setShapesVisible(false);

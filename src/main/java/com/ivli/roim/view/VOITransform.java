@@ -27,7 +27,7 @@ import java.util.concurrent.RecursiveAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class VOITransform implements Transformation {        
+public class VOITransform implements ImageTransform {        
     private static final double LUT_MIN   = .0;
     private static final double LUT_MAX   = 255.;
     private static final double LUT_RANGE = LUT_MAX - LUT_MIN;    
@@ -144,6 +144,7 @@ public class VOITransform implements Transformation {
         }
     }   
                   
+    @Override
     public BufferedImage transform(BufferedImage aSrc, BufferedImage aDst) {        
         final int width = aSrc.getWidth();
         final int height = aSrc.getHeight();   

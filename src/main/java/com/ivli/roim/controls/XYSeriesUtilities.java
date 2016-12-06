@@ -263,16 +263,14 @@ class XYSeriesUtilities {
     public static XYSeries convert(final String aName, Histogram aHist){            
         XYSeries ret = new XYSeries(aName, true, false);
         if (null != aHist)
-            for (int i = 0; i < aHist.size(); ++i) 
+            for (int i = 0; i < aHist.getNoOfBins(); ++i) 
                 ret.add((double)i * aHist.getBinSize(), (double)aHist.get(i));
                                  
         return ret;
     }
     
     
-    public static XYSeries getSeriesRebinned(final String aName, Curve aC, int aNoOfBins, double aMin, double aMax) {     
-        //Range r = null != aR ? aR: aC.getRangeX();
-        
+    public static XYSeries getSeriesRebinned(final String aName, Curve aC, int aNoOfBins, double aMin, double aMax) {         
         final int binSize = Math.max(1, (int)(aMax-aMin) / aNoOfBins);
      
         XYSeries ret = new XYSeries(aName, true, false);

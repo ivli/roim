@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.view;
 
+import com.ivli.roim.core.Curve;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -57,6 +58,7 @@ public class ImageView extends JComponent implements IImageView {
     protected VOITransform iVLUT; //VOI LUT combines W/L and Presentation LUT 
    
     protected int iCurrent; //frame that is currently shown
+    ImageFrame iFrame;
     protected IMultiframeImage iModel; //the image   
     
     protected IController iController; //Controller of MVC 
@@ -181,8 +183,9 @@ public class ImageView extends JComponent implements IImageView {
     public void setImage(IMultiframeImage anImage) {                
         iModel = anImage;             
         iVLUT.setTransform(iModel.getRescaleTransform());  
-        
-        setFrameNumber(iCurrent);   
+       
+        iCurrent = 0; 
+        iFrame = iModel.get(iCurrent);   
         setWindow(Window.fromRange(getMin(), getMax()));
     }
                  
@@ -197,7 +200,7 @@ public class ImageView extends JComponent implements IImageView {
     
     @Override
     public ImageFrame getFrame() {
-        return iModel.get(getFrameNumber());
+        return iFrame;//
     }
     
     public ROIManager getROIMgr() {
@@ -316,18 +319,20 @@ public class ImageView extends JComponent implements IImageView {
     }   
     */
     
+    
     @Override
     public boolean setFrameNumber(int aN) {                                
         if (!iModel.hasAt(aN)) {            
             return false;
-        } else {             
+        } else {                  
             Window w = getWindow();
             double oldTop = w.getTop();
             double oldBot = w.getBottom();
             double oldMin = getMin();
             double oldMax = getMax();            
             double oldRange = oldMax - oldMin;
-            iCurrent = aN;            
+            iCurrent = aN; 
+            iFrame = iModel.get(aN);            
             double newMin = getMin();
             double newMax = getMax();
             double newRange = newMax - newMin;
@@ -400,10 +405,10 @@ public class ImageView extends JComponent implements IImageView {
         AffineTransformOp z = new AffineTransformOp(getZoom(), hts);        
        
         
-        ImageFrame frm = iModel.get(iCurrent);
+        ///ImageFrame frm = iModel.get(iCurrent);
         
-        BufferedImage bi = new BufferedImage(frm.getWidth(), frm.getHeight(), BufferedImage.TYPE_INT_RGB);
-        bi.getRaster().setDataElements(0, 0, frm.getWidth(), frm.getHeight(), iModel.get(iCurrent).getPixelData());
+        BufferedImage bi = new BufferedImage(iFrame.getWidth(), iFrame.getHeight(), BufferedImage.TYPE_INT_RGB);
+        bi.getRaster().setDataElements(0, 0, iFrame.getWidth(), iFrame.getHeight(), iModel.get(iCurrent).getPixelData());
        /*         
         iBuf = iVLUT.transform(z.filter(bi, null), null); 
         
@@ -494,8 +499,13 @@ public class ImageView extends JComponent implements IImageView {
     public BufferedImage transform (BufferedImage aSrc, BufferedImage aDst) {
         return iVLUT.transform(aSrc, aDst);
     }
-              
-    private static final Logger LOG = LogManager.getLogger();
+    
+    @Override
+    public Curve getWindowCurve() {
+        return iVLUT.getLUTCurve(); //To change body of generated methods, choose Tools | Templates.
+    }    
+        
+    private static final Logger LOG = LogManager.getLogger();   
 }
 
 
