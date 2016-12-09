@@ -86,8 +86,7 @@ public class MIPProjector extends ProgressNotifier {
             weights[i] = (i + 1) * DEPTH_FACTOR;
         
         IMultiframeImage mip = iImage.createCompatibleImage(width, depth, aProjections, null);
-        
-        
+                
         for (int cp = 0; cp < aProjections; ++cp) {
             notifyProgressChanged((int)(((angStep*cp)/360.) * 100.));
             
