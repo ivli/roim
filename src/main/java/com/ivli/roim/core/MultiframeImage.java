@@ -23,8 +23,7 @@ import java.io.IOException;
 import java.util.BitSet;
 
 public class MultiframeImage extends IMultiframeImage   {
-    protected final IImageProvider iProvider;
-     //read from ImageProvider
+    protected final IImageProvider iProvider;    
     protected final IMultiframeImage iParent;
     
     protected final int iWidth;
