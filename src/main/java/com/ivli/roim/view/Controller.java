@@ -20,7 +20,6 @@ package com.ivli.roim.view;
 
 import java.awt.Graphics2D;
 import java.awt.Cursor;
-import java.awt.Dialog;
 import java.awt.Point;
 import java.awt.geom.RectangularShape;
 import java.awt.geom.Rectangle2D;
@@ -37,6 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JMenu;     
 
 import com.ivli.roim.core.Window;
+import javax.swing.MenuElement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -213,7 +213,6 @@ class Controller implements IController {
                 }
             } else 
                 buildContextPopupMenu().show(e.getComponent(), e.getX(), e.getY());
-
         }
     }
 
@@ -321,8 +320,8 @@ class Controller implements IController {
     private static final String KCommandRoiRotate90CW   = "COMMAND_ROI_OPERATIONS_ROTATE_90_CW"; // NOI18N
     private static final String KCommandRoiRotate90CCW  = "COMMAND_ROI_OPERATIONS_ROTATE_90_CCW"; // NOI18N
     private static final String KCommandRoiConvertToIso = "COMMAND_ROI_OPERATIONS_CONVERT_TO_ISO"; // NOI18N
-    private static final String KCommandProfileShow     = "COMMAND_ROI_OPERATIONS_PROFILE_SHOW_ON-OFF"; // NOI18N
-    private static final String KCommandCustomCommand = "COMMAND_ROI_OPERATIONS_CUSTOM_COMMAND"; // NOI18N
+    ///private static final String KCommandProfileShow     = "COMMAND_ROI_OPERATIONS_PROFILE_SHOW_ON-OFF"; // NOI18N
+    ///private static final String KCommandCustomCommand = "COMMAND_ROI_OPERATIONS_CUSTOM_COMMAND"; // NOI18N
 
     @Override
     public void actionPerformed(ActionEvent aCommand) {  
@@ -447,36 +446,21 @@ class Controller implements IController {
             case KCommandRoiDeleteAll: 
                 iSelected = null; 
                 releaseSelection(null);
-                iControlled.getROIMgr().clear();//deleteAllOverlays(); 
+                iControlled.getROIMgr().clear();
                 iControlled.repaint();
-                break;
-            case KCommandProfileShow:
-                ((Profile)iSelected).showHistogram(!((Profile)iSelected).isShowHistogram());
-                iControlled.repaint();
-                break;
-            case KCommandCustomCommand: {
-                if (iSelected instanceof Annotation.Static) {
-                    com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel((Annotation.Static)iSelected);
-                    javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
-
-                    dialog.setContentPane(panel);
-                    dialog.validate();
-                    dialog.pack();
-                    dialog.setResizable(false);
-                    dialog.setVisible(true);
-                } else {
-                    
-                }
-            } break;
+                break;           
             default: 
-                if(!handleCustomCommand(aCommand)) {
-                 //TODO: raise an exception ???
+                if(handleCustomCommand(aCommand)) {
+                    iControlled.repaint();
                 }
                 break;
         }
     }
 
     protected boolean handleCustomCommand(ActionEvent aCommand) {
+        if (null != iSelected)
+            iSelected.handleCustomCommand(aCommand.getActionCommand());
+        
         return false;
     }
         
@@ -524,36 +508,34 @@ class Controller implements IController {
         mnu.add(mi);
         }
         
-        return mnu;//mnu.show(iControlled, aX, aY);
+        return mnu;
     }
     
     JPopupMenu buildObjectSpecificPopupMenu(Overlay aO) {
-       JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS")); 
+        JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS")); 
+        buildBasePopupMenu(mnu);
+         
+        if (null != iSelected && 0 != (iSelected.getCaps() & Overlay.HASCUSTOMMENU)) {            
+           JMenuItem[] mi = iSelected.makeCustomMenu(null);
+           if (null != mi) {
+               for (int i=0, len=mi.length; i<len; ++i) {
+                  mi[i].addActionListener(this);
+                  mnu.add(mi[i]);                  
+               }           
+           }           
+        }
         
-       buildPopupMenu_Roi(mnu);
-        
-        if(iSelected instanceof Profile)
-            buildPopupMenu_Profile(mnu);
-                        
         return mnu;    
     }
     
-    void buildPopupMenu_Roi(JPopupMenu mnu) {
+    void buildBasePopupMenu(JPopupMenu mnu) {
         if (!iSelected.isPermanent()) {
             JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.DELETE"));
             mi11.addActionListener(this);
             mi11.setActionCommand(KCommandRoiDelete);
             mnu.add(mi11);
         }
-        
-        /* DON'T POLLUTE MENUS
-        if (iSelected.isMovable()) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.MOVE"));
-            mi.addActionListener(this);
-            mi.setActionCommand(KCommandRoiMove); 
-            mnu.add(mi);
-        }
-        */
+     
         if (iSelected.isPinnable()) {
             JCheckBoxMenuItem mi = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PIN"));
             //boolean b = iSelected.isPinned();
@@ -570,7 +552,7 @@ class Controller implements IController {
             mnu.add(mi);
         }
         
-        if (iSelected instanceof Overlay.IFlip/*iSelected.canFlip()*/) {
+        if (iSelected.canFlip()) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_HORZ"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiFlipHorz);
@@ -597,23 +579,7 @@ class Controller implements IController {
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiConvertToIso);
             mnu.add(mi);           
-        }
-        
-        if (0 != (iSelected.getCaps() & Overlay.HASCUSTOMMENU)) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CUSTOMMENU"));
-            mi.addActionListener(this);
-            mi.setActionCommand(KCommandCustomCommand); 
-            mnu.add(mi);
-        }
-    }
-
-    void buildPopupMenu_Profile(JPopupMenu mnu) {
-        {
-            JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PROFILE_SHOW"));
-            mi11.addActionListener(this);
-            mi11.setActionCommand(KCommandProfileShow);
-            mnu.add(mi11);
-        } 
+        }       
     }
  
     private static final Logger LOG = LogManager.getLogger();

@@ -25,18 +25,23 @@ import java.util.ArrayList;
 
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.core.Filter;
+import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 import com.ivli.roim.events.OverlayChangeListener;
+import java.awt.Dialog;
+import java.util.Arrays;
+import javax.swing.JMenuItem;
 
 /**
  *
  * @author likhachev
  */
-public abstract class Annotation extends ScreenObject implements OverlayChangeListener {              
-    protected boolean iMultiline = true; 
+public abstract class Annotation extends ScreenObject implements OverlayChangeListener { 
+    protected Overlay iRoi;   
+    protected boolean iMultiline = true;
     protected final ArrayList<String> iAnnotation;    
-    protected Overlay iRoi;
+    
      
     Annotation(Uid anUid, Shape aShape, String aName, IImageView aView) {
         super(anUid, aShape, aName, aView);   
@@ -62,9 +67,7 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     public abstract Color getColor();
     
     abstract void makeText(AbstractPainter aP) ;
-    
-    //protected abstract void computeShape(AbstractPainter aP);
-    
+   
     @Override
     void paint(AbstractPainter aP) {   
         makeText(aP);
@@ -115,15 +118,23 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
      * 
      */
     public static class Static extends Annotation {              
-               
-                
-        protected Filter []iFilters = {Filter.DENSITY, Filter.AREAINPIXELS};   
+        private static final Filter [] DEFAULT = {Filter.DENSITY, Filter.AREAINPIXELS};
+        private static final String [] LIST_OF_MEASUREMENTS_ROI = {Measurement.DENSITY.getName(),            
+                                                    Measurement.AREAINPIXELS.getName(),
+                                                    Measurement.MINPIXEL.getName(), 
+                                                    Measurement.MAXPIXEL.getName()
+                                                    };
+        
+        public ArrayList<String> getListOfMeasurements() {        
+            return new ArrayList<String>(Arrays.asList(LIST_OF_MEASUREMENTS_ROI));
+        }
+        
+        protected ArrayList<Filter> iFilters;           
         
         public Static(Uid anUid, ROI aRoi, IImageView aV) {
-            super(anUid, aRoi.getShape(), "ANNOTATION::STATIC",  aV); //NOI18N                  
-                    
-            iRoi = aRoi;     
-            //aRoi.addChangeListener(this);
+            super(anUid, aRoi.getShape(), "ANNOTATION::STATIC", aV); //NOI18N                              
+            iFilters = new ArrayList<Filter>(Arrays.asList(DEFAULT));                    
+            iRoi = aRoi;                
         }
   
         @Override
@@ -131,12 +142,12 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
             return ((ROI)iRoi).getColor();
         }
         
-        public void setFilters(Filter[] aF) {
-            iFilters = aF;
+        public void setFilters(ArrayList<Filter> aF) {
+            iFilters = aF;            
             notify(OverlayChangeEvent.CODE.PRESENTATION, null);
         }  
       
-        public Filter[] getFilters() {
+        public ArrayList<Filter> getFilters() {
             return iFilters;
         }
               
@@ -177,6 +188,35 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
 
             return (String[])ret.toArray();
         }
+    
+        @Override
+        public void showDialog(Object anO) {
+            com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel(this);
+            javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
+
+            dialog.setContentPane(panel);
+            dialog.validate();
+            dialog.pack();
+            dialog.setResizable(false);
+            dialog.setVisible(true);
+    }
+        
+        private static final String CUST_COMMAND_ASTATIC_SHOW_DIALOG = "CUST_COMMAND_ASTATIC_SHOW_DIALOG";  
+        @Override
+        public JMenuItem [] makeCustomMenu(Object aVoidStar) {
+            JMenuItem ret = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CUST_MNU.ASTATIC.SETUP"));        
+            ret.setActionCommand(CUST_COMMAND_ASTATIC_SHOW_DIALOG);            
+            return new JMenuItem[]{ret};       
+        }   
+        
+        @Override
+        public boolean handleCustomCommand(final String aCommand) {
+            if (aCommand == CUST_COMMAND_ASTATIC_SHOW_DIALOG) {
+                showDialog(null);
+            }
+            
+            return false;
+        }
     }
           
     /**
@@ -200,31 +240,18 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
             iAnnotation.clear();            
             iAnnotation.add(iOp.format(new BaseFormatter(aP.getView().getFrameNumber())));
         }
-        /*
-            @Override
-        protected void computeShape(AbstractPainter aP) {
-            final ImageView w = aP.getView();
-            
-           
-            
-            final Rectangle2D bnds = w.getFontMetrics(w.getFont()).getStringBounds(iAnnotation.get(0), w.getGraphics());        
-
-            double posX = .0, posY = .0;
-
-            if (null != iR) {                 
-                Rectangle2D r = w.virtualToScreen().createTransformedShape(iR.getShape()).getBounds2D();
-                posX = r.getX();
-                posY = r.getY();
-
-                //if (!(iR instanceof Ruler))                
-                //    posY += bnds.getHeight();               
-            }
-
-            iShape = w.screenToVirtual().createTransformedShape(new Rectangle2D.Double(posX, posY, bnds.getWidth(), bnds.getHeight()));  
-        }
-       
-        */
         
+        public void showDialog(Object a) {}
+        
+        public JMenuItem[] makeCustomMenu(Object aVoidStar) {
+            return null;
+        }    
+        
+        //@returns true if control needs to get repainted otherwise false 
+        public boolean handleCustomCommand(final String aCommand) {
+            return false;
+        }
+            
         @Override
         public void OverlayChanged(OverlayChangeEvent anEvt) {              
             switch (anEvt.getCode()) {
@@ -242,5 +269,6 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
                     break;
             }        
         }
+      
     }          
 }

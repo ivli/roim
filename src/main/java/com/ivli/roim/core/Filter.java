@@ -27,7 +27,7 @@ public enum Filter {
     DENSITY(Measurement.DENSITY, (ROI aR) -> aR.getSeries(Measurement.DENSITY)),
     AREAINPIXELS(Measurement.AREAINPIXELS, (ROI aR) -> aR.getSeries(Measurement.AREAINPIXELS)),
     MINPIXEL(Measurement.MINPIXEL, (ROI aR) -> aR.getSeries(Measurement.MINPIXEL)),                 
-    MAXPIXEL(Measurement.MAXPIXEL, (ROI aR) -> aR.getSeries(Measurement.MINPIXEL)),                 
+    MAXPIXEL(Measurement.MAXPIXEL, (ROI aR) -> aR.getSeries(Measurement.MAXPIXEL)),                 
     AREAINLOCALUNITS(Measurement.AREAINLOCALUNITS, (ROI aR) -> aR.getSeries(Measurement.AREAINLOCALUNITS));   
     /*
      * to be continued

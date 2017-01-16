@@ -20,6 +20,8 @@ package com.ivli.roim.view;
 import com.ivli.roim.core.Uid;
 import java.awt.Image;
 import java.awt.Rectangle;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 /**
  *
  * @author likhachev
@@ -59,5 +61,11 @@ public class OverlayPicture extends ScreenObject {
     */
     
     void update(OverlayManager aM){}
+    public void showDialog(Object anO) {          
+    }
+    @Override
+    public JMenuItem [] makeCustomMenu(Object aVoidStar){return null;}    
+    @Override
+    public boolean handleCustomCommand(final String aCommand){return false;}
          
 }

@@ -25,6 +25,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import javax.swing.event.EventListenerList;
 import com.ivli.roim.events.OverlayChangeListener;
+import javax.swing.JMenuItem;
 
 /**
  *
@@ -159,14 +160,14 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
         for (OverlayChangeListener l : arr)
             l.OverlayChanged(evt);
     }
-       
+    
+    public abstract void showDialog(Object aVoidStar);    
+    public abstract JMenuItem[] makeCustomMenu(Object aVoidStar);    
+    public abstract boolean handleCustomCommand(final String aCommand);
+    
     @Override
-    public void OverlayChanged(OverlayChangeEvent anEvt) {
-    
-    
-    }
-    
-    
+    public void OverlayChanged(OverlayChangeEvent anEvt) {}
+           
     public String toString() {
         return getClass().getName() + ":" + getName();
     }

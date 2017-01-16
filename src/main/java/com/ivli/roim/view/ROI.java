@@ -27,6 +27,8 @@ import com.ivli.roim.core.Scalar;
 import com.ivli.roim.core.SeriesCollection;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {             
     private Color iColor;          
@@ -50,18 +52,13 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         return iAreaInPixels;
     }      
     
-    public ISeries getSeries(Measurement anId) { 
-        ISeries ret;
-        if (anId != Measurement.AREAINPIXELS) {
-            ret = iSeries.get(anId);
-            if (null == ret) {
-                
-            }
-        } else {             
-            ret = new Scalar(Measurement.AREAINPIXELS, getAreaInPixels());               
-        }
-        
-        return ret;
+    public ISeries getSeries(Measurement anId) {         
+        if (anId == Measurement.AREAINPIXELS)  //special case this actually is a scalar
+            return new Scalar(Measurement.AREAINPIXELS, getAreaInPixels());
+        else if (anId == Measurement.AREAINLOCALUNITS) // TODO:
+            return new Scalar(Measurement.AREAINPIXELS, getAreaInPixels());            
+        else
+            return iSeries.get(anId);     
     }
     
     public Color getColor() {
@@ -114,5 +111,8 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         iShape = tx.createTransformedShape(iShape);
     }      
        
+    public void showDialog(Object a) {}
+    public JMenuItem [] makeCustomMenu(Object aVoidStar){return null;}    
+    public boolean handleCustomCommand(final String aCommand){return false;}
    // private static final transient org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }

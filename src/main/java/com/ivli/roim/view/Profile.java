@@ -23,6 +23,8 @@ import java.awt.geom.Rectangle2D;
 import com.ivli.roim.core.Histogram;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.Uid;
+import javax.swing.JMenuItem;
+
 /**
  *
  * @author likhachev
@@ -31,7 +33,7 @@ public class Profile extends ScreenObject {
     private boolean    iShow = true;    
     private boolean    iNormalize = false;
     private Histogram  iHist;
-    private ImageFrame iFrame;
+    private transient ImageFrame iFrame;
     private int iFrameNumber;
     
     
@@ -44,7 +46,7 @@ public class Profile extends ScreenObject {
     
     @Override
     int getCaps() {
-        return MOVEABLE | SELECTABLE | HASMENU | FRAMESCOPE;
+        return MOVEABLE | SELECTABLE | HASMENU | HASCUSTOMMENU | FRAMESCOPE ;
     }
         
     @Override
@@ -76,5 +78,26 @@ public class Profile extends ScreenObject {
     
     public Histogram getHistogram() {
          return iHist;
-    }        
+    } 
+    
+    public void showDialog(Object anO) {          
+    }
+    
+    static final String CUST_COMMAND_PROFILE_TOGGLE_SHOW = "CUST_COMMAND_PROFILE_TOGGLE_SHOW";
+    
+    public JMenuItem[] makeCustomMenu(Object aVoidStar) {
+        JMenuItem ret = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PROFILE_SHOW"));
+        //mi11.addActionListener(this);
+        ret.setActionCommand(CUST_COMMAND_PROFILE_TOGGLE_SHOW);
+        //aMenu.add(mi11);    
+        return new JMenuItem[]{ret};
+    }    
+    
+    public boolean handleCustomCommand(final String aCommand){
+        if (aCommand == CUST_COMMAND_PROFILE_TOGGLE_SHOW) {
+            iShow = !iShow;
+            return true;
+        }
+        return false;
+    }
 }

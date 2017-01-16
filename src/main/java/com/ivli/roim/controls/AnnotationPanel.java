@@ -68,29 +68,31 @@ public class AnnotationPanel extends javax.swing.JPanel {
           return (column != 0);
         }
     }    
-        
-   private final String[] str = Measurement.getAllMeasurements();
-   private final com.ivli.roim.view.Annotation.Static iAnno;
+            
+    private final com.ivli.roim.view.Annotation.Static iAnno;
     /**
      * Creates new form AnnotationPanel
      * @param anA
      */
     public AnnotationPanel(com.ivli.roim.view.Annotation.Static anA) {
         iAnno = anA;
-        rowData = new Object[str.length][2];
+        ArrayList<String> all = iAnno.getListOfMeasurements();
+        
+        rowData = new Object[all.size()][2];
                         
-        for(int n=0; n < str.length; ++n) {
-            rowData[n][0] = str[n];
+        for(int n=0; n < all.size(); ++n) {
+            rowData[n][0] = all.get(n);
             rowData[n][1] = false;
             
-            for (com.ivli.roim.core.Filter f : iAnno.getFilters())
-                if (f.getMeasurement().getName().equals(str[n])) {
+            for (Filter f : iAnno.getFilters())
+                if (f.getMeasurement().getName().equals(all.get(n))) {
                     rowData[n][1] = true;
                     break;
                 }            
         }
         
         initComponents();
+        jCheckBox1.setSelected(iAnno.isMultiline());
     }
 
     /**
@@ -118,8 +120,9 @@ public class AnnotationPanel extends javax.swing.JPanel {
             }
         });
 
-        jCheckBox1.setText(bundle.getString("ANNOTATION.HIDECURVE")); // NOI18N
-        jCheckBox1.setSelected(iAnno.isMultiline());
+        jCheckBox1.setSelected(true);
+        jCheckBox1.setText("Multiline");
+        jCheckBox1.setToolTipText("Display as multiline");
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox1ActionPerformed(evt);
@@ -132,13 +135,15 @@ public class AnnotationPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(jCheckBox1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jCheckBox1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -146,38 +151,34 @@ public class AnnotationPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1)
-                    .addComponent(jCheckBox1))
+                    .addComponent(jCheckBox1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
-        ArrayList<Filter> f = new ArrayList<>();
+        ArrayList<Filter> fi = new ArrayList<>();
         
-        int cnt = 0;
-        for(int n=0; n < jTable1.getRowCount(); ++n ) {          
-            if (true == (boolean)jTable1.getModel().getValueAt(n, 1)) 
-                cnt++;//f.add(Filter.getFilter((String)rowData[n][0]));
-        }
-        
-        Filter []fi = new Filter[cnt];
-        
-        for(int n=0; n < jTable1.getRowCount(); ++n ) {
+       
+        for(int n=0; n < jTable1.getRowCount(); ++n) {
             if (true == (boolean)jTable1.getModel().getValueAt(n, 1))
-                fi[n] = Filter.getFilter((String)rowData[n][0]);
+                fi.add(Filter.getFilter((String)rowData[n][0]));
         }
               
-        iAnno.setFilters(fi);
-        iAnno.setMultiline(jCheckBox1.isSelected());
+        iAnno.setFilters(fi);       
+        
         SwingUtilities.getWindowAncestor(this).setVisible(false);        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        // TODO add your handling code here:
+        
+        if (jCheckBox1.isSelected() != iAnno.isMultiline())
+            iAnno.setMultiline(jCheckBox1.isSelected());
+            
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
 

@@ -28,6 +28,8 @@ import com.ivli.roim.core.Uid;
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -93,6 +95,13 @@ public class Ruler extends ScreenObject {
             }            
         };
     }
+    
+    public void showDialog(Object anO) {}
+    
+    @Override
+    public JMenuItem [] makeCustomMenu(Object aVoidStar){return null;}    
+    @Override
+    public boolean handleCustomCommand(final String aCommand){return false;}
     
     private static final Logger LOG = LogManager.getLogger();
 }
