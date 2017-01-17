@@ -29,14 +29,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;     
 
 import com.ivli.roim.core.Window;
-import javax.swing.MenuElement;
+import java.util.ArrayList;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -158,16 +158,18 @@ class Controller implements IController {
      
     protected Overlay findActionTarget(Point aP) {
         Overlay ret = iControlled.getROIMgr().findObject(aP, iControlled);
-        if (null != ret && true == ret.isSelectable())
+        if (null != ret && ret.isSelectable())
             return ret;
         return null;
     }
     
-    protected void addSelection(Overlay aO) {
-        if (null != aO) {
-            iSelected = aO;
+    protected Overlay addSelection(Overlay aO) {       
+        Overlay old = iSelected;
+        iSelected = aO;
+        if (null != iSelected)
             iSelected.setEmphasized(true);
-        }
+        
+        return old;
     }
     
     protected void releaseSelection(Overlay aO) {
@@ -179,11 +181,7 @@ class Controller implements IController {
         
         iSelected = null;
     }
-    
-    boolean blockObjectSpecificPopupMenu() {
-        return false;
-    }
-
+   
     public void mouseEntered(MouseEvent e) {
         e.getComponent().requestFocusInWindow(); //gain focus
     }
@@ -199,20 +197,26 @@ class Controller implements IController {
             //iControlled.zoom(e.getWheelRotation()/Settings.ZOOM_SENSITIVITY_FACTOR, 0,0);
     }
 
-
     public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
             Overlay tmp = iControlled.getROIMgr().findObject(e.getPoint(), iControlled);
 
-            if (null != tmp) {
+            if (null == tmp)           
+                buildContextPopupMenu().show(e.getComponent(), e.getX(), e.getY());            
+            else {
                 addSelection(tmp);
+                
+                JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS")); 
+                buildBaseObjectsMenu(mnu);
 
-                if (iSelected.hasMenu() && !blockObjectSpecificPopupMenu()) {
-                    buildObjectSpecificPopupMenu(iSelected).show(e.getComponent(), e.getX(), e.getY());
-                   // mnu.;
-                }
-            } else 
-                buildContextPopupMenu().show(e.getComponent(), e.getX(), e.getY());
+                if (iSelected instanceof Overlay.IHaveCustomMenu) {                   
+                    for (JMenuItem mi:((Overlay.IHaveCustomMenu)iSelected).makeCustomMenu(null)) {
+                       mi.addActionListener(this);
+                       mnu.add(mi);                  
+                    }                                                       
+                }                
+                mnu.show(e.getComponent(), e.getX(), e.getY());  
+            } 
         }
     }
 
@@ -239,8 +243,8 @@ class Controller implements IController {
                     return false;
                 }  
                 protected boolean DoWheel(int aX) {
-                    if (iSelected instanceof Overlay.IRotate) {
-                        ((Overlay.IRotate)iSelected).rotate(aX);
+                    if (iSelected instanceof Overlay.ICanRotate) {
+                        ((Overlay.ICanRotate)iSelected).rotate(aX);
                         iControlled.repaint();
                     }
                     return true;
@@ -311,18 +315,10 @@ class Controller implements IController {
     private static final String KCommandRoiCreateRuler = "COMMAND_ROI_CREATE_RULER"; // NOI18N
     private static final String KCommandRoiCreate = "COMMAND_ROI_OPERATIONS_CREATE"; // NOI18N
     private static final String KCommandRoiDelete = "COMMAND_ROI_OPERATIONS_DELETE"; // NOI18N
-    private static final String KCommandRoiMove   = "COMMAND_ROI_OPERATIONS_MOVE"; // NOI18N
-    private static final String KCommandRoiPin  = "COMMAND_ROI_OPERATIONS_PIN"; // NOI18N
     private static final String KCommandRoiClone  = "COMMAND_ROI_OPERATIONS_CLONE"; // NOI18N
+    private static final String KCommandRoiMove   = "COMMAND_ROI_OPERATIONS_MOVE"; // NOI18N   
     private static final String KCommandRoiDeleteAll = "COMMAND_ROI_OPERATIONS_DELETE_ALL"; // NOI18N
-    private static final String KCommandRoiFlipVert  = "COMMAND_ROI_OPERATIONS_FLIP_V"; // NOI18N
-    private static final String KCommandRoiFlipHorz  = "COMMAND_ROI_OPERATIONS_FLIP_H"; // NOI18N
-    private static final String KCommandRoiRotate90CW   = "COMMAND_ROI_OPERATIONS_ROTATE_90_CW"; // NOI18N
-    private static final String KCommandRoiRotate90CCW  = "COMMAND_ROI_OPERATIONS_ROTATE_90_CCW"; // NOI18N
-    private static final String KCommandRoiConvertToIso = "COMMAND_ROI_OPERATIONS_CONVERT_TO_ISO"; // NOI18N
-    ///private static final String KCommandProfileShow     = "COMMAND_ROI_OPERATIONS_PROFILE_SHOW_ON-OFF"; // NOI18N
-    ///private static final String KCommandCustomCommand = "COMMAND_ROI_OPERATIONS_CUSTOM_COMMAND"; // NOI18N
-
+   
     @Override
     public void actionPerformed(ActionEvent aCommand) {  
         switch (aCommand.getActionCommand()) {
@@ -407,62 +403,35 @@ class Controller implements IController {
                     }                       
                 };
                 } break;
-            case KCommandRoiClone:   
-                Overlay c = iControlled.getROIMgr().cloneObject(iSelected, iControlled);
-                iControlled.repaint();                
-                releaseSelection(null);     
-                addSelection(c);
-                break;
-            case KCommandRoiMove: break;            
-            case KCommandRoiPin: 
-                iSelected.setPinned(!iSelected.isPinned());
-                break;
+            case KCommandRoiMove: break; 
             case KCommandRoiDelete: 
                 iControlled.getROIMgr().deleteObject(iSelected); 
                 //iSelected = null; 
                 releaseSelection(null);
                 iControlled.repaint(); 
                 break;                
-            case KCommandRoiFlipHorz:
-                ((Overlay.IFlip)iSelected).flip(false);
-                iControlled.repaint();
-                break;
-            case KCommandRoiFlipVert:
-                ((Overlay.IFlip)iSelected).flip(true);
-                iControlled.repaint();
-                break;
-            case KCommandRoiRotate90CW:
-                ((Overlay.IRotate)iSelected).rotate(90);
-                iControlled.repaint();
-                break;
-            case KCommandRoiRotate90CCW:
-                ((Overlay.IRotate)iSelected).rotate(-90);
-                iControlled.repaint();
-                break;
-            case KCommandRoiConvertToIso:
-                ((Overlay.IIsoLevel)iSelected).isolevel(0);
-                iControlled.repaint();
-                ;break;
+                
+            case KCommandRoiClone:   
+                Overlay c = iControlled.getROIMgr().cloneObject(iSelected, iControlled);
+                iControlled.repaint();                
+                releaseSelection(null);     
+                addSelection(c);
+                break;                       
+            
             case KCommandRoiDeleteAll: 
                 iSelected = null; 
                 releaseSelection(null);
                 iControlled.getROIMgr().clear();
                 iControlled.repaint();
                 break;           
-            default: 
-                if(handleCustomCommand(aCommand)) {
-                    iControlled.repaint();
-                }
+            default:               
+                if (null != iSelected && 
+                    iSelected instanceof Overlay.IHaveCustomMenu &&
+                    ((Overlay.IHaveCustomMenu)iSelected).handleCustomCommand(aCommand.getActionCommand()))
+                        iControlled.repaint();               
                 break;
         }
-    }
-
-    protected boolean handleCustomCommand(ActionEvent aCommand) {
-        if (null != iSelected)
-            iSelected.handleCustomCommand(aCommand.getActionCommand());
-        
-        return false;
-    }
+    }   
         
     JPopupMenu buildContextPopupMenu() {
         JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_OVERLAY_CREATE")); 
@@ -510,76 +479,20 @@ class Controller implements IController {
         
         return mnu;
     }
-    
-    JPopupMenu buildObjectSpecificPopupMenu(Overlay aO) {
-        JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS")); 
-        buildBasePopupMenu(mnu);
-         
-        if (null != iSelected && 0 != (iSelected.getCaps() & Overlay.HASCUSTOMMENU)) {            
-           JMenuItem[] mi = iSelected.makeCustomMenu(null);
-           if (null != mi) {
-               for (int i=0, len=mi.length; i<len; ++i) {
-                  mi[i].addActionListener(this);
-                  mnu.add(mi[i]);                  
-               }           
-           }           
-        }
-        
-        return mnu;    
-    }
-    
-    void buildBasePopupMenu(JPopupMenu mnu) {
+       
+    void buildBaseObjectsMenu(JPopupMenu mnu) {
         if (!iSelected.isPermanent()) {
             JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.DELETE"));
             mi11.addActionListener(this);
             mi11.setActionCommand(KCommandRoiDelete);
             mnu.add(mi11);
-        }
-     
-        if (iSelected.isPinnable()) {
-            JCheckBoxMenuItem mi = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PIN"));
-            //boolean b = iSelected.isPinned();
-            mi.setState(iSelected.isPinned());
-            mi.addActionListener(this);
-            mi.setActionCommand(KCommandRoiPin); 
-            mnu.add(mi);
-        }
-        
+        }      
         if (iSelected.isCloneable()) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CLONE"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiClone); 
             mnu.add(mi);
         }
-        
-        if (iSelected.canFlip()) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_HORZ"));
-            mi.addActionListener(this);
-            mi.setActionCommand(KCommandRoiFlipHorz);
-            mnu.add(mi);
-            mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_VERT"));
-            mi.addActionListener(this);
-            mi.setActionCommand(KCommandRoiFlipVert);
-            mnu.add(mi);         
-        }
-        
-        if (iSelected instanceof Overlay.IRotate/*iSelected.canRotate()*/) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.ROTATE_90_CW"));
-            mi.addActionListener(this);
-            mi.setActionCommand(KCommandRoiRotate90CW);
-            mnu.add(mi);
-            mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.ROTATE_90_CCW"));
-            mi.addActionListener(this);
-            mi.setActionCommand(KCommandRoiRotate90CCW);
-            mnu.add(mi);
-        }
-         
-        if (iSelected instanceof Overlay.IIsoLevel/*iSelected.canFlip()*/) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CONVERT_TO_ISO"));
-            mi.addActionListener(this);
-            mi.setActionCommand(KCommandRoiConvertToIso);
-            mnu.add(mi);           
-        }       
     }
  
     private static final Logger LOG = LogManager.getLogger();

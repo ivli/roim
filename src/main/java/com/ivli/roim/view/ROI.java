@@ -27,20 +27,16 @@ import com.ivli.roim.core.Scalar;
 import com.ivli.roim.core.SeriesCollection;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
+import java.util.ArrayList;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
-public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {             
+public class ROI extends Overlay implements Overlay.ICanFlip, Overlay.ICanRotate, Overlay.IHaveCustomMenu {             
     private Color iColor;          
     private int iAreaInPixels;   
         
     transient SeriesCollection iSeries;               
-    
-    @Override
-    int getCaps() {
-        return MOVEABLE|SELECTABLE|CANFLIP|CANROTATE|CLONEABLE|HASMENU|PINNABLE;
-    }
-          
+       
     public ROI(Uid anID, Shape aS, String aName,  Color aC) {
         super(anID, aS, null == aName ? String.format("ROI%d", anID.getLong()):aName);         
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);          
@@ -109,10 +105,108 @@ public class ROI extends Overlay implements Overlay.IFlip, Overlay.IRotate {
         AffineTransform tx = new AffineTransform();        
         tx.rotate(Math.toRadians(aV), rect.getX() + rect.width/2, rect.getY() + rect.height/2);              
         iShape = tx.createTransformedShape(iShape);
-    }      
+    }         
+
+    private static final String KCommandRoiPin  = "COMMAND_ROI_OPERATIONS_PIN"; // NOI18N
+    
+    private static final String KCommandRoiFlipVert  = "COMMAND_ROI_OPERATIONS_FLIP_V"; // NOI18N
+    private static final String KCommandRoiFlipHorz  = "COMMAND_ROI_OPERATIONS_FLIP_H"; // NOI18N
+    private static final String KCommandRoiRotate90CW   = "COMMAND_ROI_OPERATIONS_ROTATE_90_CW"; // NOI18N
+    private static final String KCommandRoiRotate90CCW  = "COMMAND_ROI_OPERATIONS_ROTATE_90_CCW"; // NOI18N
+    private static final String KCommandRoiConvertToIso = "COMMAND_ROI_OPERATIONS_CONVERT_TO_ISO"; // NOI18N
+    @Override
+    public ArrayList<JMenuItem> makeCustomMenu(Object aVoidStar) {
+        ArrayList<JMenuItem> mnu = new ArrayList<>();
+              
+        if (isPinnable()) {
+            JCheckBoxMenuItem mi = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PIN"));            
+            mi.setState(isPinned());
+            
+            mi.setActionCommand(KCommandRoiPin); 
+            mnu.add(mi);
+        }
+        
        
-    public void showDialog(Object a) {}
-    public JMenuItem [] makeCustomMenu(Object aVoidStar){return null;}    
-    public boolean handleCustomCommand(final String aCommand){return false;}
-   // private static final transient org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
+        
+        if (this instanceof Overlay.ICanFlip) {
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_HORZ"));           
+            mi.setActionCommand(KCommandRoiFlipHorz);
+            mnu.add(mi);
+            mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_VERT"));           
+            mi.setActionCommand(KCommandRoiFlipVert);
+            mnu.add(mi);         
+        }
+        
+        if (this instanceof Overlay.ICanRotate) {
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.ROTATE_90_CW"));            
+            mi.setActionCommand(KCommandRoiRotate90CW);
+            mnu.add(mi);
+            mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.ROTATE_90_CCW"));            
+            mi.setActionCommand(KCommandRoiRotate90CCW);
+            mnu.add(mi);
+        }
+         
+        if (this instanceof Overlay.ICanIso) {
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CONVERT_TO_ISO"));            
+            mi.setActionCommand(KCommandRoiConvertToIso);
+            mnu.add(mi);           
+        }    
+        return mnu;
+    }
+
+    @Override
+    public boolean handleCustomCommand(String aCommand) {
+        switch(aCommand) {
+        case KCommandRoiPin: 
+                setPinned(!isPinned());
+                break;
+            
+            case KCommandRoiFlipHorz:
+                ((Overlay.ICanFlip)this).flip(false);
+                
+                break;
+            case KCommandRoiFlipVert:
+                ((Overlay.ICanFlip)this).flip(true);
+                
+                break;
+            case KCommandRoiRotate90CW:
+                ((Overlay.ICanRotate)this).rotate(90);
+               
+                break;
+            case KCommandRoiRotate90CCW:
+                ((Overlay.ICanRotate)this).rotate(-90);
+               
+                break;
+            case KCommandRoiConvertToIso:
+                ((Overlay.ICanIso)this).convertToIso(0);
+                
+                ;break;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isSelectable() {
+         return true;
+    }
+
+    @Override
+    public boolean isMovable() {
+        return true;
+    }
+
+    @Override
+    public boolean isPermanent() {
+        return false;
+    }
+
+    @Override
+    public boolean isCloneable() {
+        return true;
+    }
+
+    @Override
+    public boolean isPinnable() {
+        return true;
+    }
 }

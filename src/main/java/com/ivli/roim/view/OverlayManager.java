@@ -147,8 +147,8 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
 
     @Override
     public void frameChanged(FrameChangeEvent anEvt) {       
-        for (Overlay o:iOverlays) 
-            if (0 != (o.getCaps() & Overlay.FRAMESCOPE) ) 
+        for (Overlay o : iOverlays) 
+            if (o instanceof Profile)
                 o.setVisible(((Profile)o).getFrameNumber() == anEvt.getFrame());                   
     }   
     

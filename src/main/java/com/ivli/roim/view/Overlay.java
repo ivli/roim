@@ -25,6 +25,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import javax.swing.event.EventListenerList;
 import com.ivli.roim.events.OverlayChangeListener;
+import java.util.ArrayList;
 import javax.swing.JMenuItem;
 
 /**
@@ -33,20 +34,21 @@ import javax.swing.JMenuItem;
  */
 public abstract class Overlay implements OverlayChangeListener, java.io.Serializable {  
     private static final long serialVersionUID = 42L;
-    
+    /*
     //static final int VISIBLE = 0x1;
     public static final int SELECTABLE = 0x1;      
-    public static final int MOVEABLE   = SELECTABLE << 0x1;
+    public static final int MOVEABLE   = 0x1 << 0x1;
     public static final int PERMANENT  = MOVEABLE  << 0x1;
     public static final int CLONEABLE  = PERMANENT << 0x1;
-    public static final int CANFLIP    = CLONEABLE << 0x1;
-    public static final int CANROTATE  = CANFLIP   << 0x1;
-    public static final int RESIZABLE  = CANROTATE << 0x1;
+   // public static final int CANFLIP    = CLONEABLE << 0x1;
+   // public static final int CANROTATE  = CANFLIP   << 0x1;
+    public static final int RESIZABLE  = CLONEABLE << 0x1;
     public static final int PINNABLE   = RESIZABLE << 0x1;
-    public static final int HASMENU    = PINNABLE  << 0x1;  
-    public static final int HASCUSTOMMENU = HASMENU << 0x1;  
-    public static final int FRAMESCOPE = HASCUSTOMMENU << 0x1;
-           
+   // public static final int HASMENU    = PINNABLE  << 0x1;  
+    ///public static final int HASCUSTOMMENU = HASMENU << 0x1;  
+    public static final int FRAMESCOPE = PINNABLE << 0x1;
+    */
+    
     protected final transient Uid iUid;
     protected Shape   iShape;
     protected String  iName;
@@ -105,16 +107,15 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
         iVisible = aV;
     }
     
-    boolean isSelectable() {return 0 != (getCaps() & SELECTABLE);}
-    boolean isMovable() {return 0 != (getCaps() & MOVEABLE);}
-    boolean isPermanent() {return 0 != (getCaps() & PERMANENT);}
-    boolean isCloneable() {return 0 != (getCaps() & CLONEABLE);}
-    boolean isPinnable() {return 0 != (getCaps() & PINNABLE);}
-    boolean hasMenu() {return 0 != (getCaps() & HASMENU);}
-    boolean canFlip() {return 0 != (getCaps() & CANFLIP);} 
-    boolean canRotate() {return 0 != (getCaps() & CANROTATE);} 
+    public abstract boolean isSelectable();//{return 0 != (getCaps() & SELECTABLE);}
+    public abstract boolean isMovable();   // {return 0 != (getCaps() & MOVEABLE);}
+    public abstract boolean isPermanent(); // {return 0 != (getCaps() & PERMANENT);}
+    public abstract boolean isCloneable(); // {return 0 != (getCaps() & CLONEABLE);}
+    public abstract boolean isPinnable();  // {return 0 != (getCaps() & PINNABLE);}
+    abstract void update(OverlayManager aRM);          
+    abstract void paint(AbstractPainter aP);  
     
-    Shape getShape() {
+    public Shape getShape() {
         return iShape;
     }       
     
@@ -127,23 +128,8 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
         notify(OverlayChangeEvent.CODE.MOVED, new double[]{adX, adY});
     } 
     
-    abstract void update(OverlayManager aRM);  
-        
-    abstract int getCaps();         
-    abstract void paint(AbstractPainter aP);  
-            
-    interface IFlip {
-        public void flip(boolean aVertical);
-    } 
-    
-    interface IRotate {
-        public void rotate(double anAngle);       
-    }
-    
-    interface IIsoLevel {
-        public void isolevel(int aTolerance);
-    }
-            
+  
+  
     public void addChangeListener(OverlayChangeListener aL) {       
         iListeners.add(OverlayChangeListener.class, aL);
     }
@@ -161,9 +147,31 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
             l.OverlayChanged(evt);
     }
     
-    public abstract void showDialog(Object aVoidStar);    
-    public abstract JMenuItem[] makeCustomMenu(Object aVoidStar);    
-    public abstract boolean handleCustomCommand(final String aCommand);
+        
+    @FunctionalInterface
+    interface ICanFlip {
+        public void flip(boolean aVertical);
+    } 
+    
+    @FunctionalInterface
+    interface ICanRotate {
+        public void rotate(double anAngle);       
+    }
+    
+    @FunctionalInterface
+    interface ICanIso {
+        public boolean convertToIso(int aTolerance);
+    }
+    
+    @FunctionalInterface
+    public interface IHaveConfigDlg {
+        public boolean showDialog(Object aVoidStar);  
+    } 
+             
+    public interface IHaveCustomMenu {   
+        public ArrayList<JMenuItem> makeCustomMenu(Object aVoidStar);    
+        public boolean handleCustomCommand(final String aCommand);
+    }
     
     @Override
     public void OverlayChanged(OverlayChangeEvent anEvt) {}

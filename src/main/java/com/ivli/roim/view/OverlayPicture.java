@@ -34,13 +34,10 @@ public class OverlayPicture extends ScreenObject {
         super(anUid, new Rectangle(aP.getWidth(null), aP.getHeight(null)), aN, aV);       
         iPicture = aP;
     }
-    
-    int getCaps(){return CANFLIP|CANROTATE|HASMENU|PERMANENT;}
-    
+  
     void paint(AbstractPainter aP) {
         aP.paint(this);
-    }
-    
+    }    
     
     /*
     void paint(Graphics2D aGC, AffineTransform aTrans) {
@@ -61,11 +58,6 @@ public class OverlayPicture extends ScreenObject {
     */
     
     void update(OverlayManager aM){}
-    public void showDialog(Object anO) {          
-    }
-    @Override
-    public JMenuItem [] makeCustomMenu(Object aVoidStar){return null;}    
-    @Override
-    public boolean handleCustomCommand(final String aCommand){return false;}
+    
          
 }

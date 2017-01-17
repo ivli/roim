@@ -36,4 +36,9 @@ public abstract class ScreenObject extends Overlay {
         return iView;
     }
     
+    public boolean isSelectable() {return true;}
+    public boolean isMovable() {return true;}
+    public boolean isPermanent() {return false;}
+    public boolean isCloneable() {return false;}
+    public boolean isPinnable() {return true;} 
 }

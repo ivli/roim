@@ -37,7 +37,7 @@ import javax.swing.JMenuItem;
  *
  * @author likhachev
  */
-public abstract class Annotation extends ScreenObject implements OverlayChangeListener { 
+public abstract class Annotation extends ScreenObject implements OverlayChangeListener, Overlay.IHaveCustomMenu, Overlay.IHaveConfigDlg { 
     protected Overlay iRoi;   
     protected boolean iMultiline = true;
     protected final ArrayList<String> iAnnotation;    
@@ -47,9 +47,6 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         super(anUid, aShape, aName, aView);   
         iAnnotation = new ArrayList<>();
     }
-    
-    @Override
-    int getCaps(){return HASMENU|MOVEABLE|SELECTABLE|PINNABLE|HASCUSTOMMENU;}    
     
     public Overlay getRoi() {
         return iRoi;
@@ -190,7 +187,7 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         }
     
         @Override
-        public void showDialog(Object anO) {
+        public boolean showDialog(Object anO) {
             com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel(this);
             javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
 
@@ -199,14 +196,15 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
             dialog.pack();
             dialog.setResizable(false);
             dialog.setVisible(true);
+            return true;
     }
         
         private static final String CUST_COMMAND_ASTATIC_SHOW_DIALOG = "CUST_COMMAND_ASTATIC_SHOW_DIALOG";  
         @Override
-        public JMenuItem [] makeCustomMenu(Object aVoidStar) {
+        public ArrayList<JMenuItem> makeCustomMenu(Object aVoidStar) {
             JMenuItem ret = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CUST_MNU.ASTATIC.SETUP"));        
             ret.setActionCommand(CUST_COMMAND_ASTATIC_SHOW_DIALOG);            
-            return new JMenuItem[]{ret};       
+            return new ArrayList<JMenuItem>(){{add(ret);}};       
         }   
         
         @Override
@@ -241,9 +239,9 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
             iAnnotation.add(iOp.format(new BaseFormatter(aP.getView().getFrameNumber())));
         }
         
-        public void showDialog(Object a) {}
+        public boolean showDialog(Object a) {return false;}
         
-        public JMenuItem[] makeCustomMenu(Object aVoidStar) {
+        public ArrayList<JMenuItem> makeCustomMenu(Object aVoidStar) {
             return null;
         }    
         

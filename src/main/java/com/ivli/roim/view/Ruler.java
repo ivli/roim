@@ -50,12 +50,7 @@ public class Ruler extends ScreenObject {
         if (aP.getView() == getView())
             aP.paint(this);    
     } 
-     
-    @Override
-    int getCaps() {
-        return MOVEABLE | SELECTABLE | HASMENU | PINNABLE;
-    }
-    
+      
     @Override
     void update(OverlayManager aM) {  
         Point2D.Double a = null, b = null;
@@ -95,13 +90,6 @@ public class Ruler extends ScreenObject {
             }            
         };
     }
-    
-    public void showDialog(Object anO) {}
-    
-    @Override
-    public JMenuItem [] makeCustomMenu(Object aVoidStar){return null;}    
-    @Override
-    public boolean handleCustomCommand(final String aCommand){return false;}
-    
+      
     private static final Logger LOG = LogManager.getLogger();
 }

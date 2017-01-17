@@ -20,7 +20,6 @@ package com.ivli.roim.controls;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.SwingUtilities;
 import com.ivli.roim.core.Filter;
-import com.ivli.roim.core.Measurement;
 import java.util.ArrayList;
 /**
  *
