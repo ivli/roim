@@ -65,26 +65,27 @@
 			</h3>
 		
 		<h3>1. Introduction </h3>
-		Roim is a class library designed to help implementing software for processing nuclear medicine (hereinafter <b>NM</b>) data. 
-		This development was inspired by <a href="https://imagej.nih.gov/ij/">ImageJ</a> image viewer and written in Java.
-		The library is designed to be vendor neutral and shall support most of modalities. However, for the time being it is tested only with NM/DR/DXR/CT/PET/MR files. 
-		It implements a set of controls, screen primitives (Overlays) and algorithms to extract, process and display biomedical information embodied in study files. 
+		Roim is an image processing application. It is designed to speedup process of implementing software for processing nuclear medicine (hereinafter <b>NM</b>) data. 
+		This development was inspired by <a href="https://imagej.nih.gov/ij/">ImageJ</a> - image viewer and also written in Java to maintain platform independence, hovewer sometimes by the price of performance.
+		The library is designed to be vendor neutral and should not be limited to support only NM and for the time being it is tested with NM/DR/DXR/CT/PET/MR files. 
+		It implements several algorithms, screen primitives and controls to extract, process and display biomedical information. 
 		<br>Namely: 
 		<ul style="list-style-type:disc">
-		<li>regions of interest (hereinafter <b>ROI</b>) of rectangular, elliptic and free form shape - once ROI is created it can be moved, reshaped, deleted, pinned, etc 
-		and a set of characteristics can be measured. Among them area (in pixels and cm), integral density (i.e. arithmetic sum of pixel values), min/max/avg pixel. 
-		In the case of multiframe image - often seen in NM - this information will be extracted out of all the frames and then one will have a possibility to build and display curves like "density over time";
-		<li>Ruler - it is meant for extracting geometrical information of the images;
-		<li>Profile - a tool to display density profile over a rectangular area of an image;
+		<li> Region of interest (hereinafter <b>ROI</b>) - is the main instrument. Supported types are rectangular, elliptic and free form.  
+		Generally, following operations can be applied to a ROI: a typical set of affine transforms move, flip, rotate, some ROIs can be reshaped, delete, pin (cannot get moved nor changed), etc. 
+		and a set of characteristics can get extracted. Among them area (in pixels and cm), integral density (i.e. arithmetic sum of pixel values), min/max/avg pixel. 
+		In the case of multiframe image - often seen in NM - this set of information will be extracted out of all the frames and then one will have a possibility to build and display curves like "density over time";
+		<li> Ruler - basic tool to measure image details;
+		<li> Profile - by means of Profile it is possible to visualize 2D distribution of pixel density (profile) over a rectangular area;
 		</ul>
 		Beyond aforementioned tools there is a number of instruments to adjust visualization parameters W/L (Window Width and Level) and apply presentation LUT 
-		(a dozen most popular ones is built into and there exists a possibility to load LUT from files in NIH format). 
+		(a dozen of most popular LUTs is built into the software and there exists a possibility to load LUT from files in NIH format). 
 		Frame selection bar provides a mechanism of navigating through multiframe/multi-phase images in either terms of frames or time (milliseconds).   
 		<ul style="list-style-type:disc">
-		<li>Using ROI calculator it is possible to apply basic maths to measurements. For instance: one of often necessary operation is subtraction of background counts of counts measured from a ROI. 
-		Then, the resulting series can be send to a chart control.
-		<li>Chart control is built around <a href=http://www.jfree.org/jfreechart/>JFreeChart</a> library and is designated to visualize series as curves, extract numeric information and finally 
-		<li>there is an instrument to fit experimental data with linear or exponential polynomials using least squares method. 
+		<li> ROI calculator - implements basic algebraic operations on ROI. For instance: one of often necessary operation is subtraction of background counts of counts measured from a ROI. 
+		Then, the result can be send to a chart control.
+		<li> Chart control is built around <a href=http://www.jfree.org/jfreechart/>JFreeChart</a> library and is designated to visualize series as curves, extract numeric information and finally 
+		<li> Curve fitter - the tool to fit experimental data with linear or exponential polynomials using least squares method. 
 		It is not seldom acquisition ends earlier than a particular event takes place, for instance a half excretion time in the case of renal obstruction. 
 		Using this tool it becomes possible to extrapolate experimental data in many cases achieving acceptable approximation of missing parameter.
 		</ul>
