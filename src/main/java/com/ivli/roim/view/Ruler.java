@@ -39,9 +39,9 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class Ruler extends ScreenObject implements ISeriesProvider {
-    private double iDistance;
-    Handle h[]={null,null};
+public class Ruler extends ScreenObject implements ISeriesProvider {     
+    private double iSpacing = 1.;    
+    private Handle h[]={null,null};
     
     private Shape makeShape(Point2D aB, Point2D aE) {
         Path2D ret = new Path2D.Double();
@@ -88,26 +88,12 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
         iShape = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);                            
         notify(OverlayChangeEvent.CODE.MOVED, new double[]{adX, adY});
     } 
-    
+   
     @Override
     void update(OverlayManager aM) {          
-        iDistance = iBegin.iPos.distance(iEnd.iPos) * aM.getImage().getPixelSpacing().getX();        
+        iSpacing = aM.getImage().getPixelSpacing().getX();      
     }       
-    
-    IOperation getOperation() {                
-        return new IOperation() {
-            Ruler iR = Ruler.this;
-            @Override
-            public IOperand value() {                
-                return new Operand(new Scalar(Measurement.DISTANCE, iR.iDistance));
-            }
-            @Override
-            public String format(AbstractFormatter aF) {
-                return aF.format(value());
-            }            
-        };
-    }
-     
+   
     @Override
     public void OverlayChanged(OverlayChangeEvent anEvt) {
         switch(anEvt.getCode()) {
@@ -128,7 +114,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
 
     @Override
     public ISeries getSeries(Measurement anId) {
-        return new Scalar(Measurement.DISTANCE, iDistance);
+        return new Scalar(Measurement.DISTANCE, iBegin.iPos.distance(iEnd.iPos) * iSpacing);
     }
     
     private static final Measurement []LIST_OF_MEASUREMENTS = {Measurement.DISTANCE};
@@ -160,5 +146,6 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
        
     Tick iBegin;
     Tick iEnd;
+    
     private static final Logger LOG = LogManager.getLogger();
 }

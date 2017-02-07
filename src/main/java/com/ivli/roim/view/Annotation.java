@@ -17,20 +17,20 @@
  */
 package com.ivli.roim.view;
 
-import com.ivli.roim.calc.BaseFormatter;
+import java.util.ArrayList;
 import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
 import java.awt.Color;
-import java.util.ArrayList;
-
+import java.awt.Dialog;
+import javax.swing.JMenuItem;
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.core.Filter;
 import com.ivli.roim.core.ISeriesProvider;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.events.OverlayChangeEvent;
 import com.ivli.roim.events.OverlayChangeListener;
-import java.awt.Dialog;
-import javax.swing.JMenuItem;
+import com.ivli.roim.calc.BaseFormatter;
+
 
 /**
  *
@@ -41,9 +41,12 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     protected boolean iMultiline = true;
     protected final ArrayList<String> iAnnotation;    
     protected Color iColor;
-     
-    Annotation(IImageView aView, Shape aShape, String aName) {
+    
+    private static final Color DEFAULT_COLOR = Color.BLACK;
+    
+    Annotation(IImageView aView, Shape aShape, String aName, Color aC) {
         super(aView, aShape, aName);   
+        iColor = null != aC ? aC : DEFAULT_COLOR;
         iAnnotation = new ArrayList<>();
     }
    
@@ -56,7 +59,7 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         return iMultiline;
     }
         
-    public abstract Color getColor();
+    public Color getColor() {return iColor;}
     
     abstract void makeText(AbstractPainter aP);
    
@@ -109,27 +112,20 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     /**
      * 
      */
-    public static class Static extends Annotation { 
-       
+    public static class Static extends Annotation {        
         private ArrayList<Filter> iFilters;           
         private ISeriesProvider  iProvider;
                 
         public Static(IImageView aV, ISeriesProvider aSP, Overlay aO, Color aC) {
-            super(aV, aO.getShape(), "ANNOTATION::STATIC"); //NOI18N                                                              
+            super(aV, aO.getShape(), "ANNOTATION::STATIC", aC); //NOI18N                                                              
             iOverlay = aO;   
             iProvider = aSP;
-            iColor = null != aC ? aC : Color.BLACK;
-            
+                       
             iFilters = new ArrayList<>();
             for (Measurement m: iProvider.getDefaults())
                 iFilters.add(Filter.getFilter(m.getName()));
         }
   
-        @Override
-        public Color getColor() {
-            return iColor;
-        }
-        
         public void setFilters(ArrayList<Filter> aF) {
             iFilters = aF;            
             notify(OverlayChangeEvent.CODE.PRESENTATION, null);
@@ -223,16 +219,11 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         private final IOperation iOp;
                    
         Active(IOperation anOp, Overlay aR, IImageView aV) {
-            super(aV, null, "ANNOTATION.ACTIVE");                    
+            super(aV, null, "ANNOTATION.ACTIVE", null);                    
             iOp = anOp;       
             iOverlay = aR;
         }   
-        
-        @Override
-        public Color getColor() {
-             return Color.RED;
-        }
-        
+            
         void makeText(AbstractPainter aP) {
             iAnnotation.clear();            
             iAnnotation.add(iOp.format(new BaseFormatter(aP.getView().getFrameNumber())));

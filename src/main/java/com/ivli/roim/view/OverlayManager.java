@@ -128,8 +128,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     }
         
     @Override
-    public void OverlayChanged(OverlayChangeEvent anEvt) {  
-        LOG.debug("-->" + anEvt);
+    public void OverlayChanged(OverlayChangeEvent anEvt) {         
         switch (anEvt.getCode()) {
             case NAME_CHANGED:
                 notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.NAME_CHANGED, anEvt.getExtra());
