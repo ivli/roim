@@ -18,6 +18,7 @@
 package com.ivli.roim.view;
 
 import com.ivli.roim.core.ISeries;
+import com.ivli.roim.core.ISeriesProvider;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.Rectangle;
@@ -31,14 +32,14 @@ import java.util.ArrayList;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 
-public class ROI extends Overlay implements Overlay.ICanFlip, Overlay.ICanRotate, Overlay.IHaveCustomMenu {             
+public class ROI extends Overlay implements ISeriesProvider, Overlay.ICanFlip, Overlay.ICanRotate, Overlay.IHaveCustomMenu {             
     private Color iColor;          
     private int iAreaInPixels;   
         
     transient SeriesCollection iSeries;               
        
     public ROI(Uid anID, Shape aS, String aName,  Color aC) {
-        super(anID, aS, null == aName ? String.format("ROI%d", anID.getLong()):aName);         
+        super(anID, aS, null != aName ? aName : "ROI" + anID.toString());         
         iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);          
         iAreaInPixels = -1;
         iSeries = null;
@@ -48,6 +49,7 @@ public class ROI extends Overlay implements Overlay.ICanFlip, Overlay.ICanRotate
         return iAreaInPixels;
     }      
     
+    @Override
     public ISeries getSeries(Measurement anId) {         
         if (anId == Measurement.AREAINPIXELS)  //special case this actually is a scalar
             return new Scalar(Measurement.AREAINPIXELS, getAreaInPixels());
@@ -57,6 +59,24 @@ public class ROI extends Overlay implements Overlay.ICanFlip, Overlay.ICanRotate
             return iSeries.get(anId);     
     }
     
+    private static final Measurement [] LIST_OF_MEASUREMENTS = {Measurement.DENSITY,            
+                                                                Measurement.AREAINPIXELS,
+                                                                Measurement.MINPIXEL, 
+                                                                Measurement.MAXPIXEL
+                                                               };
+    private static final Measurement [] DEFAULTS = {Measurement.DENSITY,            
+                                                    Measurement.AREAINPIXELS,
+                                                    };
+    @Override
+    public Measurement[] getListOfMeasurements() {            
+        return LIST_OF_MEASUREMENTS;
+    }
+    
+    @Override
+    public Measurement[] getDefaults() {
+        return DEFAULTS;                                                               
+    }
+    
     public Color getColor() {
         return iColor;
     }
@@ -64,7 +84,7 @@ public class ROI extends Overlay implements Overlay.ICanFlip, Overlay.ICanRotate
     public void setColor(Color aC) {
         Color old = iColor;
         iColor = aC;
-        notify(OverlayChangeEvent.CODE.COLOR, old);
+        notify(OverlayChangeEvent.CODE.COLOR_CHANGED, old);
     }  
     
     @Override
@@ -107,13 +127,13 @@ public class ROI extends Overlay implements Overlay.ICanFlip, Overlay.ICanRotate
         iShape = tx.createTransformedShape(iShape);
     }         
 
-    private static final String KCommandRoiPin  = "COMMAND_ROI_OPERATIONS_PIN"; // NOI18N
-    
+    private static final String KCommandRoiPin  = "COMMAND_ROI_OPERATIONS_PIN"; // NOI18N    
     private static final String KCommandRoiFlipVert  = "COMMAND_ROI_OPERATIONS_FLIP_V"; // NOI18N
     private static final String KCommandRoiFlipHorz  = "COMMAND_ROI_OPERATIONS_FLIP_H"; // NOI18N
     private static final String KCommandRoiRotate90CW   = "COMMAND_ROI_OPERATIONS_ROTATE_90_CW"; // NOI18N
     private static final String KCommandRoiRotate90CCW  = "COMMAND_ROI_OPERATIONS_ROTATE_90_CCW"; // NOI18N
     private static final String KCommandRoiConvertToIso = "COMMAND_ROI_OPERATIONS_CONVERT_TO_ISO"; // NOI18N
+   
     @Override
     public ArrayList<JMenuItem> makeCustomMenu(Object aVoidStar) {
         ArrayList<JMenuItem> mnu = new ArrayList<>();
@@ -125,9 +145,7 @@ public class ROI extends Overlay implements Overlay.ICanFlip, Overlay.ICanRotate
             mi.setActionCommand(KCommandRoiPin); 
             mnu.add(mi);
         }
-        
-       
-        
+
         if (this instanceof Overlay.ICanFlip) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_HORZ"));           
             mi.setActionCommand(KCommandRoiFlipHorz);
@@ -158,7 +176,7 @@ public class ROI extends Overlay implements Overlay.ICanFlip, Overlay.ICanRotate
     public boolean handleCustomCommand(String aCommand) {
         switch(aCommand) {
         case KCommandRoiPin: 
-                setPinned(!isPinned());
+                pin(!isPinned());
                 break;
             
             case KCommandRoiFlipHorz:

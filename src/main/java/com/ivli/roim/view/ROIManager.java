@@ -22,7 +22,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Color;
-import java.awt.geom.Path2D;
 import com.ivli.roim.calc.BinaryOp;
 import com.ivli.roim.calc.ConcreteOperand;
 import com.ivli.roim.calc.IOperand;
@@ -31,15 +30,11 @@ import com.ivli.roim.core.ISeries;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 /**
@@ -70,41 +65,26 @@ public class ROIManager extends OverlayManager {
         ret.addChangeListener(this);
         return ret; 
     }
-            
-    public Overlay createRuler(Point aFrom, Point aTo, IImageView aV) {                
-        Path2D.Double r = new Path2D.Double();         
-        r.moveTo(aFrom.x, aFrom.y);
-        r.lineTo(aTo.x, aTo.y);                                
-        Shape s = aV.screenToVirtual().createTransformedShape(r);     
-        
-        Ruler ret = new Ruler(Uid.getNext(), s, aV);     
-                
-        addObject(ret);   
-        //ruler.update(this);
-        ret.addChangeListener(this);
-        
-        addObject(new Annotation.Active(Uid.getNext(), ret.getOperation(), ret, aV));  
-        return ret;
-    }
-    
+  
     public Overlay createAnnotation(ROI aROI, IImageView aV) {    
-        Annotation.Static ret = new Annotation.Static(Uid.getNext(), aROI, aV);
+        Annotation.Static ret = new Annotation.Static(aV, aROI, aROI, aROI.getColor());
         addObject(ret);        
         addROIChangeListener(ret);   //TODO:?????????   
         return ret;
     }    
         
     public Overlay createAnnotation(BinaryOp anOp, IImageView aV) {    
-        Annotation ret = new Annotation.Active(Uid.getNext(), anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI(), aV);
+        Annotation ret = new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI(), aV);
         addObject(ret);  
         createSurrogateROI(anOp);
         ret.update(this);
         return ret;
     }
     
-    void createSurrogateROI(BinaryOp anOp) { 
-   
-        ROI surrogate = new ROI(Uid.getNext(), null, null, Color.YELLOW) {
+    void createSurrogateROI(BinaryOp anOp) {    
+        ROI surrogate = new ROI(Uid.getNext(), new Rectangle(), 
+                                "SURROGATE_" + ((ConcreteOperand)anOp.getLhs()).getROI().toString() + ":" + ((ConcreteOperand)anOp.getRhs()).getROI().toString(), 
+                                null) {
             ROI iLhs = ((ConcreteOperand)anOp.getLhs()).getROI();
             ROI iRhs = ((ConcreteOperand)anOp.getRhs()).getROI();            
             {              
@@ -112,6 +92,10 @@ public class ROIManager extends OverlayManager {
                 iLhs.addChangeListener(this);
             }
             
+            @Override
+            public boolean isSelectable(){return false;}
+            @Override
+            public boolean contains(Point2D aNotUsed){return false;}
             @Override
             public void update(OverlayManager aMgr) {       
                  final class SO implements IOperand {
@@ -147,7 +131,7 @@ public class ROIManager extends OverlayManager {
             }            
         };  
                         
-        surrogate.setVisible(false);
+        surrogate.show(false);
         addObject(surrogate);
         surrogate.update(this);
         ////notifyROIChanged(surrogate, ROIChangeEvent.CODE.CREATED, this);  
@@ -174,9 +158,30 @@ public class ROIManager extends OverlayManager {
         ROI ret = new ROI(iUid.getNext(), shape, null, null);         
         addObject(ret);
         
-        if (iAnnotationsAutoCreate)    
-            createAnnotation(ret, aV); 
+        if (iAnnotationsAutoCreate) { 
+            Annotation.Static ano = new Annotation.Static(aV, ret, ret, ret.getColor());
+            addObject(ano);        
+            addROIChangeListener(ano);   
+        }
+        return ret;
+    }
+    
+     public Overlay createRuler(Point aFrom, Point aTo, IImageView aV) {                        
+        Handle beg = new Handle(aV.screenToVirtual(aFrom));
+        Handle end = new Handle(aV.screenToVirtual(aTo));
+        Ruler ret = new Ruler(aV, beg, end);     
+                
+        addObject(ret);   
+        addObject(beg);
+        addObject(end);
         
+        ret.addChangeListener(this); 
+        
+        if (iAnnotationsAutoCreate) { 
+            Annotation.Static ano = new Annotation.Static(aV, ret, ret, Color.RED);
+            addObject(ano);        
+            addROIChangeListener(ano);   
+        }
         return ret;
     }
     

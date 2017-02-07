@@ -17,18 +17,18 @@
  */
 package com.ivli.roim.core;
 
-import com.ivli.roim.view.ROI;
-
 /**
  *
  * @author likhachev
  */
-public enum Filter {        
-    DENSITY(Measurement.DENSITY, (ROI aR) -> aR.getSeries(Measurement.DENSITY)),
-    AREAINPIXELS(Measurement.AREAINPIXELS, (ROI aR) -> aR.getSeries(Measurement.AREAINPIXELS)),
-    MINPIXEL(Measurement.MINPIXEL, (ROI aR) -> aR.getSeries(Measurement.MINPIXEL)),                 
-    MAXPIXEL(Measurement.MAXPIXEL, (ROI aR) -> aR.getSeries(Measurement.MAXPIXEL)),                 
-    AREAINLOCALUNITS(Measurement.AREAINLOCALUNITS, (ROI aR) -> aR.getSeries(Measurement.AREAINLOCALUNITS));   
+public enum Filter {      
+    //SIC: must match list of measurements (see file measurement.java)
+    DENSITY(Measurement.DENSITY, (ISeriesProvider aR) -> aR.getSeries(Measurement.DENSITY)),
+    AREAINPIXELS(Measurement.AREAINPIXELS, (ISeriesProvider aR) -> aR.getSeries(Measurement.AREAINPIXELS)),
+    MINPIXEL(Measurement.MINPIXEL, (ISeriesProvider aR) -> aR.getSeries(Measurement.MINPIXEL)),                 
+    MAXPIXEL(Measurement.MAXPIXEL, (ISeriesProvider aR) -> aR.getSeries(Measurement.MAXPIXEL)),                 
+    AREAINLOCALUNITS(Measurement.AREAINLOCALUNITS, (ISeriesProvider aR) -> aR.getSeries(Measurement.AREAINLOCALUNITS)), 
+    DISTANCE(Measurement.DISTANCE, (ISeriesProvider aR) -> aR.getSeries(Measurement.DISTANCE));   
     /*
      * to be continued
      */

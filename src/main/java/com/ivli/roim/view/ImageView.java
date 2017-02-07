@@ -42,6 +42,8 @@ import com.ivli.roim.events.WindowChangeListener;
 import com.ivli.roim.events.ZoomChangeEvent;
 import com.ivli.roim.events.ZoomChangeListener;
 import com.ivli.roim.core.IMultiframeImage;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 
 public class ImageView extends JComponent implements IImageView {
@@ -295,12 +297,23 @@ public class ImageView extends JComponent implements IImageView {
         return ret;
     }
     
+    @Override
     public AffineTransform virtualToScreen() {
         AffineTransform ret = AffineTransform.getTranslateInstance(iOrigin.x, iOrigin.y); 
         ret.concatenate(iZoom);
         return ret;
     }
-   
+    @Override      
+    public Point2D screenToVirtual(Point2D aS) {      
+        Rectangle2D r = screenToVirtual().createTransformedShape(new Rectangle2D.Double(aS.getX(), aS.getY(), 1, 1)).getBounds2D();        
+        return new Point2D.Double(r.getX(), r.getY());
+    }
+    @Override
+    public Point2D virtualToScreen(Point2D aS) {      
+        Rectangle2D r = virtualToScreen().createTransformedShape(new Rectangle2D.Double(aS.getX(), aS.getY(), 1, 1)).getBounds2D();        
+        return new Point2D.Double(r.getX(), r.getY());
+    }
+    
     public int getFrameNumber() {
         return iCurrent;
     }  

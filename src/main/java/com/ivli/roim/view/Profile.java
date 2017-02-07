@@ -17,14 +17,15 @@
  */
 package com.ivli.roim.view;
 
-import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
 import com.ivli.roim.core.Histogram;
+import com.ivli.roim.core.ISeries;
+import com.ivli.roim.core.ISeriesProvider;
 import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.Uid;
+import com.ivli.roim.core.Measurement;
+import com.ivli.roim.core.Scalar;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.JMenuItem;
 
 /**
@@ -40,7 +41,7 @@ public class Profile extends ScreenObject implements Overlay.IHaveCustomMenu {
     
     
     public Profile(Rectangle2D aS, IImageView aV) {
-        super(Uid.getNext(), (Shape)aS, "PROFILE", aV); //NOI18N 
+        super(aV, aS, "PROFILE"); //NOI18N 
         iFrameNumber = aV.getFrameNumber();
         iFrame = aV.getFrame();        
         iHist = iFrame.processor().profile(iShape.getBounds()); 
@@ -95,4 +96,6 @@ public class Profile extends ScreenObject implements Overlay.IHaveCustomMenu {
         }
         return false;
     }
+
+  
 }

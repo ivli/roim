@@ -22,15 +22,16 @@ import com.ivli.roim.calc.AbstractFormatter;
 import com.ivli.roim.calc.IOperand;
 import com.ivli.roim.calc.IOperation;
 import com.ivli.roim.calc.Operand;
+import com.ivli.roim.core.ISeries;
+import com.ivli.roim.core.ISeriesProvider;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Scalar;
-import com.ivli.roim.core.Uid;
+import com.ivli.roim.events.OverlayChangeEvent;
 import java.awt.Shape;
-import java.awt.geom.PathIterator;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
+import java.awt.geom.Rectangle2D;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,43 +39,59 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class Ruler extends ScreenObject {
+public class Ruler extends ScreenObject implements ISeriesProvider {
     private double iDistance;
+    Handle h[]={null,null};
     
-    Ruler(Uid anUid, Shape aS, IImageView aV) {         
-        super(anUid, aS, "RULER",  aV);            
+    private Shape makeShape(Point2D aB, Point2D aE) {
+        Path2D ret = new Path2D.Double();
+        ret.moveTo(aB.getX(), aB.getY());
+        ret.lineTo(aE.getX(), aE.getY());
+        return ret;
+    }
+    
+    Ruler(IImageView aV, Handle aB, Handle aE) {         
+        super(aV);  
+        iBegin = new Tick(aB.getPos());
+        iEnd = new Tick(aE.getPos());        
+        iShape = makeShape(aB.getPos(), aE.getPos());
+        
+        aB.addChangeListener(this);
+        aE.addChangeListener(this);
+        this.addChangeListener(aB);
+        this.addChangeListener(aE);
+        
+        h[0] = aB;
+        h[1] = aE;
     }
           
     @Override
     void paint(AbstractPainter aP) {   
-        if (aP.getView() == getView())
+        if (aP.getView() == getView()) {
             aP.paint(this);    
+            aP.paint(this.iBegin);
+            aP.paint(this.iEnd);
+        }
     } 
       
     @Override
-    void update(OverlayManager aM) {  
-        Point2D.Double a = null, b = null;
-        
-        PathIterator pi = iShape.getPathIterator(null);
-        
-        while(!pi.isDone()) {
-            double [] temp = new double [2];
-            switch(pi.currentSegment(temp)){
-                case PathIterator.SEG_MOVETO:
-                    a = new Point2D.Double(temp[0], temp[1]); break;
-                case PathIterator.SEG_LINETO:
-                    b = new Point2D.Double(temp[0], temp[1]); break;
-                default:
-                    return;
-            }   
-            pi.next();
-        }
-        
-        if (null == a || null == b)
-            return; 
-        
-        iDistance = a.distance(b) * aM.getImage().getPixelSpacing().getX();
-        LOG.debug("distance is: {}", iDistance);           
+    public boolean contains(Point2D aP) {       
+        double deltaX = aP.getX() * .01; 
+        double deltaY = aP.getY() * .01;                
+        return getShape().intersects(new Rectangle2D.Double(aP.getX() - deltaX, aP.getY() - deltaY, 2*deltaX, 2*deltaY));
+    }
+    
+    @Override
+    public void move(double adX, double adY) {    
+        //iBegin.move(adX, adY);
+        //iEnd.move(adX, adY);     
+        iShape = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);                            
+        notify(OverlayChangeEvent.CODE.MOVED, new double[]{adX, adY});
+    } 
+    
+    @Override
+    void update(OverlayManager aM) {          
+        iDistance = iBegin.iPos.distance(iEnd.iPos) * aM.getImage().getPixelSpacing().getX();        
     }       
     
     IOperation getOperation() {                
@@ -90,6 +107,58 @@ public class Ruler extends ScreenObject {
             }            
         };
     }
+     
+    @Override
+    public void OverlayChanged(OverlayChangeEvent anEvt) {
+        switch(anEvt.getCode()) {
+            case MOVED: {        
+                if(anEvt.getObject().equals(h[0])) {
+                    iBegin.move(((double[])anEvt.getExtra())[0], ((double[])anEvt.getExtra())[1]);
+                    iShape = makeShape(iBegin.getPos(), iEnd.getPos());
+                } else if(anEvt.getObject().equals(h[1])) {
+                    iEnd.move(((double[])anEvt.getExtra())[0], ((double[])anEvt.getExtra())[1]);
+                    iShape = makeShape(iBegin.getPos(), iEnd.getPos());
+                } else {
+
+                } 
+            } break;
+            default: break;
+        }
+    }
+
+    @Override
+    public ISeries getSeries(Measurement anId) {
+        return new Scalar(Measurement.DISTANCE, iDistance);
+    }
+    
+    private static final Measurement []LIST_OF_MEASUREMENTS = {Measurement.DISTANCE};
+    
+    @Override
+    public Measurement[] getListOfMeasurements() {
+        return LIST_OF_MEASUREMENTS;
+    }
+
+    @Override
+    public Measurement[] getDefaults() {
+        return LIST_OF_MEASUREMENTS;
+    }
+    
+    class Tick {
+        Point2D iPos;
+        Tick (Point2D aP) {iPos=aP;}
+        Point2D getPos() {return iPos;}
+        
+        void move(double adX, double adY) {
+            iPos.setLocation(iPos.getX() + adX, iPos.getY() + adY);
+        }
       
+        void paint(AbstractPainter aP) {   
+            if (aP.getView() == getView())
+                aP.paint(this);    
+        }     
+    }
+       
+    Tick iBegin;
+    Tick iEnd;
     private static final Logger LOG = LogManager.getLogger();
 }

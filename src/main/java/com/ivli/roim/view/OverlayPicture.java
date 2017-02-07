@@ -27,11 +27,10 @@ import javax.swing.JPopupMenu;
  * @author likhachev
  */
 public class OverlayPicture extends ScreenObject {    
-   Image iPicture;
-    
-    
+    Image iPicture;
+   
     OverlayPicture(Uid anUid, String aN, java.awt.Image aP, IImageView aV) { 
-        super(anUid, new Rectangle(aP.getWidth(null), aP.getHeight(null)), aN, aV);       
+        super(aV, new Rectangle(aP.getWidth(null), aP.getHeight(null)), aN);       
         iPicture = aP;
     }
   

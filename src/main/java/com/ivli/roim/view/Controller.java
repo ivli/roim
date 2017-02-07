@@ -35,7 +35,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JMenu;     
 
 import com.ivli.roim.core.Window;
-import java.util.ArrayList;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
 
 import org.apache.logging.log4j.LogManager;
@@ -155,28 +156,25 @@ class Controller implements IController {
         if (null != iAction) 
             iAction.paint(gc);
     }
-     
-    protected Overlay findActionTarget(Point aP) {
-        Overlay ret = iControlled.getROIMgr().findObject(aP, iControlled);
-        if (null != ret && ret.isSelectable())
-            return ret;
-        return null;
+  
+    protected Overlay findActionTarget(Point aP) {        
+       return iControlled.getROIMgr().findObject(iControlled.screenToVirtual(aP));        
     }
     
     protected Overlay addSelection(Overlay aO) {       
         Overlay old = iSelected;
         iSelected = aO;
         if (null != iSelected)
-            iSelected.setEmphasized(true);
+            iSelected.select(true);
         
         return old;
     }
     
     protected void releaseSelection(Overlay aO) {
         if (null != aO) {
-            aO.setEmphasized(false);                    
+            aO.select(false);                    
         } else if (null != iSelected) {
-            iSelected.setEmphasized(false);
+            iSelected.select(false);
         }
         
         iSelected = null;
@@ -199,7 +197,8 @@ class Controller implements IController {
 
     public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
-            Overlay tmp = iControlled.getROIMgr().findObject(e.getPoint(), iControlled);
+            
+            Overlay tmp = iControlled.getROIMgr().findObject(iControlled.screenToVirtual(e.getPoint()));
 
             if (null == tmp)           
                 buildContextPopupMenu().show(e.getComponent(), e.getX(), e.getY());            
@@ -229,7 +228,7 @@ class Controller implements IController {
         Overlay tmp = null;
         if (null != iAction) {
             iAction.action(e.getX(), e.getY());             
-        } else if (null != (tmp = findActionTarget(e.getPoint()) )) { // Object specific handling                    
+        } else if (null != (tmp = findActionTarget(e.getPoint()))) { // Object specific handling                    
             addSelection(tmp);
             iAction = new BaseActionItem(e.getX(), e.getY()) {
                 protected void DoAction(int aX, int aY) {

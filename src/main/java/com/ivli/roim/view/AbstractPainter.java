@@ -41,5 +41,7 @@ public abstract class AbstractPainter {
     public abstract void paint(ROI aO);
     public abstract void paint(Annotation aO);    
     public abstract void paint(Ruler aO);
-    public abstract void paint(Profile aO);
+    public abstract void paint(Ruler.Tick aO);
+    public abstract void paint(Profile aO);    
+    public abstract void paint(Handle aO);
 }

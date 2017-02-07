@@ -22,18 +22,28 @@ import com.ivli.roim.view.Overlay;
 /**
  *
  * @author likhachev
+ * 
+ * Overlay based objects usually send to subscribers to notify on changes 
+ * However, some events can be received from an OverlayManager particularly: CREATED, DELETED 
+ * 
  */
 public class OverlayChangeEvent extends java.util.EventObject {  
     public enum CODE {
-        CREATED,       
-        DELETED, 
-        MOVED,       // extra => double [] {adX, adY}
-        COLOR,       // color has been changed
-        NAME,        // name has been changed, extra => oldName      
-        PRESENTATION // other specifis proterties have been changed, such as Multi/Single - line, Filters etc
+        CREATED,       // OverlayManager sends it thus getSource() => ref::<OverlayManager> while getObject() => ref::<Overlay> created
+        DELETED,       // OverlayManager sends it thus getSource() => ref::<OverlayManager> while getObject() => ref::<Overlay> to be deleted
+        MOVED,         // object has been moved: extra => double [] {adX, adY} - offset to move to 
+                       // SIC: MOVED is sent twice 1st - OverlayManager broadcasts this and then Overlay itself sends it directly to it's subscribers 
+                       // so getSource() might return either ref::<OverlayManager> or ref::<Overlay>
+        SELECTED,      // extra => new select state
+        PINNED,        // extra => new pin state
+        
+        //SIC: following events initiated by an Overlay but responsible OverlayMnager would also resent them outside 
+        COLOR_CHANGED, // color has been changed: extra => Color - old color
+        NAME_CHANGED,  // name has been changed: extra => String - oldName      
+        PRESENTATION   // presentation state has been changed, for example: Multi/Single - line, Filters etc
     }
     
-    private final CODE    iCode; //what happened
+    private final CODE    iCode;  //what happened
     private final Overlay iObj;   //object    
     private final Object  iExtra; //depending on change it carries old name, old colour or ... 
     

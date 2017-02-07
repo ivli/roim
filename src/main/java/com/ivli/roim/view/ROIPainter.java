@@ -26,6 +26,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import com.ivli.roim.core.Histogram;
+import java.awt.geom.Point2D;
 /**
  *
  * @author likhachev
@@ -43,7 +44,7 @@ public class ROIPainter extends AbstractPainter {
     
     @Override
     public void paint(ROI aO) {
-        if (aO.isEmphasized()) {
+        if (aO.isSelected()) {
             iGC.setColor(EMPHASIZED_COLOR);
             iGC.setStroke(new BasicStroke(2));        
         } else {
@@ -98,6 +99,13 @@ public class ROIPainter extends AbstractPainter {
         iGC.draw(rect);       
     }   
     
+    public void paint(Ruler.Tick aO) {
+        Rectangle2D r = new Rectangle2D.Double(aO.getPos().getX()-1, aO.getPos().getY()-1, 2, 2);
+        Rectangle2D rect = iTrans.createTransformedShape(r).getBounds2D();                           
+        iGC.setColor(Color.RED);       
+        iGC.draw(rect); 
+    }
+    
     @Override
     public void paint(Annotation aO) {        
         final Rectangle2D temp = iTrans.createTransformedShape(aO.getShape()).getBounds();     
@@ -117,4 +125,11 @@ public class ROIPainter extends AbstractPainter {
         }
         iGC.draw(temp);                 
     }   
+        
+    public void paint(Handle aO) {
+        
+        Rectangle2D rect = iTrans.createTransformedShape(aO.getShape()).getBounds2D();                           
+        iGC.setColor(Color.RED);       
+        iGC.draw(rect); 
+    }
 }

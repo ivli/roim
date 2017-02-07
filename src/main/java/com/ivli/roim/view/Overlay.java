@@ -22,9 +22,10 @@ import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import javax.swing.event.EventListenerList;
 import com.ivli.roim.events.OverlayChangeListener;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import javax.swing.JMenuItem;
 
@@ -33,26 +34,11 @@ import javax.swing.JMenuItem;
  * @author likhachev
  */
 public abstract class Overlay implements OverlayChangeListener, java.io.Serializable {  
-    private static final long serialVersionUID = 42L;
-    /*
-    //static final int VISIBLE = 0x1;
-    public static final int SELECTABLE = 0x1;      
-    public static final int MOVEABLE   = 0x1 << 0x1;
-    public static final int PERMANENT  = MOVEABLE  << 0x1;
-    public static final int CLONEABLE  = PERMANENT << 0x1;
-   // public static final int CANFLIP    = CLONEABLE << 0x1;
-   // public static final int CANROTATE  = CANFLIP   << 0x1;
-    public static final int RESIZABLE  = CLONEABLE << 0x1;
-    public static final int PINNABLE   = RESIZABLE << 0x1;
-   // public static final int HASMENU    = PINNABLE  << 0x1;  
-    ///public static final int HASCUSTOMMENU = HASMENU << 0x1;  
-    public static final int FRAMESCOPE = PINNABLE << 0x1;
-    */
-    
+    private static final long serialVersionUID = 42L;   
     protected final transient Uid iUid;
     protected Shape   iShape;
     protected String  iName;
-    protected boolean iEmphasized = false;
+    protected boolean iSelected = false;
     protected boolean iPinned = false;
     protected boolean iVisible = true;
     
@@ -65,71 +51,80 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     protected Overlay(Uid anID, Shape aShape, String aName) {
         iUid   = anID;
         iShape = aShape;         
-        iName  = (null != aName)? aName : String.format("OVERLAY%d", anID); //NOI18N                  
+        iName  = (null != aName) ? aName : "OVERLAY:" + anID.toString(); //NOI18N                  
         iListeners = new EventListenerList();   
     }
                
     public Uid getID() {
         return iUid;
-    }
-       
-    public String getName() {
-        return iName;
-    }
+    }    
     
     public void setName(String aName) {
         String old = getName();
         iName  = aName;
-        notify(OverlayChangeEvent.CODE.NAME, old);         
+        notify(OverlayChangeEvent.CODE.NAME_CHANGED, old);         
     }
     
-    public void setPinned(boolean aPin) {
-        iPinned = isPinnable() && aPin;
+    public String getName() {
+        return iName;
+    }
+    
+    public void pin(boolean aPin) {
+        if (isPinnable())           
+            notify(OverlayChangeEvent.CODE.PINNED, iPinned = aPin);        
     }
     
     public boolean isPinned() {
-        return isPinnable() && iPinned;
+        return iPinned;
     }
   
-    public void setEmphasized(boolean aE) {
-        iEmphasized = aE;
+    public void select(boolean aE) {
+        if (isSelectable()) 
+            notify(OverlayChangeEvent.CODE.SELECTED, iSelected = aE);
     }
     
-    public boolean isEmphasized() {
-        return iEmphasized;
+    public boolean isSelected() {
+        return iSelected;
     }
     
-    public boolean isVisible() {
+    public boolean isShown() {
         return iVisible;
     }
     
-    public void setVisible(boolean aV) {
+    public void show(boolean aV) {
         iVisible = aV;
     }
     
-    public abstract boolean isSelectable();//{return 0 != (getCaps() & SELECTABLE);}
-    public abstract boolean isMovable();   // {return 0 != (getCaps() & MOVEABLE);}
-    public abstract boolean isPermanent(); // {return 0 != (getCaps() & PERMANENT);}
-    public abstract boolean isCloneable(); // {return 0 != (getCaps() & CLONEABLE);}
-    public abstract boolean isPinnable();  // {return 0 != (getCaps() & PINNABLE);}
-    abstract void update(OverlayManager aRM);          
+    public abstract boolean isSelectable();
+    public abstract boolean isMovable();   
+    public abstract boolean isPermanent(); 
+    public abstract boolean isCloneable(); 
+    public abstract boolean isPinnable();  
+   
+    abstract void update(OverlayManager aM);          
     abstract void paint(AbstractPainter aP);  
     
     public Shape getShape() {
         return iShape;
-    }       
-    
-    boolean intersects(Rectangle2D aR) {
-        return null != getShape() && getShape().intersects(aR);
-    }   
-        
-    void move(double adX, double adY) {       
-        iShape = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);                            
-        notify(OverlayChangeEvent.CODE.MOVED, new double[]{adX, adY});
+    } 
+   
+    public void getShape(Shape aS) {
+        iShape = aS;
     } 
     
-  
-  
+    public boolean contains(Point2D aP) {
+        return getShape().contains(aP);
+    }
+       
+    protected void translate(double adX, double adY) {       
+        iShape = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);                                    
+    } 
+    
+    public void move(double adX, double adY) {       
+        translate(adX, adY);
+        notify(OverlayChangeEvent.CODE.MOVED, new double[]{adX, adY});
+    } 
+ 
     public void addChangeListener(OverlayChangeListener aL) {       
         iListeners.add(OverlayChangeListener.class, aL);
     }
@@ -146,8 +141,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
         for (OverlayChangeListener l : arr)
             l.OverlayChanged(evt);
     }
-    
-        
+            
     @FunctionalInterface
     interface ICanFlip {
         public void flip(boolean aVertical);

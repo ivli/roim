@@ -17,8 +17,6 @@
  */
 package com.ivli.roim.view;
 
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -30,6 +28,7 @@ import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
 import com.ivli.roim.events.OverlayChangeEvent;
 import com.ivli.roim.events.OverlayChangeListener;
+import java.awt.geom.Point2D;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,7 +64,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     
     public void paint(AbstractPainter aP) {          
         iOverlays.stream().forEach((o) -> {
-            if(o.isVisible()) 
+            if(o.isShown()) 
                 o.paint(aP);
         });
     }    
@@ -90,11 +89,9 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
         }
     }
     
-    public Overlay findObject(Point aP, IImageView aV) {      
-        final Rectangle temp = aV.screenToVirtual().createTransformedShape(new Rectangle(aP.x, aP.y, 3, 1)).getBounds();                 
-        
+    public Overlay findObject(Point2D aP) {          
         for (Overlay o : iOverlays) {           
-            if (o.isSelectable() && o.intersects(temp)) 
+            if (o.isSelectable() && o.contains(aP)) 
                 return o;                                   
         }
         
@@ -103,7 +100,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
                
     public boolean deleteObject(Overlay aO) {
         if (iOverlays.remove(aO)) {
-            notifyROIChanged(aO, OverlayChangeEvent.CODE.DELETED, this);        
+            notifyROIChanged(aO, OverlayChangeEvent.CODE.DELETED, null);        
             return true;
         }
         return false;
@@ -134,11 +131,11 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     public void OverlayChanged(OverlayChangeEvent anEvt) {  
         LOG.debug("-->" + anEvt);
         switch (anEvt.getCode()) {
-            case NAME:
-                notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.NAME, anEvt.getExtra());
+            case NAME_CHANGED:
+                notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.NAME_CHANGED, anEvt.getExtra());
                 break;
-            case COLOR:
-                notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.COLOR, anEvt.getExtra());
+            case COLOR_CHANGED:
+                notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.COLOR_CHANGED, anEvt.getExtra());
                 break;
             default:
                 break;
@@ -149,7 +146,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     public void frameChanged(FrameChangeEvent anEvt) {       
         for (Overlay o : iOverlays) 
             if (o instanceof Profile)
-                o.setVisible(((Profile)o).getFrameNumber() == anEvt.getFrame());                   
+                o.show(((Profile)o).getFrameNumber() == anEvt.getFrame());                   
     }   
     
     private final static Logger LOG = LogManager.getLogger();

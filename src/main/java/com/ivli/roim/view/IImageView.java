@@ -19,10 +19,9 @@ package com.ivli.roim.view;
 
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.Window;
-import com.ivli.roim.view.ROIManager;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
 /**
  *
@@ -52,7 +51,9 @@ public interface IImageView extends WindowTarget {
     public void setInterpolationMethod(Object aM);    
     public void reset();
     public AffineTransform virtualToScreen();
-    public AffineTransform screenToVirtual();    
+    public AffineTransform screenToVirtual();       
+    public Point2D virtualToScreen(Point2D aP);
+    public Point2D screenToVirtual(Point2D aP);   
     public void repaint();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 likhachev
+ * Copyright (C) 2017 likhachev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,8 @@ package com.ivli.roim.core;
  *
  * @author likhachev
  */
- @FunctionalInterface
-public interface IFilter {        
-    public ISeries eval(ISeriesProvider aR);
+public interface ISeriesProvider {
+    public ISeries getSeries(Measurement anId);    
+    public Measurement[] getListOfMeasurements();
+    public Measurement[] getDefaults();
 }

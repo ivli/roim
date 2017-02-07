@@ -128,13 +128,13 @@ public class ChartView extends JPanel implements OverlayChangeListener {
                     
                 } break;
                 
-                case COLOR: {
+                case COLOR_CHANGED: {
                     assert (anEvt.getExtra() instanceof java.awt.Color);
                     final int ndx = col.indexOf(anEvt.getObject().getName());
                     iPlot.getRenderer().setSeriesPaint(ndx, ((ROI)anEvt.getObject()).getColor());                                 
                 } break;
 
-                case NAME: {
+                case NAME_CHANGED: {
                     assert (anEvt.getExtra() instanceof String);
                     LOG.debug("ROI" + (String)anEvt.getExtra() + "name changed to " + anEvt.getObject().getName());
                     

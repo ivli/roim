@@ -37,12 +37,17 @@ public class Uid implements Comparable<Uid>, java.io.Serializable {
     
     public long getLong() {return iUid;}
     
-    public synchronized static Uid getNext() {            
+    public static synchronized Uid getNext() {            
         return new Uid(++iGlobalUid);
     }
 
     @Override
     public int compareTo(Uid o) {
         return (int)(this.iUid - o.iUid);
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("%d", iUid);
     }
 }
