@@ -37,12 +37,17 @@ import com.ivli.roim.calc.BaseFormatter;
  * @author likhachev
  */
 public abstract class Annotation extends ScreenObject implements OverlayChangeListener, Overlay.IHaveCustomMenu, Overlay.IHaveConfigDlg { 
-    protected Overlay iOverlay;      
-    protected boolean iMultiline = true;
-    protected final ArrayList<String> iAnnotation;    
-    protected Color iColor;
-    
     private static final Color DEFAULT_COLOR = Color.BLACK;
+    private static final boolean DEFAULT_MULTILINE = true;
+    private static final boolean DEFAULT_BORDER = true;
+     
+    protected Overlay iOverlay;  
+    protected final ArrayList<String> iAnnotation; 
+ 
+    protected Color   iColor     = DEFAULT_COLOR;
+    protected boolean iMultiline = DEFAULT_MULTILINE;
+    protected boolean iBordered  = DEFAULT_BORDER;
+   
     
     Annotation(IImageView aView, Shape aShape, String aName, Color aC) {
         super(aView, aShape, aName);   
@@ -58,7 +63,16 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     public boolean isMultiline() {
         return iMultiline;
     }
-        
+       
+    public void setBordered(boolean aB) {
+        iBordered = aB;
+        notify(OverlayChangeEvent.CODE.PRESENTATION, null);
+    }
+
+    public boolean isBordered() {
+        return iBordered;
+    }
+    
     public Color getColor() {return iColor;}
     
     abstract void makeText(AbstractPainter aP);
@@ -77,7 +91,7 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         double width  = 0;
         double height = 0;
 
-        ImageView w = aP.getView();
+        final ImageView w = aP.getView();
 
         final java.awt.FontMetrics fm = w.getFontMetrics(w.getFont());
 
@@ -92,18 +106,17 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
                 height = Math.max(height, b.getHeight());
             }
         }
-
-        final Rectangle2D bnds = new Rectangle2D.Double(0, 0, width, height);            
+          
         final double scaleX = w.screenToVirtual().getScaleX();      
 
         if (null == iShape) 
             iShape = new Rectangle2D.Double(iOverlay.getShape().getBounds2D().getX(),  
-                                            iOverlay.getShape().getBounds2D().getY() - bnds.getHeight() * scaleX, 
-                                            bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                                                
+                                            iOverlay.getShape().getBounds2D().getY() - height * scaleX, 
+                                            width * scaleX, height * scaleX);                                                
         else
             iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), 
                                             getShape().getBounds2D().getY(),                                                                                        
-                                            bnds.getWidth() * scaleX, bnds.getHeight() * scaleX);                                             
+                                            width * scaleX, height * scaleX);                                             
     }                       
 
     public ArrayList<String> getText() {
@@ -155,7 +168,7 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
                 case MOVED: {//if it is not pinned down then move it the same dX and dY                    
                     final double[] deltas = (double[])anEvt.getExtra(); 
                     OverlayManager mgr = (OverlayManager)anEvt.getSource();
-                    mgr.moveObject(this, deltas[0], deltas[1]);                                  
+                    mgr.moveObject(this, deltas[0], deltas[1]); //selfmovement kills border checkings so it can get off the screen                                                 
                 } ///fall through break;
                 case COLOR_CHANGED:
                 case NAME_CHANGED:                      

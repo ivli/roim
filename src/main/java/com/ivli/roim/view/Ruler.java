@@ -18,10 +18,6 @@
 
 package com.ivli.roim.view;
 
-import com.ivli.roim.calc.AbstractFormatter;
-import com.ivli.roim.calc.IOperand;
-import com.ivli.roim.calc.IOperation;
-import com.ivli.roim.calc.Operand;
 import com.ivli.roim.core.ISeries;
 import com.ivli.roim.core.ISeriesProvider;
 import com.ivli.roim.core.Measurement;

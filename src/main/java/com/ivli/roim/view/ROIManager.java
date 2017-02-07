@@ -161,7 +161,7 @@ public class ROIManager extends OverlayManager {
         if (iAnnotationsAutoCreate) { 
             Annotation.Static ano = new Annotation.Static(aV, ret, ret, ret.getColor());
             addObject(ano);        
-            addROIChangeListener(ano);   
+            addROIChangeListener(ano); //let ROIManager forward events to, so it can smoothly addjust position when needed    
         }
         return ret;
     }
