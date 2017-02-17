@@ -18,13 +18,8 @@
 package com.ivli.roim.view;
 
 import java.awt.geom.Rectangle2D;
-
 import com.ivli.roim.core.Histogram;
-import com.ivli.roim.core.ISeries;
-import com.ivli.roim.core.ISeriesProvider;
 import com.ivli.roim.core.ImageFrame;
-import com.ivli.roim.core.Measurement;
-import com.ivli.roim.core.Scalar;
 import java.util.ArrayList;
 import javax.swing.JMenuItem;
 
@@ -37,19 +32,16 @@ public class Profile extends ScreenObject implements Overlay.IHaveCustomMenu {
     private boolean    iNormalize = false;
     private Histogram  iHist;
     private transient ImageFrame iFrame;
-    private int iFrameNumber;
-    
-    
+      
     public Profile(Rectangle2D aS, IImageView aV) {
-        super(aV, aS, "PROFILE"); //NOI18N 
-        iFrameNumber = aV.getFrameNumber();
+        super(aV, aV.getFrameNumber(), aS, "PROFILE"); //NOI18N     
         iFrame = aV.getFrame();        
         iHist = iFrame.processor().profile(iShape.getBounds()); 
     }
           
     @Override
     public void paint(AbstractPainter aP) {
-        if (aP.getView() == getView())
+//        if (aP.getView() == getView())
         aP.paint(this);
     } 
  
@@ -57,11 +49,7 @@ public class Profile extends ScreenObject implements Overlay.IHaveCustomMenu {
     public void update(OverlayManager aM) {        
         iHist = iFrame.processor().profile(iShape.getBounds());      
     }            
-    
-    public int getFrameNumber() {
-        return iFrameNumber;
-    }
-    
+       
     public boolean normalize() {
         return iNormalize = !iNormalize; 
     }

@@ -47,7 +47,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
     }
     
     Ruler(IImageView aV, Handle aB, Handle aE) {         
-        super(aV);  
+        super(aV, aV.getFrameNumber());  
         iBegin = new Tick(aB.getPos());
         iEnd = new Tick(aE.getPos());        
         iShape = makeShape(aB.getPos(), aE.getPos());
@@ -63,11 +63,11 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
           
     @Override
     void paint(AbstractPainter aP) {   
-        if (aP.getView() == getView()) {
+        //if (aP.getView() == getView()) {
             aP.paint(this);    
             aP.paint(this.iBegin);
             aP.paint(this.iEnd);
-        }
+        //}
     } 
       
     @Override
@@ -135,8 +135,8 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
         }
       
         void paint(AbstractPainter aP) {   
-            if (aP.getView() == getView())
-                aP.paint(this);    
+            //if (aP.getView() == getView())
+            aP.paint(this);    
         }     
     }
        

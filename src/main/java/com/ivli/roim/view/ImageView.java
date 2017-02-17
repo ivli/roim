@@ -456,7 +456,7 @@ public class ImageView extends JComponent implements IImageView {
         
         g.drawImage(iBuf, iOrigin.x, iOrigin.y, iBuf.getWidth(), iBuf.getHeight(), null);       
        
-        iMgr.paint(new ROIPainter((Graphics2D)g, virtualToScreen(), this));                        
+        iMgr.paint(new ROIPainter((Graphics2D)g, this));//virtualToScreen()));                        
         iController.paint((Graphics2D)g); // must be the last in the paint chain   
     }
 

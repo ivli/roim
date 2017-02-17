@@ -17,28 +17,26 @@
  */
 package com.ivli.roim.view;
 
-import com.ivli.roim.core.Uid;
 import java.awt.Image;
-import java.awt.Rectangle;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+
 /**
  *
  * @author likhachev
  */
 public class OverlayPicture extends ScreenObject {    
     Image iPicture;
-   
-    OverlayPicture(Uid anUid, String aN, java.awt.Image aP, IImageView aV) { 
-        super(aV, new Rectangle(aP.getWidth(null), aP.getHeight(null)), aN);       
+    
+    OverlayPicture(String aN, java.awt.Image aP, IImageView aV) { 
+        super(aV, -1);//new Rectangle(aP.getWidth(null), aP.getHeight(null)), aN);       
         iPicture = aP;
     }
   
+    @Override
     void paint(AbstractPainter aP) {
         aP.paint(this);
     }    
     
-    /*
+   /*
     void paint(Graphics2D aGC, AffineTransform aTrans) {
         
         RenderingHints hts  = new RenderingHints(RenderingHints.KEY_INTERPOLATION, Settings.KEY_INTERPOLATION_METHOD);

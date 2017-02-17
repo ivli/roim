@@ -36,7 +36,7 @@ public class OverlayChangeEvent extends java.util.EventObject {
                        // so getSource() might return either ref::<OverlayManager> or ref::<Overlay>
         SELECTED,      // extra => new select state
         PINNED,        // extra => new pin state
-        
+        RESHAPED,      // object's shape is changed - extra => old shape of the figure
         //SIC: following events initiated by an Overlay but responsible OverlayMnager would also resent them outside 
         COLOR_CHANGED, // color has been changed: extra => Color - old color
         NAME_CHANGED,  // name has been changed: extra => String - oldName      

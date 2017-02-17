@@ -108,10 +108,12 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
         return iShape;
     } 
    
-    public void getShape(Shape aS) {
+    public void setShape(Shape aS) {
+        Shape old = iShape; 
         iShape = aS;
+        notify(OverlayChangeEvent.CODE.RESHAPED, old);
     } 
-    
+       
     public boolean contains(Point2D aP) {
         return getShape().contains(aP);
     }

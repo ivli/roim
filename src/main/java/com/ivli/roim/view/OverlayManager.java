@@ -144,8 +144,8 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     @Override
     public void frameChanged(FrameChangeEvent anEvt) {       
         for (Overlay o : iOverlays) 
-            if (o instanceof Profile)
-                o.show(((Profile)o).getFrameNumber() == anEvt.getFrame());                   
+            if (o instanceof ScreenObject)
+                o.show(((ScreenObject)o).getFrameNumber() == -1 || ((ScreenObject)o).getFrameNumber() == anEvt.getFrame());                   
     }   
     
     private final static Logger LOG = LogManager.getLogger();

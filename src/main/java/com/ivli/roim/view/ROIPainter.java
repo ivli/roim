@@ -26,17 +26,20 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import com.ivli.roim.core.Histogram;
-import java.awt.geom.Point2D;
 /**
  *
  * @author likhachev
  */
-public class ROIPainter extends AbstractPainter {
+public class ROIPainter extends AbstractPainter {    
+    private static final Color EMPHASIZED_COLOR = Color.RED;
     
-    public static final Color EMPHASIZED_COLOR = Color.RED;
+    protected Graphics2D iGC;
+    protected IImageView iView;    
     
-    ROIPainter(Graphics2D aGC, AffineTransform aT, ImageView aV) {
-        super(aGC, aT, aV);
+   
+    public ROIPainter(Graphics2D aGC, IImageView aV) {
+        iGC = aGC;
+        iView = aV;
     }
     
     @Override
@@ -51,12 +54,12 @@ public class ROIPainter extends AbstractPainter {
             iGC.setColor(aO.getColor());
         }
         
-        iGC.draw(iTrans.createTransformedShape(aO.getShape()));             
+        iGC.draw(iView.virtualToScreen().createTransformedShape(aO.getShape()));             
     }
     
     @Override
     public void paint(Profile aO) { 
-        final Rectangle bn = iTrans.createTransformedShape(aO.getShape()).getBounds();          
+        final Rectangle bn = iView.virtualToScreen().createTransformedShape(aO.getShape()).getBounds();          
         final Color tmp = iGC.getColor();
         
         iGC.setColor(Colorer.BLUEVIOLET);
@@ -67,17 +70,16 @@ public class ROIPainter extends AbstractPainter {
       
         iGC.setColor(tmp);
         /**/
-        if (aO.isShowHistogram()) {
-            
+        if (aO.isShowHistogram()) {            
             Histogram h = aO.getHistogram();
             double min = h.min(); //Double.MAX_VALUE;
             double max = h.max(); //Double.MIN_VALUE;
             
-            final double range = iView.getMax() - iView.getMin();// maxV - minV; 
+            //final double range = getView().getMax() - getView().getMin();// maxV - minV; 
 
-            Rectangle bounds = new Rectangle(0, 0, iView.getImage().getWidth(), iView.getImage().getHeight());
+            Rectangle bounds = new Rectangle(0, 0, aO.getView().getImage().getWidth(), aO.getView().getImage().getHeight());
 
-            final double scale = Math.min(aO.getShape().getBounds().getY()/(4*range), bounds.getHeight()/(4*range));                                              
+            final double scale = Math.min(aO.getShape().getBounds().getY(), bounds.getHeight());                                              
             Path2D.Double s = new Path2D.Double();        
             //int n = 0;
             //Integer set[]=h.values();
@@ -87,28 +89,65 @@ public class ROIPainter extends AbstractPainter {
                 s.lineTo(n, aO.getShape().getBounds().getY() - h.get(n) * scale);
 
             iGC.setXORMode(Color.WHITE);             
-            iGC.draw(iTrans.createTransformedShape(s));                
+            iGC.draw(iView.virtualToScreen().createTransformedShape(s));                
             iGC.setPaintMode(); //turn XOR mode off    
         }
     }
   
     @Override
     public void paint(Ruler aO) {
-        final Shape rect = iTrans.createTransformedShape(aO.getShape());                           
+        final Shape rect = iView.virtualToScreen().createTransformedShape(aO.getShape());                           
         iGC.setColor(Color.YELLOW);       
         iGC.draw(rect);       
     }   
     
     public void paint(Ruler.Tick aO) {
         Rectangle2D r = new Rectangle2D.Double(aO.getPos().getX()-1, aO.getPos().getY()-1, 2, 2);
-        Rectangle2D rect = iTrans.createTransformedShape(r).getBounds2D();                           
+        Rectangle2D rect = iView.virtualToScreen().createTransformedShape(r).getBounds2D();                           
         iGC.setColor(Color.RED);       
         iGC.draw(rect); 
     }
+        
+    protected Rectangle2D updateShape(Annotation aO) {            
+        double width  = 0;
+        double height = 0;
+
+        final java.awt.FontMetrics fm = iGC.getFontMetrics();
+
+        for (String s : aO.getText()) {
+            Rectangle2D b = fm.getStringBounds(s, iGC);        
+
+            if (aO.isMultiline()) {
+                width = Math.max(width, b.getWidth());
+                height += b.getHeight();
+            } else {
+                width += b.getWidth();
+                height = Math.max(height, b.getHeight());
+            }
+        }
+          
+        final double scaleX = iView.virtualToScreen().getScaleX();      
+        
+        Rectangle2D rect;
+        /*
+        if (null == aO.getShape()) 
+            rect = new Rectangle2D.Double(aO.iOverlay.getShape().getBounds2D().getX() * scaleX, ///TODO: iOverlay musn't be accessible
+                                          aO.iOverlay.getShape().getBounds2D().getY() * scaleX - height , 
+                                          width, height );                                                
+        else
+        */
+            rect = new Rectangle2D.Double(aO.getShape().getBounds2D().getX() * scaleX, 
+                                          aO.getShape().getBounds2D().getY() * scaleX,                                                                                        
+                                          width, height);
+        
+        aO.setShape(iView.screenToVirtual().createTransformedShape(rect));
+        
+        return rect;
+    }               
     
     @Override
-    public void paint(Annotation aO) {        
-        final Rectangle2D temp = iTrans.createTransformedShape(aO.getShape()).getBounds();     
+    public void paint(Annotation aO) {            
+        final Rectangle2D temp = updateShape(aO);//iTrans.createTransformedShape().;     
         iGC.setColor(aO.getColor());
 
         if (!aO.isMultiline()) {
@@ -126,9 +165,8 @@ public class ROIPainter extends AbstractPainter {
         iGC.draw(temp);                 
     }   
         
-    public void paint(Handle aO) {
-        
-        Rectangle2D rect = iTrans.createTransformedShape(aO.getShape()).getBounds2D();                           
+    public void paint(Handle aO) {        
+        Rectangle2D rect = iView.virtualToScreen().createTransformedShape(aO.getShape()).getBounds2D();                           
         iGC.setColor(Color.RED);       
         iGC.draw(rect); 
     }

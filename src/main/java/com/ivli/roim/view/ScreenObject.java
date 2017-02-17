@@ -25,20 +25,30 @@ import java.awt.Shape;
  * @author likhachev
  */
 public abstract class ScreenObject extends Overlay {   
-    protected transient IImageView iView;
-        
-    protected ScreenObject(IImageView aView) {
+    public static final int FRAME_NUMBER_INVALID = -1; 
+            
+    protected transient IImageView iView;    
+    
+    private int iFrameNumber = FRAME_NUMBER_INVALID;
+      
+    protected ScreenObject(IImageView aView, int aN) {
        super(Uid.getNext());
        iView = aView;
+       iFrameNumber = aN;
     }
     
-    protected ScreenObject(IImageView aView, Shape aShape, String aName) {
+    protected ScreenObject(IImageView aView, int aN, Shape aShape, String aName) {
        super(Uid.getNext(), aShape, aName);
        iView = aView;
+       iFrameNumber = aN;
     }
     
     public IImageView getView() {
         return iView;
+    }
+        
+    public int getFrameNumber() {
+        return iFrameNumber;
     }
     
     public boolean isSelectable() {return true;}

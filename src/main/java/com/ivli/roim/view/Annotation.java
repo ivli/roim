@@ -18,7 +18,6 @@
 package com.ivli.roim.view;
 
 import java.util.ArrayList;
-import java.awt.geom.Rectangle2D;
 import java.awt.Shape;
 import java.awt.Color;
 import java.awt.Dialog;
@@ -30,7 +29,6 @@ import com.ivli.roim.core.Measurement;
 import com.ivli.roim.events.OverlayChangeEvent;
 import com.ivli.roim.events.OverlayChangeListener;
 import com.ivli.roim.calc.BaseFormatter;
-
 
 /**
  *
@@ -44,14 +42,13 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     protected Overlay iOverlay;  
     protected final ArrayList<String> iAnnotation; 
  
-    protected Color   iColor     = DEFAULT_COLOR;
+    protected Color iColor     = DEFAULT_COLOR;
     protected boolean iMultiline = DEFAULT_MULTILINE;
     protected boolean iBordered  = DEFAULT_BORDER;
-   
-    
-    Annotation(IImageView aView, Shape aShape, String aName, Color aC) {
-        super(aView, aShape, aName);   
-        iColor = null != aC ? aC : DEFAULT_COLOR;
+       
+    protected Annotation(IImageView aView, int aN, Shape aShape, String aName) {
+        super(aView, aN, aShape, aName);   
+        ///iColor = null != aC ? aC : DEFAULT_COLOR;
         iAnnotation = new ArrayList<>();
     }
    
@@ -74,50 +71,11 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     }
     
     public Color getColor() {return iColor;}
-    
-    abstract void makeText(AbstractPainter aP);
    
     @Override
     void paint(AbstractPainter aP) {   
-        makeText(aP);
-        computeShape(aP);
         aP.paint(this);    
     } 
-    
-    @Override
-    public void update(OverlayManager aM) {}                           
-      
-    protected void computeShape(AbstractPainter aP) {            
-        double width  = 0;
-        double height = 0;
-
-        final ImageView w = aP.getView();
-
-        final java.awt.FontMetrics fm = w.getFontMetrics(w.getFont());
-
-        for (String s : iAnnotation) {
-            Rectangle2D b = fm.getStringBounds(s, w.getGraphics());        
-
-            if (iMultiline) {
-                width = Math.max(width, b.getWidth());
-                height += b.getHeight();
-            } else {
-                width += b.getWidth();
-                height = Math.max(height, b.getHeight());
-            }
-        }
-          
-        final double scaleX = w.screenToVirtual().getScaleX();      
-
-        if (null == iShape) 
-            iShape = new Rectangle2D.Double(iOverlay.getShape().getBounds2D().getX(),  
-                                            iOverlay.getShape().getBounds2D().getY() - height * scaleX, 
-                                            width * scaleX, height * scaleX);                                                
-        else
-            iShape = new Rectangle2D.Double(getShape().getBounds2D().getX(), 
-                                            getShape().getBounds2D().getY(),                                                                                        
-                                            width * scaleX, height * scaleX);                                             
-    }                       
 
     public ArrayList<String> getText() {
         return iAnnotation;
@@ -130,10 +88,10 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         private ISeriesProvider  iProvider;
                 
         public Static(IImageView aV, ISeriesProvider aSP, Overlay aO, Color aC) {
-            super(aV, aO.getShape(), "ANNOTATION::STATIC", aC); //NOI18N                                                              
+            super(aV, aV.getFrameNumber(), aO.getShape(), "ANNOTATION::STATIC"); //NOI18N                                                              
             iOverlay = aO;   
             iProvider = aSP;
-                       
+            iColor = aC;           
             iFilters = new ArrayList<>();
             for (Measurement m: iProvider.getDefaults())
                 iFilters.add(Filter.getFilter(m.getName()));
@@ -148,11 +106,12 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
             return iFilters;
         }
               
-        void makeText(AbstractPainter aP) {
+        @Override
+    public void update(OverlayManager aM) {
             iAnnotation.clear();
             
             for (Filter f : iFilters) {
-                iAnnotation.add(f.getMeasurement().format(f.filter().eval(iProvider).get(aP.getView().getFrameNumber())));     
+                iAnnotation.add(f.getMeasurement().format(f.filter().eval(iProvider).get(getView().getFrameNumber())));     
             }
         }
                          
@@ -221,8 +180,7 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
             for(Measurement m:iProvider.getListOfMeasurements())
                 ret.add(m.getName());
             return ret;
-        }
-        
+        }        
     }
           
     /**
@@ -232,14 +190,15 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         private final IOperation iOp;
                    
         Active(IOperation anOp, Overlay aR, IImageView aV) {
-            super(aV, null, "ANNOTATION.ACTIVE", null);                    
+            super(aV, aV.getFrameNumber(), aR.getShape(), null);                    
             iOp = anOp;       
             iOverlay = aR;
         }   
             
-        void makeText(AbstractPainter aP) {
+       @Override
+        public void update(OverlayManager aM){
             iAnnotation.clear();            
-            iAnnotation.add(iOp.format(new BaseFormatter(aP.getView().getFrameNumber())));
+            iAnnotation.add(iOp.format(new BaseFormatter(getView().getFrameNumber())));
         }
         
         public boolean showDialog(Object a) {return false;}

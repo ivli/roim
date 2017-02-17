@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 likhachev
+ * Copyright (C) 2017 likhachev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,16 +16,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package com.ivli.roim.view;
+
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+
 /**
  *
  * @author likhachev
  */
-public abstract class AbstractPainter {          
-    public abstract void paint(Overlay aO);
-    public abstract void paint(ROI aO);
-    public abstract void paint(Annotation aO);    
-    public abstract void paint(Ruler aO);
-    public abstract void paint(Ruler.Tick aO);
-    public abstract void paint(Profile aO);    
-    public abstract void paint(Handle aO);
+public interface PaintContext {    
+    public Graphics2D getGraphics();
+    public AffineTransform virtualToScreen();
 }
