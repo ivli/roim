@@ -29,14 +29,19 @@ import com.ivli.roim.view.Overlay;
  */
 public class OverlayChangeEvent extends java.util.EventObject {  
     public enum CODE {
+        /* OverlayManager initiated events */
         CREATED,       // OverlayManager sends it thus getSource() => ref::<OverlayManager> while getObject() => ref::<Overlay> created
         DELETED,       // OverlayManager sends it thus getSource() => ref::<OverlayManager> while getObject() => ref::<Overlay> to be deleted
-        MOVED,         // object has been moved: extra => double [] {adX, adY} - offset to move to 
-                       // SIC: MOVED is sent twice 1st - OverlayManager broadcasts this and then Overlay itself sends it directly to it's subscribers 
-                       // so getSource() might return either ref::<OverlayManager> or ref::<Overlay>
+        MOVED,         // OverlayManager sends it thus getSource() => ref::<OverlayManager> while getObject() => ref::<Overlay>
+                       // extra => double [] {adX, adY} - offset to move to  
+        RESHAPED,      // object's shape is changed - extra => old shape of the figure
+        
+        /* Overlay initiated events */        
         SELECTED,      // extra => new select state
         PINNED,        // extra => new pin state
-        RESHAPED,      // object's shape is changed - extra => old shape of the figure
+        MOVING,        // extra => double [] {adX, adY} - offset to move to         
+        RESHAPING,     // object's shape is changed - extra => old shape of the figure
+
         //SIC: following events initiated by an Overlay but responsible OverlayMnager would also resent them outside 
         COLOR_CHANGED, // color has been changed: extra => Color - old color
         NAME_CHANGED,  // name has been changed: extra => String - oldName      

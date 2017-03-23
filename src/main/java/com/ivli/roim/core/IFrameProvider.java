@@ -23,8 +23,9 @@ package com.ivli.roim.core;
  */
 public interface IFrameProvider /*extends IImage*/ {
     
-    public final static int FIRST = 0;
-    public final static int LAST = -1;
+    public static final int FIRST = 0;
+    public static final int LAST = Integer.MAX_VALUE;
+    public static final int INVALID_FRAME = -1; 
     /**
      *
      * @param anIndex

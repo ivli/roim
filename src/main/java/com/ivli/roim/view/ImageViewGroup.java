@@ -63,10 +63,10 @@ public class ImageViewGroup {
     }   
     
     public void addROIChangeListener(OverlayChangeListener aL) {        
-        iMgr.addROIChangeListener(aL);
+        iMgr.addChangeListener(aL, null);
     }
     
     public void removeROIChangeListener(OverlayChangeListener aL) {        
-        iMgr.removeROIChangeListener(aL);
+        iMgr.removeChangeListener(aL);
     }
 }

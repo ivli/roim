@@ -111,7 +111,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     public void setShape(Shape aS) {
         Shape old = iShape; 
         iShape = aS;
-        notify(OverlayChangeEvent.CODE.RESHAPED, old);
+        notify(OverlayChangeEvent.CODE.RESHAPING, old);
     } 
        
     public boolean contains(Point2D aP) {
@@ -124,7 +124,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     
     public void move(double adX, double adY) {       
         translate(adX, adY);
-        notify(OverlayChangeEvent.CODE.MOVED, new double[]{adX, adY});
+        notify(OverlayChangeEvent.CODE.MOVING, new double[]{adX, adY});
     } 
  
     public void addChangeListener(OverlayChangeListener aL) {       

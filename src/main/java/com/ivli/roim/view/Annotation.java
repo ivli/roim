@@ -29,6 +29,7 @@ import com.ivli.roim.core.Measurement;
 import com.ivli.roim.events.OverlayChangeEvent;
 import com.ivli.roim.events.OverlayChangeListener;
 import com.ivli.roim.calc.BaseFormatter;
+import com.ivli.roim.core.IFrameProvider;
 
 /**
  *
@@ -190,7 +191,7 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         private final IOperation iOp;
                    
         Active(IOperation anOp, Overlay aR, IImageView aV) {
-            super(aV, aV.getFrameNumber(), aR.getShape(), null);                    
+            super(aV, null != aV ? aV.getFrameNumber():IFrameProvider.INVALID_FRAME, aR.getShape(), null);                    
             iOp = anOp;       
             iOverlay = aR;
         }   

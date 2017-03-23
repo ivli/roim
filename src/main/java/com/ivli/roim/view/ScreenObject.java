@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.view;
 
+import com.ivli.roim.core.IFrameProvider;
 import com.ivli.roim.core.Uid;
 import java.awt.Shape;
 
@@ -25,11 +26,10 @@ import java.awt.Shape;
  * @author likhachev
  */
 public abstract class ScreenObject extends Overlay {   
-    public static final int FRAME_NUMBER_INVALID = -1; 
-            
+       
     protected transient IImageView iView;    
     
-    private int iFrameNumber = FRAME_NUMBER_INVALID;
+    private int iFrameNumber = IFrameProvider.INVALID_FRAME;
       
     protected ScreenObject(IImageView aView, int aN) {
        super(Uid.getNext());

@@ -69,19 +69,19 @@ public class ROIManager extends OverlayManager {
     public Overlay createAnnotation(ROI aROI, IImageView aV) {    
         Annotation.Static ret = new Annotation.Static(aV, aROI, aROI, aROI.getColor());
         addObject(ret);        
-        addROIChangeListener(ret);   //TODO:?????????   
+        addChangeListener(ret, null);   //TODO:?????????   
         return ret;
     }    
         
     public Overlay createAnnotation(BinaryOp anOp, IImageView aV) {    
         Annotation ret = new Annotation.Active(anOp, ((com.ivli.roim.calc.ConcreteOperand)anOp.getLhs()).getROI(), aV);
         addObject(ret);  
-        createSurrogateROI(anOp);
+        createSurrogateRoi(anOp);
         ret.update(this);
         return ret;
     }
     
-    void createSurrogateROI(BinaryOp anOp) {    
+    public void createSurrogateRoi(BinaryOp anOp) {    
         ROI surrogate = new ROI(Uid.getNext(), new Rectangle(), 
                                 "SURROGATE_" + ((ConcreteOperand)anOp.getLhs()).getROI().toString() + ":" + ((ConcreteOperand)anOp.getRhs()).getROI().toString(), 
                                 null) {
@@ -122,7 +122,8 @@ public class ROIManager extends OverlayManager {
             public void OverlayChanged(OverlayChangeEvent anEvt) {
                 if (iLhs.equals(anEvt.getObject()) || iRhs.equals(anEvt.getObject())) {
                     switch (anEvt.getCode()) {
-                        case MOVED: //cheat
+                        case MOVED:  //cheat
+                        case MOVING: //fall through and cheat as well
                             update(ROIManager.this);
                             notifyROIChanged(this, OverlayChangeEvent.CODE.MOVED, null); break;                       
                         default: break;
@@ -161,7 +162,7 @@ public class ROIManager extends OverlayManager {
         if (iAnnotationsAutoCreate) { 
             Annotation.Static ano = new Annotation.Static(aV, ret, ret, ret.getColor());
             addObject(ano);        
-            addROIChangeListener(ano); //let ROIManager forward events to, so it can smoothly addjust position when needed    
+            addChangeListener(ano, ret); //let ROIManager forward events to, so it can smoothly addjust position when needed    
         }
         return ret;
     }
@@ -169,20 +170,20 @@ public class ROIManager extends OverlayManager {
      public Overlay createRuler(Point aFrom, Point aTo, IImageView aV) {                        
         Handle beg = new Handle(aV.screenToVirtual(aFrom));
         Handle end = new Handle(aV.screenToVirtual(aTo));
-        Ruler ret = new Ruler(aV, beg, end);     
+        Ruler ruler = new Ruler(aV, beg, end);     
                 
-        addObject(ret);   
+        addObject(ruler);   
         addObject(beg);
         addObject(end);
         
-        ret.addChangeListener(this); 
+        ruler.addChangeListener(this); 
         
         if (iAnnotationsAutoCreate) { 
-            Annotation.Static ano = new Annotation.Static(aV, ret, ret, Color.RED);
+            Annotation.Static ano = new Annotation.Static(aV, ruler, ruler, Color.RED);
             addObject(ano);        
-            addROIChangeListener(ano);   
+            addChangeListener(ano, ruler);   
         }
-        return ret;
+        return ruler;
     }
     
     public void externalize(ObjectOutputStream ois) {
