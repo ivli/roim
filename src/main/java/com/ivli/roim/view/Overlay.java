@@ -111,7 +111,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     public void setShape(Shape aS) {
         Shape old = iShape; 
         iShape = aS;
-        notify(OverlayChangeEvent.CODE.RESHAPING, old);
+        notify(OverlayChangeEvent.CODE.RESHAPED, old);
     } 
        
     public boolean contains(Point2D aP) {
@@ -124,26 +124,26 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     
     public void move(double adX, double adY) {       
         translate(adX, adY);
-        notify(OverlayChangeEvent.CODE.MOVING, new double[]{adX, adY});
+        notify(OverlayChangeEvent.CODE.MOVED, new double[]{adX, adY});
     } 
  
     public void addChangeListener(OverlayChangeListener aL) {       
         iListeners.add(OverlayChangeListener.class, aL);
     }
-    
+        
     public void removeChangeListener(OverlayChangeListener aL) {        
         iListeners.remove(OverlayChangeListener.class, aL);
     }
     
     protected void notify(OverlayChangeEvent.CODE aS, Object aEx) {        
-        final OverlayChangeEvent evt = new OverlayChangeEvent(this, aS, this, aEx);
+        final OverlayChangeEvent evt = new OverlayChangeEvent(this, aS, aEx);
 
         OverlayChangeListener arr[] = iListeners.getListeners(OverlayChangeListener.class);
 
         for (OverlayChangeListener l : arr)
             l.OverlayChanged(evt);
     }
-            
+       
     @FunctionalInterface
     interface ICanFlip {
         public void flip(boolean aVertical);

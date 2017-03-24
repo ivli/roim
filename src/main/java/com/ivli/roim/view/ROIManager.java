@@ -123,7 +123,7 @@ public class ROIManager extends OverlayManager {
                 if (iLhs.equals(anEvt.getObject()) || iRhs.equals(anEvt.getObject())) {
                     switch (anEvt.getCode()) {
                         case MOVED:  //cheat
-                        case MOVING: //fall through and cheat as well
+                        //case MOVING: //fall through and cheat as well
                             update(ROIManager.this);
                             notifyROIChanged(this, OverlayChangeEvent.CODE.MOVED, null); break;                       
                         default: break;
@@ -170,11 +170,11 @@ public class ROIManager extends OverlayManager {
      public Overlay createRuler(Point aFrom, Point aTo, IImageView aV) {                        
         Handle beg = new Handle(aV.screenToVirtual(aFrom));
         Handle end = new Handle(aV.screenToVirtual(aTo));
-        Ruler ruler = new Ruler(aV, beg, end);     
-                
-        addObject(ruler);   
+        Ruler ruler = new Ruler(aV, beg, end);                     
+           
         addObject(beg);
         addObject(end);
+        addObject(ruler);
         
         ruler.addChangeListener(this); 
         

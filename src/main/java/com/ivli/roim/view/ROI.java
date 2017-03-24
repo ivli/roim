@@ -97,6 +97,7 @@ public class ROI extends Overlay implements ISeriesProvider, Overlay.ICanFlip, O
         final Rectangle bnds = getShape().getBounds();
         
         iAreaInPixels = 0;
+        
         for (int i = bnds.x; i < (bnds.x + bnds.width); ++i)
             for (int j = bnds.y; j < (bnds.y + bnds.height); ++j) 
                 if (getShape().contains(i, j)) 

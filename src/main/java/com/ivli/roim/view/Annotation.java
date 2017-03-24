@@ -108,7 +108,7 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         }
               
         @Override
-    public void update(OverlayManager aM) {
+        public void update(OverlayManager aM) {
             iAnnotation.clear();
             
             for (Filter f : iFilters) {
@@ -129,7 +129,11 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
                     final double[] deltas = (double[])anEvt.getExtra(); 
                     OverlayManager mgr = (OverlayManager)anEvt.getSource();
                     mgr.moveObject(this, deltas[0], deltas[1]); //selfmovement kills border checkings so it can get off the screen                                                 
-                } ///fall through break;
+                } break;
+                case RESHAPED: {                                        
+                    OverlayManager mgr = (OverlayManager)anEvt.getSource();                    
+                    this.update(mgr);
+                } break;
                 case COLOR_CHANGED:
                 case NAME_CHANGED:                      
                 default: //fall-through

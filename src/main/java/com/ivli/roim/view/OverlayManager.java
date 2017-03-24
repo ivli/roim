@@ -114,6 +114,10 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
         iList.add(OverlayChangeListener.class, aL);
     }
     
+    public void addChangeListener(OverlayChangeListener aL) {    
+        iList.add(OverlayChangeListener.class, aL);
+    }
+    
     public void removeChangeListener(OverlayChangeListener aL) {          
         iList.remove(OverlayChangeListener.class, aL);
     }
@@ -136,6 +140,10 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
             case COLOR_CHANGED:
                 notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.COLOR_CHANGED, anEvt.getExtra());
                 break;
+            case RESHAPED: {
+                notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.RESHAPED, anEvt.getExtra());
+                
+            } break;
             default:
                 break;
         }      

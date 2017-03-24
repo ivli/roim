@@ -39,8 +39,8 @@ public class OverlayChangeEvent extends java.util.EventObject {
         /* Overlay initiated events */        
         SELECTED,      // extra => new select state
         PINNED,        // extra => new pin state
-        MOVING,        // extra => double [] {adX, adY} - offset to move to         
-        RESHAPING,     // object's shape is changed - extra => old shape of the figure
+        //MOVING,        // extra => double [] {adX, adY} - offset to move to         
+        //RESHAPING,     // object's shape is changed - extra => old shape of the figure
 
         //SIC: following events initiated by an Overlay but responsible OverlayMnager would also resent them outside 
         COLOR_CHANGED, // color has been changed: extra => Color - old color
@@ -51,6 +51,13 @@ public class OverlayChangeEvent extends java.util.EventObject {
     private final CODE    iCode;  //what happened
     private final Overlay iObj;   //object    
     private final Object  iExtra; //depending on change it carries old name, old colour or ... 
+    
+    public OverlayChangeEvent(Object aO, CODE aC, Object aExtra) {
+        super (aO);
+        iObj = (Overlay)aO;
+        iCode = aC;
+        iExtra = aExtra;
+    }
     
     public OverlayChangeEvent(Object aO, CODE aC, Overlay aR, Object aExtra) {
         super (aO);

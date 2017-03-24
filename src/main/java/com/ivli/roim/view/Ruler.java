@@ -76,15 +76,13 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
         double deltaY = aP.getY() * .01;                
         return getShape().intersects(new Rectangle2D.Double(aP.getX() - deltaX, aP.getY() - deltaY, 2*deltaX, 2*deltaY));
     }
-    
+   /* 
     @Override
-    public void move(double adX, double adY) {    
-        //iBegin.move(adX, adY);
-        //iEnd.move(adX, adY);     
+    public void move(double adX, double adY) {            
         iShape = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);                            
         notify(OverlayChangeEvent.CODE.MOVED, new double[]{adX, adY});
     } 
-   
+   */
     @Override
     void update(OverlayManager aM) {          
         iSpacing = aM.getImage().getPixelSpacing().getX();      
@@ -96,12 +94,10 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
             case MOVED: {        
                 if(anEvt.getObject().equals(h[0])) {
                     iBegin.move(((double[])anEvt.getExtra())[0], ((double[])anEvt.getExtra())[1]);
-                    iShape = makeShape(iBegin.getPos(), iEnd.getPos());
+                    setShape(makeShape(iBegin.getPos(), iEnd.getPos()));
                 } else if(anEvt.getObject().equals(h[1])) {
                     iEnd.move(((double[])anEvt.getExtra())[0], ((double[])anEvt.getExtra())[1]);
-                    iShape = makeShape(iBegin.getPos(), iEnd.getPos());
-                } else {
-
+                    setShape(makeShape(iBegin.getPos(), iEnd.getPos()));
                 } 
             } break;
             default: break;
