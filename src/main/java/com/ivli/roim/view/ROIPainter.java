@@ -22,10 +22,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import com.ivli.roim.core.Histogram;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 /**
  *
  * @author likhachev
@@ -101,11 +102,27 @@ public class ROIPainter extends AbstractPainter {
         iGC.draw(rect);       
     }   
     
-    public void paint(Ruler.Tick aO) {
-        Rectangle2D r = new Rectangle2D.Double(aO.getPos().getX()-1, aO.getPos().getY()-1, 2, 2);
-        Rectangle2D rect = iView.virtualToScreen().createTransformedShape(r).getBounds2D();                           
-        iGC.setColor(Color.RED);       
-        iGC.draw(rect); 
+    private static final boolean ROUND_TICKS = true;
+    private static final boolean SOLID_TICKS = false;    
+    private static final int     TICK_SIZE   = 8;    
+    private static final Color   TICK_COLOR  = Color.YELLOW;
+
+    @Override
+    public void paint(Ruler.Tick aO) {                        
+        Rectangle2D temp = iView.virtualToScreen().createTransformedShape(new Rectangle2D.Double(aO.getPos().getX(), aO.getPos().getY(), 1, 1)).getBounds2D(); 
+        
+        Shape tick;
+        if (!ROUND_TICKS)
+            tick = new Rectangle2D.Double(temp.getX() - TICK_SIZE/2, temp.getY() - TICK_SIZE/2, TICK_SIZE, TICK_SIZE);
+        else
+            tick = new Ellipse2D.Double(temp.getX() - TICK_SIZE/2, temp.getY() - TICK_SIZE/2, TICK_SIZE, TICK_SIZE);
+                                                               
+        iGC.setColor(TICK_COLOR); 
+        
+        if(SOLID_TICKS)
+            iGC.fill(tick);
+        else   
+            iGC.draw(tick); 
     }
         
     protected Rectangle2D updateShape(Annotation aO) {            

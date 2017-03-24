@@ -130,8 +130,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
             iPos.setLocation(iPos.getX() + adX, iPos.getY() + adY);
         }
       
-        void paint(AbstractPainter aP) {   
-            //if (aP.getView() == getView())
+        void paint(AbstractPainter aP) {               
             aP.paint(this);    
         }     
     }
