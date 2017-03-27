@@ -133,17 +133,14 @@ public class ROIPainter extends AbstractPainter {
         
         Measurement[] ms = aO.getDefaults();
         String text="";     
+        
         for (Measurement m : ms)
             text += m.format(Filter.getFilter(m.getName()).filter().eval(aO).get(0), false);
                 
-        double angle = Math.atan(-(beg.getY() - end.getY())/(end.getX() - beg.getX()));         
-        double len = Math.sqrt((beg.getY() - end.getY())*(beg.getY() - end.getY()) + (end.getX() - beg.getX())*(end.getX() - beg.getX()));
-        
-        Rectangle2D tb = iGC.getFont().getStringBounds(text, iGC.getFontRenderContext());
-        
-        double x = beg.getX() + ((end.getX() - beg.getX()) / 4.0);
-        
-        double y  = -((beg.getY() - end.getY()) * x + (beg.getX()*end.getY() - end.getX()*beg.getY())) / (end.getX()- beg.getX()); 
+        final double angle = Math.atan(-(beg.getY() - end.getY())/(end.getX() - beg.getX()));                 
+        final double len = iGC.getFont().getStringBounds(text, iGC.getFontRenderContext()).getWidth();        
+        final double x = beg.getX() + ((end.getX() - beg.getX()) / 2.0 - (len / 2.0) * Math.cos(angle));               
+        final double y  = -((beg.getY() - end.getY()) * x + (beg.getX()*end.getY() - end.getX()*beg.getY())) / (end.getX()- beg.getX()); 
                 
         drawRotate(iGC, x, y, angle, text);
     }   
