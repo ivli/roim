@@ -41,14 +41,16 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class ROIManager extends OverlayManager {                        
-    private final Uid iUid;
-    private boolean iAnnotationsAutoCreate;
+public class ROIManager extends OverlayManager {                            
+    private static final boolean CREATE_ANNOTATIONS_FOR_ROIS = true;
+    private static final boolean CREATE_ANNOTATIONS_FOR_RULER = false;
     
+    private final Uid iUid; //do  i really need it?
+     
     public ROIManager(IMultiframeImage anImage, Uid aUid, boolean aAnnotationsAutoCreate) {
         super (anImage);
         iUid = aUid;
-        iAnnotationsAutoCreate = true;//aAnnotationsAutoCreate;        
+             
     }
           
     /*
@@ -147,7 +149,7 @@ public class ROIManager extends OverlayManager {
             
             addObject(ret);
 
-            if (iAnnotationsAutoCreate)    
+            if (CREATE_ANNOTATIONS_FOR_ROIS)    
                 createAnnotation((ROI)ret, aV); 
         }
         
@@ -159,7 +161,7 @@ public class ROIManager extends OverlayManager {
         ROI ret = new ROI(iUid.getNext(), shape, null, null);         
         addObject(ret);
         
-        if (iAnnotationsAutoCreate) { 
+        if (CREATE_ANNOTATIONS_FOR_ROIS) { 
             Annotation.Static ano = new Annotation.Static(aV, ret, ret, ret.getColor());
             addObject(ano);        
             addChangeListener(ano, ret); //let ROIManager forward events to, so it can smoothly addjust position when needed    
@@ -178,7 +180,7 @@ public class ROIManager extends OverlayManager {
         
         ruler.addChangeListener(this); 
         
-        if (iAnnotationsAutoCreate) { 
+        if (CREATE_ANNOTATIONS_FOR_RULER) { 
             Annotation.Static ano = new Annotation.Static(aV, ruler, ruler, Color.RED);
             addObject(ano);        
             addChangeListener(ano, ruler);   

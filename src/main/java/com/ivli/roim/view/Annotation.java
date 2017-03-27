@@ -112,7 +112,7 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
             iAnnotation.clear();
             
             for (Filter f : iFilters) {
-                iAnnotation.add(f.getMeasurement().format(f.filter().eval(iProvider).get(getView().getFrameNumber())));     
+                iAnnotation.add(f.getMeasurement().format(f.filter().eval(iProvider).get(getView().getFrameNumber()), true));     
             }
         }
                          

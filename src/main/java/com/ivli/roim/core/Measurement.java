@@ -60,11 +60,11 @@ public enum Measurement {
         return ret;        
     }
                   
-    public String format(int aVal) {               
-        return iName + SEPARATOR + iUnits.format(aVal);
+    public String format(int aVal, boolean bLong) {               
+        return !bLong ? iUnits.format(aVal) : iName + SEPARATOR + iUnits.format(aVal);
     }
     
-    public String format(double aVal) {
-        return iName + SEPARATOR + iUnits.format(aVal);
+    public String format(double aVal, boolean bLong) {
+        return !bLong ? iUnits.format(aVal) : iName + SEPARATOR + iUnits.format(aVal);
     }    
 }

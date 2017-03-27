@@ -45,7 +45,7 @@ public class BaseFormatter extends AbstractFormatter {
     @Override
     public String format(IOperand aOp) {  
         double val = aOp.value().get(aOp.value().isScalar() ? 0 : iFrame); 
-        return aOp.value().getId().format(val);   
+        return aOp.value().getId().format(val, true);   
     }
     
 }

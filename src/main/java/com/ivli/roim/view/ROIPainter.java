@@ -17,6 +17,7 @@
  */
 package com.ivli.roim.view;
 
+import com.ivli.roim.core.Filter;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -25,8 +26,11 @@ import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import com.ivli.roim.core.Histogram;
+import com.ivli.roim.core.Measurement;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  *
  * @author likhachev
@@ -95,11 +99,53 @@ public class ROIPainter extends AbstractPainter {
         }
     }
   
+    static void drawRotate(Graphics2D g2d, double x, double y, double angle, String text){         
+        g2d.translate((float)x,(float)y);
+        g2d.rotate(angle);//Math.toRadians(angle));
+        g2d.drawString(text,0,0);
+        g2d.rotate(-angle);///Math.toRadians(angle));
+        g2d.translate(-(float)x,-(float)y);
+    } 
+    
+    Point2D translate(Point2D aP) {
+        Rectangle2D r = iView.virtualToScreen().createTransformedShape(new Rectangle2D.Double(aP.getX(), aP.getY(), 1, 1)).getBounds2D();
+        return new Point2D.Double(r.getX(), r.getY());
+    }
+    
     @Override
     public void paint(Ruler aO) {
-        final Shape rect = iView.virtualToScreen().createTransformedShape(aO.getShape());                           
+        final Shape line = iView.virtualToScreen().createTransformedShape(aO.getShape());                           
         iGC.setColor(Color.YELLOW);       
-        iGC.draw(rect);       
+        iGC.draw(line); 
+        
+       // Rectangle2D rd = line.getBounds2D();
+        Point2D p1 = translate(aO.iBegin.iPos);
+        Point2D p2 = translate(aO.iEnd.iPos);
+        
+        Point2D beg; 
+        Point2D end;
+        
+        if(p1.getX() < p2.getX()) {
+            beg = p1; end = p2;
+        } else {
+            beg = p2; end = p1;
+        }
+        
+        Measurement[] ms = aO.getDefaults();
+        String text="";     
+        for (Measurement m : ms)
+            text += m.format(Filter.getFilter(m.getName()).filter().eval(aO).get(0), false);
+                
+        double angle = Math.atan(-(beg.getY() - end.getY())/(end.getX() - beg.getX()));         
+        double len = Math.sqrt((beg.getY() - end.getY())*(beg.getY() - end.getY()) + (end.getX() - beg.getX())*(end.getX() - beg.getX()));
+        
+        Rectangle2D tb = iGC.getFont().getStringBounds(text, iGC.getFontRenderContext());
+        
+        double x = beg.getX() + ((end.getX() - beg.getX()) / 4.0);
+        
+        double y  = -((beg.getY() - end.getY()) * x + (beg.getX()*end.getY() - end.getX()*beg.getY())) / (end.getX()- beg.getX()); 
+                
+        drawRotate(iGC, x, y, angle, text);
     }   
     
     private static final boolean ROUND_TICKS = true;
@@ -164,7 +210,7 @@ public class ROIPainter extends AbstractPainter {
     
     @Override
     public void paint(Annotation aO) {            
-        final Rectangle2D temp = updateShape(aO);//iTrans.createTransformedShape().;     
+        final Rectangle2D temp = updateShape(aO); //iTrans.createTransformedShape().;     
         iGC.setColor(aO.getColor());
 
         if (!aO.isMultiline()) {
@@ -187,4 +233,6 @@ public class ROIPainter extends AbstractPainter {
         iGC.setColor(Color.RED);       
         iGC.draw(rect); 
     }
+    
+     private static final Logger LOG = LogManager.getLogger();
 }
