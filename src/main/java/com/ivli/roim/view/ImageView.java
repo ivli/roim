@@ -73,7 +73,7 @@ public class ImageView extends JComponent implements IImageView {
     private final EventListenerList iListeners; //
    
     public static ImageView create(IMultiframeImage aI, ViewMode aMode) {        
-        return create(aI, aMode, new ROIManager(aI, Uid.getNext(), false));    
+        return create(aI, aMode, new ROIManager(aI));    
     }
         
     public static ImageView create(IMultiframeImage aI, ViewMode aMode, ROIManager aM) {

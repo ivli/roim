@@ -39,7 +39,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
     private double iSpacing = 1.;    
     private Handle h[]={null,null};
     
-    private Shape makeShape(Point2D aB, Point2D aE) {
+    private static Shape makeShape(Point2D aB, Point2D aE) {
         Path2D ret = new Path2D.Double();
         ret.moveTo(aB.getX(), aB.getY());
         ret.lineTo(aE.getX(), aE.getY());
@@ -47,10 +47,10 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
     }
     
     Ruler(IImageView aV, Handle aB, Handle aE) {         
-        super(aV, aV.getFrameNumber());  
+        super(aV, aV.getFrameNumber(), makeShape(aB.getPos(), aE.getPos()), null);  
         iBegin = new Tick(aB.getPos());
         iEnd = new Tick(aE.getPos());        
-        iShape = makeShape(aB.getPos(), aE.getPos());
+        //iShape = makeShape(aB.getPos(), aE.getPos());
         
         aB.addChangeListener(this);
         aE.addChangeListener(this);

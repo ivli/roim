@@ -29,6 +29,7 @@ import java.util.Iterator;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import javax.swing.event.TableModelEvent;
@@ -103,7 +104,20 @@ public class ROITableModel extends DefaultTableModel {
                 final ROI r = (ROI)model.getValueAt(row, TABLE_COLUMN_OBJECT);
                 
                 if (col == TABLE_COLUMN_NAME) {
-                    r.setName((String)model.getValueAt(row, col));
+                    //test for duplicated name
+                    String newName = (String)model.getValueAt(row, TABLE_COLUMN_NAME); 
+                    
+                    if (0 == r.getName().compareTo(newName))                        
+                        return;                               
+                   
+                    for (int i = 0, rows = model.getRowCount(); i < rows; ++i)
+                        if (i != row && 0 == newName.compareTo((String)model.getValueAt(i, TABLE_COLUMN_NAME))) {
+                           JOptionPane.showMessageDialog(null, "ROI with the same name exists", "ERROR", JOptionPane.ERROR_MESSAGE);
+                           model.setValueAt(r.getName(), row, TABLE_COLUMN_NAME); 
+                           return;
+                        }
+                                                    
+                    r.setName(newName);
                     
                 } else if (col == TABLE_COLUMN_COLOR) {
                     r.setColor((Color)model.getValueAt(row, col));        

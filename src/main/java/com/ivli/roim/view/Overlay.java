@@ -34,7 +34,7 @@ import javax.swing.JMenuItem;
  */
 public abstract class Overlay implements OverlayChangeListener, java.io.Serializable {  
     private static final long serialVersionUID = 42L;   
-    protected final transient Uid iUid;
+   /// protected final transient Uid iUid;
     protected Shape   iShape;
     protected String  iName;
     protected boolean iSelected = false;
@@ -42,24 +42,21 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     protected boolean iShown = true;
     
     private final transient EventListenerList iListeners;        
-            
-    protected Overlay(Uid anID) {
-        this(anID, null, null);
-    }
-    
-    protected Overlay(Uid anID, Shape aShape, String aName) {
-        iUid   = anID;
+     
+    protected Overlay(Shape aShape, String aName) { 
+        if (null == aName)
+            throw(new IllegalArgumentException("Name cannot be null"));
+        
         iShape = aShape;         
-        iName  = (null != aName) ? aName : "OVERLAY:" + anID.toString(); //NOI18N                  
+        iName  = (null != aName) ? aName : this.toString();                   
         iListeners = new EventListenerList();   
     }
-               
-    public Uid getID() {
-        return iUid;
-    }    
-    
+   
     public void setName(String aName) {
-        String old = getName();
+        if (null == aName)
+            throw(new IllegalArgumentException("Name cannot be null"));
+        
+        String old = iName;
         iName  = aName;
         notify(OverlayChangeEvent.CODE.NAME_CHANGED, old);         
     }
@@ -99,22 +96,11 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     public final static int OVL_SELECTABLE = 0x1 << 3;
     public final static int OVL_CLONEABLE  = 0x1 << 4;
     public final static int OVL_PINNABLE   = 0x1 << 5;
-    public final static int OVL_PERMANENT  = 0x1 << 6;
-    
+    public final static int OVL_PERMANENT  = 0x1 << 6;    
     public final static int OVL_DEFAULT = OVL_VISIBLE|OVL_MOVEABLE|OVL_SELECTABLE|OVL_CLONEABLE|OVL_PINNABLE;
-    
-    ///protected final int iStyles;
-    //public void setStyles(int aS) {iStyles = aS;}
-    public int getStyles() {return OVL_DEFAULT;}
-    
-    ///public abstract boolean isPinnable();        
-    ///public abstract boolean isSelectable();
-    ///public abstract boolean isMovable();   
-    ///public abstract boolean isPermanent(); 
-    ///public abstract boolean isCloneable(); 
-    ///public abstract boolean isVisible();  
-    
    
+    public int getStyles() {return OVL_DEFAULT;}
+  
     abstract void update(OverlayManager aM);          
     abstract void paint(AbstractPainter aP);  
     
@@ -160,11 +146,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
        
     @Override
     public void OverlayChanged(OverlayChangeEvent anEvt) {}
-           
-    @Override
-    public String toString() {
-        return getClass().getName() + ":" + getName();
-    }
+   
     /**************************************/
     @FunctionalInterface
     interface ICanFlip {

@@ -38,7 +38,7 @@ public class ImageViewGroup {
         iImage = anImage;
         iViews = new ArrayList<>();
         iUid = Uid.getNext();
-        iMgr = new ROIManager(iImage, iUid, false);        
+        iMgr = new ROIManager(iImage);        
     }
     
     public ROIManager getROIMgr() {

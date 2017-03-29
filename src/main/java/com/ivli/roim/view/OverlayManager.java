@@ -29,6 +29,7 @@ import com.ivli.roim.events.FrameChangeListener;
 import com.ivli.roim.events.OverlayChangeEvent;
 import com.ivli.roim.events.OverlayChangeListener;
 import java.awt.geom.Point2D;
+import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -97,7 +98,20 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
         
         return null;
     }
-               
+    
+    public Overlay findObject(String aN) {          
+        //for (Overlay o : iOverlays)           
+        //    if (0 == o.getName().compareTo(aN)) 
+        //        return o;                                   
+        
+        Optional<Overlay> ret = iOverlays.stream().filter((o)->{return 0 == aN.compareTo(o.getName());}).findFirst();
+        
+        if(ret.isPresent())
+            return ret.get();
+        else
+            return null;
+    }
+    
     public boolean deleteObject(Overlay aO) {
         if (iOverlays.remove(aO)) {
             notifyROIChanged(aO, OverlayChangeEvent.CODE.DELETED, null);        
@@ -134,9 +148,10 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     @Override
     public void OverlayChanged(OverlayChangeEvent anEvt) {         
         switch (anEvt.getCode()) {
-            case NAME_CHANGED:
+            case NAME_CHANGED: {
+                
                 notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.NAME_CHANGED, anEvt.getExtra());
-                break;
+            } break;
             case COLOR_CHANGED:
                 notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.COLOR_CHANGED, anEvt.getExtra());
                 break;

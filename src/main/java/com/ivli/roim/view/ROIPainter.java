@@ -67,7 +67,7 @@ public class ROIPainter extends AbstractPainter {
         final Rectangle bn = iView.virtualToScreen().createTransformedShape(aO.getShape()).getBounds();          
         final Color tmp = iGC.getColor();
         
-        iGC.setColor(Colorer.BLUEVIOLET);
+        iGC.setColor(java.awt.Color.CYAN);
         iGC.drawLine(bn.x, bn.y, bn.x+bn.width, bn.y);                           
         
         iGC.setColor(java.awt.Color.RED);

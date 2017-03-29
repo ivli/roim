@@ -30,15 +30,15 @@ public abstract class ScreenObject extends Overlay {
     protected transient IImageView iView;    
     
     private int iFrameNumber = IFrameProvider.INVALID_FRAME;
-      
+      /*
     protected ScreenObject(IImageView aView, int aN) {
        super(Uid.getNext());
        iView = aView;
        iFrameNumber = aN;
     }
-    
+    */
     protected ScreenObject(IImageView aView, int aN, Shape aShape, String aName) {
-       super(Uid.getNext(), aShape, aName);
+       super(aShape, aName);
        iView = aView;
        iFrameNumber = aN;
     }

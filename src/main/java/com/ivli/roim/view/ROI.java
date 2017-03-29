@@ -38,9 +38,11 @@ public class ROI extends Overlay implements ISeriesProvider, Overlay.ICanFlip, O
         
     transient SeriesCollection iSeries;               
        
-    public ROI(Uid anID, Shape aS, String aName,  Color aC) {
-        super(anID, aS, null != aName ? aName : "ROI" + anID.toString());         
-        iColor = (null != aC) ? aC : Colorer.getNextColor(ROI.class);          
+   
+
+    public ROI(Shape aS, String aName, Color aC) {
+        super(aS, aName);
+        iColor = aC;          
         iAreaInPixels = -1;
         iSeries = null;
     }

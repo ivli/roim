@@ -456,7 +456,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
                 iGroup.getROIMgr().internalize(new ObjectInputStream(new FileInputStream(aROILIST)));
             } catch (IOException | ClassNotFoundException ex) {
                 LOG.throwing(ex);
-                JOptionPane.showMessageDialog(this, "ERROR", "Unable to open file", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Unable to open file", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         }
         

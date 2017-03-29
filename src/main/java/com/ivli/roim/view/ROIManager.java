@@ -44,13 +44,9 @@ import org.apache.logging.log4j.Logger;
 public class ROIManager extends OverlayManager {                            
     private static final boolean CREATE_ANNOTATIONS_FOR_ROIS = true;
     private static final boolean CREATE_ANNOTATIONS_FOR_RULER = false;
-    
-    private final Uid iUid; //do  i really need it?
-     
-    public ROIManager(IMultiframeImage anImage, Uid aUid, boolean aAnnotationsAutoCreate) {
-        super (anImage);
-        iUid = aUid;
-             
+           
+    public ROIManager(IMultiframeImage anImage) {
+        super (anImage);    
     }
           
     /*
@@ -84,7 +80,7 @@ public class ROIManager extends OverlayManager {
     }
     
     public void createSurrogateRoi(BinaryOp anOp) {    
-        ROI surrogate = new ROI(Uid.getNext(), new Rectangle(), 
+        ROI surrogate = new ROI(new Rectangle(), 
                                 "SURROGATE_" + ((ConcreteOperand)anOp.getLhs()).getROI().toString() + ":" + ((ConcreteOperand)anOp.getRhs()).getROI().toString(), 
                                 null) {
             ROI iLhs = ((ConcreteOperand)anOp.getLhs()).getROI();
@@ -143,24 +139,35 @@ public class ROIManager extends OverlayManager {
         surrogate.addChangeListener(this);
     }
     
-    public Overlay cloneObject(Overlay aR, IImageView aV) {             
-        Overlay ret = null;
-        
-        if (aR instanceof ROI) {           
-            ret = new ROI(Uid.getNext(), aR.getShape(), null != aV ? null : aR.getName(),  null != aV ? null : ((ROI) aR).getColor());         
-            
-            addObject(ret);
-
-            if (CREATE_ANNOTATIONS_FOR_ROIS)    
-                createAnnotation((ROI)ret, aV); 
+    public Overlay cloneObject(Overlay aR, IImageView aV) {                 
+        if (0 != (aR.getStyles() & Overlay.OVL_CLONEABLE) ) {
+            if (aR instanceof ROI)                         
+                return internalCreateROI(aR.getShape(), aV);        
+            else if (aR instanceof Overlay) {
+                //TODO:
+            }
         }
-        
-        return ret;      
+        return null;
     }
      
-    public Overlay createROI(Shape aS, IImageView aV) {                 
-        final Shape shape = aV.screenToVirtual().createTransformedShape(aS);        
-        ROI ret = new ROI(iUid.getNext(), shape, null, null);         
+    public Overlay createROI(Shape aS, IImageView aV) {
+        final Shape shape = aV.screenToVirtual().createTransformedShape(aS); 
+        return internalCreateROI(shape, aV);
+    }
+    
+    private Overlay internalCreateROI(Shape aS, IImageView aV) {                 
+
+        String name = "ROI" + Uid.getNext(ROI.class);  
+        Color clr = Colorer.getNextColor(ROI.class);
+               
+        String decorator="";
+        do {
+            name += decorator;
+            decorator += ".1";
+        } while(null != findObject(name));         
+            
+        
+        ROI ret = new ROI(aS, name, clr);         
         addObject(ret);
         
         if (CREATE_ANNOTATIONS_FOR_ROIS) { 

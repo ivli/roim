@@ -26,24 +26,26 @@ import java.util.Map;
  * @author likhachev
  */
 public class Colorer {  
-    public static final Color BLUEVIOLET = new Color(0.5411765f, 0.16862746f, 0.8862745f);
-    public static final Color VIOLET     = new Color(0.93333334f, 0.50980395f, 0.93333334f);
+    private final static Color[] RAINBOW = {
+        new Color(255,0,0),   new Color(255,127,0), new Color(255,255,0), 
+        new Color(127,255,0), new Color(0,255,0),   new Color(0,255,127), 
+        new Color(0,255,255), new Color(0,127,255), new Color(0,0,255),
+        new Color(127,0,255), new Color(255,0,255), new Color(255,0,127),
+    };    
     
-    private final static Color[] RAINBOW = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN, Color.BLUE, VIOLET};    
     private static final Map <Class, Integer> iHash = new HashMap();
-    
-    
+        
     public static synchronized Color getNextColor(Object aO) {        
         int ndx = 0;
         
         if (iHash.containsKey(aO.getClass())) 
-            ndx = iHash.get(aO.getClass()) + 1;            
+            ndx = iHash.get(aO.getClass());            
                 
-        iHash.put(aO.getClass(), ndx);
-        LOG.debug("Colorer class=" + aO.getClass().getCanonicalName() + ", index=" + ndx);
+        iHash.put(aO.getClass(), ndx + 1);
+        
         return RAINBOW[ndx%RAINBOW.length];
     }
-    
+         
     public static Color getColor(Integer anIndex) {
         return RAINBOW[anIndex%RAINBOW.length];
     }

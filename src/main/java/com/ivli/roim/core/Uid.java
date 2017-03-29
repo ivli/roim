@@ -17,6 +17,9 @@
  */
 package com.ivli.roim.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author likhachev
@@ -28,6 +31,8 @@ public class Uid implements Comparable<Uid>, java.io.Serializable {
     private static long iGlobalUid = DEFAULT_INITIAL_VALUE;
     
     public static final Uid INVALID = new Uid(INVALID_VALUE); 
+    
+    private static final Map <Class, Long> iHash = new HashMap();
     
     private final long iUid;
     
@@ -41,6 +46,16 @@ public class Uid implements Comparable<Uid>, java.io.Serializable {
         return new Uid(++iGlobalUid);
     }
 
+    public static synchronized Uid getNext(Class aC) {     
+        Long ret = INVALID_VALUE;
+        if (iHash.containsKey(aC))
+            ret = iHash.get(aC);            
+                
+        iHash.put(aC, ++ret);
+        
+        return new Uid(ret);
+    }
+    
     @Override
     public int compareTo(Uid o) {
         return (int)(this.iUid - o.iUid);
