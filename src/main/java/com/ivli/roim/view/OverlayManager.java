@@ -99,11 +99,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
         return null;
     }
     
-    public Overlay findObject(String aN) {          
-        //for (Overlay o : iOverlays)           
-        //    if (0 == o.getName().compareTo(aN)) 
-        //        return o;                                   
-        
+    public Overlay findObject(String aN) {                
         Optional<Overlay> ret = iOverlays.stream().filter((o)->{return 0 == aN.compareTo(o.getName());}).findFirst();
         
         if(ret.isPresent())

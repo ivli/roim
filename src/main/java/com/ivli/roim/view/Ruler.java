@@ -22,6 +22,7 @@ import com.ivli.roim.core.ISeries;
 import com.ivli.roim.core.ISeriesProvider;
 import com.ivli.roim.core.Measurement;
 import com.ivli.roim.core.Scalar;
+import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -47,7 +48,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
     }
     
     Ruler(IImageView aV, Handle aB, Handle aE) {         
-        super(aV, aV.getFrameNumber(), makeShape(aB.getPos(), aE.getPos()), null);  
+        super(aV, aV.getFrameNumber(), makeShape(aB.getPos(), aE.getPos()), "Ruler" + Uid.getNext(Ruler.class));  
         iBegin = new Tick(aB.getPos());
         iEnd = new Tick(aE.getPos());        
         //iShape = makeShape(aB.getPos(), aE.getPos());

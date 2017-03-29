@@ -30,9 +30,8 @@ public class Handle extends Overlay {
     Point2D iPos;
     
     Handle(Point2D aP) {
-        super(null, null);
-        iPos = aP;
-        iShape = new Rectangle2D.Double(aP.getX() - 1, aP.getY() - 1, 2, 2);
+        super(new Rectangle2D.Double(aP.getX() - 1, aP.getY() - 1, 2, 2), "Handle" + Uid.getNext(Handle.class));
+        iPos = aP;   
     }
     
     public Point2D getPos() {return iPos;}

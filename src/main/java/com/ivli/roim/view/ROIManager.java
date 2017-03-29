@@ -81,7 +81,7 @@ public class ROIManager extends OverlayManager {
     
     public void createSurrogateRoi(BinaryOp anOp) {    
         ROI surrogate = new ROI(new Rectangle(), 
-                                "SURROGATE_" + ((ConcreteOperand)anOp.getLhs()).getROI().toString() + ":" + ((ConcreteOperand)anOp.getRhs()).getROI().toString(), 
+                                ((ConcreteOperand)anOp.getLhs()).getROI().getName() + anOp.getOp().getOperationChar() + ((ConcreteOperand)anOp.getRhs()).getROI().getName(), 
                                 null) {
             ROI iLhs = ((ConcreteOperand)anOp.getLhs()).getROI();
             ROI iRhs = ((ConcreteOperand)anOp.getRhs()).getROI();            
