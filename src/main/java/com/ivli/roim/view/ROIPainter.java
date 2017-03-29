@@ -99,11 +99,11 @@ public class ROIPainter extends AbstractPainter {
         }
     }
   
-    static void drawRotate(Graphics2D g2d, double x, double y, double angle, String text){         
+    static void drawRotate(Graphics2D g2d, double x, double y, double angleRadians, String text){         
         g2d.translate((float)x,(float)y);
-        g2d.rotate(angle);//Math.toRadians(angle));
+        g2d.rotate(angleRadians);
         g2d.drawString(text,0,0);
-        g2d.rotate(-angle);///Math.toRadians(angle));
+        g2d.rotate(-angleRadians);
         g2d.translate(-(float)x,-(float)y);
     } 
     
@@ -140,7 +140,7 @@ public class ROIPainter extends AbstractPainter {
         final double angle = Math.atan(-(beg.getY() - end.getY())/(end.getX() - beg.getX()));                 
         final double len = iGC.getFont().getStringBounds(text, iGC.getFontRenderContext()).getWidth();        
         final double x = beg.getX() + ((end.getX() - beg.getX()) / 2.0 - (len / 2.0) * Math.cos(angle));               
-        final double y  = -((beg.getY() - end.getY()) * x + (beg.getX()*end.getY() - end.getX()*beg.getY())) / (end.getX()- beg.getX()); 
+        final double y  = -((beg.getY() - end.getY()) * x + (beg.getX() * end.getY() - end.getX() * beg.getY())) / (end.getX() - beg.getX()); 
                 
         drawRotate(iGC, x, y, angle, text);
     }   
@@ -151,7 +151,7 @@ public class ROIPainter extends AbstractPainter {
     private static final Color   TICK_COLOR  = Color.YELLOW;
 
     @Override
-    public void paint(Ruler.Tick aO) {                        
+    public void paint(Tick aO) {                        
         Rectangle2D temp = iView.virtualToScreen().createTransformedShape(new Rectangle2D.Double(aO.getPos().getX(), aO.getPos().getY(), 1, 1)).getBounds2D(); 
         
         Shape tick;

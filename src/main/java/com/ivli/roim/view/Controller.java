@@ -267,7 +267,7 @@ class Controller implements IController {
         final Overlay r = findActionTarget(e.getPoint());
 
         if (null != r ) { 
-            if (r.isMovable())            
+            if (0 !=(r.getStyles()&Overlay.OVL_MOVEABLE))            
                 e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));                
         } else {               
             e.getComponent().setCursor(Cursor.getDefaultCursor());
@@ -480,13 +480,13 @@ class Controller implements IController {
     }
        
     void buildBaseObjectsMenu(JPopupMenu mnu) {
-        if (!iSelected.isPermanent()) {
+        if (0 != (iSelected.getStyles() & Overlay.OVL_PERMANENT)) {
             JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.DELETE"));
             mi11.addActionListener(this);
             mi11.setActionCommand(KCommandRoiDelete);
             mnu.add(mi11);
         }      
-        if (iSelected.isCloneable()) {
+        if (0 != (iSelected.getStyles() & Overlay.OVL_CLONEABLE)) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CLONE"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiClone); 

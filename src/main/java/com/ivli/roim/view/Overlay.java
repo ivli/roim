@@ -25,7 +25,6 @@ import java.awt.geom.AffineTransform;
 import javax.swing.event.EventListenerList;
 import com.ivli.roim.events.OverlayChangeListener;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import javax.swing.JMenuItem;
 
@@ -40,7 +39,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     protected String  iName;
     protected boolean iSelected = false;
     protected boolean iPinned = false;
-    protected boolean iVisible = true;
+    protected boolean iShown = true;
     
     private final transient EventListenerList iListeners;        
             
@@ -70,7 +69,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     }
     
     public void pin(boolean aPin) {
-        if (isPinnable())           
+        if (0 != (getStyles() & OVL_PINNABLE))           
             notify(OverlayChangeEvent.CODE.PINNED, iPinned = aPin);        
     }
     
@@ -79,7 +78,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     }
   
     public void select(boolean aE) {
-        if (isSelectable()) 
+        if (0 != (getStyles() & OVL_SELECTABLE)) 
             notify(OverlayChangeEvent.CODE.SELECTED, iSelected = aE);
     }
     
@@ -88,18 +87,33 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     }
     
     public boolean isShown() {
-        return iVisible;
+        return iShown;
     }
     
     public void show(boolean aV) {
-        iVisible = aV;
+        iShown = aV;
     }
     
-    public abstract boolean isSelectable();
-    public abstract boolean isMovable();   
-    public abstract boolean isPermanent(); 
-    public abstract boolean isCloneable(); 
-    public abstract boolean isPinnable();  
+    public final static int OVL_VISIBLE    = 0x1 << 1;
+    public final static int OVL_MOVEABLE   = 0x1 << 2;
+    public final static int OVL_SELECTABLE = 0x1 << 3;
+    public final static int OVL_CLONEABLE  = 0x1 << 4;
+    public final static int OVL_PINNABLE   = 0x1 << 5;
+    public final static int OVL_PERMANENT  = 0x1 << 6;
+    
+    public final static int OVL_DEFAULT = OVL_VISIBLE|OVL_MOVEABLE|OVL_SELECTABLE|OVL_CLONEABLE|OVL_PINNABLE;
+    
+    ///protected final int iStyles;
+    //public void setStyles(int aS) {iStyles = aS;}
+    public int getStyles() {return OVL_DEFAULT;}
+    
+    ///public abstract boolean isPinnable();        
+    ///public abstract boolean isSelectable();
+    ///public abstract boolean isMovable();   
+    ///public abstract boolean isPermanent(); 
+    ///public abstract boolean isCloneable(); 
+    ///public abstract boolean isVisible();  
+    
    
     abstract void update(OverlayManager aM);          
     abstract void paint(AbstractPainter aP);  
@@ -144,6 +158,14 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
             l.OverlayChanged(evt);
     }
        
+    @Override
+    public void OverlayChanged(OverlayChangeEvent anEvt) {}
+           
+    @Override
+    public String toString() {
+        return getClass().getName() + ":" + getName();
+    }
+    /**************************************/
     @FunctionalInterface
     interface ICanFlip {
         public void flip(boolean aVertical);
@@ -153,12 +175,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     interface ICanRotate {
         public void rotate(double anAngle);       
     }
-    
-    @FunctionalInterface
-    interface ICanIso {
-        public boolean convertToIso(int aTolerance);
-    }
-    
+          
     @FunctionalInterface
     public interface IHaveConfigDlg {
         public boolean showDialog(Object aVoidStar);  
@@ -169,10 +186,5 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
         public boolean handleCustomCommand(final String aCommand);
     }
     
-    @Override
-    public void OverlayChanged(OverlayChangeEvent anEvt) {}
-           
-    public String toString() {
-        return getClass().getName() + ":" + getName();
-    }
+   
 }

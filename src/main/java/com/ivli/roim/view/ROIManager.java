@@ -95,7 +95,9 @@ public class ROIManager extends OverlayManager {
             }
             
             @Override
-            public boolean isSelectable(){return false;}
+            public int getStyles() {
+                return OVL_VISIBLE|OVL_MOVEABLE;
+            }
             @Override
             public boolean contains(Point2D aNotUsed){return false;}
             @Override

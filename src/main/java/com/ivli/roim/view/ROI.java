@@ -139,7 +139,7 @@ public class ROI extends Overlay implements ISeriesProvider, Overlay.ICanFlip, O
     public ArrayList<JMenuItem> makeCustomMenu(Object aVoidStar) {
         ArrayList<JMenuItem> mnu = new ArrayList<>();
               
-        if (isPinnable()) {
+        if (0!=(getStyles() & OVL_PINNABLE)) {
             JCheckBoxMenuItem mi = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PIN"));            
             mi.setState(isPinned());
             
@@ -164,12 +164,12 @@ public class ROI extends Overlay implements ISeriesProvider, Overlay.ICanFlip, O
             mi.setActionCommand(KCommandRoiRotate90CCW);
             mnu.add(mi);
         }
-         
+        /* 
         if (this instanceof Overlay.ICanIso) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CONVERT_TO_ISO"));            
             mi.setActionCommand(KCommandRoiConvertToIso);
             mnu.add(mi);           
-        }    
+        } */   
         return mnu;
     }
 
@@ -197,35 +197,10 @@ public class ROI extends Overlay implements ISeriesProvider, Overlay.ICanFlip, O
                
                 break;
             case KCommandRoiConvertToIso:
-                ((Overlay.ICanIso)this).convertToIso(0);
+                //((Overlay.ICanIso)this).convertToIso(0);
                 
                 ;break;
         }
-        return true;
-    }
-
-    @Override
-    public boolean isSelectable() {
-         return true;
-    }
-
-    @Override
-    public boolean isMovable() {
-        return true;
-    }
-
-    @Override
-    public boolean isPermanent() {
-        return false;
-    }
-
-    @Override
-    public boolean isCloneable() {
-        return true;
-    }
-
-    @Override
-    public boolean isPinnable() {
         return true;
     }
 }

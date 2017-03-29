@@ -91,7 +91,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     
     public Overlay findObject(Point2D aP) {          
         for (Overlay o : iOverlays) {           
-            if (o.isSelectable() && o.contains(aP)) 
+            if (0 != (o.getStyles() & Overlay.OVL_SELECTABLE) && o.contains(aP)) 
                 return o;                                   
         }
         

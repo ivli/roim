@@ -37,31 +37,11 @@ public class Handle extends Overlay {
     
     public Point2D getPos() {return iPos;}
     
-    @Override
-    public boolean isSelectable() {
-        return true;
+    public int getStyles() {
+    
+    return OVL_MOVEABLE|OVL_SELECTABLE;
     }
-
-    @Override
-    public boolean isMovable() {
-       return true;
-    }
-
-    @Override
-    public boolean isPermanent() {
-       return false;
-    }
-
-    @Override
-    public boolean isCloneable() {
-       return false;
-    }
-
-    @Override
-    public boolean isPinnable() {
-       return false;
-    }
-
+  
     @Override
     void update(OverlayManager aRM) {        
     }

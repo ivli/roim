@@ -62,12 +62,10 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
     }
           
     @Override
-    void paint(AbstractPainter aP) {   
-        //if (aP.getView() == getView()) {
-            aP.paint(this);    
-            aP.paint(this.iBegin);
-            aP.paint(this.iEnd);
-        //}
+    void paint(AbstractPainter aP) {           
+        aP.paint(this);    
+        aP.paint(this.iBegin);
+        aP.paint(this.iEnd);   
     } 
       
     @Override
@@ -76,13 +74,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
         double deltaY = aP.getY() * .01;                
         return getShape().intersects(new Rectangle2D.Double(aP.getX() - deltaX, aP.getY() - deltaY, 2*deltaX, 2*deltaY));
     }
-   /* 
-    @Override
-    public void move(double adX, double adY) {            
-        iShape = AffineTransform.getTranslateInstance(adX, adY).createTransformedShape(iShape);                            
-        notify(OverlayChangeEvent.CODE.MOVED, new double[]{adX, adY});
-    } 
-   */
+  
     @Override
     void update(OverlayManager aM) {          
         iSpacing = aM.getImage().getPixelSpacing().getX();      
@@ -121,20 +113,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
         return LIST_OF_MEASUREMENTS;
     }
     
-    class Tick {
-        Point2D iPos;
-        Tick (Point2D aP) {iPos=aP;}
-        Point2D getPos() {return iPos;}
-        
-        void move(double adX, double adY) {
-            iPos.setLocation(iPos.getX() + adX, iPos.getY() + adY);
-        }
-      
-        void paint(AbstractPainter aP) {               
-            aP.paint(this);    
-        }     
-    }
-       
+  
     Tick iBegin;
     Tick iEnd;
     
