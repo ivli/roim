@@ -91,6 +91,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
         iShown = aV;
     }
     
+    public final static int OVL_HIDDEN     = 0x0;
     public final static int OVL_VISIBLE    = 0x1 << 1;
     public final static int OVL_MOVEABLE   = 0x1 << 2;
     public final static int OVL_SELECTABLE = 0x1 << 3;

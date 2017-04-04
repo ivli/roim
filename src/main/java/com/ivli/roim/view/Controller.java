@@ -35,8 +35,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JMenu;     
 
 import com.ivli.roim.core.Window;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
+import javax.swing.JCheckBoxMenuItem;
 
 
 import org.apache.logging.log4j.LogManager;
@@ -315,6 +314,7 @@ class Controller implements IController {
     private static final String KCommandRoiCreate = "COMMAND_ROI_OPERATIONS_CREATE"; // NOI18N
     private static final String KCommandRoiDelete = "COMMAND_ROI_OPERATIONS_DELETE"; // NOI18N
     private static final String KCommandRoiClone  = "COMMAND_ROI_OPERATIONS_CLONE"; // NOI18N
+    private static final String KCommandRoiPin  = "COMMAND_ROI_OPERATIONS_PIN"; // NOI18N
     private static final String KCommandRoiMove   = "COMMAND_ROI_OPERATIONS_MOVE"; // NOI18N   
     private static final String KCommandRoiDeleteAll = "COMMAND_ROI_OPERATIONS_DELETE_ALL"; // NOI18N
    
@@ -416,13 +416,18 @@ class Controller implements IController {
                 releaseSelection(null);     
                 addSelection(c);
                 break;                       
-            
+            case KCommandRoiPin: 
+                iSelected.pin(!iSelected.isPinned());
+                iControlled.repaint();
+                break;
+                
             case KCommandRoiDeleteAll: 
                 iSelected = null; 
                 releaseSelection(null);
                 iControlled.getROIMgr().clear();
                 iControlled.repaint();
-                break;           
+                break;   
+                        
             default:               
                 if (null != iSelected && 
                     iSelected instanceof Overlay.IHaveCustomMenu &&
@@ -490,6 +495,14 @@ class Controller implements IController {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CLONE"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandRoiClone); 
+            mnu.add(mi);
+        }
+        
+        if (0 != (iSelected.getStyles() & Overlay.OVL_PINNABLE)) {
+            JCheckBoxMenuItem mi = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PIN"));            
+            mi.setState(iSelected.isPinned());
+            mi.addActionListener(this);
+            mi.setActionCommand(KCommandRoiPin); 
             mnu.add(mi);
         }
     }

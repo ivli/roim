@@ -53,6 +53,8 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         iAnnotation = new ArrayList<>();
     }
    
+   
+    
     public void setMultiline(boolean aM) {
         iMultiline = aM;
         notify(OverlayChangeEvent.CODE.PRESENTATION, null);
@@ -61,7 +63,7 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     public boolean isMultiline() {
         return iMultiline;
     }
-       
+    
     public void setBordered(boolean aB) {
         iBordered = aB;
         notify(OverlayChangeEvent.CODE.PRESENTATION, null);

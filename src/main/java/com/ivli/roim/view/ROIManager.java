@@ -92,8 +92,9 @@ public class ROIManager extends OverlayManager {
             
             @Override
             public int getStyles() {
-                return OVL_VISIBLE|OVL_MOVEABLE;
+                return OVL_HIDDEN;
             }
+            
             @Override
             public boolean contains(Point2D aNotUsed){return false;}
             @Override

@@ -130,7 +130,7 @@ public class ROI extends Overlay implements ISeriesProvider, Overlay.ICanFlip, O
         iShape = tx.createTransformedShape(iShape);
     }         
 
-    private static final String KCommandRoiPin  = "COMMAND_ROI_OPERATIONS_PIN"; // NOI18N    
+    ///private static final String KCommandRoiPin  = "COMMAND_ROI_OPERATIONS_PIN"; // NOI18N    
     private static final String KCommandRoiFlipVert  = "COMMAND_ROI_OPERATIONS_FLIP_V"; // NOI18N
     private static final String KCommandRoiFlipHorz  = "COMMAND_ROI_OPERATIONS_FLIP_H"; // NOI18N
     private static final String KCommandRoiRotate90CW   = "COMMAND_ROI_OPERATIONS_ROTATE_90_CW"; // NOI18N
@@ -141,13 +141,7 @@ public class ROI extends Overlay implements ISeriesProvider, Overlay.ICanFlip, O
     public ArrayList<JMenuItem> makeCustomMenu(Object aVoidStar) {
         ArrayList<JMenuItem> mnu = new ArrayList<>();
               
-        if (0!=(getStyles() & OVL_PINNABLE)) {
-            JCheckBoxMenuItem mi = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PIN"));            
-            mi.setState(isPinned());
-            
-            mi.setActionCommand(KCommandRoiPin); 
-            mnu.add(mi);
-        }
+        
 
         if (this instanceof Overlay.ICanFlip) {
             JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_HORZ"));           
@@ -166,42 +160,26 @@ public class ROI extends Overlay implements ISeriesProvider, Overlay.ICanFlip, O
             mi.setActionCommand(KCommandRoiRotate90CCW);
             mnu.add(mi);
         }
-        /* 
-        if (this instanceof Overlay.ICanIso) {
-            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.CONVERT_TO_ISO"));            
-            mi.setActionCommand(KCommandRoiConvertToIso);
-            mnu.add(mi);           
-        } */   
+       
         return mnu;
     }
 
     @Override
     public boolean handleCustomCommand(String aCommand) {
         switch(aCommand) {
-        case KCommandRoiPin: 
-                pin(!isPinned());
-                break;
             
             case KCommandRoiFlipHorz:
-                ((Overlay.ICanFlip)this).flip(false);
-                
-                break;
+                ((Overlay.ICanFlip)this).flip(false);                
+                break;                
             case KCommandRoiFlipVert:
-                ((Overlay.ICanFlip)this).flip(true);
-                
-                break;
+                ((Overlay.ICanFlip)this).flip(true);                
+                break;                
             case KCommandRoiRotate90CW:
-                ((Overlay.ICanRotate)this).rotate(90);
-               
-                break;
+                ((Overlay.ICanRotate)this).rotate(90);               
+                break;                
             case KCommandRoiRotate90CCW:
-                ((Overlay.ICanRotate)this).rotate(-90);
-               
-                break;
-            case KCommandRoiConvertToIso:
-                //((Overlay.ICanIso)this).convertToIso(0);
-                
-                ;break;
+                ((Overlay.ICanRotate)this).rotate(-90);               
+                break;            
         }
         return true;
     }
