@@ -25,7 +25,6 @@ import com.ivli.roim.core.Scalar;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -63,7 +62,11 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
     }
           
     @Override
-    void paint(AbstractPainter aP) {           
+    public int getStyles() {
+        return OVL_VISIBLE|OVL_MOVEABLE|OVL_SELECTABLE|OVL_PINNABLE|OVL_HAVE_MENU; 
+    }
+    @Override
+    public void paint(AbstractPainter aP) {           
         aP.paint(this);    
         aP.paint(this.iBegin);
         aP.paint(this.iEnd);   
@@ -77,7 +80,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
     }
   
     @Override
-    void update(OverlayManager aM) {          
+    public void update(OverlayManager aM) {          
         iSpacing = aM.getImage().getPixelSpacing().getX();      
     }       
    

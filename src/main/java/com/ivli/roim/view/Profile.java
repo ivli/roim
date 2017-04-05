@@ -27,7 +27,7 @@ import javax.swing.JMenuItem;
  *
  * @author likhachev
  */
-public class Profile extends ScreenObject implements Overlay.IHaveCustomMenu {      
+public class Profile extends ScreenObject {      
     private boolean    iShow = true;    
     private boolean    iNormalize = false;
     private Histogram  iHist;
@@ -38,10 +38,14 @@ public class Profile extends ScreenObject implements Overlay.IHaveCustomMenu {
         iFrame = aV.getFrame();        
         iHist = iFrame.processor().profile(iShape.getBounds()); 
     }
-          
+    
+    @Override
+    public int getStyles() {
+        return OVL_VISIBLE|OVL_MOVEABLE|OVL_SELECTABLE|OVL_PINNABLE|OVL_HAVE_MENU|OVL_HAVE_CONFIG; 
+    }
+    
     @Override
     public void paint(AbstractPainter aP) {
-//        if (aP.getView() == getView())
         aP.paint(this);
     } 
  
@@ -65,10 +69,10 @@ public class Profile extends ScreenObject implements Overlay.IHaveCustomMenu {
     public Histogram getHistogram() {
          return iHist;
     } 
+         
+    private static final String CUST_COMMAND_PROFILE_TOGGLE_SHOW = "CUST_COMMAND_PROFILE_TOGGLE_SHOW";
     
-     
-    static final String CUST_COMMAND_PROFILE_TOGGLE_SHOW = "CUST_COMMAND_PROFILE_TOGGLE_SHOW";
-    
+    @Override
     public ArrayList<JMenuItem> makeCustomMenu(Object aVoidStar) {
         JMenuItem ret = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.PROFILE_SHOW"));
         //mi11.addActionListener(this);
@@ -77,6 +81,7 @@ public class Profile extends ScreenObject implements Overlay.IHaveCustomMenu {
         return new ArrayList<JMenuItem>(){{add(ret);}};
     }    
     
+    @Override
     public boolean handleCustomCommand(final String aCommand){
         if (aCommand == CUST_COMMAND_PROFILE_TOGGLE_SHOW) {
             iShow = !iShow;
@@ -84,6 +89,4 @@ public class Profile extends ScreenObject implements Overlay.IHaveCustomMenu {
         }
         return false;
     }
-
-  
 }

@@ -41,11 +41,11 @@ public class Handle extends Overlay {
     }
   
     @Override
-    void update(OverlayManager aRM) {        
+    public void update(OverlayManager aRM) {        
     }
   
     @Override
-    void paint(AbstractPainter aP) {
+    public void paint(AbstractPainter aP) {
        // aP.paint(this);  
     }
     

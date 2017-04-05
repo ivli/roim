@@ -79,7 +79,7 @@ public class ROIManager extends OverlayManager {
         return ret;
     }
     
-    public void createSurrogateRoi(BinaryOp anOp) {    
+    public Overlay createSurrogateRoi(BinaryOp anOp) {    
         ROI surrogate = new ROI(new Rectangle(), 
                                 ((ConcreteOperand)anOp.getLhs()).getROI().getName() + anOp.getOp().getOperationChar() + ((ConcreteOperand)anOp.getRhs()).getROI().getName(), 
                                 null) {
@@ -138,6 +138,7 @@ public class ROIManager extends OverlayManager {
         surrogate.update(this);
         ////notifyROIChanged(surrogate, ROIChangeEvent.CODE.CREATED, this);  
         surrogate.addChangeListener(this);
+        return surrogate;
     }
     
     public Overlay cloneObject(Overlay aR, IImageView aV) {                 

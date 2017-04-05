@@ -35,7 +35,7 @@ import com.ivli.roim.core.IFrameProvider;
  *
  * @author likhachev
  */
-public abstract class Annotation extends ScreenObject implements OverlayChangeListener, Overlay.IHaveCustomMenu, Overlay.IHaveConfigDlg { 
+public abstract class Annotation extends ScreenObject implements OverlayChangeListener { 
     private static final Color DEFAULT_COLOR = Color.BLACK;
     private static final boolean DEFAULT_MULTILINE = true;
     private static final boolean DEFAULT_BORDER = true;
@@ -48,12 +48,14 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     protected boolean iBordered  = DEFAULT_BORDER;
        
     protected Annotation(IImageView aView, int aN, Shape aShape, String aName) {
-        super(aView, aN, aShape, aName);   
-        ///iColor = null != aC ? aC : DEFAULT_COLOR;
+        super(aView, aN, aShape, aName);          
         iAnnotation = new ArrayList<>();
     }
    
-   
+    @Override
+    public int getStyles() {
+        return OVL_VISIBLE|OVL_MOVEABLE|OVL_SELECTABLE|OVL_PINNABLE|OVL_HAVE_MENU|OVL_HAVE_CONFIG; 
+    }
     
     public void setMultiline(boolean aM) {
         iMultiline = aM;
@@ -76,7 +78,7 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
     public Color getColor() {return iColor;}
    
     @Override
-    void paint(AbstractPainter aP) {   
+    public void paint(AbstractPainter aP) {   
         aP.paint(this);    
     } 
 
@@ -151,33 +153,21 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
 
             return (String[])ret.toArray();
         }
-    
-        @Override
-        public boolean showDialog(Object anO) {
-            com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel(this);
-            javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
-
-            dialog.setContentPane(panel);
-            dialog.validate();
-            dialog.pack();
-            dialog.setResizable(false);
-            dialog.setVisible(true);
-            return true;
-    }
-        
+     
         private static final String CUST_COMMAND_ASTATIC_SHOW_DIALOG = "CUST_COMMAND_ASTATIC_SHOW_DIALOG";  
-        @Override
-        public ArrayList<JMenuItem> makeCustomMenu(Object aVoidStar) {
-            JMenuItem ret = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CUST_MNU.ASTATIC.SETUP"));        
-            ret.setActionCommand(CUST_COMMAND_ASTATIC_SHOW_DIALOG);            
-            return new ArrayList<JMenuItem>(){{add(ret);}};       
-        }   
-        
-        @Override
-        public boolean handleCustomCommand(final String aCommand) {
-            if (aCommand == CUST_COMMAND_ASTATIC_SHOW_DIALOG) {
-                showDialog(null);
-            }
+    
+    
+        public boolean showConfigDialog(Object aVoidStar) {
+            //if (aCommand == CUST_COMMAND_ASTATIC_SHOW_DIALOG) {
+                com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel(this);
+                javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
+
+                dialog.setContentPane(panel);
+                dialog.validate();
+                dialog.pack();
+                dialog.setResizable(false);
+                dialog.setVisible(true);
+            //}
             
             return false;
         }
@@ -202,23 +192,14 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
             iOverlay = aR;
         }   
             
-       @Override
+        @Override
         public void update(OverlayManager aM){
             iAnnotation.clear();            
             iAnnotation.add(iOp.format(new BaseFormatter(getView().getFrameNumber())));
         }
         
         public boolean showDialog(Object a) {return false;}
-        
-        public ArrayList<JMenuItem> makeCustomMenu(Object aVoidStar) {
-            return null;
-        }    
-        
-        //@returns true if control needs to get repainted otherwise false 
-        public boolean handleCustomCommand(final String aCommand) {
-            return false;
-        }
-            
+                                 
         @Override
         public void OverlayChanged(OverlayChangeEvent anEvt) {              
             switch (anEvt.getCode()) {
@@ -235,7 +216,6 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
                     update((OverlayManager)anEvt.getSource());                                
                     break;
             }        
-        }
-      
+        }      
     }          
 }

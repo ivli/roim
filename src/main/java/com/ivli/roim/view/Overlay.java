@@ -17,13 +17,12 @@
  */
 package com.ivli.roim.view;
 
-
-import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import javax.swing.event.EventListenerList;
 import com.ivli.roim.events.OverlayChangeListener;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import javax.swing.JMenuItem;
@@ -34,13 +33,23 @@ import javax.swing.JMenuItem;
  */
 public abstract class Overlay implements OverlayChangeListener, java.io.Serializable {  
     private static final long serialVersionUID = 42L;   
-   /// protected final transient Uid iUid;
+    public final static int OVL_HIDDEN      = 0x0;
+    public final static int OVL_VISIBLE     = 0x1 << 1;
+    public final static int OVL_MOVEABLE    = 0x1 << 2;
+    public final static int OVL_SELECTABLE  = 0x1 << 3;
+    public final static int OVL_CLONEABLE   = 0x1 << 4;
+    public final static int OVL_PINNABLE    = 0x1 << 5;
+    public final static int OVL_PERMANENT   = 0x1 << 6;   
+    public final static int OVL_HAVE_MENU   = 0x1 << 10;
+    public final static int OVL_HAVE_CONFIG = 0x1 << 11;
+    public final static int OVL_CAN_FLIP    = 0x1 << 12;
+    public final static int OVL_CAN_ROTATE  = 0x1 << 13;
+          
     protected Shape   iShape;
     protected String  iName;
     protected boolean iSelected = false;
     protected boolean iPinned = false;
-    protected boolean iShown = true;
-    
+    protected boolean iShown = true;    
     private final transient EventListenerList iListeners;        
      
     protected Overlay(Shape aShape, String aName) { 
@@ -51,7 +60,7 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
         iName  = (null != aName) ? aName : this.toString();                   
         iListeners = new EventListenerList();   
     }
-   
+       
     public void setName(String aName) {
         if (null == aName)
             throw(new IllegalArgumentException("Name cannot be null"));
@@ -91,19 +100,9 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
         iShown = aV;
     }
     
-    public final static int OVL_HIDDEN     = 0x0;
-    public final static int OVL_VISIBLE    = 0x1 << 1;
-    public final static int OVL_MOVEABLE   = 0x1 << 2;
-    public final static int OVL_SELECTABLE = 0x1 << 3;
-    public final static int OVL_CLONEABLE  = 0x1 << 4;
-    public final static int OVL_PINNABLE   = 0x1 << 5;
-    public final static int OVL_PERMANENT  = 0x1 << 6;    
-    public final static int OVL_DEFAULT = OVL_VISIBLE|OVL_MOVEABLE|OVL_SELECTABLE|OVL_CLONEABLE|OVL_PINNABLE;
-   
-    public int getStyles() {return OVL_DEFAULT;}
-  
-    abstract void update(OverlayManager aM);          
-    abstract void paint(AbstractPainter aP);  
+    public abstract int getStyles();// {return OVL_DEFAULT;}
+    public abstract void update(OverlayManager aM);          
+    public abstract void paint(AbstractPainter aP);  
     
     public Shape getShape() {
         return iShape;
@@ -148,26 +147,108 @@ public abstract class Overlay implements OverlayChangeListener, java.io.Serializ
     @Override
     public void OverlayChanged(OverlayChangeEvent anEvt) {}
    
+    
     /**************************************/
-    @FunctionalInterface
-    interface ICanFlip {
-        public void flip(boolean aVertical);
-    } 
+    private static final String CMD_SHOW_CONFIG  = "COMMAND_OVL_COMMAND_SHOW_CONFIG"; // NOI18N
+    private static final String CMD_FLIP_HORZ  = "COMMAND_ROI_OPERATIONS_FLIP_V"; // NOI18N
+    private static final String CMD_FLIP_VERT  = "COMMAND_ROI_OPERATIONS_FLIP_H"; // NOI18N
+    private static final String CMD_ROT_90CW   = "COMMAND_ROI_OPERATIONS_ROTATE_90_CW"; // NOI18N
+    private static final String CMD_ROT_90CCW  = "COMMAND_ROI_OPERATIONS_ROTATE_90_CCW"; // NOI18N
+       
+    /*
+     * if OVL_CAN_FLIP is set this method will be called to flip an object
+     * \param aVertical - true to flip vertical, false to flip horizontal
+     * \return nothing
+     */
     
-    @FunctionalInterface
-    interface ICanRotate {
-        public void rotate(double anAngle);       
+    public void flip(boolean aV) {                        
+        AffineTransform tx;
+        
+        if (aV) {
+            tx = AffineTransform.getScaleInstance(1, -1);
+            tx.translate(0, -getShape().getBounds().getHeight());
+        } else {
+            tx = AffineTransform.getScaleInstance(-1, 1);
+            tx.translate(-getShape().getBounds().getWidth(), 0);       
+        }        
+        
+        iShape = tx.createTransformedShape(iShape);                
     }
-          
-    @FunctionalInterface
-    public interface IHaveConfigDlg {
-        public boolean showDialog(Object aVoidStar);  
-    } 
-             
-    public interface IHaveCustomMenu {   
-        public ArrayList<JMenuItem> makeCustomMenu(Object aVoidStar);    
-        public boolean handleCustomCommand(final String aCommand);
-    }
+  
+    /*
+     * if OVL_CAN_ROTATE is set this method will be called to rotate an object
+     * \param anAngle - rotation angle in degrees  
+     * \return nothing
+     */     
+    public void rotate(double aV) {        
+        final Rectangle rect = getShape().getBounds();
+        AffineTransform tx = new AffineTransform();        
+        tx.rotate(Math.toRadians(aV), rect.getX() + rect.width/2, rect.getY() + rect.height/2);              
+        iShape = tx.createTransformedShape(iShape);
+    }  
     
-   
+    /*
+     * if OVL_HAVE_CONFIG is set this method will be called to edit configuration of a particular instance
+     * return true if anything changed otherwise false
+     */
+    public boolean showConfigDialog(Object aVoidStar) {
+        return false;
+    }      
+                 
+    /*
+     * if OVL_HAVE_MENU is set in styles this mehod must return non null ArrayList of 0 or more commands
+     * \param anActionListener - 
+     * \return 
+     */   
+    public ArrayList<JMenuItem> makeCustomMenu(Object anActionListener) {
+        ArrayList<JMenuItem> mnu = new ArrayList<>();
+        if (0 != (getStyles() & OVL_CAN_FLIP)) {
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_HORZ"));           
+            mi.setActionCommand(CMD_FLIP_VERT);
+            mnu.add(mi);
+            mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.FLIP_VERT"));           
+            mi.setActionCommand(CMD_FLIP_HORZ);
+            mnu.add(mi);         
+        }
+        
+        if (0 != (getStyles() & OVL_CAN_FLIP)) {
+            JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.ROTATE_90_CW"));            
+            mi.setActionCommand(CMD_ROT_90CW);
+            mnu.add(mi);
+            mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.ROTATE_90_CCW"));            
+            mi.setActionCommand(CMD_ROT_90CCW);
+            mnu.add(mi);
+        }
+       
+        if (0 != (getStyles() & OVL_HAVE_CONFIG)) {
+           JMenuItem mi = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("CUST_MNU.ASTATIC.SETUP"));        
+            mi.setActionCommand(CMD_SHOW_CONFIG);
+            mnu.add(mi);
+        }
+        return mnu;
+    }
+
+    public boolean handleCustomCommand(String aCommand) {
+        switch(aCommand) { 
+            case CMD_SHOW_CONFIG:
+                showConfigDialog(this);
+                break;
+            case CMD_FLIP_VERT:
+                flip(false);                
+                break;                
+            case CMD_FLIP_HORZ:
+                flip(true);                
+                break;                
+            case CMD_ROT_90CW:
+                rotate(90);               
+                break;                
+            case CMD_ROT_90CCW:
+                rotate(-90);               
+                break; 
+            default:
+                return false;
+        }
+        return true;
+    }
+       
 }

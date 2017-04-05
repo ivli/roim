@@ -207,8 +207,8 @@ class Controller implements IController {
                 JPopupMenu mnu = new JPopupMenu(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS")); 
                 buildBaseObjectsMenu(mnu);
 
-                if (iSelected instanceof Overlay.IHaveCustomMenu) {                   
-                    for (JMenuItem mi:((Overlay.IHaveCustomMenu)iSelected).makeCustomMenu(null)) {
+                if (0 != (iSelected.getStyles() & Overlay.OVL_HAVE_MENU)) {                   
+                    for (JMenuItem mi : iSelected.makeCustomMenu(this)) {
                        mi.addActionListener(this);
                        mnu.add(mi);                  
                     }                                                       
@@ -241,8 +241,8 @@ class Controller implements IController {
                     return false;
                 }  
                 protected boolean DoWheel(int aX) {
-                    if (iSelected instanceof Overlay.ICanRotate) {
-                        ((Overlay.ICanRotate)iSelected).rotate(aX);
+                    if (0 != (iSelected.getStyles()& Overlay.OVL_CAN_ROTATE)) {
+                        iSelected.rotate(aX);
                         iControlled.repaint();
                     }
                     return true;
@@ -430,8 +430,8 @@ class Controller implements IController {
                         
             default:               
                 if (null != iSelected && 
-                    iSelected instanceof Overlay.IHaveCustomMenu &&
-                    ((Overlay.IHaveCustomMenu)iSelected).handleCustomCommand(aCommand.getActionCommand()))
+                    0 != (iSelected.getStyles() & Overlay.OVL_HAVE_MENU) &&
+                    iSelected.handleCustomCommand(aCommand.getActionCommand()))
                         iControlled.repaint();               
                 break;
         }
