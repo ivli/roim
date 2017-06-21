@@ -36,9 +36,7 @@ class GridViewController extends Controller {
     }
 
     @Override
-    JPopupMenu buildContextPopupMenu() {
-        GridImageView v = (GridImageView)iControlled;
-
+    JPopupMenu buildContextPopupMenu() {      
         JPopupMenu mnu = new JPopupMenu("MNU_CONTEXT_GRIDVIEW"); 
         {                   
             {
@@ -51,7 +49,7 @@ class GridViewController extends Controller {
             JCheckBoxMenuItem mi = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_CONTEXT_GRIDVIEW.SHOW_FRAME_NUMBERS"));
             mi.addActionListener(this);
             mi.setActionCommand(KCommandShowFrameNumbers); 
-            mi.setState(v.isShowFrames());
+            mi.setState(((GridImageView)iControlled).isShowFrames());
             mnu.add(mi);
             }                                         
         }

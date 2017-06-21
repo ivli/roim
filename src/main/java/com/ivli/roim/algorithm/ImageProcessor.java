@@ -137,7 +137,11 @@ public class ImageProcessor {
         //         .parallel()
         //         .forEach(i -> iImage.get(i).processor().rotate(anAngle));
     }      
-        
+    
+    public IMultiframeImage collapse() {
+        return collapse(IFrameProvider.FIRST, IFrameProvider.LAST);
+    }
+
     public IMultiframeImage collapse(int aFrom, int aTo) {      
         if (aTo == IFrameProvider.LAST)
             aTo = iImage.getNumFrames() - 1;

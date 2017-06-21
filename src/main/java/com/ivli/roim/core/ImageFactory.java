@@ -30,8 +30,10 @@ public class ImageFactory {
     public static IMultiframeImage create(final String aFullPath, ProgressListener aPL) { 
         try {
             IImageProvider provider = ImageProviderFactory.create(aFullPath, aPL);        
-            return MultiframeImage.create(provider);
-        } catch (IOException ex) {
+            IMultiframeImage ret = MultiframeImage.create(provider);   
+            ret.getNumFrames();
+            return ret;            
+        } catch (IOException | RuntimeException ex) {
             LOG.debug(ex);
             return null;
         }

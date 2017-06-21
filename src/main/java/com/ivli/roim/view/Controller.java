@@ -141,13 +141,14 @@ class Controller implements IController {
         }        
     }  
     
-    protected IImageView iControlled;    
-    private ActionItem iAction;   
-    private Overlay iSelected;
-    private ActionItem iWheel;
+    protected final IImageView iControlled;    
+    private  ActionItem iAction;   
+    private  Overlay    iSelected;
+    private  ActionItem iWheel;
     
-    public Controller(IImageView aC) {       
-        iControlled = aC;        
+        
+    public Controller(IImageView aView) {       
+        iControlled = aView;        
         iWheel = NewAction(iWheelAction, 0, 0);       
     }
 

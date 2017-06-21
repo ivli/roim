@@ -31,46 +31,40 @@ import com.ivli.roim.events.ProgressListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
-
 
 /**
  *
  * @author likhachev
  */
 public class DirectoryBuilder  {
-    private ProgressListener iPL;
-    
-    public DirectoryBuilder(ProgressListener aPL) {
-        iPL = aPL;
-    }
-                
-    public IImageProvider build(final String aDir, Modality aM) throws IOException {
-        if (null != iPL)
-            iPL.ProgressChanged(new ProgressEvent(this, 0));
+       
+    public static IImageProvider build(final String aDir, ProgressListener aPL) throws IOException {
+        
+        if (null != aPL)
+            aPL.ProgressChanged(new ProgressEvent(null, 0));
         
         File dir = new File(aDir); 
         
-        if (!dir.isDirectory()) {
-            throw new UnsupportedOperationException("Not supported yet.");        
-        }
-      
+        if (!dir.isDirectory()) 
+            throw new IllegalArgumentException("Input not a directory");        
+             
         File[] lst = dir.listFiles();
         ArrayList<String> sa = new ArrayList<>();
         
         int step = 0;
-       
+        Modality m = null;
+        
         for (File fi:lst) {         
             try{
                 DCMImageProvider dc = new DCMImageProvider(fi);
 
-                if (null == aM) 
-                    aM = dc.getModality();
+                if (null == m) 
+                    m = dc.getModality();
 
-                if (null != iPL) 
-                    iPL.ProgressChanged(new ProgressEvent(this, (int)((double)step++ * 100./(double)lst.length))); //ugly but workin'            
+                if (null != aPL) 
+                    aPL.ProgressChanged(new ProgressEvent(null, (int)((double)step++ * 100./(double)lst.length))); //ugly but workin'            
 
-                if (dc.getModality() == aM)
+                if (dc.getModality() == m)
                     sa.add(fi.getAbsolutePath());
                 
             } catch (IOException ex){
@@ -196,10 +190,12 @@ public class DirectoryBuilder  {
             }
 
         };
-        if (null != iPL)
-            iPL.ProgressChanged(new ProgressEvent(this, 100));
+        if (null != aPL)
+            aPL.ProgressChanged(new ProgressEvent(null, 100));
         return ret;
     }
+        
+    private DirectoryBuilder (){} 
     
-     private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }

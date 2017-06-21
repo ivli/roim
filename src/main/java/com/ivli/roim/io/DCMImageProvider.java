@@ -70,16 +70,16 @@ class DCMImageProvider implements IImageProvider {
     private final Attributes iDataSet;               
     private final String iFileName;
     
-    protected DCMImageProvider(final String aFile) throws IOException {
+       
+    DCMImageProvider(final String aFile) throws IOException {
         File f = new File(iFileName = aFile);
         DicomInputStream dis = new DicomInputStream(f);
         iDataSet = dis.readDataset(-1, -1);   
         iReader = installImageReader();
-        iReader.setInput(ImageIO.createImageInputStream(f));  
-       
+        iReader.setInput(ImageIO.createImageInputStream(f));         
     }
     
-    protected DCMImageProvider(final File aFile) throws IOException {  
+    DCMImageProvider(final File aFile) throws IOException {  
         iFileName = aFile.getAbsolutePath();
         iDataSet = new DicomInputStream(aFile).readDataset(-1, -1);                  
     }
@@ -88,6 +88,7 @@ class DCMImageProvider implements IImageProvider {
         return iFileName;
     }
     
+    @Override
     public String dumpFileInformation() {        
         StringBuilder sb = new StringBuilder();
         sb.append("\n-----------------------------------");
@@ -111,10 +112,12 @@ class DCMImageProvider implements IImageProvider {
         return sb.substring(0);
     }
     
+    @Override
     public Modality getModality() {        
         return Modality.create(iDataSet.getString(Tag.Modality));
     }
     
+    @Override
     public Photometric getPhotometric() {
         Object o = iDataSet.getValue(Tag.PhotometricInterpretation);        
         
@@ -127,14 +130,17 @@ class DCMImageProvider implements IImageProvider {
         return Photometric.UNKNOWN;
     }
         
+    @Override
     public int getWidth() {        
         return iDataSet.getInt(Tag.Columns, 0);        
     }
 
+    @Override
     public int getHeight() {       
         return iDataSet.getInt(Tag.Rows, 0);
     }
    
+    @Override
     public int getNumFrames() {     
         switch (getModality()) {
             case NM:        
@@ -147,11 +153,13 @@ class DCMImageProvider implements IImageProvider {
         }
     }
      
+    @Override
     public ImageDataType getImageDataType() {
         return ImageDataType.GRAYS32;
     }
     
     //TODO: dcm4chee applies this transform to image data before ??? 
+    @Override
     public ModalityTransform getRescaleTransform() { 
         /*
         double  s = iDataSet.getDouble(Tag.RescaleSlope, 1.);   
@@ -161,6 +169,7 @@ class DCMImageProvider implements IImageProvider {
         return ModalityTransform.DEFAULT;
     }
      
+    @Override
     public int[] readFrame(int anIndex, int[] aBuffer) throws IndexOutOfBoundsException, IOException {        
         final int w = getWidth();
         final int h = getHeight();  
@@ -173,10 +182,11 @@ class DCMImageProvider implements IImageProvider {
         return iReader.readRaster(anIndex, readParam()).getSamples(0, 0, w, h, 0, aBuffer);       
     }
 
+    @Override
     public TimeSliceVector getTimeSliceVector() {
         ArrayList<PhaseInformation> phases = new ArrayList();
 
-        Sequence pid = (Sequence) iDataSet.getValue(Tag.PhaseInformationSequence);
+        Sequence pid = (Sequence)iDataSet.getValue(Tag.PhaseInformationSequence);
 
         if (null != pid) {
             for (Attributes a : pid) {

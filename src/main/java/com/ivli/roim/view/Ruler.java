@@ -65,6 +65,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
     public int getStyles() {
         return OVL_VISIBLE|OVL_MOVEABLE|OVL_SELECTABLE|OVL_PINNABLE|OVL_HAVE_MENU; 
     }
+    
     @Override
     public void paint(AbstractPainter aP) {           
         aP.paint(this);    

@@ -68,23 +68,24 @@ public class ImageView extends JComponent implements IImageView {
     
     protected BufferedImage iBuf2; //pre processed image of original size       
     protected BufferedImage iBuf;  //offscreen buffer made of a iBuf2 after zoom and pan   
-        
   
     private final EventListenerList iListeners; //
    
-    public static ImageView create(IMultiframeImage aI, ViewMode aMode) {        
-        return create(aI, aMode, new ROIManager(aI));    
+    public enum VIEWMODE {
+        IMAGE,
+        CINE,
+        TOMO,
     }
-        
-    public static ImageView create(IMultiframeImage aI, ViewMode aMode, ROIManager aM) {
+       
+    public static ImageView create(IMultiframeImage aI, ROIManager aM) {
         ImageView ret = new ImageView();
         ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         ret.setFit(ImageView.ZoomFit.VISIBLE);
         ret.setController(new Controller(ret));
-        ret.iMgr = aM;
+        ret.iMgr = null != aM ? aM : ROIManager.create(aI);
         
         ret.setImage(aI);
-        ret.setViewMode(aMode);         
+             
         ret.addComponentListener(new ComponentListener() {    
             @Override
             public void componentResized(ComponentEvent e) {
@@ -125,50 +126,6 @@ public class ImageView extends JComponent implements IImageView {
         addMouseMotionListener(iController);
         addMouseWheelListener(iController);
         addKeyListener(iController);
-    }
-    
-    protected ViewMode iMode = ViewMode.DEFAULT;
-        
-    public void setViewMode(ViewMode aM) {
-        if (null != aM && aM.isCompatible(iModel) && aM != ViewMode.DEFAULT_IMAGE_MODE) {
-            iMode = aM;
-        } else {
-            /*
-            switch (iModel.getImageType()) {
-                case IMAGE:            
-                case STATIC:    
-                case WHOLEBODY:
-                    iMode = DEFAULT_STATIC_IMAGE_MODE; break;
-                case DYNAMIC: 
-                case GATED: 
-                    iMode = DEFAULT_DYNAMIC_IMAGE_MODE; break;
-                case TOMO:
-                case TOMO_G://TODO: not reconstructed image
-                case VOLUME:
-                case VOLUME_G:
-                    iMode = DEFAULT_TOMO_IMAGE_MODE; break;
-                //CR/CT
-                case AXIAL:
-                case LOCALIZER:
-                case UNKNOWN:  
-            }*/
-        } 
-        
-        switch (iMode.iType) {        
-            case DEFAULT:
-            case FRAME:
-            case CINE: 
-            case RANGE: break;
-            case COMPOSITE:
-                setImage(iModel.processor().collapse(aM.iFrameFrom, aM.iFrameTo)); break;
-            case SLICE: //TODO:
-                break;
-            case VOLUME: {
-               // MIPProjector prj = new MIPProjector(getImage(), getImage().getNumFrames());
-               // setImage(prj.getDst());
-               // prj.project();
-            } break;
-        }
     }
     
     @Override

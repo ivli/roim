@@ -68,8 +68,8 @@ public class ROITableModel extends DefaultTableModel {
                                 };
     
    
-    private static final boolean DEFAULT_PRIVILEGES_READONLY[] = {false,false, false,false,false,false};    
-    private static final boolean DEFAULT_PRIVILEGES_EDITABLE[] = {false, true,true,false,false,true};  
+    private static final boolean DEFAULT_PRIVILEGES_READONLY[] = {false, false, false,false, false, false};    
+    private static final boolean DEFAULT_PRIVILEGES_EDITABLE[] = {false, true,  true, false, false, true };  
           
     private final boolean iEditable;
     

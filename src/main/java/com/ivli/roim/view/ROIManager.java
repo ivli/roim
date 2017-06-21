@@ -44,8 +44,12 @@ import org.apache.logging.log4j.Logger;
 public class ROIManager extends OverlayManager {                            
     private static final boolean CREATE_ANNOTATIONS_FOR_ROIS = true;
     private static final boolean CREATE_ANNOTATIONS_FOR_RULER = false;
-           
-    public ROIManager(IMultiframeImage anImage) {
+    
+    public static ROIManager create(IMultiframeImage anImage) {
+        return new ROIManager(anImage);    
+    }
+    
+    private ROIManager(IMultiframeImage anImage) {
         super (anImage);    
     }
           

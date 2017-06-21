@@ -130,7 +130,7 @@ public class VIEWER extends javax.swing.JFrame {
         jPanel1.removeAll();
 
         IMultiframeImage dcm = ImageFactory.create(aFileName, null);                                 
-        ImageView image = ImageView.create(dcm, ViewMode.DEFAULT_IMAGE_MODE);                    
+        ImageView image = ImageView.create(dcm, null);                    
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(image, BorderLayout.CENTER);  
         LUTControl lc = LUTControl.create(image);

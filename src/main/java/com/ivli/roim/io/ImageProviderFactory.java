@@ -31,15 +31,15 @@ public class ImageProviderFactory {
     //TODO: implement here a logic of finding a provider according to image file type (file extension???) 
     public static IImageProvider create(final String aFullPath, ProgressListener aPL) throws IOException {
         IImageProvider ret; 
+        
         if (new File(aFullPath).isDirectory()) {            
-            ret = new DirectoryBuilder(aPL).build(aFullPath, null);
+            ret = DirectoryBuilder.build(aFullPath, aPL);
         } else { 
             ret = new DCMImageProvider(aFullPath);        
         }
         
-        LOG.info(ret.dumpFileInformation());
+        org.apache.logging.log4j.LogManager.getLogger().info(ret.dumpFileInformation());
         
         return ret;
-    }
-    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
+    }    
 }

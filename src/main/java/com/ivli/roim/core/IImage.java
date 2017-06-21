@@ -52,17 +52,20 @@ public interface IImage {
     ImageType getImageType();
     /**
      *
-     * @return pixel physical dimensions in mm
+     * @return pixel physical dimensions in mm 
+     * @see PixelSpacing
      */
     PixelSpacing getPixelSpacing();  
     /**
      *
-     * @return  physical slice thickness 
+     * @return  physical slice thickness (makes sense only for 3D images)
+     * @see SliceSpacing
      */
     SliceSpacing getSliceSpacing();    
     /**
      *
-     * @return  an instance of TimeSliceVector class carrying all temporal characteristics of the image 
+     * @return  an instance of TimeSliceVector class carrying image's temporal characteristics       
+     * @see TimeSliceVector
      */
     TimeSliceVector getTimeSliceVector();            
     /**
@@ -78,16 +81,19 @@ public interface IImage {
     /**
      *
      * @return rescale or PV-transform   
+     * @see ModalityTransform
      */
     ModalityTransform getRescaleTransform();        
     /**
      *
-     * @return image photometric interpretation   
+     * @return image photometric interpretation 
+     * @see Photometric
      */
-    public Photometric getPhotometric();
+    Photometric getPhotometric();
     /**
      *
-     * @return image modality   
+     * @return image modality  
+     * @see Modality
      */
-    public Modality getModality();
+    Modality getModality();
 }

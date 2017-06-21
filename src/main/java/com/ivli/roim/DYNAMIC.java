@@ -43,10 +43,8 @@ import com.ivli.roim.core.TimeSlice;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
 import com.ivli.roim.events.*;
-import com.ivli.roim.view.ImageViewGroup;
+import com.ivli.roim.view.ROIManager;
 import com.ivli.roim.view.Settings;
-import com.ivli.roim.view.ViewMode;
-import java.awt.Frame;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -59,8 +57,9 @@ import org.apache.logging.log4j.Logger;
 public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChangeListener, ZoomChangeListener, ProgressListener {     
    
     private ChartView  iChart; 
-    private ImageViewGroup iGroup;
-    
+    private ImageView  iView1;
+    private ImageView  iView2;
+    private ROIManager iMgr;
     /**/
     private static final void adjustLAF() {
         if (Locale.getDefault().equals(new Locale("ru", "RU"))) { //NOI18N
@@ -404,23 +403,23 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         
     private void initPanels(IMultiframeImage anImage, String aROILIST) {       
         jPanel1.removeAll();
-        jPanel3.removeAll();
-      //  jPanel4.removeAll();
+        jPanel3.removeAll();      
         jPanel5.removeAll();       
        
-        iGroup = ImageViewGroup.create(anImage);       
+        iMgr = ROIManager.create(anImage);       
         
-        ImageView image = iGroup.createView(ViewMode.DEFAULT_IMAGE_MODE); //ImageView.create(mi, root);                       
+        iView1 = ImageView.create(anImage, iMgr);  
+        
         jPanel1.setLayout(new BorderLayout());
-        jPanel1.add(image, BorderLayout.CENTER);
-        jPanel1.add(LUTControl.create(image), BorderLayout.LINE_END);
-        jPanel1.add(FrameControl.create(image), BorderLayout.PAGE_END);
+        jPanel1.add(iView1, BorderLayout.CENTER);
+        jPanel1.add(LUTControl.create(iView1), BorderLayout.LINE_END);
+        jPanel1.add(FrameControl.create(iView1), BorderLayout.PAGE_END);
         jPanel1.validate(); 
         
         if (anImage.getNumFrames() > 1) {
-            ImageView sumView = iGroup.createView(ViewMode.DEFAULT_COMPOSITE_IMAGE_MODE); //ImageView.create(sum, root);
-            jPanel3.add(sumView, BorderLayout.CENTER);
-            jPanel3.add(LUTControl.create(sumView), BorderLayout.LINE_END);
+            iView2 = ImageView.create(anImage.processor().collapse(), iMgr); 
+            jPanel3.add(iView2, BorderLayout.CENTER);
+            jPanel3.add(LUTControl.create(iView2), BorderLayout.LINE_END);
             jPanel3.validate(); 
             jPanel3.setVisible(true);
             jTabbedPane1.setEnabledAt(1, true);            
@@ -433,7 +432,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
             iChart = ChartView.create();                    
             iChart.setPreferredSize(jPanel5.getPreferredSize());
             jPanel5.add(iChart);      
-            iGroup.addROIChangeListener(iChart);          
+            iMgr.addChangeListener(iChart);          
             jPanel5.setVisible(true);
             jPanel5.setSize(jPanel5.getPreferredSize());
             jSplitPane1.setDividerLocation(400);
@@ -453,16 +452,16 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         
         if (aROILIST != null) {
             try {
-                iGroup.getROIMgr().internalize(new ObjectInputStream(new FileInputStream(aROILIST)));
+                iMgr.internalize(new ObjectInputStream(new FileInputStream(aROILIST)));
             } catch (IOException | ClassNotFoundException ex) {
                 LOG.throwing(ex);
                 JOptionPane.showMessageDialog(this, "Unable to open file", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         }
         
-        image.addFrameChangeListener(this);        
-        image.addWindowChangeListener(this);
-        image.addZoomChangeListener(this);
+        iView1.addFrameChangeListener(this);        
+        iView1.addWindowChangeListener(this);
+        iView1.addZoomChangeListener(this);
         jMenuItem7.setEnabled(true);
         jMenuItem8.setEnabled(true);       
         jMenuItem4.setEnabled(true);
@@ -486,7 +485,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        ROIListPanel panel = new ROIListPanel(iGroup);
+        ROIListPanel panel = new ROIListPanel(iMgr);
         JDialog dialog = new JDialog(this, 
                                     "ROI manager", 
                                     Dialog.ModalityType.APPLICATION_MODAL);
@@ -524,7 +523,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        CalcPanel panel = new CalcPanel(iGroup.getROIMgr());
+        CalcPanel panel = new CalcPanel(iMgr);
         JDialog dialog = new JDialog(this, Dialog.ModalityType.MODELESS);
         dialog.setContentPane(panel);
         dialog.validate();

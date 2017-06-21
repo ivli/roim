@@ -19,11 +19,9 @@
 package com.ivli.roim.controls;
 
 import com.ivli.roim.view.IImageView;
-import com.ivli.roim.view.ImageViewGroup;
 import com.ivli.roim.view.Overlay;
 import com.ivli.roim.view.ROIManager;
-import javax.swing.SwingUtilities;
-import java.awt.Window;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -33,7 +31,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-
+import javax.swing.SwingUtilities;
+import java.awt.Window;
 /**
  *
  * @author likhachev
@@ -42,18 +41,19 @@ public class ROIListPanel extends JPanel implements TableModelListener {
     private final ROITableModel iModel;        
     private final ROIManager iMgr;
     
-    public ROIListPanel(ImageViewGroup aV) {
-        iModel = new ROITableModel(aV.getROIMgr(), -1, true);             
-        iMgr = aV.getROIMgr();
+    public ROIListPanel(ROIManager aMgr) {
+        iModel = new ROITableModel(aMgr, -1, true);             
+        iMgr = aMgr;
         construct();            
     }
-    
+   
+    /**/
     public ROIListPanel(IImageView aV) {               
         iModel = new ROITableModel(aV.getROIMgr(), aV.getFrameNumber(), true); 
         iMgr = aV.getROIMgr();
         construct();               
     }
-    
+     
     private void construct() {    
         initComponents();
      

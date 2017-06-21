@@ -15,7 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package com.ivli.roim;
 
 import com.ivli.roim.algorithm.MIPProjector;
@@ -29,7 +28,7 @@ import com.ivli.roim.events.ProgressEvent;
 import com.ivli.roim.events.ProgressListener;
 import com.ivli.roim.view.ImageView;
 import com.ivli.roim.view.Settings;
-import com.ivli.roim.view.ViewMode;
+
 import java.awt.BorderLayout;
 import java.awt.RenderingHints;
 import java.beans.PropertyChangeEvent;
@@ -228,7 +227,7 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
         
     private void initPanels(IMultiframeImage dcm) {        
         jPanel1.removeAll();
-        ImageView image = ImageView.create(dcm, ViewMode.DEFAULT); 
+        ImageView image = ImageView.create(dcm, null); 
         image.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(image, BorderLayout.CENTER);

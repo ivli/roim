@@ -18,18 +18,24 @@
 package com.ivli.roim.core;
 
 /**
- *
+ * 
  * @author likhachev
  */
-public interface IFrameProvider /*extends IImage*/ {
-    
+public interface IFrameProvider {
+    /*
+     * indicates the first frame of a multiframe image
+     */
     public static final int FIRST = 0;
+     /*
+     * indicates the last frame of a multiframe image
+     */
     public static final int LAST = Integer.MAX_VALUE;
+    
     public static final int INVALID_FRAME = -1; 
     /**
      *
-     * @param anIndex
-     * @return a frame of the image specified by parameter anIndex 
+     * @param aFrameNumber
+     * @return a frame of the image specified by parameter aFrameNumber 
      */
-    ImageFrame get(int anIndex) throws IndexOutOfBoundsException;     
+    ImageFrame get(int aFrameNumber) throws IndexOutOfBoundsException;     
 }
