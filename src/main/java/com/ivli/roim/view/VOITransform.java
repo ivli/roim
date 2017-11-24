@@ -39,6 +39,7 @@ public class VOITransform implements ImageTransform {
     
     private ModalityTransform iPVt;
     private LUTTransform iPlut;
+    
     private Window  iWin;    
     private boolean iInverted;            
     private boolean iLinear; 
@@ -109,7 +110,8 @@ public class VOITransform implements ImageTransform {
         return iLinear;
     }
             
-    class Transformer extends RecursiveAction {        
+    class Transformer extends RecursiveAction {       
+         //images having lees pixels than this value will not be processed in multiple threads 
         private static final int iThreshold = 4096*1200;
        
         int[] iSrc;

@@ -18,6 +18,7 @@
 
 package com.ivli.roim.io;
 
+import com.ivli.roim.io.spi.IImageProvider;
 import java.io.IOException;
 
 import com.ivli.roim.core.ImageDataType;

@@ -42,25 +42,26 @@ import org.apache.logging.log4j.Logger;
  */
 public class VOILUTPanel extends JPanel implements WindowChangeListener {        
     private static final int NO_OF_BINS = 256;
-    private final LUTControl iLUT;             
+    private final LUTControl iLUTControl;             
     private final ChartPanel iPanel;
     private final String iCurveName;    
    
     private XYSeriesCollection makeLUTCurve() {                    
-        double min = iLUT.getView().getMin();
-        double max = iLUT.getView().getMax();
+        double min = 0;//iLUTControl.getView().getMin();
+        double max = 255;//iLUTControl.getView().getMax();
        
-        Curve c = iLUT.getView().getWindowCurve();
+        Curve c = new Curve();//iLUTControl.getView().getWindowCurve();
         
         return new XYSeriesCollection(XYSeriesUtilities.getSeriesRebinned(iCurveName, c, NO_OF_BINS, min, max));
     }
         
     private XYSeries makeHistogram() {  
         Histogram hist = new Histogram(NO_OF_BINS);
-        if (iLUT.getView() instanceof ImageView) {
-            hist = ((ImageView)iLUT.getView()).getFrame().processor().histogram(null, NO_OF_BINS);
+        /*
+        if (iLUTControl.getView() instanceof ImageView) {
+            hist = ((ImageView)iLUTControl.getView()).getFrame().processor().histogram(null, NO_OF_BINS);
         }
-        
+        */
         final String name = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.HISTOGRAM");
         return XYSeriesUtilities.convert(name, hist);
     }
@@ -68,14 +69,14 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
     @Override
     public void windowChanged(WindowChangeEvent anEvt) {            
         iPanel.getChart().getXYPlot().setDataset(0, makeLUTCurve());
-        iLUT.windowChanged(anEvt);
+        iLUTControl.windowChanged(anEvt);
     }   
     
     public VOILUTPanel(LUTControl aP) {        
         
         iCurveName = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("VOILUTPANEL.VOI_LUT");        
         
-        iLUT = LUTControl.create(aP);        
+        iLUTControl = LUTControl.create(aP);        
         
         aP.addWindowChangeListener(this);
         
@@ -111,10 +112,11 @@ public class VOILUTPanel extends JPanel implements WindowChangeListener {
         iPanel = new ChartPanel(jfc);            
         iPanel.setSize(jPanel1.getPreferredSize());
         jPanel1.add(iPanel);//, java.awt.BorderLayout.CENTER);              
-        iLUT.setSize(jPanel2.getPreferredSize());
-        jPanel2.add(iLUT);       
-        iLabelMin.setText(String.format("%.0f", iLUT.getView().getMin()));
-        iLabelMax.setText(String.format("%.0f", iLUT.getView().getMax()));
+        iLUTControl.setSize(jPanel2.getPreferredSize());
+        jPanel2.add(iLUTControl);       
+        
+        //iLabelMin.setText(String.format("%.0f", iLUTControl.getView().getMin()));
+        //iLabelMax.setText(String.format("%.0f", iLUTControl.getView().getMax()));
                
         validate();  
     }

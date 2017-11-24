@@ -15,31 +15,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+package com.ivli.roim.view;
 
-package com.ivli.roim.io;
-
-import java.io.File;
-import java.io.IOException;
-import com.ivli.roim.events.ProgressListener;
+import com.ivli.roim.core.Curve;
+import com.ivli.roim.core.Window;
 
 /**
  *
  * @author likhachev
  */
-public class ImageProviderFactory {
+public interface IWindowTarget extends ImageTransform {    
+    public double getMin();
+    public double getMax();
     
-    //TODO: implement here a logic of finding a provider according to image file type (file extension???) 
-    public static IImageProvider create(final String aFullPath, ProgressListener aPL) throws IOException {
-        IImageProvider ret; 
-        
-        if (new File(aFullPath).isDirectory()) {            
-            ret = DirectoryBuilder.build(aFullPath, aPL);
-        } else { 
-            ret = new DCMImageProvider(aFullPath);        
-        }
-        
-        org.apache.logging.log4j.LogManager.getLogger().info(ret.dumpFileInformation());
-        
-        return ret;
-    }    
+    public void setWindow(Window aW);
+    public Window getWindow();
+    
+    public void setInverted(boolean aI);
+    public boolean isInverted(); 
+    public void setLinear(boolean aI); 
+    public boolean isLinear();     
+    
+    public void setLUT(String aLutName);
+    public Curve getWindowCurve();
 }

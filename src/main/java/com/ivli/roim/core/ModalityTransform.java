@@ -44,7 +44,7 @@ public class ModalityTransform implements java.io.Serializable {
         if (aDst == null)
             aDst = new double[aSrc.length];
         
-        for (int i=0; i<aDst.length; ++i)
+        for (int i=0, length=aDst.length; i<length; ++i)
             aDst[i] = iSlope * aSrc[i] + iIntercept;
         
         return aDst;

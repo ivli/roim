@@ -19,17 +19,14 @@
 package com.ivli.roim;
 
 import com.ivli.roim.controls.FileOpenDialog;
-import com.ivli.roim.controls.FrameControl;
-import com.ivli.roim.view.*;
-
 import com.ivli.roim.controls.LUTControl;
 import com.ivli.roim.controls.ROIListPanel;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.core.ImageFactory;
+import com.ivli.roim.view.IImageView;
+import com.ivli.roim.view.ImageView;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.FileDialog;
-import java.io.File;
 import javax.swing.JDialog;
 
 /**
@@ -125,12 +122,11 @@ public class VIEWER extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
     private void openFile(String aFileName) {
         jPanel1.removeAll();
 
         IMultiframeImage dcm = ImageFactory.create(aFileName, null);                                 
-        ImageView image = ImageView.create(dcm, null);                    
+        ImageView image = ImageView.create(dcm, null, null);                    
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(image, BorderLayout.CENTER);  
         LUTControl lc = LUTControl.create(image);

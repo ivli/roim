@@ -227,7 +227,7 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
         
     private void initPanels(IMultiframeImage dcm) {        
         jPanel1.removeAll();
-        ImageView image = ImageView.create(dcm, null); 
+        ImageView image = ImageView.create(dcm, null, null); 
         image.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(image, BorderLayout.CENTER);

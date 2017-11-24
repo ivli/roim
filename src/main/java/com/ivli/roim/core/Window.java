@@ -28,6 +28,7 @@ public class Window implements java.io.Serializable {
     private static final long serialVersionUID = 42L;
     private static final double MINIMAL_WINDOW_WIDTH = 1.;
     public static final Window DEFAULT_WINDOW = new Window(.5, MINIMAL_WINDOW_WIDTH);
+    public static final Window FULL_WINDOW    = new Window(-1., -1.);
     /**
      * 
      */

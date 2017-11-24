@@ -18,6 +18,7 @@
 
 package com.ivli.roim.io;
 
+import com.ivli.roim.io.spi.IImageProvider;
 import com.ivli.roim.core.ImageDataType;
 import com.ivli.roim.core.ImageType;
 import com.ivli.roim.core.Modality;

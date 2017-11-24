@@ -47,16 +47,18 @@ import com.ivli.roim.view.ActionItem;
 import com.ivli.roim.view.ImageView;
 import com.ivli.roim.io.LutReader;
 import com.ivli.roim.view.Settings;
-import com.ivli.roim.core.Curve;
 import com.ivli.roim.core.Window;
 import com.ivli.roim.events.FrameChangeEvent;
 import com.ivli.roim.events.FrameChangeListener;
 import com.ivli.roim.events.WindowChangeEvent;
 import com.ivli.roim.events.WindowChangeListener;
-import com.ivli.roim.view.WindowTarget;
+import com.ivli.roim.view.IImageView;
+import com.ivli.roim.view.IWindowTarget;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 
@@ -68,8 +70,8 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
                                                           MouseMotionListener, MouseListener, MouseWheelListener {    
     
     private static final int NUMBER_OF_SHADES = 255;    
-    private final int BAR_WIDTH = 32; //mouse inside
-    private final int LEFT_GAP  = 2;  //reserve border at left & right
+    private final int BAR_WIDTH = 32; 
+    private final int LEFT_GAP  = 2; //reserve border at left & right
     private final int RIGHT_GAP = 2;
     
     private final int TOP_GAP;  //reserve a half of marker height at window's top & bottom 
@@ -89,53 +91,89 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     private BufferedImage iBuf;
       
     private boolean iCanHaveChildren;
-    private final WindowTarget iView;                 
-        
-    public WindowTarget getView() {
+     
+     //private final IWindowTarget iView; 
+    private final List<IImageView> iAttached = new ArrayList<>(); 
+    
+     //Window in percents 
+    protected Window iWindow = new Window(255./2., 255.);
+    /*    
+    public IWindowTarget getView() {
         return iView;
     }
+    */
     
-    public static LUTControl create(WindowTarget aV) {
-        LUTControl ret = new LUTControl(aV);
-        ret.construct();         
+    protected Window getWindow() {
+        return iWindow;
+    }
+    
+    protected void setWindow(Window aW) {
+       /* iAttached.stream().forEach((i) -> { 
+            i.setWindow(aW);
+        });
+        */
+        iWindow = aW;
+        iTop.setPosition((int) imageToScreen(getWindow().getTop()));
+        iBottom.setPosition((int) imageToScreen(getWindow().getBottom())); 
+        repaint();
+    }
+    
+    private double getMax(){
+        return 255.;
+    }
+    
+    private double getMin(){
+        return .0;
+    }
+    
+    public static LUTControl create() {
+        LUTControl ret = new LUTControl();
+        ret.construct();  
+        //aV.addFrameChangeListener(ret);
+        //aV.addWindowChangeListener(ret);         
         return ret;
     }
     
     public static LUTControl create(ImageView aV) {
-        LUTControl ret = new LUTControl(aV);
+        LUTControl ret = new LUTControl();
         ret.construct();  
-        aV.addFrameChangeListener(ret);
-        aV.addWindowChangeListener(ret);         
+        ret.attach(aV);        
         return ret;
-    }
-        
+    }    
+    
+    public void attach(ImageView aV) {
+        iAttached.add(aV);
+        aV.addFrameChangeListener(this);
+        aV.addWindowChangeListener(this);        
+    } 
+            
     public static LUTControl create(LUTControl aP) {
-        LUTControl ret = new LUTControl(aP.iView);
+        /*LUTControl ret = new LUTControl(aP.iView);
         ret.construct();       
         ret.iCanHaveChildren = false;      
        
         ///TODO:
         aP.addWindowChangeListener(ret);
-        
-        return ret;
+        */
+        return null;
     }
     
-    private LUTControl(WindowTarget aW) { 
+    private LUTControl() { 
         iTop = new Marker("images/knob_horz.png", true);  //NOI18N
         iBottom = new Marker("images/knob_horz.png", true);  //NOI18N
         iListeners = new EventListenerList();
         TOP_GAP= iTop.getMarkerSize()/2;
         BOTTOM_GAP = iBottom.getMarkerSize()/2; //to the case images of different height are used                
         iCanHaveChildren = true;   
-        iView = aW;
+        ///iView = aW;
     }
         
     private void construct() {                    
         addComponentListener(new ComponentListener() {    
             public void componentResized(ComponentEvent e) {                
                 //iRange = iView.getRange();
-                iTop.setPosition((int) imageToScreen(iView.getWindow().getTop()));
-                iBottom.setPosition((int) imageToScreen(iView.getWindow().getBottom())); 
+                iTop.setPosition((int) imageToScreen(getWindow().getTop()));
+                iBottom.setPosition((int) imageToScreen(getWindow().getBottom())); 
                 makeBuffer();
                 invalidateBuffer();
                 repaint();
@@ -144,8 +182,8 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
             public void componentMoved(ComponentEvent e) {}
             public void componentShown(ComponentEvent e) {
                // iRange = iView.getRange();
-                iTop.setPosition((int) imageToScreen(iView.getWindow().getTop()));
-                iBottom.setPosition((int) imageToScreen(iView.getWindow().getBottom())); 
+                iTop.setPosition((int) imageToScreen(getWindow().getTop()));
+                iBottom.setPosition((int) imageToScreen(getWindow().getBottom())); 
                 makeBuffer();
                 invalidateBuffer();
                 repaint();
@@ -157,29 +195,27 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         addMouseWheelListener(this);   
     }
   
-    /*   
-    public Curve getLUTCurve() {    
-        return iView.getLUTCurve();
-    }   
-     */  
     protected void notifyWindowChange() {
-        WindowChangeEvent evt = new WindowChangeEvent(this, iView.getWindow());
+        WindowChangeEvent evt = new WindowChangeEvent(this, getWindow());
         for (WindowChangeListener l : iListeners.getListeners(WindowChangeListener.class))            
             l.windowChanged(evt);            
     }
            
     @Override
-    public void windowChanged(WindowChangeEvent anE) {               
-        iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
-        iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom()));                       
+    public void windowChanged(WindowChangeEvent anE) {    
+        /**/
+        setWindow(anE.getWindow());
+        //iTop.setPosition((int) imageToScreen(anE.getWindow().getTop()));
+        //iBottom.setPosition((int) imageToScreen(anE.getWindow().getBottom()));                       
 
         invalidateBuffer();
         repaint();   
         notifyWindowChange();
+        
     }   
     
     @Override
-    public void frameChanged(FrameChangeEvent anE) {                             
+    public void frameChanged(FrameChangeEvent anE) {       
         invalidateBuffer();
         makeBuffer();         
     }   
@@ -196,9 +232,9 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         if (null != iAction)
             iAction.wheel(e.getWheelRotation());
         else {
-            final Window win = new Window(iView.getWindow());                     
+            final Window win = new Window(getWindow());                     
             win.setLevel(win.getLevel() - e.getWheelRotation());                 
-            iView.setWindow(win);
+            setWindow(win);
         }            
     } 
     
@@ -229,7 +265,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
 
                 protected void DoAction(int aX, int aY) {
                     final double delta = screenToImage(aY - iY);
-                    final Window win = new Window(iView.getWindow());                     
+                    final Window win = new Window(getWindow());                     
 
                     if (iMoveTop) {               
                         win.setTop(win.getTop() - delta);                        
@@ -242,15 +278,15 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
                         updateMarkerAnnotation(new Point(aX, aY), win.getBottom());
                     }
                     
-                    iView.setWindow(win); 
+                    setWindow(win); 
                 }   
 
                 protected boolean DoWheel(int aX) {
-                    final Window win = new Window(iView.getWindow());                     
+                    final Window win = new Window(getWindow());                     
 
                     win.setLevel(win.getLevel() - aX);                 
                    
-                    iView.setWindow(win);                  
+                    setWindow(win);                  
 
                     return false;
                 }
@@ -272,7 +308,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     public void mouseReleased(MouseEvent e) {                    
         iAction = null;  
         if (!getBounds().contains(e.getPoint())){
-           
+           repaint();
         }
     }
     
@@ -286,9 +322,12 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         }
         
         if (iShowToolTips && iActive && null != aPosition) {
+          /**
             String text = !iToolTipsInPercents ? String.format("%.0f", aVal): //NOI18N
                 String.format("%.0f%%", aVal / (iView.getMax() - iView.getMin()) * 100.); //NOI18N
-            //LOG.debug("value = " + aVal + ", width = " + iView.getRange(). getRange().getWidth());
+          **/  
+
+            String text = String.format("%.0f", aVal);
             iTip.setTipText(text);
             PopupFactory popupFactory = PopupFactory.getSharedInstance();
             Point pt = new Point(getLocationOnScreen());            
@@ -320,7 +359,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         if (SwingUtilities.isRightMouseButton(e)) 
             showPopupMenu(e.getX(), e.getY());
         else if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)                                            
-            iView.setWindow(Window.fromRange(iView.getMin(), iView.getMax()));         
+            setWindow(Window.FULL_WINDOW);//  Window.fromRange(iView.getMin(), iView.getMax()));         
     }
 
     private BufferedImage iBackFrame;
@@ -331,7 +370,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         
         iBackFrame = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         
-        final double ratio = (iView.getMax() - iView.getMin()) / height;
+        final double ratio = (getMax() - getMin()) / height;
         
         for (int i = 0; i < width; ++i) {                  
             for (int j = 0; j < height; ++j) {                                     
@@ -341,7 +380,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     }
         
     private void updateBufferedImage() {
-        iBuf = iView.transform(iBackFrame, null);                                                                                                                                                                                                 
+       iBuf = iBackFrame;//iView.transform(iBackFrame, null);                                                                                                                                                                                                 
     }
       
     public void paintComponent(Graphics g) {          
@@ -357,10 +396,9 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         
         g.draw3DRect(0, 0, getWidth(), getHeight(), true);       
         
-        if (null != iTop && null != iBottom) {
-            iTop.draw(g, getBounds());
-            iBottom.draw(g, getBounds());
-        }
+        iTop.draw(g, getBounds());
+        iBottom.draw(g, getBounds());
+        
         
         g.setColor(clr);
     }
@@ -370,11 +408,11 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     }       
   
     private double imageToScreen(double aY) {              
-        return aY * ((this.getHeight() - (TOP_GAP + BOTTOM_GAP)) / (iView.getMax() - iView.getMin()));       
+        return aY * ((getHeight() - (TOP_GAP + BOTTOM_GAP)) / (getMax() - getMin()));       
     }
     
     private double screenToImage(double aY) {             
-        return aY * ((iView.getMax() - iView.getMin()) /(this.getHeight() - (TOP_GAP + BOTTOM_GAP)));  
+        return aY * ((getMax() - getMin()) /(this.getHeight() - (TOP_GAP + BOTTOM_GAP)));  
     }       
     
     @Override
@@ -408,13 +446,13 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
                 toolTipsInPercents(!iToolTipsInPercents);
                 break;
             case KCOMMAND_TRIGGER_LINEAR: 
-                iView.setLinear(!iView.isLinear());
+               //TODO!!! iView.setLinear(!iView.isLinear());
                 invalidateBuffer();
                 //iView.repaint();
                 repaint();
                 break;
             case KCOMMAND_TRIGGER_DIRECT: 
-                iView.setInverted(!iView.isInverted());
+                //TODO!!!iView.setInverted(!iView.isInverted());
                 invalidateBuffer();
                 ///iView.repaint();
                 repaint();
@@ -442,14 +480,14 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
                     final String lutFile = fd.getFileName();
                     Settings.set(Settings.KEY_LASTFILE_LUT, lutFile);
                     invalidateBuffer(); 
-                    iView.setLUT(lutFile);                                     
+                   //TODO!!! iView.setLUT(lutFile);                                     
                     repaint();
                 } 
                 break;          
             default: 
                 //setLUT(e.getActionCommand());
                 invalidateBuffer(); 
-                iView.setLUT(e.getActionCommand());
+                //TODO!!!iView.setLUT(e.getActionCommand());
                // invalidateBuffer();                
                 repaint();
                 break;
@@ -460,7 +498,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         final JPopupMenu mnu = new JPopupMenu("WL_CONTEXT_MENU_TITLE"); //NOI18N    
         JCheckBoxMenuItem mi11 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.TRIGGER_LOGARITHMIC"));
         mi11.addActionListener(this);
-        mi11.setState(!iView.isLinear());
+       //TODO!!! mi11.setState(!iView.isLinear());
         mi11.setActionCommand(KCOMMAND_TRIGGER_LINEAR);
         
         mnu.add(mi11);
@@ -468,7 +506,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         JCheckBoxMenuItem mi12 = new JCheckBoxMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("LUT_MENU.TRIGGER_DIRECT_INVERSE"));
         mi12.addActionListener(this);
         mi12.setActionCommand(KCOMMAND_TRIGGER_DIRECT); 
-        mi12.setState(iView.isInverted());
+       //TODO!!! mi12.setState(iView.isInverted());
         mnu.add(mi12);
         
         if (iCanHaveChildren) {
@@ -519,8 +557,6 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
         mnu.show(this, aX, aY);
     }   
 
-    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
-
     /**
      * @param iShowToolTips the iShowToolTips to set
      */
@@ -543,5 +579,7 @@ public class LUTControl extends JComponent implements WindowChangeListener, Fram
     public void removeWindowChangeListener(WindowChangeListener aL) {
         iListeners.remove(WindowChangeListener.class, aL);
     }
+        
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }
 

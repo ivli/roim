@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.core;
 
-import com.ivli.roim.io.IImageProvider;
+import com.ivli.roim.io.spi.IImageProvider;
 import com.ivli.roim.algorithm.ImageProcessor;
 import java.io.IOException;
 import java.util.BitSet;

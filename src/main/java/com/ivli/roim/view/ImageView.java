@@ -77,8 +77,8 @@ public class ImageView extends JComponent implements IImageView {
         TOMO,
     }
        
-    public static ImageView create(IMultiframeImage aI, ROIManager aM) {
-        ImageView ret = new ImageView();
+    public static ImageView create(IMultiframeImage aI, VOITransform aTransform, ROIManager aM) {
+        ImageView ret = new ImageView(null != aTransform ? aTransform: new VOITransform());
         ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         ret.setFit(ImageView.ZoomFit.VISIBLE);
         ret.setController(new Controller(ret));
@@ -105,11 +105,11 @@ public class ImageView extends JComponent implements IImageView {
         return ret;    
     }
     
-    protected ImageView() {                                
+    protected ImageView(VOITransform aTransform) {                                
         iCurrent = 0; 
         iOrigin = new Point(0, 0);              
         iZoom = AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);          
-        iVLUT = new VOITransform();                             
+        iVLUT = aTransform;//new VOITransform();                             
         iListeners = new EventListenerList();        
     }
       

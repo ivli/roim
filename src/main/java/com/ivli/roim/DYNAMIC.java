@@ -408,7 +408,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
        
         iMgr = ROIManager.create(anImage);       
         
-        iView1 = ImageView.create(anImage, iMgr);  
+        iView1 = ImageView.create(anImage, null, iMgr);  
         
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(iView1, BorderLayout.CENTER);
@@ -417,7 +417,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jPanel1.validate(); 
         
         if (anImage.getNumFrames() > 1) {
-            iView2 = ImageView.create(anImage.processor().collapse(), iMgr); 
+            iView2 = ImageView.create(anImage.processor().collapse(), null, iMgr); 
             jPanel3.add(iView2, BorderLayout.CENTER);
             jPanel3.add(LUTControl.create(iView2), BorderLayout.LINE_END);
             jPanel3.validate(); 

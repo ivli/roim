@@ -27,7 +27,7 @@ import java.awt.geom.Point2D;
  *
  * @author likhachev
  */
-public interface IImageView extends WindowTarget {    
+public interface IImageView extends IWindowTarget {    
     public void setImage(IMultiframeImage anImage);
     public IMultiframeImage getImage();    
     public ImageFrame getFrame();    
