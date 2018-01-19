@@ -1,11 +1,10 @@
 /nbproject/private/
 /build/
 /dist/
+/target/
+/.vscode/
+/.settings/
+*.class
 *.log*
 *.bak
-*.cmd
-*.csv
-ROILIST.*
-roilist
-/target/
-/nbproject/
+*.jar
