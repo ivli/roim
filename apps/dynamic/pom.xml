@@ -24,9 +24,28 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-    <build>
-        <plugins>
-        </plugins>
-    </build>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <archive>
+                                <index>true</index>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <mainClass>com.ivli.roim.DYNAMIC</mainClass>
+                                </manifest>
+                                <manifestEntries>
+                                    <mode>development</mode>
+                                    <url>${project.url}</url>
+                                    <key>value</key>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>       
+                    </plugin>
+                </plugins>
+            </build>
   
 </project>
