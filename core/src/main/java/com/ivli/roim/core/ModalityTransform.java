@@ -26,7 +26,10 @@ package com.ivli.roim.core;
 public class ModalityTransform implements java.io.Serializable {
     private static final long serialVersionUID = 42L;
 
-    public static final ModalityTransform DEFAULT = new  ModalityTransform(1.0, .0);
+    private static final double DEFAULT_SLOPE = 1.0;
+    private static final double DEFAULT_INTERCEPT = .0;
+
+    public static final ModalityTransform DEFAULT = new ModalityTransform(DEFAULT_SLOPE, DEFAULT_INTERCEPT);
     
     private final double iSlope;
     private final double iIntercept;

@@ -1,7 +1,5 @@
 @set PKG_DIR=.\pkg
 
-goto _zip
-
 @call bld.cmd dependency:copy-dependencies
 
 @md %PKG_DIR%
