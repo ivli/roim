@@ -102,15 +102,15 @@
 		<li>ROI calculator - implements basic algebraic operations on ROIs such as: summation, subtraction of ROIs, shift to a constant. 
 		
 		<li>Chart control employs primitives of <a href=http://www.jfree.org/jfreechart/>JFreeChart</a> library and is designated to visualize series as curves, extract numeric information and finally 
-		<li>Curve fitting tool - is capable of fitting experimental data with linear or exponential polynomials using the method of least squares. 
+		<li>Curve fitting tool - is capable of fitting experimental data with linear or exponential polynomials using least squares. 
 		It is not seldom acquisition ends earlier than a particular event takes place, for instance a half excretion time in the case of renal obstruction. 
 		Using this tool it becomes possible to extrapolate experimental data in many cases achieving acceptable approximation of missing parameter.
 		Fit curves are updated as you move marker(s) or change source ROI. And yet it is posible to export resulting data set as image or comma separated values    
 		</ul>
-		Visualization provides different rendering methods namely nearest neighbourhood, bilinear and bicubic it is especially important since NM images usually have quite low resolution, thus, zooming them in would look quite unpleasant on the screen. 
+		
+		For bettere image participation following rendering methods can be employed nearest neighbourhood, bilinear and bicubic interpolation; it is especially important since NM images usually have quite low resolution, thus, zooming them in would look quite unpleasant on the screen. 
 		Reconstructed SPECT (3D) studies can be displayed either as a stack of slices (usually transaxial) or using <b>MIP</b> method.
-		The library relies on <a href=http://www.dcm4che.org/>DCM4CHE</a> to handle DICOM data and <a href=https://aparapi.github.io/>aparapi</a> to employ GPU based data processing. 
-		Finally the library includes several applications to illustrate basic concepts and principles behind the design.  
+		The library relies on <a href=http://www.dcm4che.org/>DCM4CHE</a> to handle DICOM data and <a href=https://aparapi.github.io/>aparapi</a> to employ GPU based data processing. 		
 		<h2>LUT Control</h2>
 		The picture below shows LUT control in the action with open menu. A number of options are available to made reading as much comfortable as possible.
 		Beyond appying LUT to an image it is possible to use logarithmic function to translate image pixels to screen luminosity (actually sigmoid is used), inverted scales 
