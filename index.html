@@ -88,7 +88,7 @@
 		It implements several algorithms, screen primitives and controls to extract, process and display biomedical information. 
 		<br>Namely: 
 		<ul style="list-style-type:disc">
-		<li>Region of interest (hereinafter <b>ROI</b>) - is the main instrument. Supported types are rectangular, elliptic and free form.  
+		<li>Region of interest (hereinafter <b>ROI</b>) - is the core tool. Currently supported are rectangular, elliptic and free form (aka hand-drawn) types.   
 		Generally, following operations can be applied to a ROI: a typical set of affine transforms move, flip, rotate, some ROIs can be reshaped, delete, pin (cannot get moved nor changed), etc. 
 		and a set of characteristics can get extracted. Among them area (in pixels and cm), integral density (i.e. arithmetic sum of pixel values), min/max/avg pixel. 
 		In the case of multiframe image - often seen in NM - this set of information will be extracted out of all the frames and then one will have a possibility to build and display curves like "density over time";
@@ -96,13 +96,13 @@
 		<li>Profile - by means of Profile it is possible to visualize 2D distribution of pixel density (profile) over a rectangular area;
 		</ul>
 		Beyond aforementioned tools there is a number of instruments to adjust visualization parameters W/L (Window Width and Level) and apply presentation LUT 
-		(a dozen of most popular LUTs is built into the software and there exists a possibility to load LUT from files in NIH format). 
-		Frame selection bar provides a mechanism of navigating through multiframe/multi-phase images in either terms of frames or time (milliseconds).   
+		(a dozen of most popular LUTs is built into the software and there exists a possibility to load  a LUT from a file). 
+		Frame selection control provides visual mechanism of navigation through multiframe/multi-phase images in either terms of frames or time.   
 		<ul style="list-style-type:disc">
-		<li>ROI calculator - implements basic algebraic operations on ROI. For instance: one of often necessary operation is subtraction of background counts of counts measured from a ROI. 
-		Then, the result can be send to a chart control.
-		<li>Chart control is built around <a href=http://www.jfree.org/jfreechart/>JFreeChart</a> library and is designated to visualize series as curves, extract numeric information and finally 
-		<li>Curve fitting tool - the tool is capable of fiting experimental data with linear or exponential polynomials using the method of least squares. 
+		<li>ROI calculator - implements basic algebraic operations on ROIs such as: summation, subtraction of ROIs, shift to a constant. 
+		
+		<li>Chart control employs primitives of <a href=http://www.jfree.org/jfreechart/>JFreeChart</a> library and is designated to visualize series as curves, extract numeric information and finally 
+		<li>Curve fitting tool - is capable of fitting experimental data with linear or exponential polynomials using the method of least squares. 
 		It is not seldom acquisition ends earlier than a particular event takes place, for instance a half excretion time in the case of renal obstruction. 
 		Using this tool it becomes possible to extrapolate experimental data in many cases achieving acceptable approximation of missing parameter.
 		Fit curves are updated as you move marker(s) or change source ROI. And yet it is posible to export resulting data set as image or comma separated values    
@@ -113,7 +113,7 @@
 		Finally the library includes several applications to illustrate basic concepts and principles behind the design.  
 		<h2>LUT Control</h2>
 		The picture below shows LUT control in the action with open menu. A number of options are available to made reading as much comfortable as possible.
-		Beyond selection of LUT it is possible to use logarithmic function to translate image pixels to screen luminosity (actually sigmoid is used), inverted scales 
+		Beyond appying LUT to an image it is possible to use logarithmic function to translate image pixels to screen luminosity (actually sigmoid is used), inverted scales 
 		and yet there is a form displaying image's histogram accompanied with live W/L translation curve. Window width and level can be adjusted using control using knobs on the bar control, 
 		displayed values are either in arbitrary units or percents.              
 		<img src="images/LUTControl.png" alt="LUT control" title="LUT control" style="width:640px;height:448px;">
@@ -123,13 +123,14 @@
 		Of course, there is a mode in which it operates purely with frames.
 		<h2>Application</h2>
 		<img src="images/DYNAMIC.png" alt="Dynamic study view" title="Dynamic study view" style="width:640px;height:338px;">
-		<p>This application is designed to deal with data of dynamic acquisitions such as <i>renal clearance</i> or <i>gastric emptying</i> studies. 
-		The screen is split into two parts left one displays source image either as a serie of frames (shown) or a <i>composite image</i> 
-		 - an algebraic "pixel-by-pixel" sum of all frames of the serie or a specified range.
-		Right part is the chart control offreing dedicated to processing curves.        
+		<p>This application is designed to work with data of dynamic studies such as <i>renal clearance</i> or <i>gastric emptying</i>. 
+		The screen layout is composed of two main elements: 
+		<ul><li>Image view - displaying source image either as a serie of frames (shown) or a <i>composite image</i> 
+		 - an algebraic "pixel-by-pixel" sum of all frames of the serie or a specified range and </li>
+		<li>Chart view - alows for investigation of curves </li> </ul>
 		<img src="images/TOMO-PET.png" alt="MIP" title="MIP" style="width:300px;height:350px;"> </p>
 		<p>Implemented mechanism of displaying directory containing DICOM images of the same modality as one image.  </p>     
-		<div class="sic_note"> SIC: application requires JDK 8 </div> 
+		<div class="sic_note"> SIC: application requires Java 8 </div> 
 		<h2>Images</h2>
 		Several anonymized DICOM files are available for informational purposes: 
 		<ul>
