@@ -32,12 +32,12 @@
           <Group type="102" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
-                  <Component id="jLabel2" alignment="2" max="32767" attributes="0"/>
+                  <Component id="jLabel2" alignment="2" pref="236" max="32767" attributes="0"/>
                   <Component id="jLabel4" alignment="2" min="-2" pref="232" max="-2" attributes="0"/>
                   <Component id="jLabel1" alignment="2" max="32767" attributes="0"/>
                   <Component id="jLabel5" alignment="2" min="-2" pref="232" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="15" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

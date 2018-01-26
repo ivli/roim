@@ -81,9 +81,9 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
         jPanel2.add(jProgressBar1, java.awt.BorderLayout.CENTER);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
-        jMenu1.setText(bundle.getString("DYNAMIC.jMenu1.text")); // NOI18N
+        jMenu1.setText(bundle.getString("TOMO.jMenu1.text")); // NOI18N
 
-        jMenuItem1.setText(bundle.getString("DYNAMIC.jMenuItem2.text")); // NOI18N
+        jMenuItem1.setText(bundle.getString("TOMO.jMenuItem2.text")); // NOI18N
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -91,7 +91,7 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
         });
         jMenu1.add(jMenuItem1);
 
-        jMenuItem2.setText(bundle.getString("DYNAMIC.jMenuItem1.text")); // NOI18N
+        jMenuItem2.setText(bundle.getString("TOMO.jMenuItem1.text")); // NOI18N
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
@@ -101,9 +101,9 @@ public class TOMO extends javax.swing.JFrame implements PropertyChangeListener {
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText(bundle.getString("DYNAMIC.jMenu2.text")); // NOI18N
+        jMenu2.setText(bundle.getString("TOMO.jMenu2.text")); // NOI18N
 
-        jMenuItem3.setText(bundle.getString("DYNAMIC.jMenuItem7.text")); // NOI18N
+        jMenuItem3.setText(bundle.getString("TOMO.jMenuItem7.text")); // NOI18N
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem3ActionPerformed(evt);

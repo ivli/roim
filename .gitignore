@@ -10,3 +10,4 @@
 *.log*
 *.bak
 *.jar
+/apps/target/

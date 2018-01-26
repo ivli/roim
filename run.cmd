@@ -1,20 +1,11 @@
-goto direct 
-@md .\target
+goto dynamic
 
-copy .\spi\target\spi-0.1.jar  .\target
-copy .\roim\target\roim-0.1.jar  .\target
-
-cd .\target
-
-java -Djava.ext.dirs=.\  rom-0.1.jar com.ivli.roim.roim
-
+:dynamic
+java -Djava.ext.dirs=.\core\target;.\view\target;.\view\target\dependency;.\spi\dicom\target;.\spi\dicom\target\dependency;.\roim\target\dependency;.\apps\dynamic\target;.\apps\dynamic\target\dependency; -cp ;.\apps\dynamic\target\dynamic-1.0.1.jar com.ivli.roim.DYNAMIC 
+rem java -Djava.ext.dirs=.\apps\dynamic\target;.\apps\dynamic\target\dependency; -cp .\apps\dynamic\target\dynamic-1.0.1.jar com.ivli.roim.DYNAMIC 
 goto fine
 
-:direct
-
-rem java -Djava.ext.dirs=.\spi\dicom\target;.\spi\bitmap\target;.\roim\target;.\spi\dicom\target\dependency;.\roim\target\dependency;.\apps\dynamic\target;.\apps\tomo\target; -cp ;.\apps\roim\target\roim-0.1.jar com.ivli.roim.Roim d:\images\composite.jpg
-
-java -Djava.ext.dirs=.\view\target;.\view\target\dependency;.\spi\dicom\target;.\core\target;.\spi\dicom\target\dependency;.\roim\target\dependency;.\apps\dynamic\target;.\apps\tomo\target; -cp ;.\apps\dynamic\target\dynamic-0.1.jar com.ivli.roim.DYNAMIC 
-rem D:\images\dyn.dcm
+:tomo
+java -Djava.ext.dirs=.\core\target;.\view\target;.\view\target\dependency;.\spi\dicom\target;.\spi\dicom\target\dependency;.\roim\target\dependency;.\apps\tomo\target;.\apps\tomo\target\dependency; -cp ;.\apps\tomo\target\dynamic-1.0.1.jar com.ivli.roim.TOMO 
 
 :fine

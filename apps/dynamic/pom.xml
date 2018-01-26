@@ -43,13 +43,6 @@
             <directory>src/main/resources</directory>
             <filtering>true</filtering>
         </resource>
-        <!--resource>
-            <directory>src/main/resources</directory>
-            <filtering>false</filtering>
-            <excludes>
-                <exclude>**/version.txt</exclude>
-            </excludes>
-        </resource-->
     </resources>
 
     </build>
