@@ -29,7 +29,6 @@ import javax.swing.JDialog;
 import javax.swing.UIManager;
 import javax.swing.JFrame;
 import com.ivli.roim.view.ImageView;
-import com.ivli.roim.controls.AboutDialog;
 import com.ivli.roim.controls.CalcPanel;
 import com.ivli.roim.controls.ChartView;
 import com.ivli.roim.controls.FrameControl;
@@ -44,9 +43,13 @@ import com.ivli.roim.events.*;
 import com.ivli.roim.io.ImageServiceProvider;
 import com.ivli.roim.view.ROIManager;
 import com.ivli.roim.view.Settings;
+import java.awt.Desktop;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -95,6 +98,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -126,14 +130,17 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenu6 = new javax.swing.JMenu();
+        ON_SHOW_HELP = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
+        jMenuItem3.setText(bundle.getString("DYNAMIC.jMenuItem3.text")); // NOI18N
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
         jLabel1.setText(bundle.getString("DYNAMIC.jLabel1.text")); // NOI18N
 
         jLabel2.setText(bundle.getString("DYNAMIC.jLabel2.text")); // NOI18N
@@ -331,6 +338,15 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jMenu6.setText(bundle.getString("DYNAMIC.jMenu6.text")); // NOI18N
         jMenu6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jMenu6.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        ON_SHOW_HELP.setText(bundle.getString("DYNAMIC.ON_SHOW_HELP.text")); // NOI18N
+        ON_SHOW_HELP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ON_SHOW_HELPActionPerformed(evt);
+            }
+        });
+        jMenu6.add(ON_SHOW_HELP);
+        ON_SHOW_HELP.getAccessibleContext().setAccessibleName(bundle.getString("DYNAMIC.ON_SHOW_HELP.AccessibleContext.accessibleName")); // NOI18N
 
         jMenuItem6.setText(bundle.getString("DYNAMIC.jMenuItem6.text")); // NOI18N
         jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
@@ -561,6 +577,18 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         LOG.info(evt);
     }//GEN-LAST:event_jTabbedPane1ComponentShown
 
+    private void ON_SHOW_HELPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ON_SHOW_HELPActionPerformed
+
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {       
+                desktop.browse(new URI(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("APP_URL")));           
+            } catch (URISyntaxException | IOException ex) {
+                LOG.catching(ex);
+            } 
+        }
+    }//GEN-LAST:event_ON_SHOW_HELPActionPerformed
+   
     /**
      * @param args the command line arguments
      */
@@ -651,6 +679,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem ON_SHOW_HELP;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -672,6 +701,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;

@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.ivli</groupId>
         <artifactId>apps</artifactId>
-        <version>0.1</version>
+        <version>1.0.1</version>
     </parent>	
 
     <artifactId>dynamic</artifactId>
@@ -23,29 +23,35 @@
 	    <type>pom</type>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bitmap</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dicom</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
+    <build>
+        <plugins>
+        </plugins>
+       
+    <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+        </resource>
+        <!--resource>
+            <directory>src/main/resources</directory>
+            <filtering>false</filtering>
+            <excludes>
+                <exclude>**/version.txt</exclude>
+            </excludes>
+        </resource-->
+    </resources>
 
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <configuration>
-                            <archive>
-                                <index>true</index>
-                                <manifest>
-                                    <addClasspath>true</addClasspath>
-                                    <mainClass>com.ivli.roim.DYNAMIC</mainClass>
-                                </manifest>
-                                <manifestEntries>
-                                    <mode>development</mode>
-                                    <url>${project.url}</url>
-                                    <key>value</key>
-                                </manifestEntries>
-                            </archive>
-                        </configuration>       
-                    </plugin>
-                </plugins>
-            </build>
+    </build>
   
 </project>
