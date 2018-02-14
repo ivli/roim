@@ -53,15 +53,14 @@ public abstract class Overlay implements OverlayChangeListener, Serializable {
     protected boolean iSelected = false;
     protected boolean iPinned = false;
     protected boolean iShown = true;    
-    private final transient EventListenerList iListeners;        
+    private final transient EventListenerList iListeners = new EventListenerList();        
      
     protected Overlay(Shape aShape, String aName) { 
-        if (null == aName)
-            throw(new IllegalArgumentException("Name cannot be null"));
+        //if (null == aName)
+        //    throw(new IllegalArgumentException("Name cannot be null"));
         
         iShape = aShape;         
-        iName  = (null != aName) ? aName : this.toString();                   
-        iListeners = new EventListenerList();   
+        iName = aName;                          
     }
        
     public void setName(String aName) {
@@ -150,7 +149,6 @@ public abstract class Overlay implements OverlayChangeListener, Serializable {
     @Override
     public void OverlayChanged(OverlayChangeEvent anEvt) {}
    
-    
     /**************************************/
     private static final String CMD_SHOW_CONFIG  = "COMMAND_OVL_COMMAND_SHOW_CONFIG"; // NOI18N
     private static final String CMD_FLIP_HORZ  = "COMMAND_ROI_OPERATIONS_FLIP_V"; // NOI18N

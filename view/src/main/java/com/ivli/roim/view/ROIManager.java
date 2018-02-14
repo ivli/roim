@@ -43,8 +43,9 @@ import com.ivli.roim.events.OverlayChangeEvent;
  * @author likhachev
  */
 public class ROIManager extends OverlayManager {                            
-    private static final boolean CREATE_ANNOTATIONS_FOR_ROIS = true;
-    private static final boolean CREATE_ANNOTATIONS_FOR_RULER = false;
+    static final boolean CREATE_ANNOTATIONS_FOR_ROIS = true;
+    static final boolean CREATE_ANNOTATIONS_FOR_RULER = true;
+    static final boolean LINK_ROI_TO_ANNOTATIONS = true;
     
     public static ROIManager create(IMultiframeImage anImage) {
         return new ROIManager(anImage);    
@@ -72,7 +73,7 @@ public class ROIManager extends OverlayManager {
     public Overlay createAnnotation(ROI aROI, IImageView aV) {    
         Annotation.Static ret = new Annotation.Static(aV, aROI, aROI, aROI.getColor());
         addObject(ret);        
-        addChangeListener(ret, null);   //TODO:?????????   
+        addChangeListener(ret);   //TODO:?????????   
         return ret;
     }    
         
@@ -162,6 +163,8 @@ public class ROIManager extends OverlayManager {
         return internalCreateROI(shape, aV);
     }
     
+    
+    
     private Overlay internalCreateROI(Shape aS, IImageView aV) {                 
 
         String name = "ROI" + Uid.getNext(ROI.class);  
@@ -180,8 +183,15 @@ public class ROIManager extends OverlayManager {
         if (CREATE_ANNOTATIONS_FOR_ROIS) { 
             Annotation.Static ano = new Annotation.Static(aV, ret, ret, ret.getColor());
             addObject(ano);        
-            addChangeListener(ano, ret); //let ROIManager forward events to, so it can smoothly addjust position when needed    
+            addChangeListener(ano);   
+        
+            if (LINK_ROI_TO_ANNOTATIONS) {
+                Link lnk = new Link(aV, ret, ano);
+                addObject(lnk);
+                addChangeListener(lnk);
+            }
         }
+  
         return ret;
     }
     
@@ -199,7 +209,7 @@ public class ROIManager extends OverlayManager {
         if (CREATE_ANNOTATIONS_FOR_RULER) { 
             Annotation.Static ano = new Annotation.Static(aV, ruler, ruler, Color.RED);
             addObject(ano);        
-            addChangeListener(ano, ruler);   
+            addChangeListener(ano);   
         }
         return ruler;
     }

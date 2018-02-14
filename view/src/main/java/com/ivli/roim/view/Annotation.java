@@ -120,28 +120,28 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         }
                          
         @Override
-        public void OverlayChanged(OverlayChangeEvent anEvt) {   
-            if (!anEvt.getObject().equals(iOverlay))
-                return; //not interested in 
-            switch (anEvt.getCode()) {
-                case DELETED: 
-                    //commit suicide 
-                    ((OverlayManager)anEvt.getSource()).deleteObject(this);
-                    break;
-                case MOVED: {//if it is not pinned down then move it the same dX and dY                    
-                    final double[] deltas = (double[])anEvt.getExtra(); 
-                    OverlayManager mgr = (OverlayManager)anEvt.getSource();
-                    mgr.moveObject(this, deltas[0], deltas[1]); //selfmovement kills border checkings so it can get off the screen                                                 
-                } break;
-                case RESHAPED: {                                        
-                    OverlayManager mgr = (OverlayManager)anEvt.getSource();                    
-                    this.update(mgr);
-                } break;
-                case COLOR_CHANGED:
-                case NAME_CHANGED:                      
-                default: //fall-through
-                    //update(); break;
-            }        
+        public void OverlayChanged(OverlayChangeEvent anEvt) {              
+            if (anEvt.getObject().equals(iOverlay) && anEvt.getSource() instanceof OverlayManager) {                            
+                switch (anEvt.getCode()) {
+                    case DELETED: 
+                        //commit suicide 
+                        ((OverlayManager)anEvt.getSource()).deleteObject(this);
+                        break;
+                    case MOVED: {//if it is not pinned down then move it the same dX and dY                    
+                        final double[] deltas = (double[])anEvt.getExtra(); 
+                        OverlayManager mgr = (OverlayManager)anEvt.getSource();
+                        mgr.moveObject(this, deltas[0], deltas[1]); //selfmovement kills border checkings so it can get off the screen                                                 
+                    } break;
+                    case RESHAPED: {                                        
+                        OverlayManager mgr = (OverlayManager)anEvt.getSource();                    
+                        this.update(mgr);
+                    } break;
+                    case COLOR_CHANGED:
+                    case NAME_CHANGED:                      
+                    default: //fall-through
+                        //update(); break;
+                }  
+            }
         }
         
         public String []getCustomMenu() {
@@ -213,5 +213,6 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
                     break;
             }        
         }      
-    }          
+    }     
+    
 }

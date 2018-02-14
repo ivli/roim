@@ -36,6 +36,11 @@ public abstract class ScreenObject extends Overlay {
        iFrameNumber = aN;
     }
     
+    protected ScreenObject(IImageView aView) {
+       super(null, null);
+       iView = aView;       
+    }
+    
     public IImageView getView() {
         return iView;
     }

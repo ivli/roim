@@ -121,11 +121,11 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     public Iterator<Overlay> getObjects() {        
         return iOverlays.iterator();
     }     
-               
+    /*           
     public void addChangeListener(OverlayChangeListener aL, Overlay aO) {    
         iList.add(OverlayChangeListener.class, aL);
     }
-    
+    */
     public void addChangeListener(OverlayChangeListener aL) {    
         iList.add(OverlayChangeListener.class, aL);
     }

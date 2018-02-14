@@ -27,7 +27,9 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import com.ivli.roim.core.Histogram;
 import com.ivli.roim.core.Measurement;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 /**
  *
@@ -234,5 +236,24 @@ public class BasePainter implements IPainter {
     public void paint(ActionItem aO) {
         
     }
-   
+
+    @Override
+    public void paint(Link aO) {
+        Rectangle2D s1 = iView.virtualToScreen().createTransformedShape(aO.iFrom.getShape()).getBounds2D();
+        Rectangle2D s2 = iView.virtualToScreen().createTransformedShape(aO.iTo.getShape()).getBounds2D();        
+        Line2D l1 = new Line2D.Double(s1.getCenterX(), s1.getCenterY(), s2.getCenterX(), s2.getCenterY());
+        
+        Area a1 = new Area(l1);
+        Area a2 = new Area(s1);
+        Area a3 = new Area(s2);
+        //a1.subtract(a2);
+        //a1.subtract(a3);
+        Rectangle2D rd = a1.getBounds2D();
+                
+        iGC.drawLine((int)s1.getCenterX(), (int)s1.getCenterY(), (int)s2.getCenterX(), (int)s2.getCenterY());
+        //iGC.draw(a1);
+        
+        LOG.debug("drawing Link from {}", rd);
+    }
+    org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }

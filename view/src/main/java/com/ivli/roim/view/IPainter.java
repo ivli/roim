@@ -31,4 +31,5 @@ public interface IPainter {
     void paint(Profile aO);    
     void paint(Handle aO);   
     void paint(ActionItem aO);
+    void paint(Link aO);
 }
