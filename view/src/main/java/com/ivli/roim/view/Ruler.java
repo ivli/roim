@@ -67,7 +67,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
     }
     
     @Override
-    public void paint(AbstractPainter aP) {           
+    public void paint(IPainter aP) {           
         aP.paint(this);    
         aP.paint(this.iBegin);
         aP.paint(this.iEnd);   

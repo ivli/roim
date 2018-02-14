@@ -105,7 +105,7 @@ public abstract class Overlay implements OverlayChangeListener, Serializable {
     
     public abstract int getStyles();// {return OVL_DEFAULT;}
     public abstract void update(OverlayManager aM);          
-    public abstract void paint(AbstractPainter aP);  
+    public abstract void paint(IPainter aP);  
     
     public Shape getShape() {
         return iShape;

@@ -334,6 +334,7 @@ public class ImageView extends JComponent implements IImageView {
     
     private double iZoomStep;
     
+    @Override
     public void zoom(double aFactor) {
         //iFit = FITMODE.NONE;        
         iZoom = Math.max(iZoom + aFactor/iZoomStep, MIN_SCALE);//, Math.max(iZoom + aFactor/iZoomStep, MIN_SCALE));               
@@ -341,12 +342,14 @@ public class ImageView extends JComponent implements IImageView {
         repaint();
     }
      
+    @Override
     public void pan(int adX, int adY) {
         iOrigin.x += adX;
         iOrigin.y += adY;     
         repaint();
     }
              
+    @Override
     public void reset() {
         iMgr.clear();
         iOrigin.x = iOrigin.y = 0;
@@ -359,8 +362,7 @@ public class ImageView extends JComponent implements IImageView {
         iBuf = null;       
     }            
              
-    protected void updateBufferedImage() {
-                     
+    protected void updateBufferedImage() {                     
         RenderingHints hts = new RenderingHints(RenderingHints.KEY_INTERPOLATION, iInterpolation);
         AffineTransformOp z = new AffineTransformOp(AffineTransform.getScaleInstance(iZoom, iZoom), hts);        
                
@@ -369,6 +371,10 @@ public class ImageView extends JComponent implements IImageView {
        
         iBuf2 = transform(bi, iBuf2);        
         iBuf = z.filter(iBuf2, iBuf);                 
+    }
+    
+    IPainter getDefaultPainter(Graphics2D aGC) {
+        return new RoundPainter(aGC, this);
     }
     
     @Override
@@ -396,7 +402,7 @@ public class ImageView extends JComponent implements IImageView {
         
         g.drawImage(iBuf, iOrigin.x, iOrigin.y, iBuf.getWidth(), iBuf.getHeight(), null);       
        
-        iMgr.paint(new ROIPainter((Graphics2D)g, this)); //virtualToScreen()));
+        iMgr.paint(getDefaultPainter((Graphics2D)g)); 
         
         if (null != iController.getActionItem()) // must get called last in the painting sequence
             iController.getActionItem().paint((Graphics2D)g);    

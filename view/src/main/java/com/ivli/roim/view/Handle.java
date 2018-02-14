@@ -36,6 +36,7 @@ public class Handle extends Overlay {
     
     public Point2D getPos() {return iPos;}
     
+    @Override
     public int getStyles() {    
         return OVL_MOVEABLE|OVL_SELECTABLE;
     }
@@ -45,7 +46,7 @@ public class Handle extends Overlay {
     }
   
     @Override
-    public void paint(AbstractPainter aP) {
+    public void paint(IPainter aP) {
        // aP.paint(this);  
     }
     

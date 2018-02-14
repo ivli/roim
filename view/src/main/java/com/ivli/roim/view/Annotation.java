@@ -37,14 +37,14 @@ import com.ivli.roim.core.IFrameProvider;
 public abstract class Annotation extends ScreenObject implements OverlayChangeListener { 
     private static final Color DEFAULT_COLOR = Color.BLACK;
     private static final boolean DEFAULT_MULTILINE = true;
-    private static final boolean DEFAULT_BORDER = true;
+    private static final boolean DEFAULT_HAS_BORDER = true;
      
     protected Overlay iOverlay;  
     protected final ArrayList<String> iAnnotation; 
  
     protected Color iColor     = DEFAULT_COLOR;
     protected boolean iMultiline = DEFAULT_MULTILINE;
-    protected boolean iBordered  = DEFAULT_BORDER;
+    protected boolean iBordered  = DEFAULT_HAS_BORDER;
        
     protected Annotation(IImageView aView, int aN, Shape aShape, String aName) {
         super(aView, aN, aShape, aName);          
@@ -70,14 +70,14 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         notify(OverlayChangeEvent.CODE.PRESENTATION, null);
     }
 
-    public boolean isBordered() {
+    public boolean hasBorder() {
         return iBordered;
     }
     
     public Color getColor() {return iColor;}
    
     @Override
-    public void paint(AbstractPainter aP) {   
+    public void paint(IPainter aP) {   
         aP.paint(this);    
     } 
 
@@ -114,9 +114,9 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         public void update(OverlayManager aM) {
             iAnnotation.clear();
             
-            for (Filter f : iFilters) {
-                iAnnotation.add(f.getMeasurement().format(f.filter().eval(iProvider).get(getView().getFrameNumber()), true));     
-            }
+            iFilters.forEach((f) -> {
+                iAnnotation.add(f.getMeasurement().format(f.filter().eval(iProvider).get(getView().getFrameNumber()), true));
+            });
         }
                          
         @Override
@@ -147,27 +147,24 @@ public abstract class Annotation extends ScreenObject implements OverlayChangeLi
         public String []getCustomMenu() {
             java.util.ArrayList<String> ret = new java.util.ArrayList<>();
 
-            for (Filter f : iFilters)
+            iFilters.forEach((f) -> {
                 ret.add(f.getMeasurement().getName());
+            });
 
             return (String[])ret.toArray();
         }
-     
-        private static final String CUST_COMMAND_ASTATIC_SHOW_DIALOG = "CUST_COMMAND_ASTATIC_SHOW_DIALOG";  
-    
-    
-        public boolean showConfigDialog(Object aVoidStar) {
-            //if (aCommand == CUST_COMMAND_ASTATIC_SHOW_DIALOG) {
-                com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel(this);
-                javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
+        
+        @Override
+        public boolean showConfigDialog(Object aNotUsed) {
+            com.ivli.roim.controls.AnnotationPanel panel = new com.ivli.roim.controls.AnnotationPanel(this);
+            javax.swing.JDialog dialog = new javax.swing.JDialog(null, Dialog.ModalityType.APPLICATION_MODAL);
 
-                dialog.setContentPane(panel);
-                dialog.validate();
-                dialog.pack();
-                dialog.setResizable(false);
-                dialog.setVisible(true);
-            //}
-            
+            dialog.setContentPane(panel);
+            dialog.validate();
+            dialog.pack();
+            dialog.setResizable(false);
+            dialog.setVisible(true);
+
             return false;
         }
          

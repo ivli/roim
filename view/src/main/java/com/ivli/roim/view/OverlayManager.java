@@ -54,15 +54,18 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     }
           
     public void clear() {
-        iOverlays.stream().forEach((o) -> notifyROIChanged(o,OverlayChangeEvent.CODE.DELETED, null));        
-        iOverlays.clear();              
+        ///!!!!!
+        for(Overlay o:iOverlays) { 
+            notifyROIChanged(o, OverlayChangeEvent.CODE.DELETED, null);        
+            iOverlays.remove(o);}
+     
     }
     
     public void update() {        
         iOverlays.stream().forEach((o) -> o.update(this) );
     }
     
-    public void paint(AbstractPainter aP) {          
+    public void paint(IPainter aP) {          
         iOverlays.stream().forEach((o) -> {
             if(o.isShown()) 
                 o.paint(aP);

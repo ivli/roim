@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 likhachev
+ * Copyright (C) 2016 likhachev
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,29 +17,18 @@
  */
 package com.ivli.roim.view;
 
-import java.awt.geom.Point2D;
-
 /**
  *
  * @author likhachev
+ * Abstract painter interface 
  */
-  public class Tick {
-        protected Point2D iPos;
-        
-        Tick (Point2D aP) {
-            iPos=aP;
-        }
-        
-        Point2D getPos() {
-            return iPos;
-        }
-        
-        void move(double adX, double adY) {
-            iPos.setLocation(iPos.getX() + adX, iPos.getY() + adY);
-        }
-      
-        void paint(IPainter aP) {               
-            aP.paint(this);    
-        }     
-    }
-       
+public interface IPainter {          
+    void paint(Overlay aO);
+    void paint(ROI aO);
+    void paint(Annotation aO);    
+    void paint(Ruler aO);
+    void paint(Tick aO);
+    void paint(Profile aO);    
+    void paint(Handle aO);   
+    void paint(ActionItem aO);
+}

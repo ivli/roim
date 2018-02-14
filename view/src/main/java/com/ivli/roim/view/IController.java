@@ -17,7 +17,6 @@
  */
 package com.ivli.roim.view;
 
-///import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;

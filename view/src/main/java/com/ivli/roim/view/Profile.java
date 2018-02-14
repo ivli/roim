@@ -45,7 +45,7 @@ public class Profile extends ScreenObject {
     }
     
     @Override
-    public void paint(AbstractPainter aP) {
+    public void paint(IPainter aP) {
         aP.paint(this);
     } 
  

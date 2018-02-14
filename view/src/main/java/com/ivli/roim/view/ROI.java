@@ -87,7 +87,7 @@ public class ROI extends Overlay implements ISeriesProvider {
     }  
     
     @Override
-    public void paint(AbstractPainter aD) {
+    public void paint(IPainter aD) {
         aD.paint(this);     
     }
   
