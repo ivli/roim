@@ -7,6 +7,7 @@ package com.ivli.roim.view;
 
 //import static com.ivli.roim.view.Overlay.OVL_VISIBLE;
 
+import com.ivli.roim.core.IFrameProvider;
 import com.ivli.roim.events.OverlayChangeEvent;
 
 
@@ -16,11 +17,11 @@ import com.ivli.roim.events.OverlayChangeEvent;
  */
 
 class Link extends ScreenObject {
-    final public Overlay     iFrom; 
-    final public ScreenObject  iTo;
+    final public Overlay iFrom; 
+    final public Overlay iTo;
 
-    Link(IImageView aV, Overlay aFrom, ScreenObject aTo) {
-        super(aV);
+    Link(IImageView aV, Overlay aFrom, Overlay aTo) {
+        super(aV, IFrameProvider.INVALID_FRAME, null, "ANNOTATION::STATIC"); //NOI18N 
         iFrom = aFrom;
         iTo   = aTo;
     }
@@ -56,7 +57,6 @@ class Link extends ScreenObject {
                 break;
         }        
     }      
-
-
+    
     org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }

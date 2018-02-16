@@ -41,25 +41,23 @@ import com.ivli.roim.events.ZoomChangeListener;
 import com.ivli.roim.core.IMultiframeImage;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.RescaleOp;
 
 public class ImageView extends JComponent implements IImageView {
    // private static final double DEFAULT_SCALE_X = 1.0;
    // private static final double DEFAULT_SCALE_Y = 1.0;   
-    private static final double DEFAULT_ZOOM    = 1.0;
+    private static final double DEFAULT_ZOOM = 1.0;
     private static final double MIN_SCALE = .01;
        
     ///protected FITMODE iFit; //a method of initial fitting into the window       
     protected Object iInterpolation; //interpolation method   
     
-    protected Point iOrigin; //image point [0,0] on the window implements panoramic transform 
+    protected Point iOrigin = new Point(0,0); //image point [0,0] on the window implements panoramic transform 
     
     //zoom factor assuming isotropic image zoom ie zoom.x == zoom.y, zoom := 1.0 => no zoom image is shown pixel_to_pixel
-    protected double iZoom; 
-               
+    protected double iZoom = DEFAULT_ZOOM; 
+    protected int iCurrent = 0; //frame that is currently shown  
+    
     protected VOITransform iVLUT; //VOI LUT combines W/L and Presentation LUT 
-   
-    protected int iCurrent; //frame that is currently shown
    
     protected IMultiframeImage iModel; //the image   
     
@@ -69,21 +67,16 @@ public class ImageView extends JComponent implements IImageView {
     protected BufferedImage iBuf2; //pre processed image of original size       
     protected BufferedImage iBuf;  //offscreen buffer made of a iBuf2 after zoom and pan   
   
-    private final EventListenerList iListeners; //
+    private final EventListenerList iListeners = new EventListenerList(); //
 
-    public enum VIEWMODE {
-        IMAGE,
-        CINE,
-        TOMO,
-    }
-       
     public static ImageView create(IMultiframeImage aI, VOITransform aTransform, ROIManager aM) {
         ImageView ret = new ImageView(null != aTransform ? aTransform: new VOITransform());
-        ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        ///ret.fit(FITMODE.VISIBLE);
-        ret.setController(new Controller(ret));
-        ret.iMgr = null != aM ? aM : ROIManager.create(aI);
+               
         
+        ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        
+        
+        ret.doConstruct(ROIManager.create(aI));
         ret.setImage(aI);
              
         ret.addComponentListener(new ComponentListener() {    
@@ -105,15 +98,11 @@ public class ImageView extends JComponent implements IImageView {
         return ret;    
     }
     
-    protected ImageView(VOITransform aTransform) {                                
-        iCurrent = 0; 
-        iOrigin = new Point(0, 0);              
-        iZoom = 1.0;//AffineTransform.getScaleInstance(DEFAULT_SCALE_X, DEFAULT_SCALE_Y);          
-        iVLUT = aTransform;//new VOITransform();                             
-        iListeners = new EventListenerList();        
+    protected ImageView(VOITransform aTransform) {                                      
+        iVLUT = aTransform;           
     }
       
-    final void setController(IController aC) {
+    final void doConstruct(ROIManager aM) {
         if (null != iController) {
             removeMouseListener(iController);
             removeMouseMotionListener(iController);
@@ -121,11 +110,12 @@ public class ImageView extends JComponent implements IImageView {
             removeKeyListener(iController);
         }
         
-        iController = aC;
+        iController = new Controller(this);
         addMouseListener(iController);
         addMouseMotionListener(iController);
         addMouseWheelListener(iController);
         addKeyListener(iController);
+        iMgr = aM;
     }
     
     @Override

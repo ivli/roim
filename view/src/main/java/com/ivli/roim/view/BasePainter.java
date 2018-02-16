@@ -24,13 +24,14 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
 import com.ivli.roim.core.Histogram;
 import com.ivli.roim.core.Measurement;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.awt.geom.QuadCurve2D;
+import java.awt.geom.Rectangle2D;
 /**
  *
  * @author likhachev
@@ -236,24 +237,85 @@ public class BasePainter implements IPainter {
     public void paint(ActionItem aO) {
         
     }
+    
+    public static double euclideanDistance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
+    
+    static Point2D lineIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+        double denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+        if (denom == 0.0) { // Lines are parallel.
+           return null;
+        }
+        
+        double ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3))/denom;
+        double ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3))/denom;
+            if (ua >= 0.0f && ua <= 1.0f && ub >= 0.0f && ub <= 1.0f) {
+                // Get the intersection point.
+                return new Point2D.Double( (x1 + ua*(x2 - x1)), (y1 + ua*(y2 - y1)));
+            }
 
+        return null;
+    }
+        
+    Point2D intersect(Line2D aL, Shape aS) {
+        PathIterator pi = aS.getPathIterator(null);
+        double x=.0, y=.0;
+
+        while (!pi.isDone()) {            
+            double [] vals = new double[6]; 
+            double x1, y1;
+            switch (pi.currentSegment(vals)) {
+                case PathIterator.SEG_MOVETO: {
+                    x = vals[0];
+                    y = vals[1];
+                    } break;
+                case PathIterator.SEG_CUBICTO: 
+                case PathIterator.SEG_QUADTO:    //TODO:            
+                case PathIterator.SEG_LINETO: {                                                       
+                    Point2D tmp = lineIntersect(x, y, vals[0], vals[1], aL.getX1(), aL.getY1(), aL.getX2(), aL.getY2());
+                    if (null != tmp) {
+                        LOG.debug("an intersection found {}", tmp);
+                        return tmp;                                         
+                    }    
+                    x = vals[0]; y = vals[1];
+                } break;
+                case PathIterator.SEG_CLOSE:  break;
+                default: break;
+            } 
+            pi.next(); 
+        }
+        return null;
+    }
+    
+    Line2D computeLinkLine(Shape aF, Shape aT) {
+        Shape s1 = iView.virtualToScreen().createTransformedShape(aF);
+        Shape s2 = iView.virtualToScreen().createTransformedShape(aT);;      
+        Rectangle2D r1 = s1.getBounds2D();
+        Rectangle2D r2 = s2.getBounds2D();
+        Line2D temp = new Line2D.Double(r1.getCenterX(), r1.getCenterY(), r2.getCenterX(), r2.getCenterY());
+        Point2D p1 = intersect(temp, s1);
+        if (null != p1) {
+            Point2D p2 = intersect(temp, s2);
+            if (null != p2)
+                return new Line2D.Double(p1, p2);
+        }
+        return null;
+    }
+    
     @Override
     public void paint(Link aO) {
-        Rectangle2D s1 = iView.virtualToScreen().createTransformedShape(aO.iFrom.getShape()).getBounds2D();
-        Rectangle2D s2 = iView.virtualToScreen().createTransformedShape(aO.iTo.getShape()).getBounds2D();        
-        Line2D l1 = new Line2D.Double(s1.getCenterX(), s1.getCenterY(), s2.getCenterX(), s2.getCenterY());
+  
+        Line2D line = computeLinkLine(aO.iFrom.getShape(), aO.iTo.getShape());
+
+        if (null != line) {
+            LOG.debug("<--draw line {}", line);
+            iGC.setColor(Color.RED);
+            iGC.draw(line);
+        }
+       
         
-        Area a1 = new Area(l1);
-        Area a2 = new Area(s1);
-        Area a3 = new Area(s2);
-        //a1.subtract(a2);
-        //a1.subtract(a3);
-        Rectangle2D rd = a1.getBounds2D();
-                
-        iGC.drawLine((int)s1.getCenterX(), (int)s1.getCenterY(), (int)s2.getCenterX(), (int)s2.getCenterY());
-        //iGC.draw(a1);
-        
-        LOG.debug("drawing Link from {}", rd);
+        ///LOG.debug("drawing Link from {}", rd);
     }
     org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }
