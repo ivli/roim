@@ -62,7 +62,7 @@ public class ImageView extends JComponent implements IImageView {
     protected IMultiframeImage iModel; //the image   
     
     protected IController iController; //Controller of MVC 
-    protected ROIManager iMgr; //
+    protected ROIManager  iMgr; //
     
     protected BufferedImage iBuf2; //pre processed image of original size       
     protected BufferedImage iBuf;  //offscreen buffer made of a iBuf2 after zoom and pan   
@@ -70,13 +70,11 @@ public class ImageView extends JComponent implements IImageView {
     private final EventListenerList iListeners = new EventListenerList(); //
 
     public static ImageView create(IMultiframeImage aI, VOITransform aTransform, ROIManager aM) {
-        ImageView ret = new ImageView(null != aTransform ? aTransform: new VOITransform());
-               
+        ImageView ret = new ImageView(null != aTransform ? aTransform: new VOITransform());              
         
         ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        
-        
-        ret.doConstruct(ROIManager.create(aI));
+      
+        ret.doConstruct(aM != null ? aM : ROIManager.create(aI));
         ret.setImage(aI);
              
         ret.addComponentListener(new ComponentListener() {    

@@ -43,8 +43,11 @@ class Link extends ScreenObject {
     @Override
     public void OverlayChanged(OverlayChangeEvent anEvt) {              
         switch (anEvt.getCode()) {
-            case DELETED: 
-                break;
+            case DELETED:  {
+                if (anEvt.getObject() == iFrom || anEvt.getObject() == iTo && anEvt.getSource() instanceof OverlayManager) {
+                    ((OverlayManager)anEvt.getSource()).deleteObject(this);
+                }
+            } break;
             case MOVED: {  
                 //final double[] deltas = (double[])anEvt.getExtra();                    
                 //((OverlayManager)anEvt.getSource()).moveObject(this, deltas[0], deltas[1]);
