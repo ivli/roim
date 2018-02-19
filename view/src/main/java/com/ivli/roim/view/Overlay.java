@@ -58,7 +58,7 @@ public abstract class Overlay implements OverlayChangeListener, Serializable {
      
     protected Overlay(Shape aShape, String aName) { 
         if (null == aName)
-            iName = "OVERLAY" + Uid.getNext(this.getClass());
+            iName = "OVERLAY::" + Uid.getNext(Overlay.class);
         else
             iName = aName; 
         

@@ -8,6 +8,7 @@ package com.ivli.roim.view;
 //import static com.ivli.roim.view.Overlay.OVL_VISIBLE;
 
 import com.ivli.roim.core.IFrameProvider;
+import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
 
 
@@ -21,7 +22,7 @@ class Link extends ScreenObject {
     final public Overlay iTo;
 
     Link(IImageView aV, Overlay aFrom, Overlay aTo) {
-        super(aV, IFrameProvider.INVALID_FRAME, null, "ANNOTATION::STATIC"); //NOI18N 
+        super(aV, IFrameProvider.INVALID_FRAME, null, "LINK::" + Uid.getNext(Link.class)); //NOI18N 
         iFrom = aFrom;
         iTo   = aTo;
     }
