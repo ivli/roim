@@ -484,7 +484,7 @@ class Controller implements IController {
     }
        
     void buildBaseObjectsMenu(JPopupMenu mnu) {
-        if (0 != (iSelected.getStyles() & Overlay.OVL_PERMANENT)) {
+        if (0 == (iSelected.getStyles() & Overlay.OVL_PERMANENT)) {
             JMenuItem mi11 = new JMenuItem(java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle").getString("MNU_ROI_OPERATIONS.DELETE"));
             mi11.addActionListener(this);
             mi11.setActionCommand(KCommandRoiDelete);

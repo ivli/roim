@@ -264,25 +264,48 @@ public class BasePainter implements IPainter {
 
         while (!pi.isDone()) {            
             double [] vals = new double[6]; 
-            double x1, y1;
+            
             switch (pi.currentSegment(vals)) {
                 case PathIterator.SEG_MOVETO: {
                     x = vals[0];
                     y = vals[1];
-                    } break;
-                case PathIterator.SEG_CUBICTO: 
-                case PathIterator.SEG_QUADTO:    //TODO:            
-                case PathIterator.SEG_LINETO: {                                                       
+                    } break;         
+                case PathIterator.SEG_LINETO:  
+                case PathIterator.SEG_QUADTO:
+                {
                     Point2D tmp = lineIntersect(x, y, vals[0], vals[1], aL.getX1(), aL.getY1(), aL.getX2(), aL.getY2());
+
                     if (null != tmp) {
                         LOG.debug("an intersection found {}", tmp);
                         return tmp;                                         
                     }    
-                    x = vals[0]; y = vals[1];
+                    x = vals[0]; y = vals[1];} break; 
+                /*    
+                case PathIterator.SEG_QUADTO:  {
+                    Point2D tmp = lineIntersect(x, y, vals[2], vals[3], aL.getX1(), aL.getY1(), aL.getX2(), aL.getY2());
+
+                    if (null != tmp) {
+                        LOG.debug("an intersection found {}", tmp);
+                        return tmp;                                         
+                    }    
+                    x = vals[2]; y = vals[3];} break;
+                  */
+                case PathIterator.SEG_CUBICTO:  {
+                    Point2D tmp = lineIntersect(vals[0], vals[1], vals[2], vals[3], aL.getX1(), aL.getY1(), aL.getX2(), aL.getY2());
+
+                    if (null != tmp) {
+                        LOG.debug("an intersection found {}", tmp);
+                        return tmp;                                         
+                    }    
+                    x = vals[4]; y = vals[5];
                 } break;
+                
                 case PathIterator.SEG_CLOSE:  break;
-                default: break;
+                default: 
+                    throw new IllegalArgumentException("Illeagl segment type");
+                    //break;
             } 
+            
             pi.next(); 
         }
         return null;
@@ -290,7 +313,7 @@ public class BasePainter implements IPainter {
     
     Line2D computeLinkLine(Shape aF, Shape aT) {
         Shape s1 = iView.virtualToScreen().createTransformedShape(aF);
-        Shape s2 = iView.virtualToScreen().createTransformedShape(aT);;      
+        Shape s2 = iView.virtualToScreen().createTransformedShape(aT);      
         Rectangle2D r1 = s1.getBounds2D();
         Rectangle2D r2 = s2.getBounds2D();
         Line2D temp = new Line2D.Double(r1.getCenterX(), r1.getCenterY(), r2.getCenterX(), r2.getCenterY());

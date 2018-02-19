@@ -18,6 +18,7 @@
 package com.ivli.roim.view;
 
 
+import com.ivli.roim.core.Uid;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import javax.swing.event.EventListenerList;
@@ -56,11 +57,12 @@ public abstract class Overlay implements OverlayChangeListener, Serializable {
     private final transient EventListenerList iListeners = new EventListenerList();        
      
     protected Overlay(Shape aShape, String aName) { 
-        //if (null == aName)
-        //    throw(new IllegalArgumentException("Name cannot be null"));
+        if (null == aName)
+            iName = "OVERLAY" + Uid.getNext(this.getClass());
+        else
+            iName = aName; 
         
-        iShape = aShape;         
-        iName = aName;                          
+        iShape = aShape;                                 
     }
        
     public void setName(String aName) {

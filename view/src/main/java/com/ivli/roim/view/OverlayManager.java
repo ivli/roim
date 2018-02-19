@@ -121,11 +121,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     public Iterator<Overlay> getObjects() {        
         return iOverlays.iterator();
     }     
-    /*           
-    public void addChangeListener(OverlayChangeListener aL, Overlay aO) {    
-        iList.add(OverlayChangeListener.class, aL);
-    }
-    */
+  
     public void addChangeListener(OverlayChangeListener aL) {    
         iList.add(OverlayChangeListener.class, aL);
     }
@@ -136,7 +132,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     
     void notifyROIChanged(Overlay aO, OverlayChangeEvent.CODE aS, Object aEx) {
         final OverlayChangeEvent evt = new OverlayChangeEvent(this, aS, aO, aEx);
-        LOG.debug("<--" + evt);
+        //LOG.debug("<--" + evt);
         OverlayChangeListener arr[] = iList.getListeners(OverlayChangeListener.class);
 
         for (OverlayChangeListener l : arr)
