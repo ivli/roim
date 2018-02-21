@@ -41,24 +41,23 @@ public class IntersectFinder {
     //px and py are the coordinates of the start, first tangent, second tangent, end in that order. length = 4
     //lx and ly are the start then end coordinates of the stright line. length = 2
     static Point2D cubicIntersect(double[] px, double[] py, double[] lx, double[] ly) {  
-        double[] X = new double[2];
+        final double[] X = new double[2];
 
-        double A = ly[1] - ly[0];      //A=y2-y1
-        double B = lx[0] - lx[1];      //B=x1-x2
-        double C = lx[0] * (ly[0] - ly[1]) +
-              ly[0] * (lx[1] - lx[0]);  //C=x1*(y1-y2)+y1*(x2-x1)
-
-        double []bx = {     -px[0] + 3 * px[1] + -3 * px[2] + px[3], 
+        final double A = ly[1] - ly[0];      //A=y2-y1
+        final double B = lx[0] - lx[1];      //B=x1-x2
+        final double C = lx[0] * (ly[0] - ly[1]) + ly[0] * (lx[1] - lx[0]);  //C=x1*(y1-y2)+y1*(x2-x1)
+    
+        final double []bx = {     -px[0] + 3 * px[1] + -3 * px[2] + px[3], 
                          3 * px[0] - 6 * px[1] +  3 * px[2], 
                         -3 * px[0] + 3 * px[1],
                              px[0]};
                       
-        double []by = {     -py[0] + 3 * py[1] + -3 * py[2] + py[3], 
+        final double []by = {     -py[0] + 3 * py[1] + -3 * py[2] + py[3], 
                          3 * py[0] - 6 * py[1] +  3 * py[2], 
                         -3 * py[0] + 3 * py[1],
                              py[0]};
    
-        double[] r = cubicRoots(
+        final double[] r = cubicRoots(
                                 A * bx[0] + B * by[0],      /*t^3*/
                                 A * bx[1] + B * by[1],      /*t^2*/
                                 A * bx[2] + B * by[2],      /*t*/
@@ -67,8 +66,8 @@ public class IntersectFinder {
         ArrayList<Point2D> ret = new ArrayList<>();
         /*verify the roots are in bounds of the linear segment*/
         for (int i = 0; i < 3; i++) {
-            final double t = r[i];
-            final double t2 = t*t;
+            final double t  = r[i];
+            final double t2 = r[i]*r[i];
             final double t3 = t2*t;
 
             X[0] = bx[0] * t3 + bx[1] * t2 + bx[2] * t + bx[3];
@@ -86,7 +85,7 @@ public class IntersectFinder {
             if (t < .0 || t > 1.0 || s < .0 || s > 1.0) {
                 X[0] = -100;  /*move off screen*/
                 X[1] = -100;
-            }
+            } else
             
             ret.add(new Point2D.Double(X[0], X[1]));            
         }
@@ -94,46 +93,49 @@ public class IntersectFinder {
         LOG.debug("found roots: " + ret.size());
         ret.stream().forEach((a)->LOG.debug("root -(" + a.getX() + ", " + a.getY() + ");"));
         
-        return ret.stream().filter((a) -> a.getX() > .0 && a.getY() > .0).findFirst().orElse(null); 
+        return ret.stream().filter((a) -> (a.getX() > .0 && a.getY() > .0)).findFirst().orElse(null); 
     }
 
     static final double PI2 = Math.PI*2.;
-    static final double PI4 = Math.PI*4.;
-    static final double SQRT3 = Math.sqrt(3);
+    static final double PI4 = Math.PI*4.;    
+    static final double SQRT3 = 1.7320508075688772935274463415059;
   
     static double[] cubicRoots(double a, double b, double c, double d) {
-        double A = b / a;
-        double B = c / a;
-        double C = d / a;
+        final double A = b / a;
+        final double B = c / a;
+        final double C = d / a;
 
-        double Q = (3. * B - Math.pow(A, 2)) / 9.;
-        double R = (9. * A * B - 27. * C - 2. * Math.pow(A, 3)) / 54.;
-        double D = Math.pow(Q, 3) + Math.pow(R, 2); // polynomial discriminant
-
+        final double Q = (3. * B - Math.pow(A, 2)) / 9.;
+        final double R = (9. * A * B - 27. * C - 2. * Math.pow(A, 3)) / 54.;
+        final double D = Math.pow(Q, 3) + Math.pow(R, 2); // polynomial discriminant
+        final double Ato3 = A / 3.;
+        
+        
         double[] t = {.0, .0, .0};//new double[3];
 
-        if (D >= 0)                                 // complex or duplicate roots POI
+        if (D >= .0) // complex or duplicate roots POI
         {
-            double S = Sign(R + Math.sqrt(D)) * Math.cbrt(Math.abs(R + Math.sqrt(D)));
-            double T = Sign(R - Math.sqrt(D)) * Math.cbrt(Math.abs(R - Math.sqrt(D)));
+            final double S = Sign(R + Math.sqrt(D)) * Math.cbrt(Math.abs(R + Math.sqrt(D)));
+            final double T = Sign(R - Math.sqrt(D)) * Math.cbrt(Math.abs(R - Math.sqrt(D)));
 
-            t[0] = -A / 3 + (S + T);                    // real root
-            t[1] = -A / 3 - (S + T) / 2;                // real part of complex root
-            t[2] = -A / 3 - (S + T) / 2;                // real part of complex root
+            t[0] = -Ato3 + (S + T); // real root
+            
+            ///t[2] = -Ato3 - (S + T) / 2; // real part of complex root
             //double Im = Math.abs(Math.sqrt(3) * (S - T) / 2); // complex part of root pair   
 
             //discard complex roots//
-            if (Math.abs(Math.sqrt(3) * (S - T) / 2) != .0) {
-                t[1] = -1;
-                t[2] = -1;
-            } 
+            if (S != T)//Math.abs(SQRT3 * (S - T) / 2) != .0) {
+                t[1] = t[2] = -1;
+            else 
+                t[1] = t[2] = -Ato3 - (S + T) / 2; // real part of complex roots
 
         } else { // distinct real roots          
-            double th = Math.acos(R / Math.sqrt(-Math.pow(Q, 3)));
-
-            t[0] = 2 * Math.sqrt(-Q) * Math.cos(th / 3) - A / 3;
-            t[1] = 2 * Math.sqrt(-Q) * Math.cos((th + PI2) / 3) - A / 3;
-            t[2] = 2 * Math.sqrt(-Q) * Math.cos((th + PI4) / 3) - A / 3;            
+            final double th = Math.acos(R / Math.sqrt(-Math.pow(Q, 3)));
+            final double Qsq2 = 2 * Math.sqrt(-Q);
+            
+            t[0] = Qsq2 * Math.cos(th / 3.) - Ato3;
+            t[1] = Qsq2 * Math.cos((th + PI2) / 3.) - Ato3;
+            t[2] = Qsq2 * Math.cos((th + PI4) / 3.) - Ato3;            
         }
 
         /* discard out of spec roots */
@@ -145,7 +147,7 @@ public class IntersectFinder {
     }
 
     static int Sign(double x) {
-        if (x < 0.0)
+        if (x < .0)
             return -1;
         return 1;
     }
