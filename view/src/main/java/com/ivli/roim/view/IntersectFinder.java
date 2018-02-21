@@ -128,7 +128,7 @@ public class IntersectFinder {
                 t[2] = -1;
             } 
 
-        } else {                                         // distinct real roots          
+        } else { // distinct real roots          
             double th = Math.acos(R / Math.sqrt(-Math.pow(Q, 3)));
 
             t[0] = 2 * Math.sqrt(-Q) * Math.cos(th / 3) - A / 3;
