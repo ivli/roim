@@ -18,7 +18,6 @@
 package com.ivli.roim.view;
 
 import com.ivli.roim.core.IFrameProvider;
-import com.ivli.roim.core.Uid;
 import java.awt.Shape;
 
 /**
@@ -36,12 +35,7 @@ public abstract class ScreenObject extends Overlay {
        iView = aView;
        iFrameNumber = aN;
     }
-    /*
-    protected ScreenObject(IImageView aView) {
-       super(null, "SOB" + Uid.getNext(aC));
-       iView = aView;       
-    }
-    */
+  
     public IImageView getView() {
         return iView;
     }
@@ -49,10 +43,11 @@ public abstract class ScreenObject extends Overlay {
     public int getFrameNumber() {
         return iFrameNumber;
     }
-    /*
+    
+    /**/
     @Override
     public int getStyles() {
         return OVL_VISIBLE|OVL_MOVEABLE|OVL_SELECTABLE|OVL_PINNABLE; 
     }
-    */
+    
 }

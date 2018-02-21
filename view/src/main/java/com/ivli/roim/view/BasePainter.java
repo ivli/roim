@@ -168,7 +168,7 @@ public class BasePainter implements IPainter {
             iGC.draw(tick); 
     }
         
-    protected Rectangle2D updateShape(Annotation aO) {            
+    final Rectangle2D updateAnnotationShape(Annotation aO) {            
         double width  = 0;
         double height = 0;
 
@@ -185,29 +185,17 @@ public class BasePainter implements IPainter {
                 height = Math.max(height, b.getHeight());
             }
         }
-          
-        final double scaleX = iView.virtualToScreen().getScaleX();      
-        
-        Rectangle2D rect;
-        /*
-        if (null == aO.getShape()) 
-            rect = new Rectangle2D.Double(aO.iOverlay.getShape().getBounds2D().getX() * scaleX, ///TODO: iOverlay musn't be accessible
-                                          aO.iOverlay.getShape().getBounds2D().getY() * scaleX - height , 
-                                          width, height );                                                
-        else
-        */
-            rect = new Rectangle2D.Double(aO.getShape().getBounds2D().getX() * scaleX, 
-                                          aO.getShape().getBounds2D().getY() * scaleX,                                                                                        
-                                          width, height);
-        
-        aO.setShape(iView.screenToVirtual().createTransformedShape(rect));
-        
+                
+        Rectangle2D rect = iView.virtualToScreen().createTransformedShape(aO.getShape()).getBounds2D();                              
+        rect.setRect(rect.getMinX(), rect.getMinY(), width + 4, height + 4);
+        aO.setShape(iView.screenToVirtual().createTransformedShape(rect));       
         return rect;
     }               
     
     @Override
-    public void paint(Annotation aO) {            
-        final Rectangle2D temp = updateShape(aO); //iTrans.createTransformedShape().;     
+    public void paint(Annotation aO) {          
+        LOG.debug("annotation update");
+        final Rectangle2D temp = updateAnnotationShape(aO);    
         iGC.setColor(aO.getColor());
 
         if (!aO.isMultiline()) {

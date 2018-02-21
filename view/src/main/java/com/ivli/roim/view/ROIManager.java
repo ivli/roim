@@ -45,7 +45,7 @@ import com.ivli.roim.events.OverlayChangeEvent;
 public class ROIManager extends OverlayManager {                            
     static final boolean CREATE_ANNOTATIONS_FOR_ROIS = true;
     static final boolean CREATE_ANNOTATIONS_FOR_RULER = true;
-    static final boolean LINK_ROI_TO_ANNOTATIONS = true;
+    static final boolean CREATE_LINKS_TO_ANNOTATIONS = true;
     
     public static ROIManager create(IMultiframeImage anImage) {
         return new ROIManager(anImage);    
@@ -185,7 +185,7 @@ public class ROIManager extends OverlayManager {
             addObject(ano);        
             addChangeListener(ano);   
         
-            if (LINK_ROI_TO_ANNOTATIONS) {
+            if (CREATE_LINKS_TO_ANNOTATIONS) {
                 Link lnk = new Link(aV, ret, ano);
                 addObject(lnk);
                 addChangeListener(lnk);
@@ -198,20 +198,27 @@ public class ROIManager extends OverlayManager {
      public Overlay createRuler(Point aFrom, Point aTo, IImageView aV) {                        
         Handle beg = new Handle(aV.screenToVirtual(aFrom));
         Handle end = new Handle(aV.screenToVirtual(aTo));
-        Ruler ruler = new Ruler(aV, beg, end);                     
+        Ruler  ret = new Ruler(aV, beg, end);                     
            
         addObject(beg);
         addObject(end);
-        addObject(ruler);
+        addObject(ret);
         
-        ruler.addChangeListener(this); 
+        ret.addChangeListener(this); 
         
+        /* TODO!!!
         if (CREATE_ANNOTATIONS_FOR_RULER) { 
-            Annotation.Static ano = new Annotation.Static(aV, ruler, ruler, Color.RED);
+            Annotation.Static ano = new Annotation.Static(aV, ret, ret, Color.RED);
             addObject(ano);        
             addChangeListener(ano);   
-        }
-        return ruler;
+            
+                if (CREATE_LINKS_TO_ANNOTATIONS) {
+                Link lnk = new Link(aV, ret, ano);
+                addObject(lnk);
+                addChangeListener(lnk);
+            }
+        }*/
+        return ret;
     }
     
     public void externalize(ObjectOutputStream ois) {

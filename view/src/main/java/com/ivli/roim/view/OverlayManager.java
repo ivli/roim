@@ -57,8 +57,8 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
         ///!!!!!
         for(Overlay o:iOverlays) { 
             notifyROIChanged(o, OverlayChangeEvent.CODE.DELETED, null);        
-            iOverlays.remove(o);}
-     
+            iOverlays.remove(o);
+        }     
     }
     
     public void update() {        

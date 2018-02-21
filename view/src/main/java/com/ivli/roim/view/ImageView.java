@@ -323,9 +323,8 @@ public class ImageView extends JComponent implements IImageView {
     private double iZoomStep;
     
     @Override
-    public void zoom(double aFactor) {
-        //iFit = FITMODE.NONE;        
-        iZoom = Math.max(iZoom + aFactor/iZoomStep, MIN_SCALE);//, Math.max(iZoom + aFactor/iZoomStep, MIN_SCALE));               
+    public void zoom(double aFactor) {      
+        iZoom = Math.max(iZoom + aFactor/iZoomStep, MIN_SCALE);               
         invalidateBuffer();  
         repaint();
     }
@@ -333,7 +332,7 @@ public class ImageView extends JComponent implements IImageView {
     @Override
     public void pan(int adX, int adY) {
         iOrigin.x += adX;
-        iOrigin.y += adY;     
+        iOrigin.y += adY;             
         repaint();
     }
              

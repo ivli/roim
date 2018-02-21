@@ -123,8 +123,7 @@ class Controller implements IController {
             case MOUSE_ACTION_PAN: 
                 return new BaseRoiCreator(aX, aY) {
                     public void DoAction(int aX, int aY) {
-                        iControlled.pan(aX-iX, aY-iY);
-                        //iControlled.repaint();
+                        iControlled.pan(aX-iX, aY-iY);                        
                 }};                 
             case MOUSE_ACTION_LIST: 
                 return new BaseRoiCreator(aX, aY) {
@@ -151,6 +150,7 @@ class Controller implements IController {
         iWheel = NewAction(iWheelAction, 0, 0);       
     }
 
+    @Override
     public ActionItem getActionItem() {
         return iAction;
     }
@@ -178,10 +178,12 @@ class Controller implements IController {
         iSelected = null;
     }
    
+    @Override
     public void mouseEntered(MouseEvent e) {
         e.getComponent().requestFocusInWindow(); //gain focus
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
     }
 
@@ -193,6 +195,7 @@ class Controller implements IController {
             //iControlled.zoom(e.getWheelRotation()/Settings.ZOOM_SENSITIVITY_FACTOR, 0,0);
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
             
