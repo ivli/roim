@@ -23,17 +23,17 @@ import java.util.ArrayList;
  */
 public class IntersectFinder {
     
-    static Point2D CubicIntersect(Point2D P0, Point2D P1, Point2D P2, Point2D P3, Line2D aL)  throws java.util.NoSuchElementException {
+    static Point2D cubicIntersect(Point2D P0, Point2D P1, Point2D P2, Point2D P3, Line2D aL) {
         double []px = {P0.getX(),P1.getX(),P2.getX(),P3.getX()};
         double []py = {P0.getY(), P1.getY(),P2.getY(),P3.getY()};
         double []lx = {aL.getX1(), aL.getX2()};
         double []ly = {aL.getY1(), aL.getY2()};
-        return CubicIntersect(px, py, lx, ly);
+        return cubicIntersect(px, py, lx, ly);
     }
     
     //px and py are the coordinates of the start, first tangent, second tangent, end in that order. length = 4
     //lx and ly are the start then end coordinates of the stright line. length = 2
-    static Point2D CubicIntersect(double[] px, double[] py, double[] lx, double[] ly) throws java.util.NoSuchElementException {  
+    static Point2D cubicIntersect(double[] px, double[] py, double[] lx, double[] ly) {  
         double[] X = new double[2];
 
         double A = ly[1] - ly[0];      //A=y2-y1
@@ -52,13 +52,15 @@ public class IntersectFinder {
 
         double []r = CubicRoots(P);
 
-        ArrayList<Point2D> ret = new ArrayList();
+        ArrayList<Point2D> ret = new ArrayList<>();
         /*verify the roots are in bounds of the linear segment*/
         for (int i = 0; i < 3; i++) {
-            double t = r[i];
+            final double t = r[i];
+            final double t2 = t*t;
+            final double t3 = t2*t;
 
-            X[0] = bx[0] * t * t * t + bx[1] * t * t + bx[2] * t + bx[3];
-            X[1] = by[0] * t * t * t + by[1] * t * t + by[2] * t + by[3];
+            X[0] = bx[0] * t3 + bx[1] * t2 + bx[2] * t + bx[3];
+            X[1] = by[0] * t3 + by[1] * t2 + by[2] * t + by[3];
 
             /*above is intersection point assuming infinitely long line segment,
               make sure we are also in bounds of the line*/
@@ -83,9 +85,12 @@ public class IntersectFinder {
         LOG.debug("found roots: " + ret.size());
         ret.stream().forEach((a)->LOG.debug("root -(" + a.getX() + ", " + a.getY() + ");"));
         
-        return ret.stream().filter((a) -> a.getX() > .0 && a.getY() > .0).findFirst().get(); 
+        return ret.stream().filter((a) -> a.getX() > .0 && a.getY() > .0).findFirst().orElse(null); 
     }
 
+    static final double PI2 = Math.PI*2.;
+    static final double PI4 = Math.PI*4.;
+    
     static double[] CubicRoots(double[] P) {
         double a = P[0];
         double b = P[1];
@@ -96,13 +101,13 @@ public class IntersectFinder {
         double B = c / a;
         double C = d / a;
 
-        double Im;
+        //double Im;
 
         double Q = (3f * B - Math.pow(A, 2)) / 9f;
-        double R = (9f * A * B - 27f * C - 2 * Math.pow(A, 3)) / 54f;
+        double R = (9f * A * B - 27. * C - 2. * Math.pow(A, 3)) / 54.;
         double D = Math.pow(Q, 3) + Math.pow(R, 2);    // polynomial discriminant
 
-        double[] t = new double[3];
+        double[] t = {.0, .0, .0};//new double[3];
 
         if (D >= 0)                                 // complex or duplicate roots POI
         {
@@ -112,7 +117,7 @@ public class IntersectFinder {
             t[0] = -A / 3 + (S + T);                    // real root
             t[1] = -A / 3 - (S + T) / 2;                  // real part of complex root
             t[2] = -A / 3 - (S + T) / 2;                  // real part of complex root
-            Im = Math.abs(Math.sqrt(3) * (S - T) / 2);    // complex part of root pair   
+            double Im = Math.abs(Math.sqrt(3) * (S - T) / 2);    // complex part of root pair   
 
             //discard complex roots//
             if (Im != 0) {
@@ -125,9 +130,9 @@ public class IntersectFinder {
             double th = Math.acos(R / Math.sqrt(-Math.pow(Q, 3)));
 
             t[0] = 2 * Math.sqrt(-Q) * Math.cos(th / 3) - A / 3;
-            t[1] = 2 * Math.sqrt(-Q) * Math.cos((th + 2 * Math.PI) / 3) - A / 3;
-            t[2] = 2 * Math.sqrt(-Q) * Math.cos((th + 4 * Math.PI) / 3) - A / 3;
-            Im = .0;
+            t[1] = 2 * Math.sqrt(-Q) * Math.cos((th + PI2) / 3) - A / 3;
+            t[2] = 2 * Math.sqrt(-Q) * Math.cos((th + PI4) / 3) - A / 3;
+            //Im = .0;
         }
 
         /*discard out of spec roots*/
@@ -146,12 +151,15 @@ public class IntersectFinder {
     }
 
     static double[] BezierCoeffs(double P0, double P1, double P2, double P3) {
-        double[] Z = new double[4];
-        Z[0] = -P0 + 3 * P1 + -3 * P2 + P3;
-        Z[1] = 3 * P0 - 6 * P1 + 3 * P2;
-        Z[2] = -3 * P0 + 3 * P1;
-        Z[3] = P0;
-        return Z;
+        double[] ret = {-P0 + 3 * P1 + -3 * P2 + P3, 
+            3 * P0 - 6 * P1 + 3 * P2, 
+            -3 * P0 + 3 * P1,
+            P0};       
+        //ret[0] = -P0 + 3 * P1 + -3 * P2 + P3;
+        //ret[1] = 3 * P0 - 6 * P1 + 3 * P2;
+        //ret[2] = -3 * P0 + 3 * P1;
+        //ret[3] = P0;
+        return ret;
     }
  
     public static double euclideanDistance(double x1, double y1, double x2, double y2) {
@@ -190,16 +198,14 @@ public class IntersectFinder {
                 case PathIterator.SEG_LINETO: {                                       
                     Point2D tmp = lineIntersect(x, y, vals[0], vals[1], aL.getX1(), aL.getY1(), aL.getX2(), aL.getY2());
 
-                    if (null != tmp) {
-                        LOG.debug("an intersection found {}", tmp);
+                    if (null != tmp) {                        
                         return tmp;                                         
                     }    
                     x = vals[0]; y = vals[1];
                 } break; 
                 case PathIterator.SEG_QUADTO: {                    
                     Point2D tmp = lineIntersect(x, y, vals[0], vals[1], aL.getX1(), aL.getY1(), aL.getX2(), aL.getY2());
-                    if (null != tmp) {
-                        LOG.debug("an intersection found {}", tmp);
+                    if (null != tmp) {                        
                         return tmp;                                         
                     }    
                     x = vals[2]; y = vals[3];
@@ -209,12 +215,13 @@ public class IntersectFinder {
                     double []py = {y,vals[1],vals[3],vals[5]};
                     double []lx = {aL.getX1(), aL.getX2()};
                     double []ly = {aL.getY1(), aL.getY2()};
-                    try {
-                        return CubicIntersect(px, py, lx, ly);
+                   
+                    Point2D tmp = cubicIntersect(px, py, lx, ly);
                         
-                    } catch (java.util.NoSuchElementException ex) {
-                    
-                    }
+                    if (null != tmp) {                        
+                        return tmp;                                         
+                    }    
+                  
                     x = vals[4]; y = vals[5];
                 } break;
                

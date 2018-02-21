@@ -28,9 +28,7 @@ import com.ivli.roim.core.Histogram;
 import com.ivli.roim.core.Measurement;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
-import java.awt.geom.QuadCurve2D;
 import java.awt.geom.Rectangle2D;
 /**
  *
@@ -38,6 +36,7 @@ import java.awt.geom.Rectangle2D;
  */
 public class BasePainter implements IPainter {    
     protected static final Color EMPHASIZED_COLOR = Color.RED;
+    protected static final Color DEFAULT_LINK_COLOR = Color.RED;
     
     protected Graphics2D iGC;
     protected IImageView iView;    
@@ -260,7 +259,7 @@ public class BasePainter implements IPainter {
         Line2D line = computeLinkLine(aO.iFrom.getShape(), aO.iTo.getShape());
 
         if (null != line) {            
-            iGC.setColor(aO.iFrom instanceof ROI ? ((ROI)aO.iFrom).getColor() : aO.iTo instanceof ROI ? ((ROI)aO.iFrom).getColor() : Color.RED );
+            iGC.setColor(aO.iFrom instanceof ROI ? ((ROI)aO.iFrom).getColor() : aO.iTo instanceof ROI ? ((ROI)aO.iFrom).getColor() : DEFAULT_LINK_COLOR );
             iGC.draw(line);
         }     
     }
