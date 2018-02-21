@@ -22,22 +22,7 @@ import java.util.ArrayList;
  * @author likhachev
  */
 public class IntersectFinder {
-    
-    static Point2D cubicIntersect(Point2D P0, Point2D P1, Point2D P2, Point2D P3, Line2D aL) {
-        double []px = {P0.getX(),P1.getX(),P2.getX(),P3.getX()};
-        double []py = {P0.getY(), P1.getY(),P2.getY(),P3.getY()};
-        double []lx = {aL.getX1(), aL.getX2()};
-        double []ly = {aL.getY1(), aL.getY2()};
-        return cubicIntersect(px, py, lx, ly);
-    }
-    
-    static double[] bezierCoeffs(double P0, double P1, double P2, double P3) {
-        double[] ret = {-P0 + 3 * P1 + -3 * P2 + P3, 
-                        3 * P0 - 6 * P1 + 3 * P2, 
-                        -3 * P0 + 3 * P1,
-                        P0};             
-        return ret;
-    }
+           
     //px and py are the coordinates of the start, first tangent, second tangent, end in that order. length = 4
     //lx and ly are the start then end coordinates of the stright line. length = 2
     static Point2D cubicIntersect(double[] px, double[] py, double[] lx, double[] ly) {  
@@ -46,22 +31,22 @@ public class IntersectFinder {
         final double A = ly[1] - ly[0];      //A=y2-y1
         final double B = lx[0] - lx[1];      //B=x1-x2
         final double C = lx[0] * (ly[0] - ly[1]) + ly[0] * (lx[1] - lx[0]);  //C=x1*(y1-y2)+y1*(x2-x1)
-    
-        final double []bx = {     -px[0] + 3 * px[1] + -3 * px[2] + px[3], 
-                         3 * px[0] - 6 * px[1] +  3 * px[2], 
-                        -3 * px[0] + 3 * px[1],
-                             px[0]};
-                      
-        final double []by = {     -py[0] + 3 * py[1] + -3 * py[2] + py[3], 
-                         3 * py[0] - 6 * py[1] +  3 * py[2], 
-                        -3 * py[0] + 3 * py[1],
-                             py[0]};
+         
+         //Bezier coeefficients X
+        final double []bx = {-px[0] + 3 * px[1] -  3 * px[2] + px[3], 
+                          3 * px[0] - 6 * px[1] +  3 * px[2], 
+                         -3 * px[0] + 3 * px[1],
+                              px[0]};
+         //Bezier coeefficients Y              
+        final double []by = { -py[0] + 3 * py[1] -  3 * py[2] + py[3], 
+                           3 * py[0] - 6 * py[1] +  3 * py[2], 
+                          -3 * py[0] + 3 * py[1],
+                               py[0]};
    
-        final double[] r = cubicRoots(
-                                A * bx[0] + B * by[0],      /*t^3*/
-                                A * bx[1] + B * by[1],      /*t^2*/
-                                A * bx[2] + B * by[2],      /*t*/
-                                A * bx[3] + B * by[3] + C); /*1*/
+        final double[] r = cubicRoots(A * bx[0] + B * by[0],    /*t^3*/                                     
+                                      A * bx[1] + B * by[1],     /*t^2*/
+                                      A * bx[2] + B * by[2],     /*t*/
+                                      A * bx[3] + B * by[3] + C); /*1*/
        
         ArrayList<Point2D> ret = new ArrayList<>();
         /*verify the roots are in bounds of the linear segment*/
@@ -90,8 +75,7 @@ public class IntersectFinder {
             ret.add(new Point2D.Double(X[0], X[1]));            
         }
         
-        LOG.debug("found roots: " + ret.size());
-        ret.stream().forEach((a)->LOG.debug("root -(" + a.getX() + ", " + a.getY() + ");"));
+        //ret.stream().forEach((a)->LOG.debug("root -(" + a.getX() + ", " + a.getY() + ");"));
         
         return ret.stream().filter((a) -> (a.getX() > .0 && a.getY() > .0)).findFirst().orElse(null); 
     }
