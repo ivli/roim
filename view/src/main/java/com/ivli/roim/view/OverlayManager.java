@@ -30,6 +30,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.events.*;
 import com.ivli.roim.core.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -53,12 +55,13 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
         return iImage;
     }
           
-    public void clear() {
-        ///!!!!!
-        for(Overlay o:iOverlays) { 
-            notifyROIChanged(o, OverlayChangeEvent.CODE.DELETED, null);        
-            iOverlays.remove(o);
-        }     
+    public void clear() {            
+        //first delete ROIs one-by-one emitting notifications. SIC: collect() is manadatory to avoid exception  
+        iOverlays.stream().filter(o -> o instanceof ROI).collect(Collectors.toList())  
+                          .forEach(o -> {iOverlays.remove(o); notifyROIChanged(o, OverlayChangeEvent.CODE.DELETED, null);});
+        //delete the rest objects emptying the container 
+        iOverlays.clear();
+               
     }
     
     public void update() {        
