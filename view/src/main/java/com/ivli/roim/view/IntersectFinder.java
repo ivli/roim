@@ -31,6 +31,13 @@ public class IntersectFinder {
         return cubicIntersect(px, py, lx, ly);
     }
     
+    static double[] bezierCoeffs(double P0, double P1, double P2, double P3) {
+        double[] ret = {-P0 + 3 * P1 + -3 * P2 + P3, 
+                        3 * P0 - 6 * P1 + 3 * P2, 
+                        -3 * P0 + 3 * P1,
+                        P0};             
+        return ret;
+    }
     //px and py are the coordinates of the start, first tangent, second tangent, end in that order. length = 4
     //lx and ly are the start then end coordinates of the stright line. length = 2
     static Point2D cubicIntersect(double[] px, double[] py, double[] lx, double[] ly) {  
@@ -41,17 +48,22 @@ public class IntersectFinder {
         double C = lx[0] * (ly[0] - ly[1]) +
               ly[0] * (lx[1] - lx[0]);  //C=x1*(y1-y2)+y1*(x2-x1)
 
-        double []bx = BezierCoeffs(px[0], px[1], px[2], px[3]);
-        double []by = BezierCoeffs(py[0], py[1], py[2], py[3]);
-
-        double[] P = new double[4];
-        P[0] = A * bx[0] + B * by[0];       /*t^3*/
-        P[1] = A * bx[1] + B * by[1];       /*t^2*/
-        P[2] = A * bx[2] + B * by[2];       /*t*/
-        P[3] = A * bx[3] + B * by[3] + C;   /*1*/
-
-        double []r = CubicRoots(P);
-
+        double []bx = {     -px[0] + 3 * px[1] + -3 * px[2] + px[3], 
+                         3 * px[0] - 6 * px[1] +  3 * px[2], 
+                        -3 * px[0] + 3 * px[1],
+                             px[0]};
+                      
+        double []by = {     -py[0] + 3 * py[1] + -3 * py[2] + py[3], 
+                         3 * py[0] - 6 * py[1] +  3 * py[2], 
+                        -3 * py[0] + 3 * py[1],
+                             py[0]};
+   
+        double[] r = cubicRoots(
+                                A * bx[0] + B * by[0],      /*t^3*/
+                                A * bx[1] + B * by[1],      /*t^2*/
+                                A * bx[2] + B * by[2],      /*t*/
+                                A * bx[3] + B * by[3] + C); /*1*/
+       
         ArrayList<Point2D> ret = new ArrayList<>();
         /*verify the roots are in bounds of the linear segment*/
         for (int i = 0; i < 3; i++) {
@@ -65,21 +77,18 @@ public class IntersectFinder {
             /*above is intersection point assuming infinitely long line segment,
               make sure we are also in bounds of the line*/
             double s;
-            if ((lx[1] - lx[0]) != 0)           /*if not vertical line*/
+            if (lx[1] != lx[0])  /*if not vertical line*/
                 s = (X[0] - lx[0]) / (lx[1] - lx[0]);
             else
                 s = (X[1] - ly[0]) / (ly[1] - ly[0]);
 
             /*in bounds?*/
-            if (t < 0 || t > 1.0 || s < 0 || s > 1.0) {
+            if (t < .0 || t > 1.0 || s < .0 || s > 1.0) {
                 X[0] = -100;  /*move off screen*/
                 X[1] = -100;
             }
-
-            /*move intersection point*/
-            //I[i] = new Vector2(X[0], X[1]);
-            ret.add(new Point2D.Double(X[0], X[1]));
             
+            ret.add(new Point2D.Double(X[0], X[1]));            
         }
         
         LOG.debug("found roots: " + ret.size());
@@ -90,57 +99,48 @@ public class IntersectFinder {
 
     static final double PI2 = Math.PI*2.;
     static final double PI4 = Math.PI*4.;
-    
-    static double[] CubicRoots(double[] P) {
-        double a = P[0];
-        double b = P[1];
-        double c = P[2];
-        double d = P[3];
-
+    static final double SQRT3 = Math.sqrt(3);
+  
+    static double[] cubicRoots(double a, double b, double c, double d) {
         double A = b / a;
         double B = c / a;
         double C = d / a;
 
-        //double Im;
-
-        double Q = (3f * B - Math.pow(A, 2)) / 9f;
-        double R = (9f * A * B - 27. * C - 2. * Math.pow(A, 3)) / 54.;
-        double D = Math.pow(Q, 3) + Math.pow(R, 2);    // polynomial discriminant
+        double Q = (3. * B - Math.pow(A, 2)) / 9.;
+        double R = (9. * A * B - 27. * C - 2. * Math.pow(A, 3)) / 54.;
+        double D = Math.pow(Q, 3) + Math.pow(R, 2); // polynomial discriminant
 
         double[] t = {.0, .0, .0};//new double[3];
 
         if (D >= 0)                                 // complex or duplicate roots POI
         {
-            double S = Sign(R + Math.sqrt(D)) * Math.pow(Math.abs(R + Math.sqrt(D)), (1 / 3));
-            double T = Sign(R - Math.sqrt(D)) * Math.pow(Math.abs(R - Math.sqrt(D)), (1 / 3));
+            double S = Sign(R + Math.sqrt(D)) * Math.cbrt(Math.abs(R + Math.sqrt(D)));
+            double T = Sign(R - Math.sqrt(D)) * Math.cbrt(Math.abs(R - Math.sqrt(D)));
 
             t[0] = -A / 3 + (S + T);                    // real root
-            t[1] = -A / 3 - (S + T) / 2;                  // real part of complex root
-            t[2] = -A / 3 - (S + T) / 2;                  // real part of complex root
-            double Im = Math.abs(Math.sqrt(3) * (S - T) / 2);    // complex part of root pair   
+            t[1] = -A / 3 - (S + T) / 2;                // real part of complex root
+            t[2] = -A / 3 - (S + T) / 2;                // real part of complex root
+            //double Im = Math.abs(Math.sqrt(3) * (S - T) / 2); // complex part of root pair   
 
             //discard complex roots//
-            if (Im != 0) {
+            if (Math.abs(Math.sqrt(3) * (S - T) / 2) != .0) {
                 t[1] = -1;
                 t[2] = -1;
-            }
+            } 
 
-        } else                                          // distinct real roots
-          {
+        } else {                                         // distinct real roots          
             double th = Math.acos(R / Math.sqrt(-Math.pow(Q, 3)));
 
             t[0] = 2 * Math.sqrt(-Q) * Math.cos(th / 3) - A / 3;
             t[1] = 2 * Math.sqrt(-Q) * Math.cos((th + PI2) / 3) - A / 3;
-            t[2] = 2 * Math.sqrt(-Q) * Math.cos((th + PI4) / 3) - A / 3;
-            //Im = .0;
+            t[2] = 2 * Math.sqrt(-Q) * Math.cos((th + PI4) / 3) - A / 3;            
         }
 
-        /*discard out of spec roots*/
+        /* discard out of spec roots */
         for (int i = 0; i < 3; i++)
             if (t[i] < 0 || t[i] > 1.0)
                 t[i] = -1;
 
-        //Debug.Log(t[0] + " " + t[1] + " " + t[2]);
         return t;
     }
 
@@ -148,18 +148,6 @@ public class IntersectFinder {
         if (x < 0.0)
             return -1;
         return 1;
-    }
-
-    static double[] BezierCoeffs(double P0, double P1, double P2, double P3) {
-        double[] ret = {-P0 + 3 * P1 + -3 * P2 + P3, 
-            3 * P0 - 6 * P1 + 3 * P2, 
-            -3 * P0 + 3 * P1,
-            P0};       
-        //ret[0] = -P0 + 3 * P1 + -3 * P2 + P3;
-        //ret[1] = 3 * P0 - 6 * P1 + 3 * P2;
-        //ret[2] = -3 * P0 + 3 * P1;
-        //ret[3] = P0;
-        return ret;
     }
  
     public static double euclideanDistance(double x1, double y1, double x2, double y2) {
