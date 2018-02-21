@@ -236,90 +236,19 @@ public class BasePainter implements IPainter {
     @Override
     public void paint(ActionItem aO) {
         
-    }
-    
-    public static double euclideanDistance(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-    }
-    
-    static Point2D lineIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
-        double denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
-        if (denom == 0.0) { // Lines are parallel.
-           return null;
-        }
-        
-        double ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3))/denom;
-        double ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3))/denom;
-            if (ua >= 0.0f && ua <= 1.0f && ub >= 0.0f && ub <= 1.0f) {
-                // Get the intersection point.
-                return new Point2D.Double( (x1 + ua*(x2 - x1)), (y1 + ua*(y2 - y1)));
-            }
-
-        return null;
-    }
-        
-    Point2D intersect(Line2D aL, Shape aS) {
-        PathIterator pi = aS.getPathIterator(null);
-        double x=.0, y=.0;
-
-        while (!pi.isDone()) {            
-            double [] vals = new double[6]; 
-            
-            switch (pi.currentSegment(vals)) {
-                case PathIterator.SEG_MOVETO: {
-                    x = vals[0];
-                    y = vals[1];
-                    } break;         
-                case PathIterator.SEG_LINETO:  
-                case PathIterator.SEG_QUADTO:
-                {
-                    Point2D tmp = lineIntersect(x, y, vals[0], vals[1], aL.getX1(), aL.getY1(), aL.getX2(), aL.getY2());
-
-                    if (null != tmp) {
-                        LOG.debug("an intersection found {}", tmp);
-                        return tmp;                                         
-                    }    
-                    x = vals[0]; y = vals[1];} break; 
-                /*    
-                case PathIterator.SEG_QUADTO:  {
-                    Point2D tmp = lineIntersect(x, y, vals[2], vals[3], aL.getX1(), aL.getY1(), aL.getX2(), aL.getY2());
-
-                    if (null != tmp) {
-                        LOG.debug("an intersection found {}", tmp);
-                        return tmp;                                         
-                    }    
-                    x = vals[2]; y = vals[3];} break;
-                  */
-                case PathIterator.SEG_CUBICTO:  {
-                    Point2D tmp = lineIntersect(vals[0], vals[1], vals[2], vals[3], aL.getX1(), aL.getY1(), aL.getX2(), aL.getY2());
-
-                    if (null != tmp) {
-                        LOG.debug("an intersection found {}", tmp);
-                        return tmp;                                         
-                    }    
-                    x = vals[4]; y = vals[5];
-                } break;
-                
-                case PathIterator.SEG_CLOSE:  break;
-                default: 
-                    throw new IllegalArgumentException("Illeagl segment type");
-                    //break;
-            } 
-            
-            pi.next(); 
-        }
-        return null;
-    }
-    
+    }    
+   
     Line2D computeLinkLine(Shape aF, Shape aT) {
         Shape s1 = iView.virtualToScreen().createTransformedShape(aF);
         Shape s2 = iView.virtualToScreen().createTransformedShape(aT);      
         Rectangle2D r1 = s1.getBounds2D();
         Rectangle2D r2 = s2.getBounds2D();
         Line2D temp = new Line2D.Double(r1.getCenterX(), r1.getCenterY(), r2.getCenterX(), r2.getCenterY());
-        Point2D p1 = intersect(temp, s1);
+        
+        Point2D p1 = IntersectFinder.intersect(s1, temp);
+        
         if (null != p1) {
-            Point2D p2 = intersect(temp, s2);
+            Point2D p2 = IntersectFinder.intersect(s2, temp);
             if (null != p2)
                 return new Line2D.Double(p1, p2);
         }
@@ -327,18 +256,13 @@ public class BasePainter implements IPainter {
     }
     
     @Override
-    public void paint(Link aO) {
-  
+    public void paint(Link aO) {  
         Line2D line = computeLinkLine(aO.iFrom.getShape(), aO.iTo.getShape());
 
-        if (null != line) {
-            LOG.debug("<--draw line {}", line);
-            iGC.setColor(Color.RED);
+        if (null != line) {            
+            iGC.setColor(aO.iFrom instanceof ROI ? ((ROI)aO.iFrom).getColor() : aO.iTo instanceof ROI ? ((ROI)aO.iFrom).getColor() : Color.RED );
             iGC.draw(line);
-        }
-       
-        
-        ///LOG.debug("drawing Link from {}", rd);
+        }     
     }
     org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger();
 }
