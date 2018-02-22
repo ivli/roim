@@ -26,6 +26,7 @@ import java.awt.Shape;
 import java.awt.geom.Path2D;
 import com.ivli.roim.core.Histogram;
 import com.ivli.roim.core.Measurement;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -123,21 +124,26 @@ public class BasePainter implements IPainter {
             final double angle = GeomTools.angle(beg, end);                      
             
             final double len = GeomTools.euclideanDistance(beg, end);
-            Histogram h = aO.getHistogram();
-            double height = Math.max(Math.abs(end.getY() - beg.getY()), Math.max(beg.getY(), end.getY()));
-            double min = h.min();
-            double max = h.max();
+            Histogram hist = aO.getHistogram();
+            double height  = Math.max(Math.abs(end.getY() - beg.getY()), Math.max(beg.getY(), end.getY())) / 2.;
             
-            if (max - min > EPSILON) {
-                double scale =  height / (max - min);
+            
+            if (hist.max() - hist.min() > EPSILON) {
+                double scale =  height / (hist.max() - hist.min());
                 Path2D path = new Path2D.Double();
-                path.moveTo(beg.getX(), beg.getY() - h.get(0) * scale);
-                double stepX = h.getNoOfBins() / len;
-                for (int n = 1; n < h.getNoOfBins(); ++n) 
-                    path.lineTo(beg.getX() + n*stepX, beg.getY() - h.get(n) * scale);
-
+              
+                path.moveTo(0, 0);//-hist.get(0) * scale);
+              
+                
+                for (int n = 1; n < hist.getNoOfBins(); ++n) 
+                    path.lineTo(n, -(hist.get(n) - hist.get(0)) * scale);
+                
+                AffineTransform tx = new AffineTransform(iView.virtualToScreen());//.getTranslateInstance(beg.getX(), beg.getY());
+                tx.concatenate(AffineTransform.getTranslateInstance(beg.getX(), beg.getY()));
+                tx.concatenate(AffineTransform.getRotateInstance(angle));
+                Shape s = tx.createTransformedShape(path);
                 iGC.setXORMode(Color.WHITE);             
-                iGC.draw(iView.virtualToScreen().createTransformedShape(path));                
+                iGC.draw(s);                
                 iGC.setPaintMode(); //turn XOR mode off    
             }
         }
