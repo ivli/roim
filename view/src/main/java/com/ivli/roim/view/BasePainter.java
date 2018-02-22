@@ -63,45 +63,7 @@ public class BasePainter implements IPainter {
         
         iGC.draw(iView.virtualToScreen().createTransformedShape(aO.getShape()));             
     }
-    /*
-    @Override
-    public void paint(Profile aO) { 
-        final Rectangle bn = iView.virtualToScreen().createTransformedShape(aO.getShape()).getBounds();          
-        final Color tmp = iGC.getColor();
-        
-        iGC.setColor(java.awt.Color.CYAN);
-        iGC.drawLine(bn.x, bn.y, bn.x+bn.width, bn.y);                           
-        
-        iGC.setColor(java.awt.Color.RED);
-        iGC.drawLine(bn.x, bn.y+bn.height, bn.x+bn.width, bn.y+bn.height);
-      
-        iGC.setColor(tmp);
-       
-        if (aO.isShowHistogram()) {            
-            Histogram h = aO.getHistogram();
-            double min = h.min(); //Double.MAX_VALUE;
-            double max = h.max(); //Double.MIN_VALUE;
-            
-            //final double range = getView().getMax() - getView().getMin();// maxV - minV; 
-
-            Rectangle bounds = new Rectangle(0, 0, aO.getView().getImage().getWidth(), aO.getView().getImage().getHeight());
-
-            final double scale = Math.min(aO.getShape().getBounds().getY(), bounds.getHeight());                                              
-            Path2D.Double s = new Path2D.Double();        
-            //int n = 0;
-            //Integer set[]=h.values();
-            s.moveTo(0, aO.getShape().getBounds().getY() - h.get(0) * scale);
-
-            for (int n = 1; n < h.getNoOfBins(); ++n) 
-                s.lineTo(n, aO.getShape().getBounds().getY() - h.get(n) * scale);
-
-            iGC.setXORMode(Color.WHITE);             
-            iGC.draw(iView.virtualToScreen().createTransformedShape(s));                
-            iGC.setPaintMode(); //turn XOR mode off    
-        }
-    }
-    */
-
+   
     @Override
     public void paint(Profile aO) {
         final Shape line = iView.virtualToScreen().createTransformedShape(aO.getShape());                           
@@ -123,7 +85,7 @@ public class BasePainter implements IPainter {
         if (aO.isShowHistogram()) {
             final double angle = GeomTools.angle(beg, end);                      
             
-            final double len = GeomTools.euclideanDistance(beg, end);
+            ///final double len = GeomTools.euclideanDistance(beg, end);
             Histogram hist = aO.getHistogram();
             double height  = Math.max(Math.abs(end.getY() - beg.getY()), Math.max(beg.getY(), end.getY())) / 2.;
             
@@ -132,22 +94,20 @@ public class BasePainter implements IPainter {
                 double scale =  height / (hist.max() - hist.min());
                 Path2D path = new Path2D.Double();
               
-                path.moveTo(0, 0);//-hist.get(0) * scale);
-              
-                
+                path.moveTo(0, 0);
+                              
                 for (int n = 1; n < hist.getNoOfBins(); ++n) 
-                    path.lineTo(n, -(hist.get(n) - hist.get(0)) * scale);
+                    path.lineTo(n, - (hist.get(n) - hist.min()) * scale);
                 
-                AffineTransform tx = new AffineTransform(iView.virtualToScreen());//.getTranslateInstance(beg.getX(), beg.getY());
+                AffineTransform tx = new AffineTransform(iView.virtualToScreen());
                 tx.concatenate(AffineTransform.getTranslateInstance(beg.getX(), beg.getY()));
                 tx.concatenate(AffineTransform.getRotateInstance(angle));
-                Shape s = tx.createTransformedShape(path);
+               
                 iGC.setXORMode(Color.WHITE);             
-                iGC.draw(s);                
+                iGC.draw(tx.createTransformedShape(path));                
                 iGC.setPaintMode(); //turn XOR mode off    
             }
-        }
-        
+        }        
     }   
     
     static void drawRotate(Graphics2D g2d, double x, double y, double angleRadians, String text){         
