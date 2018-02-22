@@ -21,23 +21,23 @@ import java.util.ArrayList;
  *
  * @author likhachev
  */
-public class IntersectFinder {
+public class GeomTools {
            
     //px and py are the coordinates of the start, first tangent, second tangent, end in that order. length = 4
     //lx and ly are the start then end coordinates of the stright line. length = 2
-    static Point2D cubicIntersect(double[] px, double[] py, double[] lx, double[] ly) {  
+    public static Point2D cubicIntersect(double[] px, double[] py, double[] lx, double[] ly) {  
         final double[] X = new double[2];
 
         final double A = ly[1] - ly[0];      //A=y2-y1
         final double B = lx[0] - lx[1];      //B=x1-x2
         final double C = lx[0] * (ly[0] - ly[1]) + ly[0] * (lx[1] - lx[0]);  //C=x1*(y1-y2)+y1*(x2-x1)
          
-         //Bezier coeefficients X
+         //Bezier coefficients X
         final double []bx = {-px[0] + 3 * px[1] -  3 * px[2] + px[3], 
                           3 * px[0] - 6 * px[1] +  3 * px[2], 
                          -3 * px[0] + 3 * px[1],
                               px[0]};
-         //Bezier coeefficients Y              
+         //Bezier coefficients Y              
         final double []by = { -py[0] + 3 * py[1] -  3 * py[2] + py[3], 
                            3 * py[0] - 6 * py[1] +  3 * py[2], 
                           -3 * py[0] + 3 * py[1],
@@ -77,7 +77,7 @@ public class IntersectFinder {
         
         //ret.stream().forEach((a)->LOG.debug("root -(" + a.getX() + ", " + a.getY() + ");"));
         
-        return ret.stream().filter((a) -> (a.getX() > .0 && a.getY() > .0)).findFirst().orElse(null); 
+        return ret.stream().filter(a -> a.getX() > .0 && a.getY() > .0).findFirst().orElse(null); 
     }
 
     static final double PI2 = Math.PI*2.;
@@ -95,7 +95,7 @@ public class IntersectFinder {
         final double Ato3 = A / 3.;
         
         
-        double[] t = {.0, .0, .0};//new double[3];
+        double[] t = {.0, -1.0, -1.0};//new double[3];
 
         if (D >= .0) // complex or duplicate roots POI
         {
@@ -108,9 +108,9 @@ public class IntersectFinder {
             //double Im = Math.abs(Math.sqrt(3) * (S - T) / 2); // complex part of root pair   
 
             //discard complex roots//
-            if (S != T)//Math.abs(SQRT3 * (S - T) / 2) != .0) {
-                t[1] = t[2] = -1;
-            else 
+            if (S == T)//Math.abs(SQRT3 * (S - T) / 2) != .0) {
+            //    t[1] = t[2] = -1;
+            //else 
                 t[1] = t[2] = -Ato3 - (S + T) / 2; // real part of complex roots
 
         } else { // distinct real roots          
@@ -135,12 +135,30 @@ public class IntersectFinder {
             return -1;
         return 1;
     }
- 
+    /*
+     * euclidean distance between two points on cartesian plane
+    */
     public static double euclideanDistance(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
     
-    static Point2D lineIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+    public static double euclideanDistance(Point2D beg, Point2D end){//double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(beg.getX() - end.getX(), 2) + Math.pow(beg.getY() - end.getY(), 2));
+    }
+    /*
+     * angle between x-axis and a line connecting two points on cartesian plane
+    */    
+    public static double angle(double x1, double y1, double x2, double y2) {
+        return Math.atan(-(y1 - y2)/(x2 - x1));
+    }
+    
+    public static double angle(Point2D beg, Point2D end) {
+        return Math.atan(-(beg.getY() - end.getY())/(end.getX() - beg.getX()));
+    }
+    /*
+     * return point of intersection of two stright lines set by endpoints
+    */
+    public static Point2D lineIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
         double denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
         if (denom == 0.0) { // Lines are parallel.
            return null;
@@ -156,7 +174,10 @@ public class IntersectFinder {
 
         return null;
     }
-        
+    
+    /*
+     * return point of intersection of two shapes
+    */    
     static Point2D intersect(Shape aS, Line2D aL) {
         PathIterator pi = aS.getPathIterator(null);
         double x=.0, y=.0;

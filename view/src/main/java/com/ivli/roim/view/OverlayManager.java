@@ -30,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.ivli.roim.events.*;
 import com.ivli.roim.core.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 

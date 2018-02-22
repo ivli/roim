@@ -23,18 +23,30 @@ import java.util.ArrayList;
  *
  * @author likhachev
  */
-public class Histogram {    
+public class Histogram {   
+    public static double DEFAULT_BIN_SIZE = 1.0;
     private int iMin = Integer.MAX_VALUE;
     private int iMax = Integer.MIN_VALUE;    
     
-    private double iBinSize = 1.0;
-    private int iNoOfBins = 0;
-    private ArrayList<Integer> iData = new ArrayList();
+    private double iBinSize  = 1.0;
+   /// private int    iNoOfBins = 0;
     
-    public Histogram(int[] aV, double aS) {
+    private ArrayList<Integer> iData;
+    
+    public Histogram(ArrayList aL, double aS) {                
+        iBinSize = aS; 
+        iData = aL;
         
+        iData.stream().forEach(a -> {
+                                     if (a < iMin) iMin = a; 
+                                     if (a > iMax) iMax = a;
+        });
+        
+    }
+    
+    public Histogram(int[] aV, double aS) {        
         iBinSize = aS;
-               
+        iData = new ArrayList();        
         for (int i = 0; i < aV.length; ++i)
             put(i, aV[i]);    
     }
@@ -42,14 +54,13 @@ public class Histogram {
     public Histogram(int[] aV) {
         this(aV, 1.);  
     }
-       
+      
     public Histogram(int aNoOfBins) {     
-        iNoOfBins = aNoOfBins;
-        iData.ensureCapacity(iNoOfBins);
+        iData.ensureCapacity(aNoOfBins);
         
         for(int i = 0; i < iData.size(); ++i)
             iData.add(i, 0);
-    }
+    }   
     
     public int getNoOfBins() {
         return iData.size();

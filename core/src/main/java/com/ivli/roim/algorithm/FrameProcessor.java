@@ -22,7 +22,9 @@ import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.Measure;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.util.Arrays;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 /**
  *
  * @author likhachev
@@ -178,7 +180,7 @@ public class FrameProcessor {
                 
         for (int i = r.x; i < r.x + r.width; ++i) {           
             for (int j = r.y; j < r.y + r.height; ++j) 
-                if (null == aR || aR.contains(i,j)) {
+                if (null == aR || aR.contains(i, j)) {
                     final int v = iFrame.get(i, j);                      
                     if (v > max) max = v;
                     if (v < min) min = v;
@@ -204,30 +206,44 @@ public class FrameProcessor {
         return new Histogram(bins, step);
     }
     
-    public Histogram profile(Shape aR) {
-        final Rectangle r;       
+    public Histogram profile(Rectangle2D aR) {    
+        final Rectangle r = aR.getBounds();
         
-        if (null != aR)
-            r = aR.getBounds(); 
-        else 
-            r = new Rectangle(0, 0, iFrame.getWidth(), iFrame.getHeight());          
+        ArrayList<Integer> bins = new ArrayList<>();
         
-        int bins[] = new int[r.width];
-              
-        Arrays.fill(bins, 0);
-        
-        for (int i = r.x; i < r.x + r.width; ++i) {    
+        for (int i = r.x; i <= r.x + r.width; ++i) {    
             int val = 0;
-            for (int j = r.y; j < r.y + r.height; ++j) 
-                if (null == aR || aR.contains(i, j)) {
-                    val += (int)(iFrame.get(i, j));                                              
-                }
-            bins[i - r.x] = val; 
+            for (int j = r.y; j <= r.y + r.height; ++j) 
+                if (aR.contains(i, j)) 
+                    val += iFrame.get(i, j);                                              
+                
+            bins.add(val); 
         }
         
-        return new Histogram(bins);    
-    }
+        return new Histogram(bins, Histogram.DEFAULT_BIN_SIZE);    
+    }      
+     
+    public Histogram profile(Point2D aB, Point2D aE, double aH) {    
         
+        final Rectangle2D r = new Rectangle2D.Double(aB.getX(), aB.getY(), Math.abs(aE.getX() - aB.getX()), Math.abs(aE.getY() - aB.getY()));
+        
+        ArrayList<Integer> bins = new ArrayList<>();
+        
+        for (int i = 0; i < r.getWidth(); ++i) {    
+            int val = 0;
+            final double iX = i + r.getX();
+            for (int j = 0; j <= r.getHeight(); ++j) {
+            final double jY = j + r.getY();    
+                if (r.contains(iX, jY)) 
+                    val += iFrame.get((int)iX, (int)jY);                                              
+               }    
+            bins.add(val); 
+        }
+        
+        return new Histogram(bins, Histogram.DEFAULT_BIN_SIZE);    
+    }      
+    
+    
     public long density(Shape aR) {        
         return (long)measure(aR).getIden();    
     } 

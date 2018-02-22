@@ -104,6 +104,35 @@ class Controller implements IController {
         }
     }
     
+    class LinearRoiCreator extends BaseRoiCreator {
+            //boolean first = true;
+            Point start =  null;
+            Point finish = null;
+
+            LinearRoiCreator() {
+                super (-1, -1);
+            }
+            public void DoAction(int aX, int aY) {
+                if (start == null && finish == null) {
+                    start = new Point(aX, aY);
+                } else //if (start != null && finish ==null)
+                    finish = new Point(aX, aY);
+
+                iControlled.repaint();//iPath.getBounds()); 
+            }
+/*
+            public boolean DoRelease(int aX, int aY) {                
+                iControlled.getROIMgr().createRuler(start, new Point(aX, aY), iControlled);
+                iControlled.repaint();
+                return false;
+            }
+*/
+            public void DoPaint(Graphics2D gc) {                                              
+                if (start != null && finish != null)
+                    gc.drawLine(start.x, start.y, finish.x, finish.y);
+            }                       
+        };
+    
     ActionItem NewAction(int aType, int aX, int aY) {
         switch (aType){   
             case MOUSE_ACTION_WINDOW: 
@@ -187,6 +216,7 @@ class Controller implements IController {
     public void mouseExited(MouseEvent e) {
     }
 
+    @Override
     public void mouseWheelMoved(MouseWheelEvent e) {    
         if (null != iAction)
             iAction.wheel(e.getWheelRotation());
@@ -360,48 +390,24 @@ class Controller implements IController {
                 iAction = new RectangularRoiCreator(new Rectangle2D.Double());
                 break;
                 
-            case KCommandRoiCreateProfile: //
-                iAction = new RectangularRoiCreator(new Rectangle2D.Double()) {
-                    
+            case KCommandRoiCreateProfile: {
+                iAction = new LinearRoiCreator() {                  
+                    @Override
                     public boolean DoRelease(int aX, int aY) {
-                        iControlled.getROIMgr().createProfile(iShape, iControlled);
+                        iControlled.getROIMgr().createProfile(start, new Point(aX, aY), iControlled);
                         iControlled.repaint();
                         return false;
-                    }
-                    public void DoPaint(Graphics2D gc) {                       
-                        final java.awt.Rectangle bn = iShape.getBounds();  
-                        final int w = gc.getClipBounds().width;
-                        gc.drawLine(0, bn.y, w, bn.y);                           
-                        gc.drawLine(0, bn.y+bn.height, w, bn.y + bn.height);                       
-                    }
-                }; break;
-                            
+                    }                                                  
+                };
+                } break;  
             case KCommandRoiCreateRuler: {
-                iAction = new BaseRoiCreator(-1, -1) {
-                    //boolean first = true;
-                    Point start =  null;
-                    Point finish = null;
-                    
-                    public void DoAction(int aX, int aY) {
-                        if (start == null && finish == null) {
-                            start = new Point(aX, aY);
-                        } else //if (start != null && finish ==null)
-                            finish = new Point(aX, aY);
-                         
-                        iControlled.repaint();//iPath.getBounds()); 
-                    }
-                    
+                iAction = new LinearRoiCreator() {                  
+                    @Override
                     public boolean DoRelease(int aX, int aY) {
-                        //
                         iControlled.getROIMgr().createRuler(start, new Point(aX, aY), iControlled);
                         iControlled.repaint();
                         return false;
-                    }
-        
-                    public void DoPaint(Graphics2D gc) {                                              
-                        if (start != null && finish != null)
-                            gc.drawLine(start.x, start.y, finish.x, finish.y);
-                    }                       
+                    }                                                  
                 };
                 } break;
             case KCommandRoiMove: break; 

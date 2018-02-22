@@ -34,7 +34,8 @@ import java.awt.geom.Rectangle2D;
  *
  * @author likhachev
  */
-public class BasePainter implements IPainter {    
+public class BasePainter implements IPainter {   
+    protected static final double EPSILON = .001;
     protected static final Color EMPHASIZED_COLOR = Color.RED;
     protected static final Color DEFAULT_LINK_COLOR = Color.RED;
     
@@ -61,7 +62,7 @@ public class BasePainter implements IPainter {
         
         iGC.draw(iView.virtualToScreen().createTransformedShape(aO.getShape()));             
     }
-    
+    /*
     @Override
     public void paint(Profile aO) { 
         final Rectangle bn = iView.virtualToScreen().createTransformedShape(aO.getShape()).getBounds();          
@@ -74,7 +75,7 @@ public class BasePainter implements IPainter {
         iGC.drawLine(bn.x, bn.y+bn.height, bn.x+bn.width, bn.y+bn.height);
       
         iGC.setColor(tmp);
-        /**/
+       
         if (aO.isShowHistogram()) {            
             Histogram h = aO.getHistogram();
             double min = h.min(); //Double.MAX_VALUE;
@@ -98,7 +99,51 @@ public class BasePainter implements IPainter {
             iGC.setPaintMode(); //turn XOR mode off    
         }
     }
-  
+    */
+
+    @Override
+    public void paint(Profile aO) {
+        final Shape line = iView.virtualToScreen().createTransformedShape(aO.getShape());                           
+        iGC.setColor(Color.YELLOW);       
+        iGC.draw(line); 
+               
+        Point2D p1 = aO.iBegin.iPos;
+        Point2D p2 = aO.iEnd.iPos;
+        
+        Point2D beg; 
+        Point2D end;
+        
+        if(p1.getX() < p2.getX()) {
+            beg = p1; end = p2;
+        } else {
+            beg = p2; end = p1;
+        }
+ 
+        if (aO.isShowHistogram()) {
+            final double angle = GeomTools.angle(beg, end);                      
+            
+            final double len = GeomTools.euclideanDistance(beg, end);
+            Histogram h = aO.getHistogram();
+            double height = Math.max(Math.abs(end.getY() - beg.getY()), Math.max(beg.getY(), end.getY()));
+            double min = h.min();
+            double max = h.max();
+            
+            if (max - min > EPSILON) {
+                double scale =  height / (max - min);
+                Path2D path = new Path2D.Double();
+                path.moveTo(beg.getX(), beg.getY() - h.get(0) * scale);
+                double stepX = h.getNoOfBins() / len;
+                for (int n = 1; n < h.getNoOfBins(); ++n) 
+                    path.lineTo(beg.getX() + n*stepX, beg.getY() - h.get(n) * scale);
+
+                iGC.setXORMode(Color.WHITE);             
+                iGC.draw(iView.virtualToScreen().createTransformedShape(path));                
+                iGC.setPaintMode(); //turn XOR mode off    
+            }
+        }
+        
+    }   
+    
     static void drawRotate(Graphics2D g2d, double x, double y, double angleRadians, String text){         
         g2d.translate((float)x,(float)y);
         g2d.rotate(angleRadians);
@@ -107,8 +152,8 @@ public class BasePainter implements IPainter {
         g2d.translate(-(float)x,-(float)y);
     } 
     
-    Point2D translate(Point2D aP) {
-        Rectangle2D r = iView.virtualToScreen().createTransformedShape(new Rectangle2D.Double(aP.getX(), aP.getY(), 1, 1)).getBounds2D();
+    Point2D translate(Point2D aO) {
+        Rectangle2D r = iView.virtualToScreen().createTransformedShape(new Rectangle2D.Double(aO.getX(), aO.getY(), 1, 1)).getBounds2D();
         return new Point2D.Double(r.getX(), r.getY());
     }
     
@@ -137,7 +182,7 @@ public class BasePainter implements IPainter {
         for (Measurement m : ms)
             text += m.format(Filter.getFilter(m.getName()).filter().eval(aO).get(0), false);
                 
-        final double angle = Math.atan(-(beg.getY() - end.getY())/(end.getX() - beg.getX()));                 
+        final double angle = GeomTools.angle(beg, end);//Math.atan(-(beg.getY() - end.getY())/(end.getX() - beg.getX()));                 
         final double len = iGC.getFont().getStringBounds(text, iGC.getFontRenderContext()).getWidth();        
         final double x = beg.getX() + ((end.getX() - beg.getX()) / 2.0 - (len / 2.0) * Math.cos(angle));               
         final double y  = -((beg.getY() - end.getY()) * x + (beg.getX() * end.getY() - end.getX() * beg.getY())) / (end.getX() - beg.getX()); 
@@ -232,10 +277,10 @@ public class BasePainter implements IPainter {
         Rectangle2D r2 = s2.getBounds2D();
         Line2D temp = new Line2D.Double(r1.getCenterX(), r1.getCenterY(), r2.getCenterX(), r2.getCenterY());
         
-        Point2D p1 = IntersectFinder.intersect(s1, temp);
+        Point2D p1 = GeomTools.intersect(s1, temp);
         
         if (null != p1) {
-            Point2D p2 = IntersectFinder.intersect(s2, temp);
+            Point2D p2 = GeomTools.intersect(s2, temp);
             if (null != p2)
                 return new Line2D.Double(p1, p2);
         }

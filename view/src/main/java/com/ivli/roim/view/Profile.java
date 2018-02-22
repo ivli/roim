@@ -17,9 +17,8 @@
  */
 package com.ivli.roim.view;
 
-import java.awt.geom.Rectangle2D;
 import com.ivli.roim.core.Histogram;
-import com.ivli.roim.core.ImageFrame;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import javax.swing.JMenuItem;
 
@@ -27,31 +26,33 @@ import javax.swing.JMenuItem;
  *
  * @author likhachev
  */
-public class Profile extends ScreenObject {      
+public class Profile extends Ruler {      
     private boolean    iShow = true;    
     private boolean    iNormalize = false;
-    private Histogram  iHist;
-    private transient ImageFrame iFrame;
+    //private Histogram  iHist;
+   // private transient ImageFrame iFrame;
       
-    public Profile(Rectangle2D aS, IImageView aV) {
-        super(aV, aV.getFrameNumber(), aS, "PROFILE"); //NOI18N     
-        iFrame = aV.getImage().get(aV.getFrameNumber());        
-        iHist = iFrame.processor().profile(iShape.getBounds()); 
+    Profile(IImageView aV, Handle aB, Handle aE) {
+        super(aV, aB, aE); //NOI18N     
+       // iFrame = aV.getImage().get(aV.getFrameNumber());        
+       // iHist = iFrame.processor().profile(iShape.getBounds()); 
     }
     
     @Override
     public int getStyles() {
         return OVL_VISIBLE|OVL_MOVEABLE|OVL_SELECTABLE|OVL_PINNABLE|OVL_HAVE_MENU|OVL_HAVE_CONFIG; 
     }
-    
+    /* */
     @Override
     public void paint(IPainter aP) {
         aP.paint(this);
+        aP.paint(this.iBegin);
+        aP.paint(this.iEnd);
     } 
- 
+   
     @Override
     public void update(OverlayManager aM) {        
-        iHist = iFrame.processor().profile(iShape.getBounds());      
+       // iHist = iView.getImage().get(iView.getFrameNumber()).processor().profile(iShape);      
     }            
        
     public boolean normalize() {
@@ -66,8 +67,11 @@ public class Profile extends ScreenObject {
          iShow = aS; 
     }
     
-    public Histogram getHistogram() {
-         return iHist;
+    public Histogram getHistogram() {     
+        // Point p1 = this.iBegin.iPos
+        // Point p2 = this.iEnd.iPos
+        
+        return iView.getImage().get(iView.getFrameNumber()).processor().profile(this.iBegin.iPos, this.iEnd.iPos, 1.);
     } 
          
     private static final String CUST_COMMAND_PROFILE_TOGGLE_SHOW = "CUST_COMMAND_PROFILE_TOGGLE_SHOW";

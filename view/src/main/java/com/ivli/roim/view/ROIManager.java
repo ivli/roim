@@ -55,21 +55,7 @@ public class ROIManager extends OverlayManager {
         super (anImage);    
     }
           
-    /*
-     * creates profile curve for whole width of the image
-     * aS - shape <b><i> in screen coordinates </i></b>  
-    */
-    public Overlay createProfile(Shape aS, IImageView aV) {               
-        Rectangle r = aV.screenToVirtual().createTransformedShape(aS).getBounds();        
-        r.x = 0;
-        r.width = getImage().getWidth();
-        
-        Profile ret = new Profile(r, aV);     
-        addObject(ret);   
-        ret.addChangeListener(this);
-        return ret; 
-    }
-  
+   
     public Overlay createAnnotation(ROI aROI, IImageView aV) {    
         Annotation.Static ret = new Annotation.Static(aV, aROI, aROI, aROI.getColor());
         addObject(ret);        
@@ -162,15 +148,12 @@ public class ROIManager extends OverlayManager {
         final Shape shape = aV.screenToVirtual().createTransformedShape(aS); 
         return internalCreateROI(shape, aV);
     }
-    
-    
-    
-    private Overlay internalCreateROI(Shape aS, IImageView aV) {                 
 
+    private Overlay internalCreateROI(Shape aS, IImageView aV) {                 
         String name = "ROI" + Uid.getNext(ROI.class);  
         Color clr = Colorer.getNextColor(ROI.class);
                
-        String decorator="";
+        String decorator = "";
         do {
             name += decorator;
             decorator += ".1";
@@ -220,7 +203,24 @@ public class ROIManager extends OverlayManager {
         }*/
         return ret;
     }
-    
+  
+    /*
+     * creates profile curve for whole width of the image
+     * aS - shape <b><i> in screen coordinates </i></b>  
+    */
+    public Overlay createProfile(Point aFrom, Point aTo, IImageView aV) {                       
+        Handle beg = new Handle(aV.screenToVirtual(aFrom));
+        Handle end = new Handle(aV.screenToVirtual(aTo));
+        Profile ret = new Profile(aV, beg, end);                     
+           
+        addObject(beg);
+        addObject(end);
+        addObject(ret);
+        
+        ret.addChangeListener(this); 
+        return ret; 
+    }
+  
     public void externalize(ObjectOutputStream ois) {
     
     }
