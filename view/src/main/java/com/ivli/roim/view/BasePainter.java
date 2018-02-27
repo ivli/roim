@@ -69,29 +69,23 @@ public class BasePainter implements IPainter {
         final Shape line = iView.virtualToScreen().createTransformedShape(aO.getShape());                           
         iGC.setColor(Color.YELLOW);       
         iGC.draw(line); 
-               
-        Point2D p1 = aO.iBegin.iPos;
-        Point2D p2 = aO.iEnd.iPos;
-        
+       
         Point2D beg; 
         Point2D end;
         
-        if(p1.getX() < p2.getX()) {
-            beg = p1; end = p2;
+        if(aO.iBegin.iPos.getX() < aO.iEnd.iPos.getX()) {
+            beg = aO.iBegin.iPos; end = aO.iEnd.iPos;
         } else {
-            beg = p2; end = p1;
+            beg = aO.iEnd.iPos; end = aO.iBegin.iPos;
         }
  
         if (aO.isShowHistogram()) {
             final double angle = GeomTools.angle(beg, end);                      
-            
-            ///final double len = GeomTools.euclideanDistance(beg, end);
-            Histogram hist = aO.getHistogram();
-            double height  = Math.max(Math.abs(end.getY() - beg.getY()), Math.max(beg.getY(), end.getY())) / 2.;
-            
+            final double height = Math.max(Math.abs(end.getY() - beg.getY()), Math.max(beg.getY(), end.getY())) / 2.;            
+            final Histogram hist = aO.getHistogram();                        
             
             if (hist.max() - hist.min() > EPSILON) {
-                double scale =  height / (hist.max() - hist.min());
+                final double scale =  height / (hist.max() - hist.min());
                 Path2D path = new Path2D.Double();
               
                 path.moveTo(0, 0);
