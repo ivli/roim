@@ -189,7 +189,7 @@ public class ROIManager extends OverlayManager {
         
         ret.addChangeListener(this); 
         
-        /* TODO!!!
+        /* TODO!!!*/
         if (CREATE_ANNOTATIONS_FOR_RULER) { 
             Annotation.Static ano = new Annotation.Static(aV, ret, ret, Color.RED);
             addObject(ano);        
@@ -200,7 +200,7 @@ public class ROIManager extends OverlayManager {
                 addObject(lnk);
                 addChangeListener(lnk);
             }
-        }*/
+        }
         return ret;
     }
   

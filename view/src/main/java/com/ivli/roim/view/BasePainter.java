@@ -87,7 +87,7 @@ public class BasePainter implements IPainter {
             if (hist.max() - hist.min() > EPSILON) {
                 final double scale =  height / (hist.max() - hist.min());
                 Path2D path = new Path2D.Double();
-              
+                
                 path.moveTo(0, 0);
                               
                 for (int n = 1; n < hist.getNoOfBins(); ++n) 

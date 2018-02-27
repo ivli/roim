@@ -43,8 +43,7 @@ public abstract class ScreenObject extends Overlay {
     public int getFrameNumber() {
         return iFrameNumber;
     }
-    
-    /**/
+        
     @Override
     public int getStyles() {
         return OVL_VISIBLE|OVL_MOVEABLE|OVL_SELECTABLE|OVL_PINNABLE; 

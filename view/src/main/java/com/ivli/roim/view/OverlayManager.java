@@ -59,8 +59,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
         iOverlays.stream().filter(o -> o instanceof ROI).collect(Collectors.toList())  
                           .forEach(o -> {iOverlays.remove(o); notifyROIChanged(o, OverlayChangeEvent.CODE.DELETED, null);});
         //delete the rest objects emptying the container 
-        iOverlays.clear();
-               
+        iOverlays.clear();               
     }
     
     public void update() {        
@@ -68,10 +67,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     }
     
     public void paint(IPainter aP) {          
-        iOverlays.stream().forEach((o) -> {
-            if(o.isShown()) 
-                o.paint(aP);
-        });
+        iOverlays.stream().filter((o) -> o.isShown()).forEach((o) -> o.paint(aP));        
     }    
        
     protected void addObject(Overlay aO) {
@@ -144,16 +140,14 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     @Override
     public void OverlayChanged(OverlayChangeEvent anEvt) {         
         switch (anEvt.getCode()) {
-            case NAME_CHANGED: {
-                
+            case NAME_CHANGED: {                
                 notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.NAME_CHANGED, anEvt.getExtra());
             } break;
             case COLOR_CHANGED:
                 notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.COLOR_CHANGED, anEvt.getExtra());
                 break;
             case RESHAPED: {
-                notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.RESHAPED, anEvt.getExtra());
-                
+                notifyROIChanged(anEvt.getObject(), OverlayChangeEvent.CODE.RESHAPED, anEvt.getExtra());                
             } break;
             default:
                 break;
@@ -161,10 +155,11 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     }
 
     @Override
-    public void frameChanged(FrameChangeEvent anEvt) {       
-        for (Overlay o : iOverlays) 
-            if (o instanceof ScreenObject)
-                o.show(((ScreenObject)o).getFrameNumber() == -1 || ((ScreenObject)o).getFrameNumber() == anEvt.getFrame());                   
+    public void frameChanged(FrameChangeEvent anEvt) {         
+        iOverlays.stream().filter((o) -> o instanceof ScreenObject)
+                          .filter((o) -> ((ScreenObject)(o)).getFrameNumber() != IFrameProvider.INVALID_FRAME)
+                          .forEach((o) -> o.show(((ScreenObject)(o)).getFrameNumber() == anEvt.getFrame()));
+    
     }   
     
     private final static Logger LOG = LogManager.getLogger();

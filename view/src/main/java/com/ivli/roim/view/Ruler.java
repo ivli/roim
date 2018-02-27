@@ -21,6 +21,7 @@ package com.ivli.roim.view;
 import com.ivli.roim.core.ISeries;
 import com.ivli.roim.core.ISeriesProvider;
 import com.ivli.roim.core.Measurement;
+import com.ivli.roim.core.PixelSpacing;
 import com.ivli.roim.core.Scalar;
 import com.ivli.roim.core.Uid;
 import com.ivli.roim.events.OverlayChangeEvent;
@@ -35,9 +36,12 @@ import org.apache.logging.log4j.Logger;
  *
  * @author likhachev
  */
-public class Ruler extends ScreenObject implements ISeriesProvider {     
-    private double iSpacing = 1.;    
-    private Handle h[]={null,null};
+public class Ruler extends ScreenObject implements ISeriesProvider {           
+    final private Handle h[] = {null, null};     
+   
+    private PixelSpacing iSpacing = PixelSpacing.UNITY_PIXEL_SPACING;  
+    
+    final Tick iBegin, iEnd; 
     
     private static Shape makeShape(Point2D aB, Point2D aE) {
         Path2D ret = new Path2D.Double();
@@ -47,11 +51,10 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
     }
     
     Ruler(IImageView aV, Handle aB, Handle aE) {         
-        super(aV, aV.getFrameNumber(), makeShape(aB.getPos(), aE.getPos()), "Ruler" + Uid.getNext(Ruler.class));  
+        super(aV, aV.getFrameNumber(), makeShape(aB.getPos(), aE.getPos()), "Ruler::" + Uid.getNext());  
         iBegin = new Tick(aB.getPos());
         iEnd = new Tick(aE.getPos());        
-        //iShape = makeShape(aB.getPos(), aE.getPos());
-        
+       
         aB.addChangeListener(this);
         aE.addChangeListener(this);
         this.addChangeListener(aB);
@@ -82,7 +85,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
   
     @Override
     public void update(OverlayManager aM) {          
-        iSpacing = aM.getImage().getPixelSpacing().getX();      
+        iSpacing = aM.getImage().getPixelSpacing();      
     }       
    
     @Override
@@ -103,7 +106,7 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
 
     @Override
     public ISeries getSeries(Measurement anId) {
-        return new Scalar(Measurement.DISTANCE, iBegin.iPos.distance(iEnd.iPos) * iSpacing);
+        return new Scalar(Measurement.DISTANCE, iBegin.iPos.distance(iEnd.iPos) * iSpacing.getX());
     }
     
     private static final Measurement []LIST_OF_MEASUREMENTS = {Measurement.DISTANCE};
@@ -118,9 +121,6 @@ public class Ruler extends ScreenObject implements ISeriesProvider {
         return LIST_OF_MEASUREMENTS;
     }
     
-  
-    Tick iBegin;
-    Tick iEnd;
     
     private static final Logger LOG = LogManager.getLogger();
 }
