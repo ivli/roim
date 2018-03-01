@@ -17,7 +17,7 @@
  */
 package com.ivli.roim.view;
 
-import com.amd.aparapi.Kernel;
+import com.aparapi.Kernel;
 
 /**
  *
