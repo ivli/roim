@@ -11,7 +11,7 @@
     <packaging>pom</packaging>   
     
     <modules>
-	<module>dicom</module>        
+	<!--module>dicom</module-->        
 	<module>bitmap</module>        
     </modules> 
 
