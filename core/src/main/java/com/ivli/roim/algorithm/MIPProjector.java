@@ -21,8 +21,8 @@ import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.IMultiframeImage;
 import com.ivli.roim.events.ProgressNotifier;
 
-import com.amd.aparapi.Kernel;
-import com.amd.aparapi.Range;
+import com.aparapi.Kernel;
+import com.aparapi.Range;
 import com.ivli.roim.core.MultiframeImage;
 import com.ivli.roim.events.ProgressListener;
 import java.util.stream.IntStream;
