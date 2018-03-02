@@ -6,7 +6,7 @@ pkg/
 log/
 /.vscode/
 /.settings/
-
+package/
 *.class
 *.log*
 *.bak

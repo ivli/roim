@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/ivli/roim.svg?branch=master)](https://travis-ci.org/ivli/roim)
 
 *Also available in: [English](README.md), [по Русски](README.ru_ru.md)*
 
@@ -19,13 +20,13 @@ Right part is a cartesian chart showing activity curves over the ROIs.
 Also, using markers it is possible to fit acquired data with exponential curve using least squares method. 
 And export data into a CSV file for processing in an external application.          
 
-***SIC***: Java v8 necessary to build and run the application.
+***SIC***: Java8 is necessary.
 
 The library and program have been successfully tested on Windows and Linux (Ubuntu) and it has almost 100% i18n for English and Russian.  
 
 Please visit Roim [project](http://ivli.github.io/roim/) or [WiKi] (https://github.com/ivli/roim/wiki/ROIM/) page to get more details on design, uses and how it can help in creating your applications.
 
-Build Status: [![Build Status](https://travis-ci.org/ivli/roim.svg?branch=master)](https://travis-ci.org/ivli/roim)
+
 
 With best regards,    
 I.

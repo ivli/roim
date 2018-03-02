@@ -97,7 +97,6 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        jMenuItem3 = new javax.swing.JMenuItem();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -132,14 +131,12 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         ON_SHOW_HELP = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
-        jMenuItem3.setText(bundle.getString("DYNAMIC.jMenuItem3.text")); // NOI18N
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/ivli/roim/Bundle"); // NOI18N
         jLabel1.setText(bundle.getString("DYNAMIC.jLabel1.text")); // NOI18N
 
         jLabel2.setText(bundle.getString("DYNAMIC.jLabel2.text")); // NOI18N
@@ -407,7 +404,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
             jfc.setFileSelectionMode(/*JFileChooser.FILES_AND_DIRECTORIES:*/JFileChooser.FILES_ONLY);
 
             ImageServiceProvider.getInstance().getInstalledServices().forEach((e) -> {
-                jfc.addChoosableFileFilter(new FileNameExtensionFilter(e.getKey() + ": " + String.join(", ", e.getValue()), e.getValue()));
+                jfc.addChoosableFileFilter(new FileNameExtensionFilter(e.getKey() + ": " + String.join(", ", e.getValue()), e.getValue())); // NOI18N
             });
 
             if (JFileChooser.APPROVE_OPTION == jfc.showOpenDialog(this)) 
@@ -700,7 +697,6 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;

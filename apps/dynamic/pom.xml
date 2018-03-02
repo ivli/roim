@@ -23,20 +23,36 @@
 	    <type>pom</type>
             <scope>runtime</scope>
         </dependency>
-        <!--dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bitmap</artifactId>
             <version>${project.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>dicom</artifactId>
             <version>${project.version}</version>
-        </dependency-->
+            <scope>runtime</scope>
+        </dependency>
+        
     </dependencies>
     <build>
         <plugins>
-        </plugins>
+            <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>           
+            <configuration>
+                <archive>
+                    <manifest>                        
+                        <addClasspath>true</addClasspath>
+                        <mainClass>com.ivli.roim.DYNAMIC</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+            </plugin>
+        </plugins>    
+        
        
     <resources>
         <resource>
