@@ -237,14 +237,13 @@ public class TimeSliceVectorTest {
         System.out.println("slice");
         
         final TimeSliceVector instance = new TimeSliceVector(phi);
-        
-        {
+             
         TimeSliceVector temp = instance.slice(TimeSlice.INFINITY);
         
         assertEquals("duration",  instance.duration(),     temp.duration());
         assertEquals("NumPhases", instance.getNumPhases(), temp.getNumPhases());
         assertEquals("NumFrames", instance.getNumFrames(), temp.getNumFrames());   
-        }
+      
         
         int from = 0;
         int to   = 0;
@@ -253,11 +252,11 @@ public class TimeSliceVectorTest {
             String msg = String.format("iteration #%d", i);
             to += PHASE_DURATION[i];
         
-            TimeSliceVector temp = instance.slice(new TimeSlice(from, to));
+            TimeSliceVector temp2 = instance.slice(new TimeSlice(new Instant(from), new Instant(to)));
 
-            assertEquals(msg + "duration", PHASE_DURATION[i], temp.duration());
-            assertEquals(msg + "NumPhases",                1, temp.getNumPhases());
-            assertEquals(msg + "NumFrames", NO_OF_FRAMES[i],  temp.getNumFrames());
+            assertEquals(msg + "duration", PHASE_DURATION[i], temp2.duration());
+            assertEquals(msg + "NumPhases",                1, temp2.getNumPhases());
+            assertEquals(msg + "NumFrames", NO_OF_FRAMES[i],  temp2.getNumFrames());
 
             from += PHASE_DURATION[i];        
         }
@@ -418,7 +417,7 @@ public class TimeSliceVectorTest {
         System.out.println("getSlice");
         int FN = 0;
         TimeSliceVector instance = new TimeSliceVector(phi);
-        TimeSlice expResult = new TimeSlice(FRAME_DURATION[0] * FN, FRAME_DURATION[0] * (FN + 1));
+        TimeSlice expResult = new TimeSlice(new Instant(FRAME_DURATION[0] * FN), new Instant(FRAME_DURATION[0] * (FN + 1)));
         TimeSlice result = instance.getSlice(FN);
         assertEquals(0, expResult.compareTo(result));
        

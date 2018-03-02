@@ -211,9 +211,9 @@ public class FrameProcessor {
         
         ArrayList<Integer> bins = new ArrayList<>();
         
-        for (int i = r.x; i <= r.x + r.width; ++i) {    
+        for (int i = r.x; i < r.x + r.width; ++i) {    
             int val = 0;
-            for (int j = r.y; j <= r.y + r.height; ++j) 
+            for (int j = r.y; j < r.y + r.height; ++j) 
                 if (aR.contains(i, j)) 
                     val += iFrame.get(i, j);                                              
                 

@@ -34,14 +34,14 @@ import static org.junit.Assert.*;
  * @author likhachev
  */
 public class FrameProcessorTest {
-    static final ImageFrame fc = new ImageFrame(TestImage32x32.ROWS, TestImage32x32.COLS, TestImage32x32.BUFFER);
-    static final Histogram  profile = new Histogram(TestImage32x32.SUM_ROWS);
+    static final ImageFrame FRAME   = new ImageFrame(TestImage32x32.ROWS, TestImage32x32.COLS, TestImage32x32.BUFFER);
+    static final Histogram  PROFILE = new Histogram(TestImage32x32.SUM_COLS);
     
     ImageFrame f1;
         
     public FrameProcessorTest() {         
        // for (int i=0; i < TestImage32x32.SUM_ROWS.length; ++i)
-       //     profile.put(i, TestImage32x32.SUM_ROWS[i]);        
+       //     PROFILE.put(i, TestImage32x32.SUM_ROWS[i]);        
     }
     
     @BeforeClass
@@ -54,7 +54,7 @@ public class FrameProcessorTest {
     
     @Before
     public void setUp() {
-        f1 = fc.duplicate(); 
+        f1 = FRAME.duplicate(); 
     }
     
     @After
@@ -95,7 +95,7 @@ public class FrameProcessorTest {
         
         for (int i = 0; i < f1.getWidth(); ++i)
             for(int j = 0; j < f1.getHeight(); ++j)
-                assertEquals ((int)f1.get(i, j), (int)(fc.get(i, j) * 2));
+                assertEquals ((int)f1.get(i, j), (int)(FRAME.get(i, j) * 2));
     
     }
 
@@ -138,11 +138,8 @@ public class FrameProcessorTest {
     @Test
     public void testHistogram() {
         System.out.println("histogram");
-        
-        Rectangle aR = null;
-       
-        Histogram expResult = profile;
-        Histogram result = f1.processor().profile(aR);
+        Histogram expResult = PROFILE;
+        Histogram result = f1.processor().profile(new Rectangle(0, 0, TestImage32x32.ROWS, TestImage32x32.COLS));
         
         assertEquals(expResult.getNoOfBins(), result.getNoOfBins());
         assertEquals(expResult.getBinSize(), result.getBinSize(), 1.);

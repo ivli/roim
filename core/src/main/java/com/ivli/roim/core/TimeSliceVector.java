@@ -135,7 +135,7 @@ public class TimeSliceVector implements java.io.Serializable, Comparable<TimeSli
     public TimeSlice getSlice(int aFrameNumber) {
         final long from = frameStarts(aFrameNumber);
         final long to = frameStarts(aFrameNumber + 1);
-        return new TimeSlice(from, to);
+        return new TimeSlice(new Instant(from), new Instant(to));
     }
     
     private void fillSlicesArray() {

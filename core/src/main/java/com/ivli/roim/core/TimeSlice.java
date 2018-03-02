@@ -18,6 +18,7 @@
 package com.ivli.roim.core;
 
 import java.time.Duration;
+import com.ivli.roim.core.Instant;
 /**
  *
  * @author likhachev
@@ -26,13 +27,13 @@ public class TimeSlice implements java.io.Serializable, Comparable<TimeSlice> {
     private final Instant iFrom;
     private final Instant iTo;
     
-    public static final TimeSlice INFINITY = new TimeSlice(Instant.ZERO.toLong(), Instant.INFINITE.toLong());
-   
+    public static final TimeSlice INFINITY = new TimeSlice(Instant.ZERO, Instant.INFINITE);
+  
     public TimeSlice(long aFrom, long aTo) {
         iFrom = new Instant(aFrom);
         iTo = new Instant(aTo);
     }
-    
+   
     public TimeSlice(Instant aFrom, Instant aTo) {
         iFrom = aFrom;
         iTo = aTo;

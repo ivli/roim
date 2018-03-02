@@ -29,11 +29,10 @@ public class Histogram {
     private int iMax = Integer.MIN_VALUE;    
     
     private double iBinSize  = 1.0;
-   /// private int    iNoOfBins = 0;
     
-    private ArrayList<Integer> iData;
+    final ArrayList<Integer> iData;
     
-    public Histogram(ArrayList aL, double aS) {                
+    public Histogram(ArrayList<Integer> aL, double aS) {                
         iBinSize = aS; 
         iData = aL;
         
@@ -46,7 +45,7 @@ public class Histogram {
     
     public Histogram(int[] aV, double aS) {        
         iBinSize = aS;
-        iData = new ArrayList();        
+        iData = new ArrayList<>();        
         for (int i = 0; i < aV.length; ++i)
             put(i, aV[i]);    
     }
@@ -55,7 +54,8 @@ public class Histogram {
         this(aV, 1.);  
     }
       
-    public Histogram(int aNoOfBins) {     
+    public Histogram(int aNoOfBins) { 
+        iData = new ArrayList<>();    
         iData.ensureCapacity(aNoOfBins);
         
         for(int i = 0; i < iData.size(); ++i)
