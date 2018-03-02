@@ -11,15 +11,15 @@
     <packaging>pom</packaging>   
     
     <modules>
-	<!--module>dicom</module-->        
+	<module>dicom</module>        
 	<module>bitmap</module>        
     </modules> 
 
     <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>core</artifactId>
-      <version>${project.version}</version>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>core</artifactId>
+        <version>${project.version}</version>
     </dependency>
         
     </dependencies>
