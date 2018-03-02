@@ -17,7 +17,7 @@
 
 [Страничка проекта](<http://ivli.github.io/roim/>) и [WiKi](<https://github.com/ivli/roim/wiki/ROIM>) содержат более детальное описание внутреннего устройства и вариантов использования Roim *(увы пока только по Английски :-).*  
 
-
+Build Status: [![Build Status](https://travis-ci.org/ivli/roim.svg?branch=master)](https://travis-ci.org/ivli/roim)
 
 *С пожеланиями всего самого лучшего,*   
 И.

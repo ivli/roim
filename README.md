@@ -25,7 +25,7 @@ The library and program have been successfully tested on Windows and Linux (Ubun
 
 Please visit Roim [project](http://ivli.github.io/roim/) or [WiKi] (https://github.com/ivli/roim/wiki/ROIM/) page to get more details on design, uses and how it can help in creating your applications.
 
-[![Build Status](https://travis-ci.org/ivli/roim.svg?branch=master)](https://travis-ci.org/ivli/roim)
+Build Status: [![Build Status](https://travis-ci.org/ivli/roim.svg?branch=master)](https://travis-ci.org/ivli/roim)
 
 With best regards,    
 I.
