@@ -3,7 +3,17 @@
 <!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
 <html>
 	<head>
-	<link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-72006658-1"></script>
+		<script>
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){dataLayer.push(arguments);}
+		  gtag('js', new Date());
+
+		  gtag('config', 'UA-72006658-1');
+		</script>
+
+		<link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
@@ -82,8 +92,8 @@
 			</h3>
 		
 		<h2>Introduction</h2>
-		Roim is an image processing application. It is designed to speedup process of implementing software for processing nuclear medicine (hereinafter <b>NM</b>) data. 
-		This development was inspired by <a href="https://imagej.nih.gov/ij/">ImageJ</a> - image viewer and also written in Java to maintain platform independence, hovewer sometimes by the price of performance.
+		Roim (stands for ROI Master) is yet another class library designed to ease development of image processing applications of very special kind - nuclear medicine (hereinafter <b>NM</b>). 
+		This development has been greatly inspired by <a href="https://imagej.nih.gov/ij/">ImageJ</a> - image viewer and also written in Java to gain platform independence, hovewer sometimes by the price of performance.
 		The library is designed to be vendor neutral and should not be limited to support only NM and for the time being it is tested with NM/DR/DXR/CT/PET/MR files. 
 		It implements several algorithms, screen primitives and controls to extract, process and display biomedical information. 
 		<br>Namely: 
