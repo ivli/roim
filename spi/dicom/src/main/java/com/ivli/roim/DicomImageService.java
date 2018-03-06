@@ -178,7 +178,7 @@ public class DicomImageService implements IImageService {
 
                 //TODO: dcm4chee applies this transform to image data before ??? 
                 @Override
-                public ModalityTransform getRescaleTransform() { 
+                public ModalityTransform getModalityTransform() { 
                     /*
                     double  s = iDataSet.getDouble(Tag.RescaleSlope, 1.);   
                     double  i = iDataSet.getDouble(Tag.RescaleIntercept, .0);                    

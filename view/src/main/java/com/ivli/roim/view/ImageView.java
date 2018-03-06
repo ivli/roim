@@ -131,7 +131,7 @@ public class ImageView extends JComponent implements IImageView {
     @Override
     public void setImage(IMultiframeImage anImage) {                
         iModel = anImage;             
-        iVLUT.setTransform(iModel.getRescaleTransform());  
+        iVLUT.setTransform(iModel.getModalityTransform());  
        
         iCurrent = 0; 
         ///iFrame = iModel.get(iCurrent);   

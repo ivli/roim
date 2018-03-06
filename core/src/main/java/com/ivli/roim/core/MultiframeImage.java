@@ -99,7 +99,7 @@ public class MultiframeImage extends IMultiframeImage   {
         iImageType = image.getImageType();
         iPixelSpacing = image.getPixelSpacing();
         iTimeSliceVector = image.getTimeSliceVector(); 
-        iPVT = image.getRescaleTransform();
+        iPVT = image.getModalityTransform();
         iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames, null);
         
     }
@@ -114,16 +114,36 @@ public class MultiframeImage extends IMultiframeImage   {
         iNumFrames = aZ; 
         iTimeSliceVector = aM.getTimeSliceVector();
         iImageType = aM.getImageType();
-        iPVT = aM.getRescaleTransform();    
+        iPVT = aM.getModalityTransform();    
         iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames, aBuf); 
         
         iFrames.present(); //have no provider - must not call it
+    }
+   
+    private MultiframeImage(ImageFrame aF) {
+        iService = null;
+        iParent = null;               
+        iWidth  = aF.getWidth();
+        iHeight = aF.getHeight();        
+        iPixelSpacing = PixelSpacing.UNITY_PIXEL_SPACING;
+        iSliceSpacing = SliceSpacing.UNITY_SLICE_SPACING;
+        iNumFrames    = 1; 
+        iTimeSliceVector = TimeSliceVector.ONESHOT;
+        iImageType = ImageType.IMAGE;
+        iPVT = ModalityTransform.DEFAULT;    
+        int [][] tmp = new int [1][iWidth*iHeight];
+        System.arraycopy(tmp, 0, aF.getPixelData(), 0, iWidth*iHeight);
+        iFrames = new PixelBuffer(iWidth, iHeight, iNumFrames, tmp);     
     }
     
     public static IMultiframeImage create(IImageService aP) {    
         return new MultiframeImage(aP);
     }
-       
+     
+    public static IMultiframeImage create(ImageFrame aF) {    
+        return new MultiframeImage(aF);
+    }
+    
     protected void computeStatistics() {   
         
         iMin = iService.image().getMin();
@@ -178,7 +198,7 @@ public class MultiframeImage extends IMultiframeImage   {
     }
     
     @Override
-    public ModalityTransform getRescaleTransform() {
+    public ModalityTransform getModalityTransform() {
         return iPVT;
     }
     

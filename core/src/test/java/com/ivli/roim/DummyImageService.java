@@ -139,7 +139,7 @@ public class DummyImageService implements IImageService {
 
             //TODO: dcm4chee applies this transform to image data before ??? 
             @Override
-            public ModalityTransform getRescaleTransform() { 
+            public ModalityTransform getModalityTransform() { 
                 return ModalityTransform.DEFAULT;
             }
 

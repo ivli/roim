@@ -80,7 +80,7 @@ public class ImageServiceProvider {
         sb.append("\nTIMESLICE VECTOR:");
         sb.append(img.getTimeSliceVector());
         sb.append("\nP-VALUE TRANSFORM:");
-        sb.append(img.getRescaleTransform());                
+        sb.append(img.getModalityTransform());                
         sb.append("\nmin/max:");
         sb.append(img.getMin());
         sb.append(img.getMax());

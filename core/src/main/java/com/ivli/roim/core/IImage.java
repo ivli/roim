@@ -83,7 +83,7 @@ public interface IImage {
      * @return rescale or PV-transform   
      * @see ModalityTransform
      */
-    ModalityTransform getRescaleTransform();        
+    ModalityTransform getModalityTransform();        
     /**
      *
      * @return image photometric interpretation 

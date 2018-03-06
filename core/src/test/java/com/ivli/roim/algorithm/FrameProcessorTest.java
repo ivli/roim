@@ -116,8 +116,7 @@ public class FrameProcessorTest {
     public void testFlipHorz() {
         System.out.println("flipHorz");
         FrameProcessor instance = f1.processor();
-        instance.flipHorz();
-        // TODO review the generated test code and remove the default call to fail.        
+        instance.flipHorz();        
     }
 
     /**
