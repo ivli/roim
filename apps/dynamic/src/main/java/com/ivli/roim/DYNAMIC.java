@@ -453,7 +453,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
             jTabbedPane1.setEnabledAt(1, false);
         }
         //CHART        
-        if (anImage.getImageType().getTypeName().equals(ImageType.NM_DYNAMIC)) {
+        if (anImage.getImageType().getTypeName().equals(ImageType.NM_DYNAMIC) || anImage.getNumFrames() > 1) {
             iChart = ChartView.create();                    
             iChart.setPreferredSize(jPanel5.getPreferredSize());
             jPanel5.add(iChart);      
