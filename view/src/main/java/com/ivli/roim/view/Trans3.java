@@ -17,12 +17,13 @@
  */
 package com.ivli.roim.view;
 
-import com.aparapi.Kernel;
+//import com.aparapi.Kernel;
 
 /**
  *
  * @author likhachev
  */
+/**
 public class Trans3 extends Kernel{   
     final int[] src;
     final int[] dst;
@@ -41,3 +42,4 @@ public class Trans3 extends Kernel{
         dst[id] = flat[buffer[src[id]]];
     }     
 }
+*/

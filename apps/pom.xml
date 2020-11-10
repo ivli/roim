@@ -11,8 +11,8 @@
     <packaging>pom</packaging>   
     
     <modules>
-	<module>tomo</module>        
-	<module>dynamic</module>        
+    	<module>tomo</module>        
+    	<module>dynamic</module>        
     </modules> 
     
 </project>
