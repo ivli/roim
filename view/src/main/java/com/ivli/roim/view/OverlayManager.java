@@ -63,7 +63,7 @@ public class OverlayManager implements OverlayChangeListener, FrameChangeListene
     }
     
     public void update() {        
-        iOverlays.stream().forEach((o) -> o.update(this) );
+        iOverlays.stream().forEach((o) -> o.update(this));
     }
     
     public void paint(IPainter aP) {          

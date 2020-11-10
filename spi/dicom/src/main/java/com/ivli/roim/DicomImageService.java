@@ -200,11 +200,13 @@ public class DicomImageService implements IImageService {
                                 phases.add(new PhaseInformation(nf, fd));
                             }
                     } else {
-                            // either image is single frame or phase information is not present
-                            //if (getNumFrames() != 1) {
-                            //    LOG.info("file is suspicious");
-                       // }
-                        phases.add(PhaseInformation.ONESHOT);//new PhaseInformation(Math.max(1, getNumFrames()), iDataSet.getInt(Tag.ActualFrameDuration, 1000)));
+                            //either image is single frame or phase information is not present
+                            if (getNumFrames() != 1) {
+                               LOG.info("Multiframe image misses phase information -- try to restore it");
+                               phases.add(new PhaseInformation(Math.max(1, getNumFrames()), iDataSet.getInt(Tag.ActualFrameDuration, 1000)));
+                            }
+                            else
+                               phases.add(PhaseInformation.ONESHOT);
                     }
 
                     return new TimeSliceVector(phases);
