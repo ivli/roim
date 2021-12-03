@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ivli/roim.svg?branch=master)](https://travis-ci.org/ivli/roim)
+[![Build Status](https://travis-ci.com/ivli/roim.svg?branch=master)](https://travis-ci.com/ivli/roim)
 
 *Also available in: [English](README.md), [по Русски](README.ru_ru.md)*
 
