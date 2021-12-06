@@ -29,6 +29,5 @@ Please visit Roim [project](http://ivli.github.io/roim/) or [WiKi] (https://gith
 
 
 With best regards,    
-I.
-http://www.ilikhachev.com
+[I.](http://www.ilikhachev.com)
 
