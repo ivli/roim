@@ -1,3 +1,13 @@
 language: java
 jdk: openjdk11
 
+ deploy:
+     provider: releases
+     api_key:
+         secure: <your key>
+     file: 
+         - file1
+     skip_cleanup: true
+     on:
+         repo: <your repository path>
+         tags: true

@@ -20,7 +20,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>spi</artifactId>
             <version>${project.version}</version>
-	    <type>pom</type>
+	        <type>pom</type>
             <scope>runtime</scope>
         </dependency>
         <dependency>
