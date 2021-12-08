@@ -1,3 +1,10 @@
 language: java
 jdk: openjdk11
 
+deploy:
+     provider: releases
+     api_key:
+         secure: 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
+     file: 
+         *.jar
+     skip_cleanup: true
