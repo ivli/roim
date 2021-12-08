@@ -8,3 +8,4 @@ deploy:
      file: 
          *.jar
      skip_cleanup: true
+     
