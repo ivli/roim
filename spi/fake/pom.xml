@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.github.ivli</groupId>
-        <artifactId>roim</artifactId>
+        <artifactId>spi</artifactId>
         <version>1.0.5</version>
     </parent>	
 
-    <artifactId>view</artifactId>
+    <artifactId>fake</artifactId>
     <packaging>jar</packaging>   
 
     <repositories>
@@ -19,41 +19,22 @@
     </repositories>
 
     <dependencies>     
-        <!--dependency>
-            <groupId>com.aparapi</groupId>
-            <artifactId>aparapi</artifactId>
-            <version>1.5.0</version>
-        </dependency-->
         <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jcommon</artifactId>
-            <version>1.0.23</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.0.19</version>
-        </dependency>        
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.1</version>
+        </dependency>    
         <dependency>
             <groupId>com.sun.media</groupId>
             <artifactId>jai_imageio</artifactId>
             <version>1.1</version>
             <type>pom</type>
-        </dependency>                
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.5</version>
-        </dependency>        
+        </dependency>       
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>core</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        
-    </dependencies>
-
-    <build>
-    </build>
-  
+        </dependency>        
+    </dependencies>  
 </project>
+

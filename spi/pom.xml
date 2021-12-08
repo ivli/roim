@@ -4,26 +4,24 @@
     <parent>
         <groupId>com.github.ivli</groupId>
         <artifactId>roim</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.5</version>
     </parent>	
 
     <artifactId>spi</artifactId>
     <packaging>pom</packaging>   
     
     <modules>
-	<module>dicom</module>        
-	<module>bitmap</module>        
+	    <module>dicom</module>        
+	    <module>bitmap</module>      
+        <module>fake</module>
     </modules> 
 
     <dependencies>
-    <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>core</artifactId>
-        <version>${project.version}</version>
-    </dependency>
-        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>core</artifactId>
+            <version>${project.version}</version>
+        </dependency>  
     </dependencies>
-
-    
 </project>
 

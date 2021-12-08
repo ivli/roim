@@ -21,10 +21,12 @@ import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
 
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
+
 
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Sequence;

@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.ivli</groupId>
         <artifactId>apps</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.5</version>
     </parent>	
 
     <artifactId>dynamic</artifactId>
@@ -21,7 +21,7 @@
             <artifactId>spi</artifactId>
             <version>${project.version}</version>
 	        <type>pom</type>
-            <scope>runtime</scope>
+            <!--scope>runtime</scope-->
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -35,61 +35,72 @@
             <version>${project.version}</version>
             <!--scope>runtime</scope-->
         </dependency>
-
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>fake</artifactId>
+            <version>${project.version}</version>
+            
+        </dependency>
     </dependencies>
     <build>
         <plugins>
-            <!--plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
+
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-shade-plugin</artifactId>
+    <version>3.2.1</version>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>shade</goal>
+            </goals>
             <configuration>
-                <archive>
-                    <manifest>
-                        <addClasspath>true</addClasspath>
+                <transformers>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                         <mainClass>com.ivli.roim.DYNAMIC</mainClass>
-                    </manifest>
-                </archive>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                        </manifestEntries>
+                    </transformer>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                </transformers>
             </configuration>
-            </plugin-->
-            <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
+        </execution>
+    </executions>
+</plugin>
+
+
+
+        <!--plugin>
             <artifactId>maven-assembly-plugin</artifactId>
-            <version>3.1.1</version>
-
-            <configuration>
-                <descriptorRefs>
-                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
-                <archive>
-                    <manifest>
-                        <addClasspath>true</addClasspath>
-                        <mainClass>com.ivli.roim.DYNAMIC</mainClass>
-                    </manifest>
-                    <manifestEntries>
-                    <Multi-Release> true </Multi-Release>
-                    </manifestEntries>
-                </archive>
-            </configuration>
-
             <executions>
-                <execution>
-                    <id>make-assembly</id>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>single</goal>
-                    </goals>
-                </execution>
+            <execution>
+                <phase>package</phase>
+                <goals>
+                <goal>single</goal>
+                </goals>
+            </execution>
             </executions>
-
-        </plugin>
+            <configuration>
+            <archive>
+                <manifest>
+                <addClasspath>true</addClasspath>
+                <mainClass>com.ivli.roim.DYNAMIC</mainClass>
+                </manifest>
+            </archive>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            </configuration>
+        </plugin--> 
         </plugins>
-
-    <resources>
-        <resource>
-            <directory>src/main/resources</directory>
-            <filtering>true</filtering>
-        </resource>
-    </resources>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 
     </build>
 

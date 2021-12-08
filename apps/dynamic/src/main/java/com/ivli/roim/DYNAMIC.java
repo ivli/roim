@@ -403,7 +403,8 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
             jfc.setCurrentDirectory(new File(Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")))); 
             jfc.setFileSelectionMode(/*JFileChooser.FILES_AND_DIRECTORIES:*/JFileChooser.FILES_ONLY);
 
-            ImageServiceProvider.getInstance().getInstalledServices().forEach((e) -> {
+            ImageServiceProvider.getInstance().getInstalledServices().forEach((e) -> 
+            {
                 jfc.addChoosableFileFilter(new FileNameExtensionFilter(e.getKey() + ": " + String.join(", ", e.getValue()), e.getValue())); // NOI18N
             });
 
@@ -596,7 +597,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
          */
         
         try {
-         /*  IF USE_NIMBUS_LAF */ 
+         /*  IF USE_NIMBUS_LAF */
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) { // NOI18N
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -668,10 +669,6 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jLabel3.setText(String.format("%3.0f/%3.0f", iw.getMin(), iw.getMax())); // NOI18N
         
     }
-  
-    //public void OverlayChanged(OverlayChangeEvent anEvt) {
-    
-    //}
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

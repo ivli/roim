@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.ivli</groupId>
         <artifactId>spi</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.5</version>
     </parent>	
 
     <artifactId>bitmap</artifactId>
@@ -36,10 +36,5 @@
             <version>${project.version}</version>
         </dependency>  
     </dependencies>
-
-    <build>                           
-    <plugins>
-    </plugins>    
-    </build>    
 </project>
 
