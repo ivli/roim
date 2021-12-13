@@ -3,8 +3,8 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 http://maven.apache.org/xsd/settings-1.2.0.xsd">
     <mirrors>
         <mirror>
-            <id>releases-java-net-http-unblocker</id>
-            <mirrorOf>maven.dcm4che.org</mirrorOf>
+            <id>http-unblocker</id>
+            <mirrorOf>*</mirrorOf>
             <name>maven.dcm4che.org</name>
             <url>http://maven.dcm4che.org</url>
             <blocked>false</blocked>
