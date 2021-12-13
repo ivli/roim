@@ -12,3 +12,4 @@ package/
 *.bak
 *.jar
 /core/nbproject/
+dependency-reduced-pom.xml
