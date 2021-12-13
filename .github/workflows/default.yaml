@@ -14,6 +14,5 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Build with Maven
-        run: ls -a /home/runner/work/roim/roim/ || \
-             mvn clean install --settings /home/runner/work/roim/roim/.mvn/custom-settings.xml && \
+        run: mvn clean install --settings .mvn/custom-settings.xml && \
              mvn -U --batch-mode --update-snapshots verify
