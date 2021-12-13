@@ -10,7 +10,7 @@
     <artifactId>dicom</artifactId>
     <packaging>jar</packaging>   
 
-    <repositories>
+    <!--repositories>
         <repository>
             <id>geotoolkit</id>
             <name>geotoolkit</name>
@@ -22,7 +22,7 @@
             <url>http://maven.dcm4che.org</url>
         </repository>
 
-    </repositories>
+    </repositories-->
 
     <dependencies>     
         <dependency>
