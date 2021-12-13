@@ -4,7 +4,7 @@
     <mirrors>
         <mirror>
             <id>http-unblocker</id>
-            <mirrorOf>*</mirrorOf>
+            <mirrorOf>external:http:*</mirrorOf>
             <name>maven.dcm4che.org</name>
             <url>http://maven.dcm4che.org</url>
             <blocked>false</blocked>
