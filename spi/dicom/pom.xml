@@ -14,12 +14,12 @@
         <repository>
             <id>geotoolkit</id>
             <name>geotoolkit</name>
-            <url>http://maven.geotoolkit.org</url>
+            <url>https://maven.geotoolkit.org</url>
         </repository>
         <repository>
             <id>dcm4che.org</id>
             <name>dcm4che.org</name>
-            <url>http://maven.dcm4che.org</url>
+            <url>https://maven.dcm4che.org</url>
         </repository>
 
     </repositories>
