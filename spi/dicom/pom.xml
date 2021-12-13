@@ -16,11 +16,11 @@
             <name>geotoolkit</name>
             <url>https://maven.geotoolkit.org</url>
         </repository>
-        <!--repository>
+        <repository>
             <id>dcm4che.org</id>
             <name>dcm4che.org</name>
             <url>https://maven.dcm4che.org</url>
-        </repository-->
+        </repository>
 
     </repositories>
 
@@ -39,12 +39,12 @@
         <dependency>
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-core</artifactId>
-            <version>3.3.8</version>
+            <version>[3.3.8,)</version>
         </dependency>
         <dependency>
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-imageio</artifactId>
-            <version>3.3.8</version>            
+            <version>[3.3.8,)</version>            
         </dependency>                
         <dependency>
             <groupId>commons-lang</groupId>
