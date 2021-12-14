@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/ivli/roim.svg?branch=master)](https://travis-ci.com/ivli/roim)
+[![Java CI](https://github.com/ivli/roim/actions/workflows/default.yaml/badge.svg)](https://github.com/ivli/roim/actions/workflows/default.yaml)
 
 *Так же доступно: [in English](README.md), [по Русски](README.ru_ru.md)*
 
