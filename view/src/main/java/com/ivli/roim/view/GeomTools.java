@@ -52,8 +52,8 @@ public class GeomTools {
         /*verify the roots are in bounds of the linear segment*/
         for (int i = 0; i < 3; i++) {
             final double t  = r[i];
-            final double t2 = r[i]*r[i];
-            final double t3 = t2*t;
+            final double t2 = r[i] * r[i];
+            final double t3 = t2 * t;
 
             X[0] = bx[0] * t3 + bx[1] * t2 + bx[2] * t + bx[3];
             X[1] = by[0] * t3 + by[1] * t2 + by[2] * t + by[3];
@@ -80,8 +80,8 @@ public class GeomTools {
         return ret.stream().filter(a -> a.getX() > .0 && a.getY() > .0).findFirst().orElse(null); 
     }
 
-    static final double PI2 = Math.PI*2.;
-    static final double PI4 = Math.PI*4.;    
+    static final double PI2 = Math.PI * 2.;
+    static final double PI4 = Math.PI * 4.;    
     static final double SQRT3 = 1.7320508075688772935274463415059;
   
     static double[] cubicRoots(double a, double b, double c, double d) {

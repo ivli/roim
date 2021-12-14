@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.ivli</groupId>
     <artifactId>roim</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.8-SNAPSHOT</version>
     <packaging>pom</packaging>   
     
     <properties>
@@ -62,43 +62,51 @@
 
     <build>
         <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                   <groupId>org.apache.maven.plugins</groupId>
-                   <artifactId>maven-jar-plugin</artifactId>
-                   <version>2.6</version>
-                </plugin>
-                <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>3.1.1</version>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
 
-            <configuration>
-                <descriptorRefs>
-                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
-            </configuration>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
 
-            <executions>
-                <execution>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
                     <id>make-assembly</id>
                     <phase>package</phase>
                     <goals>
-                        <goal>single</goal>
+                    <goal>single</goal>
                     </goals>
-                </execution>
-            </executions>
+                    </execution>
+                </executions>
+            </plugin>
 
-        </plugin>
-            </plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.0-M4</version>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+        </plugins>
 	</pluginManagement>
     </build>
 
