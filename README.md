@@ -10,7 +10,7 @@ However, for the time being it is tested only with ***NM/DR/DXR/CT/PET/MR*** fil
  
 It implements a set of algorithms, screen primitives and forms to simplify processes of extraction, 
 processing and display information extracted off study files. 
-The library relies on few external libraries namely [DICOM](https://ru.wikipedia.org/wiki/DICOM) to handle DICOM data, 
+The library relies on few external libraries namely [DICOM](https://en.wikipedia.org/wiki/DICOM) to handle DICOM data, 
 [Aparapi](https://aparapi.github.io/) for GPU operations and charts is based on [JFreeChart](http://www.jfree.org/jfreechart/). 
 
 The library includes an application to illustrate basic concepts and principles behind it.  
