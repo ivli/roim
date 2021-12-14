@@ -18,7 +18,7 @@
 package com.ivli.roim.core;
 
 import java.time.Duration;
-import com.ivli.roim.core.Instant;
+
 /**
  *
  * @author likhachev

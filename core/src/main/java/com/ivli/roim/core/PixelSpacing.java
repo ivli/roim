@@ -33,12 +33,12 @@ public class PixelSpacing implements java.io.Serializable {
     /**
      * column spacing
      */
-    protected double iX; 
+    private double iX; 
 
     /**
      * row spacing
      */
-    protected double iY;
+    private double iY;
     
     /**
      *

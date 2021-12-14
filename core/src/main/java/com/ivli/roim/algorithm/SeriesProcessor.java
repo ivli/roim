@@ -96,6 +96,7 @@ public class SeriesProcessor {
     public Double avg() {
         if (iSeries.isScalar())
             return iSeries.get(0);
+        
         Double ret = 0.;
         
         for(int i = 0; i < iSeries.size(); ++i)

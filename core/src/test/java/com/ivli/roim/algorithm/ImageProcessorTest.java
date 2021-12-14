@@ -1,6 +1,6 @@
 package com.ivli.roim.algorithm;
 
-import com.ivli.roim.core.Histogram;
+import com.ivli.roim.core.MultiframeImage;
 import com.ivli.roim.core.ImageFrame;
 import com.ivli.roim.core.TestImage32x32;
 import java.awt.Rectangle;
