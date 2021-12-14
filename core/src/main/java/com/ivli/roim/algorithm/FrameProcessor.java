@@ -29,26 +29,26 @@ import java.util.ArrayList;
  *
  * @author likhachev
  */
-public class FrameProcessor {      
+public class FrameProcessor {    
     public static final int INTERPOLATION_NONE     = 0;
     public static final int INTERPOLATION_BILINEAR = 1;
     public static final int INTERPOLATION_BICUBIC  = 2;    
     
     private final ImageFrame iFrame;       
-    private int iInterpol; 
+    private int iInterpolation; //interpolation
         
     public FrameProcessor(ImageFrame aF) {
         iFrame = aF;   
-        iInterpol = INTERPOLATION_NONE;
+        iInterpolation = INTERPOLATION_NONE;
     }
     
     public FrameProcessor(ImageFrame aF, int aI) {
         iFrame = aF;   
-        iInterpol = aI;
+        iInterpolation = aI;
     }
     
     public void setInterpolation(int aI) {
-        iInterpol = aI;
+        iInterpolation = aI;
     }
        
     protected int[] getPixelsCopy() {
@@ -139,7 +139,7 @@ public class FrameProcessor {
                 xs = x*ca + tmp3;
                 ys = x*sa + tmp4;
                 if ((xs>=-0.01) && (xs<dwidth) && (ys>=-0.01) && (ys<dheight)) {
-                    if (INTERPOLATION_BILINEAR == iInterpol) {
+                    if (INTERPOLATION_BILINEAR == iInterpolation) {
                         if (xs<0.0) xs = 0.0;
                         if (xs>=xlimit) xs = xlimit2;
                         if (ys<0.0) ys = 0.0;			
@@ -158,15 +158,37 @@ public class FrameProcessor {
         }
     }
     
-    public void rotate(final double anAngle) {                       
-        final int width = iFrame.getWidth();
-        final int height = iFrame.getHeight();       
-        final int[] src = iFrame.getPixelData(); //source
-        final int[] dst = new int[src.length];   //destination
-        _rotate(src, dst, width, height, anAngle);
-        iFrame.setPixelData(width, height, dst);
+    public void rotate(final double anAngle) { 
+        if (anAngle != 0.0)
+        {                      
+            final int width = iFrame.getWidth();
+            final int height = iFrame.getHeight();       
+            final int[] src = iFrame.getPixelData(); //source
+            final int[] dst = new int[src.length];   //destination
+            _rotate(src, dst, width, height, anAngle);
+            iFrame.setPixelData(width, height, dst);
+        }
     }
   
+    public boolean compare (ImageFrame anImageFrame)
+    {
+        if (anImageFrame == iFrame)
+            return true;
+
+        if (iFrame.getImageDataType() != anImageFrame.getImageDataType() || 
+            iFrame.getWidth() != anImageFrame.getWidth() || 
+            iFrame.getHeight() != anImageFrame.getHeight()
+           )   
+            return false;
+
+        for (int i = 0; i < iFrame.getWidth(); ++i)            
+            for (int j = 0; j < iFrame.getHeight(); ++j) 
+                if (iFrame.getPixel(i, j) != anImageFrame.getPixel(i, j))
+                    return false;
+            
+        return true;             
+    }
+
     public Histogram histogram(Shape aR, Integer aNoOfBins) {             
         final Rectangle r;       
         

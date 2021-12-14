@@ -403,8 +403,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
             jfc.setCurrentDirectory(new File(Settings.get(Settings.KEY_DEFAULT_FOLDER_DICOM, System.getProperty("user.home")))); 
             jfc.setFileSelectionMode(/*JFileChooser.FILES_AND_DIRECTORIES:*/JFileChooser.FILES_ONLY);
 
-            ImageServiceProvider.getInstance().getInstalledServices().forEach((e) -> 
-            {
+            ImageServiceProvider.getInstance().getInstalledServices().forEach((e) -> {
                 jfc.addChoosableFileFilter(new FileNameExtensionFilter(e.getKey() + ": " + String.join(", ", e.getValue()), e.getValue())); // NOI18N
             });
 

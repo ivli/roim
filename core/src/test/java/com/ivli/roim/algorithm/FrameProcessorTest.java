@@ -35,6 +35,7 @@ import static org.junit.Assert.*;
  */
 public class FrameProcessorTest {
     static final ImageFrame FRAME   = new ImageFrame(TestImage32x32.ROWS, TestImage32x32.COLS, TestImage32x32.BUFFER);
+
     static final Histogram  PROFILE = new Histogram(TestImage32x32.SUM_COLS);
     
     ImageFrame f1;
@@ -105,8 +106,12 @@ public class FrameProcessorTest {
     @Test
     public void testFlipVert() {
         System.out.println("flipVert");
-        FrameProcessor instance = f1.processor();
-        instance.flipVert();        
+       
+        f1.processor().flipVert();
+        assertFalse(f1.processor().compare(FRAME));
+
+        f1.processor().flipVert();
+        assertTrue(f1.processor().compare(FRAME));      
     }
 
     /**
@@ -115,8 +120,11 @@ public class FrameProcessorTest {
     @Test
     public void testFlipHorz() {
         System.out.println("flipHorz");
-        FrameProcessor instance = f1.processor();
-        instance.flipHorz();        
+        f1.processor().flipHorz();
+        assertFalse(f1.processor().compare(FRAME));
+
+        f1.processor().flipHorz();
+        assertTrue(f1.processor().compare(FRAME));      
     }
 
     /**
@@ -126,11 +134,28 @@ public class FrameProcessorTest {
     public void testRotate() {
         System.out.println("rotate");
         double anAngle = 0.0;
-        FrameProcessor instance = f1.processor();
-        instance.rotate(anAngle);
-        // TODO review the generated test code and remove the default call to fail.       
+
+        f1.processor().rotate(anAngle);
+        assertTrue(f1.processor().compare(FRAME)); 
+
+        f1.processor().rotate(30.);
+        assertFalse(f1.processor().compare(FRAME)); 
     }
 
+
+    /**
+     * Test compare method
+     */
+    @Test
+    public void testCompare() {
+        assertTrue(f1.processor().compare(FRAME));
+       
+        f1.processor().flipVert();
+        assertFalse(f1.processor().compare(FRAME));
+
+        f1.processor().flipVert();
+        assertTrue(f1.processor().compare(FRAME));
+    }
     /**
      * Test of histogram method, of class FrameProcessor.
      */

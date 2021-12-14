@@ -67,9 +67,6 @@ public class ImageProcessor {
     
     public void flipVert() {   
         iImage.forEach(f -> f.processor().flipVert());
-        //IntStream.range(0, iImage.getNumFrames())
-        //         .parallel()
-        //         .forEach(i -> iImage.get(i).processor().flipVert());
     }    
     
     public void flipHorz(int aFrom, int aTo) {    
