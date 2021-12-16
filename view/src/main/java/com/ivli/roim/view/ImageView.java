@@ -49,7 +49,7 @@ public class ImageView extends JComponent implements IImageView {
     private static final double MIN_SCALE = .01;
        
     ///protected FITMODE iFit; //a method of initial fitting into the window       
-    protected Object iInterpolation; //interpolation method   
+    protected Object iInterpolation = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR; //interpolation method   
     
     protected Point iOrigin = new Point(0,0); //image point [0,0] on the window implements panoramic transform 
     
@@ -72,7 +72,7 @@ public class ImageView extends JComponent implements IImageView {
     public static ImageView create(IMultiframeImage aI, VOITransform aTransform, ROIManager aM) {
         ImageView ret = new ImageView(null != aTransform ? aTransform: new VOITransform());              
         
-        ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+       /// ret.setInterpolationMethod(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
       
         ret.doConstruct(aM != null ? aM : ROIManager.create(aI));
         ret.setImage(aI);

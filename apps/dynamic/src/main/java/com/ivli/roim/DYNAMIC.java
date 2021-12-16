@@ -495,7 +495,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     }
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        openImage(null);//"D:/images/cholescy.dcm");
+        openImage(null);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
           
     private void jMenu2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu2ComponentShown
@@ -511,9 +511,7 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         ROIListPanel panel = new ROIListPanel(iMgr);
-        JDialog dialog = new JDialog(this, 
-                                    "ROI manager", 
-                                    Dialog.ModalityType.APPLICATION_MODAL);
+        JDialog dialog = new JDialog(this, "ROI manager", Dialog.ModalityType.APPLICATION_MODAL);                       
         dialog.setContentPane(panel);
         dialog.validate();
         dialog.pack();

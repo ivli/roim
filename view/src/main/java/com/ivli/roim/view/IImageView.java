@@ -41,8 +41,7 @@ public interface IImageView extends IWindowTarget {
         FIT_VISIBLE, //fit to display entire image      
         FIT_WIDTH,   //fit to display full image width      
         FIT_HEIGHT,  //fit to display full image height 
-          //fit to display image in pixel to pixel mode no matter how big it is
-        FIT_PIXELS;  
+        FIT_PIXELS;  //fit to display image in pixel to pixel mode no matter how big it is
     }
    
     public void fit(FITMODE aW);    

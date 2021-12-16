@@ -66,4 +66,3 @@ public enum Filter {
         return DENSITY;     
     }
 }
-

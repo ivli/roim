@@ -10,6 +10,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>ivli</sonar.organization>
+        <sonar.projectKey>roim</sonar.projectKey>
     </properties>
     
     <modules>
@@ -118,10 +121,14 @@
                     <check />
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.2</version>
+            </plugin>
         </plugins>
 	</pluginManagement>
     </build>
-
 
     <scm>
         <connection>scm:git:git@github.com:ivli/roim.git</connection>
