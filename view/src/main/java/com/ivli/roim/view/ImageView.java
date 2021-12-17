@@ -167,7 +167,8 @@ public class ImageView extends JComponent implements IImageView {
            
     public void setInterpolationMethod(Object aMethod) {
         iInterpolation = aMethod;       
-        invalidateBuffer();       
+        invalidateBuffer();
+        repaint();       
     }
     
     public Object getInterpolationMethod() {
@@ -366,7 +367,9 @@ public class ImageView extends JComponent implements IImageView {
     
     @Override
     public void paintComponent(Graphics g) {                           
+        
         if (null == iBuf) {
+            LOG.debug("scheduled buffer update " + g);
             long endTime, startTime = System.currentTimeMillis(); 
             updateBufferedImage();
             endTime = System.currentTimeMillis();

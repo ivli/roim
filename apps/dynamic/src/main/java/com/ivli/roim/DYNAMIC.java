@@ -23,11 +23,24 @@ import java.util.Locale;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.RenderingHints;
+import java.awt.Desktop;
 import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.UIManager;
 import javax.swing.JFrame;
+import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+
 import com.ivli.roim.view.ImageView;
 import com.ivli.roim.controls.CalcPanel;
 import com.ivli.roim.controls.ChartView;
@@ -43,15 +56,7 @@ import com.ivli.roim.events.*;
 import com.ivli.roim.io.ImageServiceProvider;
 import com.ivli.roim.view.ROIManager;
 import com.ivli.roim.view.Settings;
-import java.awt.Desktop;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.filechooser.FileNameExtensionFilter;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,24 +114,35 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
+
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem1 = new javax.swing.JMenuItem();
+
         jMenu2 = new javax.swing.JMenu();
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
+
         jMenu3 = new javax.swing.JMenu();
         jMenu31 = new javax.swing.JMenu();
-        jMenuItem10 = new javax.swing.JMenuItem();
-        jMenuItem11 = new javax.swing.JMenuItem();
-        jMenuItem12 = new javax.swing.JMenuItem();
+        jMenuItem10 = new javax.swing.JRadioButtonMenuItem();
+        jMenuItem11 = new javax.swing.JRadioButtonMenuItem();
+        jMenuItem12 = new javax.swing.JRadioButtonMenuItem();
+        jMenuGroup1 = new ButtonGroup();
+        jMenuGroup1.add(jMenuItem10);
+        jMenuGroup1.add(jMenuItem11); 
+        jMenuGroup1.add(jMenuItem12);
+        jMenuItem10.setSelected(true);
+        
         jMenu32 = new javax.swing.JMenu();
+        
         jMenuItem13 = new javax.swing.JMenuItem();
         jMenuItem14 = new javax.swing.JMenuItem();
         jMenuItem15 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
+        
         jMenu4 = new javax.swing.JMenu();
         ON_SHOW_HELP = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
@@ -684,9 +700,11 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem10;
-    private javax.swing.JMenuItem jMenuItem11;
-    private javax.swing.JMenuItem jMenuItem12;
+
+    private javax.swing.JRadioButtonMenuItem jMenuItem10;  
+    private javax.swing.JRadioButtonMenuItem jMenuItem11;
+    private javax.swing.JRadioButtonMenuItem jMenuItem12;
+    private javax.swing.ButtonGroup          jMenuGroup1; 
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem15;
