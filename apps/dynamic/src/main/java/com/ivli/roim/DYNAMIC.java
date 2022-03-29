@@ -70,11 +70,36 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     private ROIManager iMgr;
     /**/
     private static final void adjustLAF() {
+
         if (Locale.getDefault().equals(new Locale("ru", "RU"))) { //NOI18N
             /*  add locale to JColorChooser */            
             UIManager.put("ColorChooser.okText",     "Выбрать");  //NOI18N
             UIManager.put("ColorChooser.cancelText", "Отменить"); //NOI18N
-            UIManager.put("ColorChooser.resetText",  "Сброс");    //NOI18N           
+            UIManager.put("ColorChooser.resetText",  "Сброс");    //NOI18N    
+            /*  add locale to JFileChooser */
+            UIManager.put("FileChooser.acceptAllFileFilterText", "Каталоги");
+            UIManager.put("FileChooser.lookInLabelText", "Путь");
+            UIManager.put("FileChooser.cancelButtonText", "Отмена");
+            UIManager.put("FileChooser.cancelButtonToolTipText", "Отмена");
+            UIManager.put("FileChooser.openButtonText", "Открыть");
+            UIManager.put("FileChooser.openButtonToolTipText", "Открыть");
+            UIManager.put("FileChooser.filesOfTypeLabelText", "Тип файла");
+            UIManager.put("FileChooser.fileNameLabelText", "Файл(ы)");
+            UIManager.put("FileChooser.listViewButtonToolTipText", "Список"); 
+            UIManager.put("FileChooser.listViewButtonAccessibleName", "Список"); 
+            UIManager.put("FileChooser.detailsViewButtonToolTipText", "Таблица");
+            UIManager.put("FileChooser.detailsViewButtonAccessibleName", "Таблица");
+            UIManager.put("FileChooser.upFolderToolTipText", "на один уровень вверх"); 
+            UIManager.put("FileChooser.upFolderAccessibleName", "на один уровень вверх"); 
+            UIManager.put("FileChooser.homeFolderToolTipText", "Домашний каталог"); 
+            UIManager.put("FileChooser.homeFolderAccessibleName", "Домашний каталог");
+            UIManager.put("FileChooser.fileNameHeaderText", "Имя"); 
+            UIManager.put("FileChooser.fileSizeHeaderText", "Размер"); 
+            UIManager.put("FileChooser.fileTypeHeaderText", "Тип"); 
+            UIManager.put("FileChooser.fileDateHeaderText", "Дата"); 
+            UIManager.put("FileChooser.fileAttrHeaderText", "Аттрибуты"); 
+            UIManager.put("FileChooser.openDialogTitleText","Выберите файл");
+            UIManager.put("FileChooser.readOnly", Boolean.TRUE);    //NOI18N 
         }
     }
     
@@ -83,13 +108,10 @@ public class DYNAMIC extends JFrame implements FrameChangeListener, WindowChange
     }
     
     public DYNAMIC() {         
-        LOG.info("-->Entering application"); // NOI18N       
+        LOG.info("-->Entering application ::" + Locale.getDefault()); // NOI18N       
         setIconImage(new ImageIcon(ClassLoader.getSystemResource("images/khibiny.png")).getImage()); // NOI18N
       
         initComponents(); 
-        
-        //jMenuItem7.setEnabled(false);
-        //jMenuItem8.setEnabled(false);
     }
     	
     /**
